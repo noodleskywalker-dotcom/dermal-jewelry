@@ -44,6 +44,16 @@ npm run test:e2e     # browser tests (Playwright); reuses a running dev server
 npm run build
 ```
 
+## Preview deployment
+
+The Git integration built a Vercel **preview** (not production) for this branch:
+https://dermal-jewelry-git-feat-dermal-first-slice-openlimits.vercel.app
+
+It is protected by Vercel login, so sign in with the project's Vercel account to open it.
+Its homepage content was checked through authenticated access on 20 September 2026.
+Production at https://dermal-jewelry.vercel.app still serves the starter page and was not touched.
+Vercel's Hobby plan is for non-commercial use; confirm the plan before any commercial launch.
+
 ## Routes to review
 
 `/`, `/shop`, `/shop?placement=dermal`, `/collections`, `/collections/desert-eye`,
