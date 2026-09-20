@@ -22,7 +22,7 @@ Reasons and limits are in `docs/DECISIONS.md`. Before and after screenshots are 
 | Area | Status | Notes |
 | --- | --- | --- |
 | Design tokens, fonts, layout, navigation, footer | tested | Dark editorial system in `app/globals.css`. Cormorant Garamond for display, Geist and Geist Mono for UI. |
-| Homepage | tested | Hero, placement selector, Collection 001, try-on explanation, transparency section. |
+| Homepage | tested | Four scroll-driven chapters: the piece, Face Studio demonstration, horizontal collection sequence, closing statement. Chapter index, progress rule, reduced-motion layout. |
 | Shop with placement filter and search | tested | Filter and search live in the URL. Empty placements show an honest empty state. |
 | Collections index and DESERT EYE page | tested | |
 | Product page (all four demo products) | tested | Demo price, unverified specs, package note, inline try-on, add to demo bag. |
