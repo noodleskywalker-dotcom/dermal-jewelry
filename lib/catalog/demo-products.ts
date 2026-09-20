@@ -1,10 +1,10 @@
-import type { Placement, Product } from "./types";
+import type { Placement, Product, ProductComponent, ProductForm, RevealConfig } from "./types";
 
 export const placements: Placement[] = [
   { id: "anti-eyebrow", label: "Anti-eyebrow", note: "Below and outside the outer corner of the eye." },
   { id: "dermal", label: "Dermal", note: "Single-point surface placements." },
+  { id: "nostril", label: "Nose", note: "Single-point nostril placement." },
   { id: "eyebrow", label: "Eyebrow", note: "No pieces in this preview yet." },
-  { id: "nostril", label: "Nostril", note: "No pieces in this preview yet." },
   { id: "septum", label: "Septum", note: "No pieces in this preview yet." },
   { id: "lip", label: "Lip", note: "No pieces in this preview yet." },
 ];
@@ -21,87 +21,199 @@ function unverifiedSpecs(): Product["specs"] {
   ];
 }
 
-// Demo prices come from earlier concepts and are placeholders only (brief §06).
+const NO_REVEAL: RevealConfig = {
+  mode: "none",
+  identity: "none",
+  title: "",
+  maxSeconds: 0,
+  readiness: { playerImplemented: true, storyboardPrepared: false, sourceVideo: "missing", approvedForPublication: false },
+};
+
+/** A concept-pending form has no configuration yet: no pieces, no price, nothing to preview or buy. */
+function pendingForm(id: ProductForm["id"], label: string, placement: ProductForm["placement"]): ProductForm {
+  return {
+    id,
+    label,
+    status: "concept-pending",
+    placement,
+    components: [],
+    defaultScale: 0,
+    demoPrice: 0,
+    packageContents: "",
+    note: "Concept pending. This form has not been designed or approved yet.",
+  };
+}
+
+type FamilyInput = Omit<Product, "isDemo" | "currency" | "placements" | "demoPrice" | "packageContents" | "components" | "defaultScale" | "defaultRotation">;
+
+function family(input: FamilyInput): Product {
+  const base = input.forms.find((f) => f.id === input.defaultFormId)!;
+  return {
+    ...input,
+    isDemo: true,
+    currency: "QAR",
+    placements: input.forms.filter((f) => f.status === "available").map((f) => f.placement),
+    demoPrice: base.demoPrice,
+    packageContents: base.packageContents,
+    components: base.components,
+    defaultScale: base.defaultScale,
+    defaultRotation: 0,
+  };
+}
+
+const single = (id: string, label: string, art: ProductComponent["art"], size: number): ProductComponent[] => [
+  { id, label, art, x: 0, y: 0, size },
+];
+
+// Demo prices are placeholders carried over from earlier concepts. They are not selling prices.
 export const demoProducts: Product[] = [
-  {
+  family({
     id: "demo-desert-eye-love",
     slug: "desert-eye-love",
     title: "DESERT EYE — LOVE",
     collection: "desert-eye",
-    placements: ["anti-eyebrow"],
-    isDemo: true,
-    demoPrice: 390,
-    currency: "QAR",
-    summary: "An asymmetrical pair: an openwork symbol above, a deep-red faceted gemstone below.",
+    origin: "anime-inspired",
+    summary: "An openwork symbol with a deep-red accent, shown in more than one piercing form.",
     story:
-      "Two small pieces set on a diagonal. The upper, outer piece is an openwork symbol with a deep-red accent. The lower, inner piece is a small deep-red faceted gemstone in a claw setting. Together they read as one composition.",
-    packageContents: "Package contents are not confirmed yet. This concept shows two decorative tops.",
-    components: [
-      { id: "symbol", label: "Symbol (upper, outer)", art: "love-symbol", x: 0.3, y: -0.2, size: 0.48 },
-      { id: "gem", label: "Gemstone (lower, inner)", art: "garnet-gem", x: -0.28, y: 0.2, size: 0.2 },
+      "One design, several forms. As an anti-eyebrow pair it is two small pieces on a diagonal: an openwork symbol above and outside, a deep-red faceted gemstone below and inside.",
+    defaultFormId: "anti-eyebrow",
+    forms: [
+      {
+        id: "anti-eyebrow",
+        label: "Anti-eyebrow",
+        status: "available",
+        placement: "anti-eyebrow",
+        components: [
+          { id: "symbol", label: "Symbol (upper, outer)", art: "love-symbol", x: 0.3, y: -0.2, size: 0.48 },
+          { id: "gem", label: "Gemstone (lower, inner)", art: "garnet-gem", x: -0.28, y: 0.2, size: 0.2 },
+        ],
+        defaultScale: 0.12,
+        demoPrice: 390,
+        packageContents: "Package contents are not confirmed yet. This concept shows two decorative tops.",
+        note: "Approved appearance concept: symbol upper and outer, gemstone lower and inner.",
+      },
+      {
+        id: "micro-dermal",
+        label: "Micro dermal",
+        status: "available",
+        placement: "dermal",
+        components: single("symbol", "Symbol top", "love-symbol", 0.8),
+        defaultScale: 0.055,
+        demoPrice: 220,
+        packageContents: "Package contents are not confirmed yet. This concept shows one decorative top.",
+        note: "Demo configuration with a single symbol top. The final design of this form is not approved.",
+      },
+      pendingForm("nose", "Nose", "nostril"),
     ],
-    defaultScale: 0.12,
-    defaultRotation: 0,
+    reveal: {
+      mode: "mini-scene",
+      identity: "sand-impact",
+      title: "Sand reveal",
+      maxSeconds: 8,
+      readiness: { playerImplemented: true, storyboardPrepared: true, sourceVideo: "missing", approvedForPublication: false },
+    },
     specs: [
       { label: "Stone", value: "Deep-red faceted gemstone. Identity not yet verified.", status: "unverified" },
       ...unverifiedSpecs(),
     ],
-  },
-  {
+  }),
+  family({
+    id: "demo-crimson-orbit",
+    slug: "crimson-orbit",
+    title: "CRIMSON ORBIT",
+    collection: "originals",
+    origin: "original",
+    summary: "A deep-red centre held inside a fine open ring.",
+    story: "One point, one ring. The ring stands off the centre so light passes between them.",
+    defaultFormId: "micro-dermal",
+    forms: [
+      pendingForm("anti-eyebrow", "Anti-eyebrow", "anti-eyebrow"),
+      {
+        id: "micro-dermal",
+        label: "Micro dermal",
+        status: "available",
+        placement: "dermal",
+        components: single("orbit", "Orbit top", "orbit", 0.9),
+        defaultScale: 0.05,
+        demoPrice: 220,
+        packageContents: "Package contents are not confirmed yet. This concept shows one decorative top.",
+        note: "Original concept. Dimensions and hardware are not verified.",
+      },
+      {
+        id: "nose",
+        label: "Nose",
+        status: "available",
+        placement: "nostril",
+        components: single("orbit", "Orbit top, small", "orbit", 0.9),
+        defaultScale: 0.032,
+        demoPrice: 190,
+        packageContents: "Package contents are not confirmed yet. This concept shows one small decorative top.",
+        note: "Original concept, shown smaller for the nostril. Dimensions and hardware are not verified.",
+      },
+    ],
+    reveal: {
+      mode: "loop",
+      identity: "metal-sweep",
+      title: "Metal sweep",
+      maxSeconds: 3,
+      readiness: { playerImplemented: true, storyboardPrepared: true, sourceVideo: "available", approvedForPublication: false },
+    },
+    specs: [
+      { label: "Stone", value: "Deep-red faceted gemstone. Identity not yet verified.", status: "unverified" },
+      ...unverifiedSpecs(),
+    ],
+  }),
+  family({
     id: "demo-sand-vortex",
     slug: "sand-vortex",
     title: "SAND VORTEX",
     collection: "desert-eye",
-    placements: ["anti-eyebrow"],
-    isDemo: true,
-    demoPrice: 350,
-    currency: "QAR",
+    origin: "original",
     summary: "A wind-cut spiral paired with a plain polished point.",
     story: "A spiral drawn the way wind marks sand, set above a small polished point.",
-    packageContents: "Package contents are not confirmed yet. This concept shows two decorative tops.",
-    components: [
-      { id: "spiral", label: "Spiral (upper, outer)", art: "vortex", x: 0.28, y: -0.2, size: 0.42 },
-      { id: "point", label: "Point (lower, inner)", art: "vortex-stud", x: -0.28, y: 0.2, size: 0.18 },
+    defaultFormId: "anti-eyebrow",
+    forms: [
+      {
+        id: "anti-eyebrow",
+        label: "Anti-eyebrow",
+        status: "available",
+        placement: "anti-eyebrow",
+        components: [
+          { id: "spiral", label: "Spiral (upper, outer)", art: "vortex", x: 0.28, y: -0.2, size: 0.42 },
+          { id: "point", label: "Point (lower, inner)", art: "vortex-stud", x: -0.28, y: 0.2, size: 0.18 },
+        ],
+        defaultScale: 0.12,
+        demoPrice: 350,
+        packageContents: "Package contents are not confirmed yet. This concept shows two decorative tops.",
+        note: "Original concept. Dimensions and hardware are not verified.",
+      },
     ],
-    defaultScale: 0.12,
-    defaultRotation: 0,
+    reveal: NO_REVEAL,
     specs: unverifiedSpecs(),
-  },
-  {
-    id: "demo-crimson-orbit",
-    slug: "crimson-orbit",
-    title: "CRIMSON ORBIT",
-    collection: "desert-eye",
-    placements: ["dermal"],
-    isDemo: true,
-    demoPrice: 220,
-    currency: "QAR",
-    summary: "A deep-red centre held inside a fine open ring.",
-    story: "One point, one ring. The ring stands off the centre so light passes between them.",
-    packageContents: "Package contents are not confirmed yet. This concept shows one decorative top.",
-    components: [{ id: "orbit", label: "Orbit top", art: "orbit", x: 0, y: 0, size: 0.6 }],
-    defaultScale: 0.07,
-    defaultRotation: 0,
-    specs: [
-      { label: "Stone", value: "Deep-red faceted gemstone. Identity not yet verified.", status: "unverified" },
-      ...unverifiedSpecs(),
-    ],
-  },
-  {
+  }),
+  family({
     id: "demo-void-stud",
     slug: "void-stud",
     title: "VOID STUD",
-    collection: "desert-eye",
-    placements: ["dermal"],
-    isDemo: true,
-    demoPrice: 190,
-    currency: "QAR",
+    collection: "originals",
+    origin: "original",
     summary: "A matte black disc inside a polished rim.",
-    story: "The quietest piece in the collection. A dark centre, a bright edge.",
-    packageContents: "Package contents are not confirmed yet. This concept shows one decorative top.",
-    components: [{ id: "void", label: "Void top", art: "void", x: 0, y: 0, size: 0.5 }],
-    defaultScale: 0.07,
-    defaultRotation: 0,
+    story: "The quietest piece. A dark centre, a bright edge.",
+    defaultFormId: "micro-dermal",
+    forms: [
+      {
+        id: "micro-dermal",
+        label: "Micro dermal",
+        status: "available",
+        placement: "dermal",
+        components: single("void", "Void top", "void", 0.9),
+        defaultScale: 0.045,
+        demoPrice: 190,
+        packageContents: "Package contents are not confirmed yet. This concept shows one decorative top.",
+        note: "Original concept. Dimensions and hardware are not verified.",
+      },
+    ],
+    reveal: NO_REVEAL,
     specs: unverifiedSpecs(),
-  },
+  }),
 ];

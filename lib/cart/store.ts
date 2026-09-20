@@ -2,10 +2,11 @@
 
 import { useSyncExternalStore } from "react";
 import { catalog } from "@/lib/catalog";
+import type { FormId } from "@/lib/catalog/types";
 import { addToBag, EMPTY_BAG, removeFromBag, sanitizeBag, setQuantity, type Bag } from "./bag";
 
 // The demo bag holds product ids and quantities only. No photo or face data is ever stored here.
-const STORAGE_KEY = "dermal.demo-bag.v1";
+const STORAGE_KEY = "dermal.demo-bag.v2";
 
 let bag: Bag = EMPTY_BAG;
 let loaded = false;
@@ -44,9 +45,9 @@ function subscribe(listener: () => void) {
 }
 
 export const bagActions = {
-  add: (productId: string, quantity = 1) => commit(addToBag(bag, productId, quantity)),
-  setQuantity: (productId: string, quantity: number) => commit(setQuantity(bag, productId, quantity)),
-  remove: (productId: string) => commit(removeFromBag(bag, productId)),
+  add: (productId: string, formId: FormId, quantity = 1) => commit(addToBag(bag, productId, formId, quantity)),
+  setQuantity: (productId: string, formId: FormId, quantity: number) => commit(setQuantity(bag, productId, formId, quantity)),
+  remove: (productId: string, formId: FormId) => commit(removeFromBag(bag, productId, formId)),
   openDrawer: () => {
     drawerOpen = true;
     emit();

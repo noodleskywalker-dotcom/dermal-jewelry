@@ -1,27 +1,19 @@
-import { CollectionChapter } from "@/components/home/CollectionChapter";
-import { EndingChapter } from "@/components/home/EndingChapter";
-import { HeroChapter } from "@/components/home/HeroChapter";
-import { SceneHud } from "@/components/home/SceneHud";
-import { StudioChapter } from "@/components/home/StudioChapter";
+import { CollectionSection, EndingSection, HeroSection, PieceSection, StudioSection } from "@/components/home/HomeSections";
 import { catalog } from "@/lib/catalog";
 
-const CHAPTERS = [
-  { id: "piece", label: "The piece" },
-  { id: "studio", label: "Face Studio" },
-  { id: "collection", label: "Collection" },
-  { id: "enter", label: "Enter" },
-];
-
-// The homepage is one editorial sequence in four chapters rather than a stack of sections.
+// A normal, vertically scrolling page: campaign opening, the featured design family, a Face Studio
+// demonstration, the pieces, and a close.
 export default function HomePage() {
   const products = catalog.listProducts();
+  const featured = products[0];
+  const antiEyebrow = products.filter((p) => p.forms.some((f) => f.id === "anti-eyebrow" && f.status === "available"));
   return (
     <>
-      <SceneHud chapters={CHAPTERS} />
-      <HeroChapter product={products[0]} />
-      <StudioChapter first={products[0]} second={products[1]} />
-      <CollectionChapter products={products} />
-      <EndingChapter />
+      <HeroSection product={featured} />
+      <PieceSection product={featured} />
+      <StudioSection products={antiEyebrow} />
+      <CollectionSection products={products} />
+      <EndingSection />
     </>
   );
 }

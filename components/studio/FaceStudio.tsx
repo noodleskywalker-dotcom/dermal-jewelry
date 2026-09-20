@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { catalog, formatPrice, placementLabel } from "@/lib/catalog";
+import { catalog, formatPrice, formOf, placementLabel } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { bagActions } from "@/lib/cart/store";
 import { SCALE_MAX, SCALE_MIN, TWEAK_SCALE_MAX, TWEAK_SCALE_MIN, ZERO_TWEAK } from "@/lib/studio/geometry";
@@ -15,6 +15,7 @@ import {
   replaceItem,
   resetItem,
   setActive,
+  setForm,
   setSide,
   switchProduct,
   toggleVisible,
@@ -33,9 +34,9 @@ const NUDGE = 0.004;
 const toolButton =
   "label-xs inline-flex min-h-11 shrink-0 items-center px-3 text-ivory/75 transition-colors duration-200 hover:text-ivory disabled:cursor-not-allowed disabled:text-ivory/25 aria-pressed:text-ivory aria-pressed:underline aria-pressed:underline-offset-8";
 
-export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string }) {
+export function FaceStudio({ initialProductSlug, initialFormId }: { initialProductSlug?: string; initialFormId?: string }) {
   const studio = useStudio();
-  const { photo, look, change, selectProduct, selectSide } = studio;
+  const { photo, look, change, selectProduct, selectSide, selectForm } = studio;
   const products = catalog.listProducts();
   const active = activeItem(look);
   const activeProduct = active ? catalog.getProductById(active.productId) : undefined;
@@ -49,27 +50,42 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
   const [addSide, setAddSide] = useState<Side>("right");
 
   // A selection only counts while it names a piece of the active product.
-  const pieceId = activeProduct?.components.some((c) => c.id === selectedComponent) ? selectedComponent : null;
+  const pieceId =
+    activeProduct && active && formOf(activeProduct, active.formId).components.some((c) => c.id === selectedComponent)
+      ? selectedComponent
+      : null;
 
   const chooseProduct = (product: Product) => {
     selectProduct(product.id);
     setSelectedComponent(null);
-    if (active) change((l) => switchProduct(l, active.uid, product));
+    if (active) change((l) => switchProduct(l, active.uid, product, studio.forms[product.id]));
+  };
+
+  const chooseForm = (product: Product, formId: string) => {
+    studio.selectForm(product.id, formId);
+    setSelectedComponent(null);
+    if (active && active.productId === product.id) change((l) => setForm(l, active.uid, product, formId));
   };
 
   // Product-aware links (/face-studio?product=slug) open the Studio on that piece.
   const appliedSlug = useRef<string | null>(null);
   useEffect(() => {
-    if (!initialProductSlug || appliedSlug.current === initialProductSlug) return;
-    appliedSlug.current = initialProductSlug;
+    const key = `${initialProductSlug ?? ""}|${initialFormId ?? ""}`;
+    if (!initialProductSlug || appliedSlug.current === key) return;
+    appliedSlug.current = key;
     const product = catalog.getProduct(initialProductSlug);
     if (!product) return;
     selectProduct(product.id);
+    // Only a real, available form is accepted from the URL. The URL never carries photo data.
+    const form = initialFormId ? formOf(product, initialFormId) : null;
+    if (form) selectForm(product.id, form.id);
     change((l) => {
       const current = activeItem(l);
-      return current && current.productId !== product.id ? switchProduct(l, current.uid, product) : l;
+      if (!current) return l;
+      const wanted = form?.id ?? (current.productId === product.id ? current.formId : undefined);
+      return current.productId !== product.id || current.formId !== wanted ? switchProduct(l, current.uid, product, wanted) : l;
     });
-  }, [initialProductSlug, selectProduct, change]);
+  }, [initialProductSlug, initialFormId, selectProduct, selectForm, change]);
 
   const interaction: LookInteraction = {
     activeUid: look.activeUid,
@@ -119,13 +135,14 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
   const requestAdd = () => {
     const product = catalog.getProductById(addProductId);
     if (!product) return;
-    const conflict = findConflict(look, product.placements[0], addSide);
+    const form = formOf(product, studio.forms[product.id]);
+    const conflict = findConflict(look, form.placement, addSide);
     if (conflict) {
       setPendingAdd({ product, side: addSide, conflictUid: conflict.uid });
       return;
     }
     // Build the item outside the updater so the reducer stays pure.
-    const item = createItem(studio.newUid(), product, addSide);
+    const item = createItem(studio.newUid(), product, addSide, form.id);
     change((l) => addItem(l, item));
     setSelectedComponent(null);
     setStatus(`${product.title} added to your look.`);
@@ -133,7 +150,7 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
 
   const resolveAdd = (mode: "replace" | "add") => {
     if (!pendingAdd) return;
-    const item = createItem(studio.newUid(), pendingAdd.product, pendingAdd.side);
+    const item = createItem(studio.newUid(), pendingAdd.product, pendingAdd.side, studio.forms[pendingAdd.product.id]);
     change((l) => (mode === "replace" ? replaceItem(l, pendingAdd.conflictUid, item) : addItem(l, item)));
     setSelectedComponent(null);
     setStatus(`${pendingAdd.product.title} ${mode === "replace" ? "replaced the existing piece" : "added to your look"}.`);
@@ -142,10 +159,11 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
 
   const addLookToBag = () => {
     // A pair is one sellable product, so each distinct product is added once, not once per piece.
-    const ids = [...new Set(look.items.map((i) => i.productId))];
-    ids.forEach((id) => bagActions.add(id));
+    // Two forms of the same design are different bag lines.
+    const lines = new Map(look.items.map((i) => [`${i.productId}:${i.formId}`, i]));
+    lines.forEach((i) => bagActions.add(i.productId, i.formId));
     bagActions.openDrawer();
-    setStatus(`${ids.length} ${ids.length === 1 ? "piece" : "pieces"} added to your demo bag.`);
+    setStatus(`${lines.size} ${lines.size === 1 ? "piece" : "pieces"} added to your demo bag.`);
   };
 
   return (
@@ -311,16 +329,40 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
               </p>
             </fieldset>
 
+            {currentProduct.forms.length > 1 && (
+              <fieldset className="mt-5">
+                <legend className="text-sm">Piercing form</legend>
+                <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
+                  {currentProduct.forms.map((form) => {
+                    const pending = form.status !== "available";
+                    const selectedForm = (active?.productId === currentProduct.id ? active.formId : formOf(currentProduct, studio.forms[currentProduct.id]).id) === form.id;
+                    return (
+                      <TargetButton
+                        key={form.id}
+                        selected={!pending && selectedForm}
+                        disabled={pending}
+                        onClick={() => chooseForm(currentProduct, form.id)}
+                        testId={`studio-form-${form.id}`}
+                      >
+                        {form.label}
+                        {pending && " · concept pending"}
+                      </TargetButton>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            )}
+
             {active && activeProduct ? (
               <>
-                {activeProduct.components.length > 1 && (
+                {formOf(activeProduct, active.formId).components.length > 1 && (
                   <fieldset className="mt-5">
                     <legend className="text-sm">What to move</legend>
                     <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
                       <TargetButton selected={pieceId === null} onClick={() => setSelectedComponent(null)} testId="target-group">
                         Both pieces
                       </TargetButton>
-                      {activeProduct.components.map((c) => (
+                      {formOf(activeProduct, active.formId).components.map((c) => (
                         <TargetButton
                           key={c.id}
                           selected={pieceId === c.id}
@@ -456,7 +498,7 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
                 {pendingAdd && (
                   <div role="alertdialog" aria-labelledby="conflict-title" className="border border-garnet p-4" data-testid="conflict">
                     <p id="conflict-title" className="text-sm leading-relaxed">
-                      There is already a {placementLabel(pendingAdd.product.placements[0]).toLowerCase()} piece on the
+                      There is already a {placementLabel(formOf(pendingAdd.product, studio.forms[pendingAdd.product.id]).placement).toLowerCase()} piece on the
                       wearer&rsquo;s {pendingAdd.side}.
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2">
@@ -503,16 +545,19 @@ function TargetButton({
   selected,
   onClick,
   testId,
+  disabled = false,
   children,
 }: {
   selected: boolean;
   onClick: () => void;
   testId: string;
+  disabled?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <button
       type="button"
+      disabled={disabled}
       aria-pressed={selected}
       onClick={onClick}
       data-testid={testId}
@@ -611,10 +656,10 @@ function LookRow({
           {product.title}
           {isActive && <span className="ml-2 align-middle text-[0.625rem] uppercase tracking-[0.16em] text-garnet-text">Editing</span>}
         </p>
-        <p className="shrink-0 text-xs text-ash">Demo {formatPrice(product.demoPrice, product.currency)}</p>
+        <p className="shrink-0 text-xs text-ash">Demo {formatPrice(formOf(product, item.formId).demoPrice, product.currency)}</p>
       </div>
       <p className="mt-1 text-xs text-ash">
-        {placementLabel(item.placement)} · wearer&rsquo;s {item.side}
+        {formOf(product, item.formId).label} form · wearer&rsquo;s {item.side}
         {!item.visible && " · hidden"}
       </p>
       <div className="-ml-3 mt-1 flex">

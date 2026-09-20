@@ -10,19 +10,38 @@ Statuses used here: planned, implemented, tested, owner-approved, blocked, defer
 Milestone 1, the first vertical slice, is implemented and tested locally. It is waiting for owner review.
 Nothing is owner-approved yet. Nothing was merged to `main` or deployed to production.
 
-## Visual redirection (20 September 2026)
+## Final direction (20 September 2026)
 
-The owner replaced the first visual direction. The homepage is now a four-chapter scroll sequence
-(the piece, Face Studio, the collection, the close) with a new type system, light and dark chapters,
-a rebuilt navigation and a restyled Face Studio. Status: implemented and tested, awaiting owner review.
-Reasons and limits are in `docs/DECISIONS.md`. Before and after screenshots are in `docs/screenshots/`.
+The owner's addendum is the current direction: normal vertical scrolling, original and anime-inspired
+designs side by side, one design-family page with several piercing forms, optional short concept
+reveals, and Face Studio at the centre. The earlier pinned-chapter homepage was removed.
+Details are in `docs/DECISIONS.md` and `docs/REVEALS.md`.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Normal-scroll homepage | tested | Opening, featured family, Face Studio demonstration, the pieces, close. |
+| Design-family page, DESERT EYE — LOVE | tested | Anti-eyebrow and micro dermal are available. Nose is concept pending and cannot be chosen. |
+| Original example, CRIMSON ORBIT | tested | Micro dermal and nose are available. Anti-eyebrow is concept pending. |
+| Form switching (visual, piece count, placement preview, price, package, URL) | tested | |
+| Form consistency across reveal, placement preview, try-on, Face Studio and bag | tested | Shared selection in the Studio provider. |
+| Per-form and per-side placement memory | tested | A nose form never starts from cheek coordinates. |
+| Bag lines per form | tested | Two forms of one design are two lines. |
+| Reveal player framework | tested | Play, skip, replay, sound, expand, close, failure fallback, reduced motion, eight-second ceiling, no hover start, on-demand loading. Playback itself was tested with a labeled test pattern in Chromium only. |
+| Gaara-inspired mini-scene | **media missing** | Player implemented, storyboard prepared, source video missing, not approved. Customers see a still with "Reveal in preparation". |
+| Metal-sweep loop for originals | implemented, not owner-approved | Drawn in CSS, no media file. |
+| Featureless-head placement preview | tested | Approved device, labeled as not a person. |
+
+## Earlier visual redirection
+
+The type system, palette, text links, blended homepage header, mobile menu and restyled Face Studio
+from the earlier redirection remain. Its scroll mechanics were superseded and deleted.
 
 ## What exists
 
 | Area | Status | Notes |
 | --- | --- | --- |
 | Design tokens, fonts, layout, navigation, footer | tested | Dark editorial system in `app/globals.css`. Cormorant Garamond for display, Geist and Geist Mono for UI. |
-| Homepage | tested | Four scroll-driven chapters: the piece, Face Studio demonstration, horizontal collection sequence, closing statement. Chapter index, progress rule, reduced-motion layout. |
+| Homepage | tested | Five normally scrolling sections. See "Final direction" above. |
 | Shop with placement filter and search | tested | Filter and search live in the URL. Empty placements show an honest empty state. |
 | Collections index and DESERT EYE page | tested | |
 | Product page (all four demo products) | tested | Demo price, unverified specs, package note, inline try-on, add to demo bag. |

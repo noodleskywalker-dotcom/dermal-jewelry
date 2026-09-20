@@ -1,4 +1,4 @@
-import type { PlacementId } from "@/lib/catalog/types";
+import type { FormId, PlacementId } from "@/lib/catalog/types";
 
 /** The wearer's own left or right, not the viewer's. */
 export type Side = "left" | "right";
@@ -28,9 +28,13 @@ export type ComponentTweak = {
 export type LookItem = {
   uid: string;
   productId: string;
+  /** Which piercing form of the design family this item shows. */
+  formId: FormId;
   placement: PlacementId;
   side: Side;
   group: GroupTransform;
+  /** Adjustments remembered per form and side, keyed "form:side", so switching back restores them. */
+  memory: Record<string, GroupTransform>;
   tweaks: Record<string, ComponentTweak>;
   visible: boolean;
 };

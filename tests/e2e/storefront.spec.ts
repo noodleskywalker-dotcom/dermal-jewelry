@@ -7,9 +7,9 @@ test.describe("storefront navigation", () => {
     page.on("pageerror", (e) => errors.push(e.message));
 
     await page.goto("/collections");
-    await page.getByRole("link", { name: /View the collection/ }).click();
+    await page.getByRole("link", { name: /View DESERT EYE/ }).click();
     await expect(page).toHaveURL(/\/collections\/desert-eye$/);
-    await expect(page.getByTestId("product-card")).toHaveCount(4);
+    await expect(page.getByTestId("product-card")).toHaveCount(2);
 
     await page.getByTestId("product-card").first().getByRole("link").first().click();
     await expect(page).toHaveURL(/\/product\/desert-eye-love$/);
@@ -28,7 +28,9 @@ test.describe("storefront navigation", () => {
 
   test("placement filters show real pieces or an honest empty state", async ({ page }) => {
     await page.goto("/shop?placement=dermal");
-    await expect(page.getByTestId("product-card")).toHaveCount(2);
+    await expect(page.getByTestId("product-card")).toHaveCount(3);
+    await page.goto("/shop?placement=nostril");
+    await expect(page.getByTestId("product-card")).toHaveCount(1);
     await page.goto("/shop?placement=septum");
     await expect(page.getByTestId("shop-empty")).toBeVisible();
     await page.goto("/shop?q=vortex");

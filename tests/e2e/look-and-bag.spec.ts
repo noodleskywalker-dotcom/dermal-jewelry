@@ -4,7 +4,7 @@ import { mouseDrag, openStudioWithPhoto } from "./helpers";
 test("build a look, handle a conflict, and carry it into the demo bag", async ({ page }) => {
   await openStudioWithPhoto(page);
   await expect(page.getByTestId("look-item")).toHaveCount(1);
-  await expect(page.getByTestId("look-item").first()).toContainText("Anti-eyebrow · wearer’s left");
+  await expect(page.getByTestId("look-item").first()).toContainText("Anti-eyebrow form · wearer’s left");
 
   // Add a dermal piece on the other side.
   await page.getByTestId("add-product").selectOption({ label: "CRIMSON ORBIT" });

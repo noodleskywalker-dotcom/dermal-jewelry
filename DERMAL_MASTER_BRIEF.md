@@ -11,6 +11,25 @@ This brief is a set of proposed product requirements and execution instructions,
 
 ---
 
+## Addendum 2.2 — final direction (20 September 2026). This section overrides anything below that conflicts with it.
+
+The owner set the final direction after reviewing two visual attempts. Where an older section of this
+brief, an older decision record or an older test describes pinned chapters, scroll-driven camera moves,
+horizontal movement driven by vertical scroll, a fixed chapter index, or any other presentation-style
+scrolling, that instruction is **superseded and must not be reintroduced**.
+
+1. DERMAL is a premium facial-jewelry brand. It is not an anime-only store. Original designs and anime-inspired designs sit side by side with the same typography, navigation, controls and shopping behaviour. Nothing is called an official collaboration unless that is confirmed.
+2. Pages scroll normally and vertically. No scroll-jacking and no pinned full-screen stages. Sections may ease in as they arrive and must do nothing under reduced motion.
+3. One customer-facing **design-family page** shows a design in several piercing forms (anti-eyebrow, micro dermal, nose). A form is offered only when its demo configuration really exists; otherwise it is shown as concept pending. Changing form changes the form identifier, the visual, the number of pieces, the placement preview, the Face Studio overlay and placement profile, the demo price, the package description and the bag line. A form is never the anti-eyebrow pair shrunk and moved. How a family maps to Shopify products or variants stays open.
+4. The chosen form stays the same across Concept reveal, Placement preview, Try on your face, Face Studio and the bag. Adjustments are remembered per form and per side, and a nose form never reuses cheek coordinates. Different forms of one design are different bag lines. A product-and-form URL is supported and never contains photo or face data.
+5. Selected special products may have an optional concept reveal of 5 to 8 seconds in total. Rules, readiness tracking, the storyboard and the media still needed are in `docs/REVEALS.md`. Reveals never autoplay, never start on hover, never block Placement preview, Try on or Add to bag, and are never generated while a customer shops.
+6. A featureless sculpted head is an approved placement-preview device. It is not a missing photograph, and it is separate from a character showcase and from the customer's own photo in Face Studio.
+7. The working Face Studio stays central and keeps all of its privacy behaviour.
+
+The approved anti-eyebrow design is unchanged: upper and outer openwork symbol, lower and inner small deep-red faceted gemstone.
+
+---
+
 ## File handoff — read this first
 
 This package contains the full existing v2 master brief, not the older setup-only README. Version 2.1 adds real bundled reference paths, updates the latest owner-reported infrastructure status and resolves the missing-sample-photo blocker. The substantive storefront, engineering, Face Studio, marketing and advertising requirements are preserved.

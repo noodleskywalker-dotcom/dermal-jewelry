@@ -1,4 +1,5 @@
-import type { PlacementId, Product } from "@/lib/catalog/types";
+import { formOf } from "@/lib/catalog";
+import type { PlacementId, Product, ProductForm } from "@/lib/catalog/types";
 import type { ComponentTweak, GroupTransform, LookItem, Rect, Side } from "./types";
 
 export const SCALE_MIN = 0.02;
@@ -81,20 +82,16 @@ const DEFAULT_ANCHORS: Record<PlacementId, { offsetX: number; y: number }> = {
   "anti-eyebrow": { offsetX: 0.19, y: 0.47 },
   dermal: { offsetX: 0.2, y: 0.58 },
   eyebrow: { offsetX: 0.17, y: 0.36 },
-  nostril: { offsetX: 0.05, y: 0.58 },
+  nostril: { offsetX: 0.055, y: 0.6 },
   septum: { offsetX: 0, y: 0.62 },
   lip: { offsetX: 0.06, y: 0.74 },
 };
 
-export function defaultGroup(product: Product, placement: PlacementId, side: Side): GroupTransform {
-  const anchor = DEFAULT_ANCHORS[placement];
+/** Starting transform for a form. Each form has its own placement profile, so a nose form never starts on the cheek. */
+export function defaultGroup(form: ProductForm, side: Side): GroupTransform {
+  const anchor = DEFAULT_ANCHORS[form.placement];
   const sign = sideSign(side);
-  return clampGroup({
-    x: 0.5 + sign * anchor.offsetX,
-    y: anchor.y,
-    scale: product.defaultScale,
-    rotation: sign * product.defaultRotation,
-  });
+  return clampGroup({ x: 0.5 + sign * anchor.offsetX, y: anchor.y, scale: form.defaultScale, rotation: 0 });
 }
 
 /** Moves an item to the other side of the face. Artwork is never flipped, only its position. */
@@ -124,9 +121,12 @@ export type ResolvedComponent = {
 };
 
 /** Final per-piece layout inside the group box, shared by the Studio and every preview. */
-export function resolveComponents(product: Product, item: Pick<LookItem, "side" | "tweaks">): ResolvedComponent[] {
+export function resolveComponents(
+  product: Product,
+  item: Pick<LookItem, "side" | "tweaks"> & { formId?: string },
+): ResolvedComponent[] {
   const sign = sideSign(item.side);
-  return product.components.map((c) => {
+  return formOf(product, item.formId).components.map((c) => {
     const t = item.tweaks[c.id] ?? ZERO_TWEAK;
     return {
       id: c.id,

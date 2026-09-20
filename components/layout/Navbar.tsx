@@ -48,9 +48,12 @@ export function Navbar() {
         </ul>
 
         <div className="flex items-center gap-5">
-          <Link href="/shop#shop-search" className={`${linkClass} hidden md:inline-flex`}>
-            Search
-          </Link>
+          {/* The wrapper owns the breakpoint, because the link class already sets a display value. */}
+          <span className="hidden md:block">
+            <Link href="/shop#shop-search" className={linkClass}>
+              Search
+            </Link>
+          </span>
           <button type="button" onClick={bagActions.openDrawer} data-testid="open-bag" className={linkClass}>
             Bag <span aria-hidden="true">&nbsp;({count})</span>
             <span className="sr-only">, {count} {count === 1 ? "item" : "items"}</span>

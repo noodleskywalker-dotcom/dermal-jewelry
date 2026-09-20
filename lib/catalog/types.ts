@@ -25,26 +25,74 @@ export type ProductComponent = {
 
 export type SpecStatus = "unverified" | "verified";
 
+export type FormId = "anti-eyebrow" | "micro-dermal" | "nose";
+
+/**
+ * One piercing form of a design family. A family page shows several forms of the same design.
+ * Only forms whose demo configuration really exists are "available".
+ */
+export type ProductForm = {
+  id: FormId;
+  label: string;
+  status: "available" | "concept-pending";
+  /** Placement profile used for previews and Face Studio defaults. */
+  placement: PlacementId;
+  components: ProductComponent[];
+  /** Default group width as a fraction of the photo width. */
+  defaultScale: number;
+  /** Demo-only placeholder price, not an approved selling price. */
+  demoPrice: number;
+  packageContents: string;
+  /** Honest note about how final this form's design is. */
+  note: string;
+};
+
+export type RevealMode = "none" | "loop" | "mini-scene";
+
+/** Each readiness step is tracked on its own so nothing is reported as finished early. */
+export type RevealReadiness = {
+  playerImplemented: boolean;
+  storyboardPrepared: boolean;
+  sourceVideo: "missing" | "available";
+  approvedForPublication: boolean;
+};
+
+export type RevealConfig = {
+  mode: RevealMode;
+  /** Motion language. Anime-inspired pieces get their own; originals use product-led motion. */
+  identity: "sand-impact" | "metal-sweep" | "none";
+  title: string;
+  /** Prepared media file. Reveals are never generated while a customer shops. */
+  src?: string;
+  /** Hard ceiling for a mini-scene, including its final jewelry reveal. */
+  maxSeconds: number;
+  readiness: RevealReadiness;
+};
+
 export type Product = {
   /** Demo identifiers are prefixed "demo-" and must never be sent to Shopify. */
   id: string;
   slug: string;
   title: string;
   collection: string;
-  placements: PlacementId[];
+  /** "anime-inspired" is a design influence only. It never means an official collaboration. */
+  origin: "anime-inspired" | "original";
   isDemo: true;
-  /** Demo-only placeholder price, not an approved selling price. */
-  demoPrice: number;
   currency: "QAR";
   summary: string;
   story: string;
+  forms: ProductForm[];
+  defaultFormId: FormId;
+  reveal: RevealConfig;
+  specs: { label: string; value: string; status: SpecStatus }[];
+
+  // Convenience copies of the default form, used by listings and filters.
+  placements: PlacementId[];
+  demoPrice: number;
   packageContents: string;
   components: ProductComponent[];
-  /** Default group width as a fraction of the photo width. */
   defaultScale: number;
-  /** Default group rotation in degrees for the wearer's left side. */
   defaultRotation: number;
-  specs: { label: string; value: string; status: SpecStatus }[];
 };
 
 export type Placement = {

@@ -10,8 +10,11 @@ export function ProductArtwork({
   scale = 0.62,
   showLabel = true,
   tone = "bone",
+  formId,
 }: {
   product: Product;
+  /** Which piercing form to draw. Defaults to the product's default form. */
+  formId?: string;
   className?: string;
   /** Group width as a fraction of the box. */
   scale?: number;
@@ -36,7 +39,7 @@ export function ProductArtwork({
           : undefined
       }
     >
-      <ProductPieces product={product} scale={scale} shadow={tone === "ink" ? "dark" : "soft"} />
+      <ProductPieces product={product} formId={formId} scale={scale} shadow={tone === "ink" ? "dark" : "soft"} />
       {showLabel && (
         <span className={`label-xs absolute bottom-3 left-3 ${tone === "ink" ? "text-ash" : "text-ink/55"}`}>Concept artwork</span>
       )}
@@ -49,12 +52,14 @@ export function ProductPieces({
   product,
   scale,
   shadow = "soft",
+  formId,
 }: {
   product: Product;
+  formId?: string;
   scale: number;
   shadow?: "soft" | "dark" | "none";
 }) {
-  const components = resolveComponents(product, { side: "left", tweaks: {} });
+  const components = resolveComponents(product, { side: "left", tweaks: {}, formId });
   const filter =
     shadow === "soft"
       ? "drop-shadow(0 1.2vw 1vw rgba(40,30,20,0.28)) drop-shadow(0 0.2vw 0.2vw rgba(40,30,20,0.35))"

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { catalog, formatPrice, placementLabel } from "@/lib/catalog";
+import { catalog, formatPrice, formOf } from "@/lib/catalog";
 import { bagSubtotal, MAX_QUANTITY } from "@/lib/cart/bag";
 import { bagActions, useBag } from "@/lib/cart/store";
 import { site } from "@/lib/config/site";
@@ -34,20 +34,21 @@ export function BagContents({ onNavigate }: { onNavigate?: () => void }) {
         {bag.lines.map((line) => {
           const product = catalog.getProductById(line.productId);
           if (!product) return null;
+          const form = formOf(product, line.formId);
           return (
-            <li key={line.productId} className="flex gap-4 py-5" data-testid="bag-line" data-product={product.slug}>
-              <ProductArtwork product={product} className="h-24 w-20 shrink-0" showLabel={false} />
+            <li key={`${line.productId}:${line.formId}`} className="flex gap-4 py-5" data-testid="bag-line" data-product={product.slug} data-form={form.id}>
+              <ProductArtwork product={product} formId={form.id} className="h-24 w-20 shrink-0" showLabel={false} />
               <div className="min-w-0 flex-1">
-                <Link href={`/product/${product.slug}`} onClick={onNavigate} className="font-display text-lg leading-tight hover:text-garnet-text">
+                <Link href={`/product/${product.slug}?form=${form.id}`} onClick={onNavigate} className="font-display text-lg leading-tight hover:text-garnet-text">
                   {product.title}
                 </Link>
-                <p className="mt-1 text-xs text-ash">{product.placements.map(placementLabel).join(", ")}</p>
-                <p className="mt-1 text-xs text-ash">Demo price {formatPrice(product.demoPrice, product.currency)}</p>
+                <p className="mt-1 text-xs text-ash" data-testid="bag-line-form">{form.label} form</p>
+                <p className="mt-1 text-xs text-ash">Demo price {formatPrice(form.demoPrice, product.currency)}</p>
                 <div className="mt-3 flex items-center gap-1">
                   <button
                     type="button"
-                    aria-label={`Decrease quantity of ${product.title}`}
-                    onClick={() => bagActions.setQuantity(product.id, line.quantity - 1)}
+                    aria-label={`Decrease quantity of ${product.title}, ${form.label}`}
+                    onClick={() => bagActions.setQuantity(product.id, form.id, line.quantity - 1)}
                     className="h-11 w-11 border border-line text-lg hover:border-ivory"
                   >
                     −
@@ -58,19 +59,19 @@ export function BagContents({ onNavigate }: { onNavigate?: () => void }) {
                   </span>
                   <button
                     type="button"
-                    aria-label={`Increase quantity of ${product.title}`}
+                    aria-label={`Increase quantity of ${product.title}, ${form.label}`}
                     disabled={line.quantity >= MAX_QUANTITY}
-                    onClick={() => bagActions.setQuantity(product.id, line.quantity + 1)}
+                    onClick={() => bagActions.setQuantity(product.id, form.id, line.quantity + 1)}
                     className="h-11 w-11 border border-line text-lg hover:border-ivory disabled:opacity-40"
                   >
                     +
                   </button>
                   <button
                     type="button"
-                    onClick={() => bagActions.remove(product.id)}
+                    onClick={() => bagActions.remove(product.id, form.id)}
                     className="ml-auto min-h-11 px-2 text-xs uppercase tracking-[0.18em] text-ash hover:text-ivory"
                   >
-                    Remove<span className="sr-only"> {product.title}</span>
+                    Remove<span className="sr-only"> {product.title}, {form.label}</span>
                   </button>
                 </div>
               </div>

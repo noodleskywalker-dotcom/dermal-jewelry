@@ -17,9 +17,12 @@ type State = {
   history: History<Look>;
   productId: string;
   side: Side;
+  /** The piercing form chosen for each design family. Shared by the product page, previews, Studio and bag. */
+  forms: Record<string, string>;
 };
 
 type Action =
+  | { type: "select-form"; productId: string; formId: string }
   | { type: "photo-loading" }
   | { type: "photo-loaded"; photo: StudioPhoto; look: Look }
   | { type: "photo-error"; message: string }
@@ -37,10 +40,15 @@ const initialState: State = {
   history: createHistory(EMPTY_LOOK),
   productId: catalog.listProducts()[0].id,
   side: "left",
+  forms: {},
 };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
+    case "select-form":
+      return state.forms[action.productId] === action.formId
+        ? state
+        : { ...state, forms: { ...state.forms, [action.productId]: action.formId } };
     case "photo-loading":
       return { ...state, loading: true, error: null };
     case "photo-loaded":
@@ -82,6 +90,9 @@ type StudioContextValue = {
   redo: () => void;
   selectProduct: (productId: string) => void;
   selectSide: (side: Side) => void;
+  /** Chosen form id per product id. Missing means the product's default form. */
+  forms: Record<string, string>;
+  selectForm: (productId: string, formId: string) => void;
   newUid: () => string;
 };
 
@@ -120,7 +131,10 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         const previous = stateRef.current.photo?.url;
         if (previous) URL.revokeObjectURL(previous);
         const product = catalog.getProductById(stateRef.current.productId) ?? catalog.listProducts()[0];
-        const look = addItem(EMPTY_LOOK, createItem(newUid(), product, stateRef.current.side));
+        const look = addItem(
+          EMPTY_LOOK,
+          createItem(newUid(), product, stateRef.current.side, stateRef.current.forms[product.id]),
+        );
         dispatch({ type: "photo-loaded", photo, look });
       } catch (err) {
         if (token !== loadToken.current) return;
@@ -146,6 +160,7 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
   const redoLast = useCallback(() => dispatch({ type: "redo" }), []);
   const selectProduct = useCallback((productId: string) => dispatch({ type: "select-product", productId }), []);
   const selectSide = useCallback((side: Side) => dispatch({ type: "select-side", side }), []);
+  const selectForm = useCallback((productId: string, formId: string) => dispatch({ type: "select-form", productId, formId }), []);
 
   const value = useMemo<StudioContextValue>(
     () => ({
@@ -164,9 +179,11 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
       redo: redoLast,
       selectProduct,
       selectSide,
+      forms: state.forms,
+      selectForm,
       newUid,
     }),
-    [state, selectFile, clearPhoto, change, undoLast, redoLast, selectProduct, selectSide, newUid],
+    [state, selectFile, clearPhoto, change, undoLast, redoLast, selectProduct, selectSide, selectForm, newUid],
   );
 
   return <StudioContext.Provider value={value}>{children}</StudioContext.Provider>;

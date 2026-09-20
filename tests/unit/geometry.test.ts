@@ -93,8 +93,8 @@ describe("mirrorItem", () => {
 
 describe("defaults and clamps", () => {
   it("starts on the correct side of the photo", () => {
-    expect(defaultGroup(hero, "anti-eyebrow", "left").x).toBeGreaterThan(0.5);
-    expect(defaultGroup(hero, "anti-eyebrow", "right").x).toBeLessThan(0.5);
+    expect(defaultGroup(hero.forms[0], "left").x).toBeGreaterThan(0.5);
+    expect(defaultGroup(hero.forms[0], "right").x).toBeLessThan(0.5);
   });
 
   it("keeps the group inside the photo and within size limits", () => {

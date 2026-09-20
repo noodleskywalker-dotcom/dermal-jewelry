@@ -58,6 +58,26 @@ certifications, scarcity, reviews, lead times or inventory. Mark unknown values 
 Franchise imagery is internal concept material pending a rights review. `references/` is local only:
 gitignored, never in `public/`, never uploaded to an external service. Use only files actually on disk.
 
+## Final direction (overrides older notes)
+
+DERMAL is a premium facial-jewelry brand, not an anime-only store. Original and anime-inspired designs
+share the same typography, navigation, controls and shopping behaviour. Never write "official
+collaboration" unless it is confirmed.
+
+Pages scroll normally. Do not reintroduce pinned stages, scroll-driven camera moves, horizontal
+movement driven by vertical scroll, or a chapter index.
+
+A product is a design family with `forms`. Always resolve a form through `formOf(product, id)`.
+Offer a form only when its demo configuration exists; otherwise mark it concept pending. A form is
+never the anti-eyebrow pair shrunk and moved. The chosen form lives in the Studio provider and must
+stay the same across reveal, placement preview, try-on, Face Studio and the bag. Bag lines are keyed
+by product and form. URLs may carry a product and a form, never anything about a photo.
+
+Concept reveals follow `docs/REVEALS.md`: optional, 5 to 8 seconds in total, never autoplay, never
+start on hover, load on demand, skippable at once, final jewelry frame drawn as an overlay from the
+product asset. Never show an unfinished reveal as finished, and never call a generation service from
+a customer action. The featureless head is an approved placement-preview device.
+
 ## Face Studio
 
 Photos and any face data stay in browser memory. No upload, storage, analytics, replay, logging or URLs.

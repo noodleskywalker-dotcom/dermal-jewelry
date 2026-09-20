@@ -2,7 +2,26 @@
 
 Dated records of choices that are not obvious from the code.
 
-## 2026-09-20 — Visual redirection
+## 2026-09-20 — Final direction (supersedes the pinned-chapter homepage below)
+
+The owner's addendum ends the scroll-driven experiment. The pinned chapters, the `--p` scroll variable,
+the horizontal collection sequence and the chapter index were deleted, along with the tests that
+encoded them. What was kept from that attempt: the type system, the paper and ink palette, the
+wordmark-behind-object opening, text links instead of buttons, the blended header on the homepage,
+the full-screen mobile menu and the restyled Face Studio.
+
+- **Normal scrolling.** The homepage is five ordinary sections. A browser test asserts that no full-height sticky stage exists and that the wheel moves the page one-to-one.
+- **Design families.** A product owns `forms`. `formOf(product, id)` is the single gate: unknown or concept-pending form ids fall back to the default form, so they cannot reach previews, Face Studio, the bag or a URL.
+- **Micro dermal form of DESERT EYE — LOVE** is a demo configuration with a single symbol top, labeled on the page as not approved. **Its nose form is concept pending** and cannot be selected. Nothing about those forms' physical design was invented beyond that label.
+- **Demo prices per form** reuse the earlier placeholder tiers (390, 220, 190). They remain placeholders.
+- **One shared selection.** The chosen form lives in the Studio provider (`forms[productId]`), so the family page, previews, Face Studio and the bag read the same value. The URL `?form=` is applied once on arrival and rewritten with `history.replaceState` on change.
+- **Placement memory.** A look item remembers its adjustment per `form:side`. Switching form restores that form's own adjustment or starts from that form's placement default. A different placement profile never inherits coordinates.
+- **Bag identity** is product plus form. The storage key moved to `dermal.demo-bag.v2`; older stored bags are ignored.
+- **Reveal player.** See `docs/REVEALS.md`. The final jewelry frame is an overlay from the product asset, not part of the video. The development-only test pattern is refused by production builds.
+- **Featureless head.** Drawn in code for placement previews. It is an approved device, labeled "Featureless form, not a person".
+- **Second collection.** "ORIGINALS" sits beside "DESERT EYE". CRIMSON ORBIT is the complete original example, with micro dermal and nose forms and a product-led metal-sweep reveal.
+
+## 2026-09-20 — Visual redirection (scroll mechanics superseded; visual language kept)
 
 The owner rejected the first homepage as template-like and named a reference video
 (`youtube.com/watch?v=6U3k4H346Es`). The video is a tutorial that shows three AI-built sites: a

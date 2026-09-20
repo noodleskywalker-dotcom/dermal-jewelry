@@ -7,6 +7,11 @@ export const site = {
     number: "001",
     title: "DESERT EYE",
   },
+  /** Original and anime-inspired designs sit side by side. Neither is an official collaboration. */
+  collections: [
+    { slug: "desert-eye", number: "001", title: "DESERT EYE", blurb: "Shapes taken from sand and wind." },
+    { slug: "originals", number: "002", title: "ORIGINALS", blurb: "Quiet, product-led forms." },
+  ],
   currency: "QAR",
   nav: [
     { href: "/shop", label: "Shop" },

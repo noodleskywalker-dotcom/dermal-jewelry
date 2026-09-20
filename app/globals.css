@@ -201,6 +201,27 @@ input[type="range"].studio-range::-moz-range-thumb {
   letter-spacing: 0.22em;
   text-transform: uppercase;
 }
+/* Product-led reveal for original pieces: one blade of light crosses the still. */
+@keyframes metal-sweep {
+  0% {
+    transform: translateX(-130%) skewX(-18deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(230%) skewX(-18deg);
+    opacity: 0;
+  }
+}
+.reveal-sweep {
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent 35%, rgba(255, 255, 255, 0.85) 48%, rgba(201, 206, 214, 0.5) 52%, transparent 65%);
+  mix-blend-mode: soft-light;
+  animation: metal-sweep 2.4s var(--ease-editorial) both;
+}
+
 /* Entrance used by non-pinned blocks. */
 .reveal {
   opacity: 0;
