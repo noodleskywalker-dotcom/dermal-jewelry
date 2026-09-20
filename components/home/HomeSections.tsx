@@ -4,12 +4,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { formatPrice } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
-import { resolveComponents } from "@/lib/studio/geometry";
 import { site } from "@/lib/config/site";
 import { useReveal } from "@/lib/motion/useScrollProgress";
 import { ProductPieces } from "@/components/catalog/ProductArtwork";
+import { FormVisual } from "@/components/catalog/FormVisual";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
-import { JewelryArt } from "@/components/studio/JewelryArt";
 
 // The homepage scrolls like any page. Nothing is pinned and the wheel is never taken over:
 // sections simply ease in as they arrive, and do nothing at all under reduced motion.
@@ -116,11 +115,7 @@ export function StudioSection({ products }: { products: Product[] }) {
           </svg>
           {/* Same layout function as the real renderer, anchored below and outside the eye. */}
           <div key={product.id} data-testid="studio-demo-piece" data-product={product.slug} className="fade-in absolute aspect-square w-[9%]" style={{ left: "70.5%", top: "54%" }}>
-            {resolveComponents(product, { side: "left", tweaks: {} }).map((c) => (
-              <span key={c.id} className="absolute block" style={{ left: `${c.leftPct}%`, top: `${c.topPct}%`, width: `${c.widthPct}%`, transform: "translate(-50%, -50%)" }}>
-                <JewelryArt art={c.art} />
-              </span>
-            ))}
+            <FormVisual product={product} />
           </div>
         </div>
       </div>

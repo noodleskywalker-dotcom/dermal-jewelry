@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { catalog } from "@/lib/catalog";
 import { containRect, zoomedRect, pxDeltaToGroupUnits, pxDeltaToNormalized, resolveComponents, ZERO_TWEAK } from "@/lib/studio/geometry";
 import type { ComponentTweak, GroupTransform, LookItem, StudioPhoto } from "@/lib/studio/types";
+import { FormVisual, hasExactAsset } from "@/components/catalog/FormVisual";
 import { JewelryArt } from "./JewelryArt";
 
 // The single renderer for jewelry on a photo. Face Studio, product-card previews and the mobile
@@ -102,7 +103,9 @@ function PlacedItem({
 
   const components = resolveComponents(product, item);
   const isActive = interaction?.activeUid === item.uid;
-  const pieceMode = Boolean(interaction && isActive && interaction.selectedComponent);
+  // A form shown from one exact image keeps its approved spacing, so its pieces are not moved separately.
+  const exact = hasExactAsset(product, item.formId, item.side);
+  const pieceMode = !exact && Boolean(interaction && isActive && interaction.selectedComponent);
 
   const groupStyle: React.CSSProperties = {
     left: `${item.group.x * 100}%`,
@@ -112,7 +115,7 @@ function PlacedItem({
     transform: `translate(-50%, -50%) rotate(${item.group.rotation}deg)`,
   };
 
-  const art = components.map((c) => {
+  const drawn = components.map((c) => {
     const style: React.CSSProperties = {
       left: `${c.leftPct}%`,
       top: `${c.topPct}%`,
@@ -155,6 +158,7 @@ function PlacedItem({
       </span>
     );
   });
+  const art = exact ? <FormVisual product={product} formId={item.formId} side={item.side} /> : drawn;
 
   if (!interaction) {
     return (

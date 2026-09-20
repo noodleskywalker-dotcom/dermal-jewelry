@@ -23,6 +23,7 @@ import {
   updateTweak,
 } from "@/lib/studio/look";
 import type { LookItem, Side } from "@/lib/studio/types";
+import { hasExactAsset } from "@/components/catalog/FormVisual";
 import { ProductArtwork } from "@/components/catalog/ProductArtwork";
 import { LookRenderer, type LookInteraction } from "./LookRenderer";
 import { PhotoPicker } from "./PhotoPicker";
@@ -355,7 +356,7 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
 
             {active && activeProduct ? (
               <>
-                {formOf(activeProduct, active.formId).components.length > 1 && (
+                {formOf(activeProduct, active.formId).components.length > 1 && !hasExactAsset(activeProduct, active.formId, active.side) && (
                   <fieldset className="mt-5">
                     <legend className="text-sm">What to move</legend>
                     <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">

@@ -305,6 +305,11 @@ input[type="range"].studio-range::-moz-range-thumb {
     filter: blur(0);
   }
 }
+/* Presentation-only grade that brings the paler generated sand frame toward the warmer, deeper dunes
+   of the start frame. The image files themselves are never altered. */
+.concept-sand {
+  filter: sepia(0.24) saturate(1.32) hue-rotate(-7deg) brightness(0.88) contrast(1.06);
+}
 .concept-push {
   animation: concept-push 5.5s cubic-bezier(0.3, 0, 0.5, 1) both;
 }

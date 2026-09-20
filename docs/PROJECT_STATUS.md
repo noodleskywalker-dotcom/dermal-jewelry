@@ -40,6 +40,8 @@ generated or spent yet**.
 - `docs/production/ASSET_MANIFEST.md`: the seven assets needed per form. Anti-eyebrow assets are needed; micro dermal and nose are **design required**.
 - `docs/production/PRODUCTION_PLAN.md`: the public IP boundary, the 7.0 second storyboard, exact Higgsfield prompts and shot specifications, the minimum test plan (3 generations, about 8 credits), the premium plan (about 110 credits), three katana-geometry directions for an original piece, the media specification, and the list of approvals needed before any generation.
 
+- `docs/production/ASSET_SLOT.md`: the exact product asset slot. One transparent image per form is the single visual source on every surface, through `components/catalog/FormVisual.tsx`. **The slot is empty**, so every surface still shows the labeled code-drawn fallback. The development-only reveal prototype and its sand-frame grade are described there too.
+
 Missing art is documented rather than imitated in code. The site keeps its labeled concept artwork
 and stills until real assets arrive.
 

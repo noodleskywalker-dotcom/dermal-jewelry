@@ -1,7 +1,6 @@
 import { formOf } from "@/lib/catalog";
 import type { PlacementId, Product } from "@/lib/catalog/types";
-import { resolveComponents } from "@/lib/studio/geometry";
-import { JewelryArt } from "@/components/studio/JewelryArt";
+import { FormVisual } from "./FormVisual";
 
 // Placement preview on a deliberately featureless sculpted head. This is an approved presentation
 // device, not a stand-in for a missing photograph: it shows where a form sits without showing a
@@ -17,7 +16,6 @@ const ANCHORS: Partial<Record<PlacementId, { x: number; y: number }>> = {
 export function PlacementPreview({ product, formId }: { product: Product; formId: string }) {
   const form = formOf(product, formId);
   const anchor = ANCHORS[form.placement];
-  const pieces = resolveComponents(product, { side: "left", tweaks: {}, formId: form.id });
 
   return (
     <figure data-testid="placement-preview" data-form={form.id} data-placement={form.placement} className="relative aspect-[4/5] w-full overflow-hidden bg-bone">
@@ -47,16 +45,7 @@ export function PlacementPreview({ product, formId }: { product: Product; formId
           className="absolute aspect-square -translate-x-1/2 -translate-y-1/2"
           style={{ left: `${anchor.x * 100}%`, top: `${anchor.y * 100}%`, width: `${form.defaultScale * 100 * 1.15}%` }}
         >
-          {pieces.map((c) => (
-            <span
-              key={c.id}
-              data-testid="placement-piece"
-              className="absolute block"
-              style={{ left: `${c.leftPct}%`, top: `${c.topPct}%`, width: `${c.widthPct}%`, transform: "translate(-50%, -50%)" }}
-            >
-              <JewelryArt art={c.art} />
-            </span>
-          ))}
+          <FormVisual product={product} formId={form.id} pieceTestId={() => "placement-piece"} />
         </div>
       )}
 

@@ -176,7 +176,7 @@ function Stage({
           {usingConcept && concept && (
             // A local development still, served only by the dev server.
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={concept.sand} alt="" className="absolute inset-0 h-full w-full object-cover" />
+            <img src={concept.sand} alt="" className="concept-sand absolute inset-0 h-full w-full object-cover" />
           )}
           {/* The jewelry is always this separate overlay of the selected form, never part of the footage. */}
           <div className={`absolute inset-0 ${usingConcept ? "concept-jewel" : ""}`}>
@@ -259,14 +259,14 @@ function ConceptSequence({ concept, onDone }: { concept: ConceptStills; onDone: 
     <div data-testid="reveal-concept" className="absolute inset-0 overflow-hidden bg-ink">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={concept.start} alt="" className="concept-push absolute inset-0 h-full w-full object-cover" />
-      <div className="concept-build absolute inset-0" style={{ backgroundImage: `url(${concept.sand})` }} />
-      <div className="concept-sweep absolute inset-y-0 left-0 w-[260%]" style={{ backgroundImage: `url(${concept.sand})` }} />
+      <div className="concept-build concept-sand absolute inset-0" style={{ backgroundImage: `url(${concept.sand})` }} />
+      <div className="concept-sweep concept-sand absolute inset-y-0 left-0 w-[260%]" style={{ backgroundImage: `url(${concept.sand})` }} />
       <div className="concept-dust grain absolute -inset-[10%]" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={concept.sand}
         alt=""
-        className="concept-settle absolute inset-0 h-full w-full object-cover"
+        className="concept-settle concept-sand absolute inset-0 h-full w-full object-cover"
         onAnimationEnd={(e) => e.animationName === "concept-settle" && onDone()}
       />
     </div>
