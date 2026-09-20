@@ -1,0 +1,23 @@
+DERMAL READY-TO-BUILD HANDOFF
+
+Download filename: DERMAL_READY_TO_BUILD.zip
+This is a replacement combined delivery, not the older setup-docs ZIP.
+
+Extract the CONTENTS directly into:
+C:\Users\USER\Desktop\dermal-jewelry
+
+The result must include:
+C:\Users\USER\Desktop\dermal-jewelry\DERMAL_MASTER_BRIEF.md
+
+The package deliberately excludes existing app, environment, Git and README/CLAUDE files.
+It contains the full master brief, proposed Claude rules, an extraction/build instruction,
+and the approved final concept plus original placement/symbol references.
+
+The project files have NOT been written to your PC or committed to GitHub by this download.
+Use START_CLAUDE.txt to let your local Claude extract/read the package and continue.
+
+Reference images are INTERNAL/LOCAL ONLY. They must not be put in public/ or committed.
+There is no approved full-face sample photograph in this package; this does not block the upload MVP.
+
+The source brief's platform references are carried forward from the previous v2 document;
+this file-handoff repair did not reverify external documentation or your live accounts.

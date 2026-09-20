@@ -1,251 +1,95 @@
 # CLAUDE.md — DERMAL project instructions
 
-You are working on the DERMAL facial-piercing jewelry e-commerce project.
-
-Read `README.md` before making major architecture or product decisions.
-
-Repository:
-`https://github.com/noodleskywalker-dotcom/dermal-jewelry`
-
-Expected local Windows path:
-`C:\Users\USER\Desktop\dermal-jewelry`
+DERMAL is a premium facial-jewelry storefront with a browser-local Face Studio, personalized
+product previews and Shopify as the commerce backend.
 
-## Mission
+Read `DERMAL_MASTER_BRIEF.md` for requirements and `docs/PROJECT_STATUS.md` for current progress.
+The brief holds the full roadmap. Build only the active milestone and carry unfinished work forward honestly.
+`README.md` holds the original concept and setup notes.
 
-Build a premium custom Next.js e-commerce experience for unusual facial piercing jewelry, with a proprietary Face Studio that lets customers upload a face photo and preview exact jewelry SKUs.
+Infrastructure is connected and verified. Do not recreate accounts, projects, stores or credentials,
+and do not run another setup-only cycle. Development is authorized.
 
-The site must not look like a generic Shopify theme.
+## Identifiers
 
-The intended feel is luxury editorial fashion + experimental jewelry + technology.
+- Folder: `C:\Users\USER\Desktop\dermal-jewelry`
+- Repository: `noodleskywalker-dotcom/dermal-jewelry`
+- Vercel project: `openlimits/dermal-jewelry`
+- Shopify: `vxh01e-0d.myshopify.com`, Headless storefront "DERMAL Web Store"
+- Environment names: `SHOPIFY_STORE_DOMAIN`, `SHOPIFY_STOREFRONT_ACCESS_TOKEN` (a private token), `SHOPIFY_API_VERSION` (`2026-07`)
 
-## Core priorities
+## Work style
 
-1. Keep the app working.
-2. Keep changes incremental and reversible.
-3. Inspect before editing.
-4. Plan before broad refactors.
-5. Protect secrets.
-6. Keep the customer try-on accurate.
-7. Do not let generative AI hallucinate product geometry.
-8. Prioritize responsive/mobile quality.
-9. Use Shopify as commerce backend, not as design system.
-10. Commit meaningful checkpoints.
+1. Confirm the directory and `git status`. Preserve unrelated and uncommitted work.
+2. Inspect before editing. Do not claim a file or integration exists without looking.
+3. Make a short plan, then build a small testable slice. Use sensible defaults and avoid routine questions.
+4. Run `npm run lint`, `npm run typecheck`, `npm test`, `npm run test:e2e` and `npm run build`. Fix failures.
+5. Update `docs/PROJECT_STATUS.md` and record notable choices in `docs/DECISIONS.md`.
+6. Report in complete sentences with real test evidence and remaining limits, even when a compression skill is active.
 
-## Before every major task
+This Next.js version has breaking changes. Read `node_modules/next/dist/docs/` before using an API (see `AGENTS.md`).
+Do not add a heavy library when native code is enough. No framework migration or broad upgrade without a concrete reason.
 
-1. confirm current directory
-2. inspect `git status`
-3. inspect relevant files
-4. read `README.md` if architecture/product direction is involved
-5. make a short plan
-6. implement a small testable slice
-7. run lint/build
-8. fix errors
-9. summarize changed files and test steps
+## Safety and authorization
 
-Do not claim a file or integration exists without inspecting it.
+Work on a feature branch and commit meaningful checkpoints. Never force-push, rewrite public history,
+delete `.git`, or run destructive cleanup. Do not merge to `main` or deploy to production without explicit approval.
 
-## Git safety
+Ask before: purchases, plan or billing changes, billed creative generation, ads, marketing sends,
+publishing products, real orders or refunds, removing integrations, rotating credentials, or deleting data.
+A browser login is not blanket authorization.
 
-Never:
-- force push
-- rewrite public history
-- delete `.git`
-- delete large folders without confirmation
-- commit `.env*`
-- commit tokens/API credentials
+Never print secrets or whole environment files. Keep `.env.local` ignored and preserve every key in it.
+Keep Shopify credentials server-only and out of `NEXT_PUBLIC_*`, screenshots, logs and client bundles.
 
-If the working tree contains unrelated user changes, preserve them.
+## Product and visual direction
 
-## Environment secrets
+Dark editorial: near-black, warm ivory, garnet, restrained silver. Large expressive type, strong product
+detail, generous space, purposeful motion. Avoid generic SaaS cards, heavy rounding, random gradients,
+neon gamer styling, scroll hijacking, fake trust signals and clutter. Mobile is a first-class layout.
 
-Use `.env.local`.
+Preserve the approved anti-eyebrow pair: upper and outer openwork symbol, lower and inner small deep-red
+faceted gemstone, on a diagonal. Never bring back a grey ball. Say only "deep-red faceted gemstone"
+until a supplier confirms the stone.
 
-Never move server-side secrets into `NEXT_PUBLIC_*`.
+Never invent material standards, dimensions, thread size, compatibility, gemstone identity,
+certifications, scarcity, reviews, lead times or inventory. Mark unknown values as unverified.
 
-## Current stack
+Franchise imagery is internal concept material pending a rights review. `references/` is local only:
+gitignored, never in `public/`, never uploaded to an external service. Use only files actually on disk.
 
-- Next.js
-- TypeScript
-- Tailwind CSS
-- Git/GitHub
-- Vercel
-- Shopify headless / Storefront API
-- Higgsfield
-- Claude Code
-- optional Superpowers
-- optional Caveman plugin
+## Face Studio
 
-Future:
-- face landmarks
-- Three.js / React Three Fiber if needed
-- 3D jewelry assets
-- optional Supabase
+Photos and any face data stay in browser memory. No upload, storage, analytics, replay, logging or URLs.
+Clear photo must clear every dependent preview and release the object URL.
+All surfaces draw through `components/studio/LookRenderer.tsx`; do not build a second overlay system.
+Positions are photo-relative, and changing side mirrors positions but never the artwork.
 
-## UI direction
+The 2D preview is approximate. It is not a fitting or a piercing-safety assessment.
+A tilted photo is not a side view. Head motion and 3D are a later milestone.
 
-Use:
-- black/charcoal
-- off-white
-- deep wine red / garnet
-- polished chrome/titanium details
-- large editorial typography
-- negative space
-- cinematic photography
-- elegant subtle motion
-- high-end microinteractions
+## Commerce and marketing
 
-Avoid:
-- generic SaaS cards
-- excessive rounded rectangles
-- random gradients
-- neon gamer aesthetic
-- obvious template layouts
-- clutter
+Modes are preview, waitlist and live. Demo products must never reach Shopify or a real checkout, and the
+server must refuse purchasing outside live mode. Shopify is the authority for real prices, inventory and
+cart totals. Send the private token with `Shopify-Storefront-Private-Token` from server code only.
+An HTTP 200 with GraphQL errors is a failure. Preserve QAR support.
 
-## Accessibility
+Marketing starts as drafts and disabled, consent-aware hooks. No fake signup success, reviews or scarcity.
+No tracking services, ads, outreach or emails without approval. Use Higgsfield for creative work only,
+never for exact product geometry, and never spend credits without approval.
 
-Use semantic controls, labels, keyboard support, sensible focus states, useful alt text, and reduced-motion support where reasonable.
+## Accessibility and performance
 
-## Performance
+Semantic controls, labels, keyboard alternatives to dragging, visible focus, useful alt text,
+reduced-motion support and roughly 44 px touch targets. Keep face models, 3D engines and other heavy
+code off ordinary shopping pages.
 
-Do not add a heavy library when native code is enough.
+## Testing and handoff
 
-Optimize large imagery.
+Test real interactions in Playwright with the non-personal fixture in `tests/fixtures/`.
+Cover mobile, keyboard, photo privacy and error states. Never claim a test ran when it did not.
+A passing build is not proof that the UI works.
 
-Avoid huge client components and unnecessary global state.
-
-Keep Face Studio processing local/browser-side where practical.
-
-## Face Studio MVP
-
-First version:
-- upload image locally
-- preview
-- placement selector
-- anti-eyebrow jewelry overlay
-- two separate jewelry pieces
-- drag
-- scale
-- rotate
-- reset
-- switch product
-- stack panel
-
-Do not attempt full AI head movement before this is polished.
-
-## Face privacy
-
-Prefer local browser processing.
-
-Do not upload customer photos by default.
-
-## Product accuracy
-
-Never invent:
-- material standards
-- dimensions
-- thread size
-- compatibility
-- gemstone identity
-- manufacturing certification
-
-Mark mock values as placeholders.
-
-## Shopify
-
-Use Storefront API for customer-facing commerce.
-
-Keep private Admin credentials server-side.
-
-Preserve QAR currency support.
-
-## Higgsfield
-
-Use Higgsfield for creative work, not exact product geometry.
-
-Do not trigger expensive image/video batches without confirmation.
-
-## Superpowers
-
-If installed, use its planning/brainstorming/testing workflows for large features.
-
-## Caveman
-
-If installed, use conservatively.
-
-Do not enable proxy/routing/compression behavior unless explicitly requested.
-
-## Target components
-
-- Navbar
-- Hero
-- CategorySelector
-- ProductCard
-- ProductGrid
-- ProductDetails
-- FaceStudio
-- PhotoUploader
-- JewelryOverlay
-- PlacementSelector
-- StackPanel
-- CartDrawer
-- Footer
-
-## Routes
-
-- `/`
-- `/shop`
-- `/collections`
-- `/collections/[slug]`
-- `/product/[slug]`
-- `/face-studio`
-- `/about`
-
-Later:
-- `/account`
-- `/look/[shareId]`
-- `/custom`
-
-## Testing
-
-After meaningful frontend work:
-
-```powershell
-npm run lint
-npm run build
-```
-
-If a script does not exist, inspect `package.json`.
-
-Test affected routes on desktop and mobile.
-
-## Definition of done
-
-A task is done when:
-- code compiles
-- relevant lint/build checks pass
-- UI works
-- mobile behavior is reasonable
-- no obvious console errors
-- secrets are safe
-- Git state is clear
-- test instructions are provided
-
-## Working style
-
-Be autonomous about ordinary implementation decisions.
-
-Ask before:
-- destructive actions
-- expensive external generations
-- schema/data deletion
-- irreversible production changes
-- purchasing services
-- publishing sensitive information
-
-## Immediate objective
-
-Finish infrastructure setup, then build a polished visual shell and Face Studio MVP before advanced AI head movement.
-
-Keep it premium, accurate, distinctive, and testable.
+Optional plugins (Superpowers, Context7, Shopify AI Toolkit, Caveman) are aids. A plugin failure must not
+block unrelated work. Do not enable Caveman proxy, routing or compression features.

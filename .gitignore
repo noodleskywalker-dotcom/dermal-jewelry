@@ -43,3 +43,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local-only design references (never commit or publish)
+/references/
+
+# test output
+/test-results/
+/playwright-report/

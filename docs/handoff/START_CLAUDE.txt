@@ -1,0 +1,35 @@
+Paste this into Claude Code after downloading DERMAL_READY_TO_BUILD.zip:
+
+The complete brief and design references are in the new ZIP I just downloaded:
+DERMAL_READY_TO_BUILD.zip
+
+This is NOT the older dermal-jewelry-project-docs.zip.
+
+Find the new ZIP in my Downloads folder (also check my configured download location and a browser-added numbered suffix). Inspect its entries before extracting. It must contain DERMAL_MASTER_BRIEF.md at the archive root and references/approved-gaara-red-gem.png.
+
+Safely extract its contents directly into:
+C:\Users\USER\Desktop\dermal-jewelry
+
+Do not create a nested DERMAL_READY_TO_BUILD project directory. Do not execute any downloaded script. Preserve existing application files, environment files, README.md and CLAUDE.md. If a destination file already differs, keep a backup and reconcile deliberately rather than blindly overwriting it. Do not force push or reset Git.
+
+Confirm this exact file now exists:
+C:\Users\USER\Desktop\dermal-jewelry\DERMAL_MASTER_BRIEF.md
+
+Then read the entire master brief, references/ASSET_GUIDE.md, the existing README.md and CLAUDE.md. Open the actual reference images using your available image-reading capability. Merge relevant proposed rules deliberately; do not blindly replace CLAUDE.md.
+
+The approved final visual reference is:
+references/approved-gaara-red-gem.png
+The original location reference is:
+references/original-placement.png
+The symbol reference is:
+references/symbol-reference.png
+
+Keep references local-only. Ensure /references/ is gitignored before any commit, do not put these images in public/, and do not upload them to external services. They are design references, not automatically approved public marketing assets.
+
+No approved full-face sample photo is included. Do not stall for one: build the real local photo-upload flow; hide sample mode until there is an approved sample; use a non-personal geometric fixture to test dragging and resizing without pretending it tests facial landmarks.
+
+Infrastructure is complete. Start Milestone 1 after a short code/Git inspection and plan. Implement the design system, homepage, demo products, hero-product page, local-photo Studio, personalized hover/tap previews, stack and clearly non-purchasable demo bag. Do not stop after only planning.
+
+Preserve the upper/outer hollow symbol and lower/inner small red gemstone arrangement. Do not replace it with the old grey ball. Do not invent physical product specs or claim finished CAD/3D assets exist.
+
+Do not recreate integrations, restart setup, expose secrets, spend credits, publish ads, create live products, merge main or deploy to production. Work in a safe feature branch, test with the available tools, update docs/PROJECT_STATUS.md and show the working local or authorized preview result with actual test evidence.

@@ -1,0 +1,45 @@
+{
+  "bundle": "DERMAL_READY_TO_BUILD",
+  "files": [
+    {
+      "path": "CLAUDE_RULES_PROPOSED.md",
+      "bytes": 5876,
+      "sha256": "e8480dfef6cf00f6c322c5ba6ebce9bcd48c8b889b3371d8217d751941ad996b"
+    },
+    {
+      "path": "DERMAL_MASTER_BRIEF.md",
+      "bytes": 75811,
+      "sha256": "8af45d481dcccada3170bdc42cd8d4fe4072c82bc84ac5a109d25f950d991e4f"
+    },
+    {
+      "path": "READ_FIRST.txt",
+      "bytes": 1111,
+      "sha256": "ecabaf2ab2a27f719d97d08e9bb44a74987b482cf992cea6a0cca8bbb86d1c4a"
+    },
+    {
+      "path": "START_CLAUDE.txt",
+      "bytes": 2816,
+      "sha256": "ed889b537e29388d98ac6487dcc37d453e0d0c393f736e02cc435f39d5606dd0"
+    },
+    {
+      "path": "references/ASSET_GUIDE.md",
+      "bytes": 4191,
+      "sha256": "9b7dc27cefc84498d3a6d86cfa317ca3ef1c5b64cf3937d42c1059ca79f15237"
+    },
+    {
+      "path": "references/approved-gaara-red-gem.png",
+      "bytes": 1828349,
+      "sha256": "76748b37997294bfffeeab86edf75ad16af5fe6d6ba4bb32e56ea9f0f1ccbb34"
+    },
+    {
+      "path": "references/original-placement.png",
+      "bytes": 139007,
+      "sha256": "33f82d0e62847257fb89c4e126d7d862a7966a1e84a648f94c7c08b80bd52f6f"
+    },
+    {
+      "path": "references/symbol-reference.png",
+      "bytes": 38644,
+      "sha256": "f15f3939cd5627c9935ded312ad1b1f3d44eb847ce5bae408b681e785d48bede"
+    }
+  ]
+}

@@ -12,6 +12,32 @@
 
 ---
 
+# Current state (20 September 2026)
+
+Infrastructure is complete and development has started. `DERMAL_MASTER_BRIEF.md` is the product
+specification and supersedes the setup-only wording further down this file.
+
+Milestone 1 is built on the `feat/dermal-first-slice` branch: the visual system, homepage, shop,
+collection and product pages, a working local-photo Face Studio, personalized product previews,
+a look (stack) and a demo bag. Products and prices are demo placeholders and checkout is disabled.
+
+- Progress and next task: `docs/PROJECT_STATUS.md`
+- Test evidence: `docs/TEST_REPORT.md`
+- Decisions: `docs/DECISIONS.md`
+- Assets and rights: `docs/ASSET_REGISTER.md`
+- Unknown product data: `docs/PRODUCT_SPEC_GAPS.md`
+
+```powershell
+npm run dev          # http://localhost:3000
+npm run lint
+npm run typecheck
+npm test             # unit tests
+npm run test:e2e     # browser tests
+npm run build
+```
+
+---
+
 # 1. What this business is
 
 DERMAL is intended to become a premium facial-piercing jewelry e-commerce brand centered around unusual placements that are underserved by ordinary jewelry stores.
