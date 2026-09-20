@@ -20,15 +20,21 @@ const LOOP_MS = 2600;
 // Only one reveal may play at a time across the whole page.
 let stopCurrent: (() => void) | null = null;
 
+/** Two local stills for a development-only pacing prototype. It is not the final cinematic. */
+export type ConceptStills = { start: string; sand: string };
+
 export function RevealPlayer({
   product,
   formId,
   fixtureSrc,
+  concept,
 }: {
   product: Product;
   formId: string;
   /** Development-only test pattern used to exercise the player. Never campaign media. */
   fixtureSrc?: string;
+  /** Development-only stills for the local motion prototype. */
+  concept?: ConceptStills;
 }) {
   const [expanded, setExpanded] = useState(false);
   return (
@@ -38,7 +44,7 @@ export function RevealPlayer({
           <p className="label-xs text-ink/60">Reveal is open in the expanded view.</p>
         </div>
       ) : (
-        <Stage product={product} formId={formId} fixtureSrc={fixtureSrc} onExpand={() => setExpanded(true)} />
+        <Stage product={product} formId={formId} fixtureSrc={fixtureSrc} concept={concept} onExpand={() => setExpanded(true)} />
       )}
       <Modal open={expanded} onClose={() => setExpanded(false)} label={`${product.title} reveal, expanded`} variant="full">
         {expanded && (
@@ -49,7 +55,7 @@ export function RevealPlayer({
               </button>
             </div>
             <div className="mx-auto flex min-h-0 w-full max-w-[70vh] flex-1 items-center">
-              <Stage product={product} formId={formId} fixtureSrc={fixtureSrc} />
+              <Stage product={product} formId={formId} fixtureSrc={fixtureSrc} concept={concept} />
             </div>
           </div>
         )}
@@ -62,11 +68,13 @@ function Stage({
   product,
   formId,
   fixtureSrc,
+  concept,
   onExpand,
 }: {
   product: Product;
   formId: string;
   fixtureSrc?: string;
+  concept?: ConceptStills;
   onExpand?: () => void;
 }) {
   const reveal = product.reveal;
@@ -77,11 +85,15 @@ function Stage({
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const isLoop = reveal.mode === "loop";
-  const usingFixture = reveal.mode === "mini-scene" && !reveal.src && Boolean(fixtureSrc);
-  const src = reveal.mode === "mini-scene" ? (reveal.src ?? fixtureSrc) : undefined;
+  const usingConcept = reveal.mode === "mini-scene" && !reveal.src && Boolean(concept);
+  const usingFixture = reveal.mode === "mini-scene" && !reveal.src && !usingConcept && Boolean(fixtureSrc);
+  const src = reveal.mode === "mini-scene" && !usingConcept ? (reveal.src ?? fixtureSrc) : undefined;
   // A mini-scene is playable only with prepared media. Publication approval is checked for real
-  // media; the labeled test pattern exists only to exercise the player in development.
-  const playable = !reduced && (isLoop || (Boolean(src) && (usingFixture || reveal.readiness.approvedForPublication)));
+  // media; the labeled test pattern and the local stills prototype exist only in development.
+  const playable =
+    !reduced && (isLoop || usingConcept || (Boolean(src) && (usingFixture || reveal.readiness.approvedForPublication)));
+  // The prototype and the loop have no file to load, so they start at once.
+  const instant = isLoop || usingConcept;
   const active = state === "loading" || state === "playing";
 
   const stop = (next: PlayState) => {
@@ -121,7 +133,7 @@ function Stage({
     stopCurrent?.();
     stopCurrent = stopSelf.current;
     setMuted(true);
-    setState(isLoop ? "playing" : "loading");
+    setState(instant ? "playing" : "loading");
   };
 
   if (reveal.mode === "none") {
@@ -157,9 +169,19 @@ function Stage({
         />
       )}
 
+      {usingConcept && concept && state === "playing" && <ConceptSequence concept={concept} onDone={() => stop("ended")} />}
+
       {state === "ended" && (
-        <div data-testid="reveal-final" data-form={form.id} className="fade-in absolute inset-0 bg-bone">
-          <ProductPieces product={product} formId={form.id} scale={form.components.length > 1 ? 0.62 : 0.3} shadow="soft" />
+        <div data-testid="reveal-final" data-form={form.id} className={`absolute inset-0 bg-bone ${usingConcept ? "" : "fade-in"}`}>
+          {usingConcept && concept && (
+            // A local development still, served only by the dev server.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={concept.sand} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          )}
+          {/* The jewelry is always this separate overlay of the selected form, never part of the footage. */}
+          <div className={`absolute inset-0 ${usingConcept ? "concept-jewel" : ""}`}>
+            <ProductPieces product={product} formId={form.id} scale={form.components.length > 1 ? 0.62 : 0.3} shadow="soft" />
+          </div>
         </div>
       )}
 
@@ -177,6 +199,7 @@ function Stage({
         <p className="label-xs text-ink/60">
           {reveal.title}
           {usingFixture && <span data-testid="reveal-fixture-tag"> · test pattern, not campaign media</span>}
+          {usingConcept && <span data-testid="reveal-concept-tag"> · local stills prototype, not the final cinematic</span>}
         </p>
         {active && (
           <button type="button" data-testid="reveal-skip" onClick={() => stop("ended")} className="label-xs inline-flex min-h-11 items-center bg-ink px-3 text-ivory">
@@ -221,6 +244,31 @@ function Stage({
           {!playable && !reduced && "Reveal in preparation. Showing the still."}
         </p>
       </div>
+    </div>
+  );
+}
+
+/**
+ * Pacing prototype made from two stills and plain CSS: a slow push on the start frame, sand building
+ * from the lower right, a fast sweep across the lens, then the settled sand frame. It runs 5.5
+ * seconds; the jewelry overlay then takes the last 1.5 seconds, for 7.0 in total.
+ * It tests timing and the hidden cut only. It is not a fight scene and not the final film.
+ */
+function ConceptSequence({ concept, onDone }: { concept: ConceptStills; onDone: () => void }) {
+  return (
+    <div data-testid="reveal-concept" className="absolute inset-0 overflow-hidden bg-ink">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={concept.start} alt="" className="concept-push absolute inset-0 h-full w-full object-cover" />
+      <div className="concept-build absolute inset-0" style={{ backgroundImage: `url(${concept.sand})` }} />
+      <div className="concept-sweep absolute inset-y-0 left-0 w-[260%]" style={{ backgroundImage: `url(${concept.sand})` }} />
+      <div className="concept-dust grain absolute -inset-[10%]" />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={concept.sand}
+        alt=""
+        className="concept-settle absolute inset-0 h-full w-full object-cover"
+        onAnimationEnd={(e) => e.animationName === "concept-settle" && onDone()}
+      />
     </div>
   );
 }

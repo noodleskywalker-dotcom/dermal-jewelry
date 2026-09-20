@@ -222,6 +222,114 @@ input[type="range"].studio-range::-moz-range-thumb {
   animation: metal-sweep 2.4s var(--ease-editorial) both;
 }
 
+/* Local reveal pacing prototype (development only). 5.5 s of stills, then the jewelry overlay.
+   Marks: 1.5 s = 27%, 3.5 s = 64%, 4.8 s = 87%. */
+@keyframes concept-push {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  27% {
+    transform: scale(1.05) translate(-0.6%, -0.4%);
+  }
+  64% {
+    transform: scale(1.1) translate(-1.6%, -1.2%);
+  }
+  100% {
+    transform: scale(1.16) translate(-2.2%, -1.8%);
+  }
+}
+@keyframes concept-build {
+  0%,
+  27% {
+    opacity: 0;
+    transform: translate(10%, 12%) scale(1.25);
+  }
+  64% {
+    opacity: 0.82;
+    transform: translate(3%, 4%) scale(1.2);
+  }
+  87%,
+  100% {
+    opacity: 1;
+    transform: translate(-2%, -2%) scale(1.15);
+  }
+}
+@keyframes concept-sweep {
+  0%,
+  62% {
+    transform: translateX(100%);
+  }
+  87%,
+  100% {
+    transform: translateX(-52%);
+  }
+}
+@keyframes concept-dust {
+  0%,
+  20% {
+    opacity: 0;
+    transform: translate(4%, 3%);
+  }
+  64% {
+    opacity: 0.35;
+  }
+  87% {
+    opacity: 0.5;
+    transform: translate(-6%, -4%);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes concept-settle {
+  0%,
+  85% {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes concept-jewel {
+  0% {
+    opacity: 0;
+    transform: scale(0.94);
+    filter: blur(6px);
+  }
+  55%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+.concept-push {
+  animation: concept-push 5.5s cubic-bezier(0.3, 0, 0.5, 1) both;
+}
+.concept-build {
+  background-size: cover;
+  /* Sand gathers from the lower right, where the raised hand is. */
+  mask-image: radial-gradient(ellipse 105% 90% at 100% 100%, #000 30%, transparent 82%);
+  animation: concept-build 5.5s ease-out both;
+}
+.concept-sweep {
+  background-size: 50% 100%;
+  /* A soft leading edge, then solid sand, so the wall reads as moving mass rather than a wipe. */
+  mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 100%);
+  animation: concept-sweep 5.5s cubic-bezier(0.4, 0, 0.8, 0.65) both;
+}
+.concept-dust {
+  animation: concept-dust 5.5s linear both;
+}
+.concept-settle {
+  animation: concept-settle 5.5s ease-out both;
+}
+.concept-jewel {
+  animation: concept-jewel 1.5s var(--ease-editorial) both;
+}
+
 /* Entrance used by non-pinned blocks. */
 .reveal {
   opacity: 0;

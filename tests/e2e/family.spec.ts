@@ -180,6 +180,27 @@ test.describe("concept reveal", () => {
     await expect(page.getByTestId("reveal-watch")).toHaveCount(0);
   });
 
+  test("the local stills prototype plays, skips, replays and ends on the chosen form", async ({ page }) => {
+    // The two stills are internal and gitignored. The sequence must behave the same when they are absent.
+    await page.goto(`${FAMILY}?revealFixture=concept&form=micro-dermal`);
+    const player = page.getByTestId("reveal-player");
+    await expect(page.getByTestId("reveal-concept-tag")).toContainText("not the final cinematic");
+    await expect(player).toHaveAttribute("data-state", "idle");
+    await expect(page.getByTestId("reveal-concept")).toHaveCount(0);
+
+    await page.getByTestId("reveal-watch").click();
+    await expect(player).toHaveAttribute("data-state", "playing");
+    await expect(page.getByTestId("reveal-skip")).toBeVisible();
+    await expect(page.getByTestId("reveal-video")).toHaveCount(0);
+    await page.getByTestId("reveal-skip").click();
+    await expect(page.getByTestId("reveal-final")).toHaveAttribute("data-form", "micro-dermal");
+
+    // Replayed and left alone, it ends by itself at about 5.5 seconds and then shows the jewelry.
+    await page.getByTestId("reveal-replay").click();
+    await expect(player).toHaveAttribute("data-state", "ended", { timeout: 9000 });
+    await expect(page.getByTestId("add-to-bag")).toBeEnabled();
+  });
+
   test("the original piece has a short product-led reveal with replay", async ({ page }) => {
     await page.goto("/product/crimson-orbit");
     const player = page.getByTestId("reveal-player");

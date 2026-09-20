@@ -6,7 +6,7 @@ import { formatPrice, formOf } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { activeItem, setForm } from "@/lib/studio/look";
 import { AddToBagButton } from "@/components/cart/AddToBagButton";
-import { RevealPlayer } from "@/components/reveal/RevealPlayer";
+import { RevealPlayer, type ConceptStills } from "@/components/reveal/RevealPlayer";
 import { useStudio } from "@/components/studio/StudioProvider";
 import { PlacementPreview } from "./PlacementPreview";
 import { TryOnPreview } from "./TryOnPreview";
@@ -19,10 +19,13 @@ export function FamilyExperience({
   product,
   initialFormId,
   fixtureSrc,
+  concept,
 }: {
   product: Product;
   initialFormId?: string;
   fixtureSrc?: string;
+  /** Development-only stills for the local reveal prototype. */
+  concept?: ConceptStills;
 }) {
   const studio = useStudio();
   const { forms, selectForm, change } = studio;
@@ -95,7 +98,7 @@ export function FamilyExperience({
         {/* Width is tied to the window height so the whole 4:5 frame fits on screen, even in short windows. */}
         <div role="tabpanel" id={`panel-${view}`} aria-labelledby={`tab-${view}`} className="mt-5 w-full max-w-[max(16rem,60svh)]">
           {/* Keyed by product so leaving a product always unmounts, and so stops, its reveal. */}
-          {view === "reveal" && <RevealPlayer key={product.id} product={product} formId={form.id} fixtureSrc={fixtureSrc} />}
+          {view === "reveal" && <RevealPlayer key={product.id} product={product} formId={form.id} fixtureSrc={fixtureSrc} concept={concept} />}
           {view === "placement" && <PlacementPreview product={product} formId={form.id} />}
           {view === "tryon" && (
             <div className="max-w-sm">

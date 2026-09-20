@@ -26,6 +26,13 @@ function fixtureFor(flag: string | undefined): string | undefined {
   return undefined;
 }
 
+// Development-only local prototype built from two internal stills. They live in the gitignored
+// `references/generated/` folder and are served by a route that answers 404 in production.
+function conceptFor(flag: string | undefined, slug: string) {
+  if (process.env.NODE_ENV === "production" || flag !== "concept" || slug !== "desert-eye-love") return undefined;
+  return { start: "/api/dev-concept/start", sand: "/api/dev-concept/sand" };
+}
+
 export default async function ProductPage({ params, searchParams }: PageProps<"/product/[slug]">) {
   const { slug } = await params;
   const query = await searchParams;
@@ -48,7 +55,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
       </nav>
 
       <div className="mt-8">
-        <FamilyExperience product={product} initialFormId={first(query.form)} fixtureSrc={fixtureFor(first(query.revealFixture))} />
+        <FamilyExperience product={product} initialFormId={first(query.form)} fixtureSrc={fixtureFor(first(query.revealFixture))} concept={conceptFor(first(query.revealFixture), slug)} />
       </div>
 
       <section aria-labelledby="specs-heading" className="mt-16 max-w-2xl border-t border-line pt-6">
