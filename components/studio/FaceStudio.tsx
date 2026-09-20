@@ -29,8 +29,9 @@ import { useStudio } from "./StudioProvider";
 
 const NUDGE = 0.004;
 
+// Quiet text controls. The Studio should read as a styling tool, not a dashboard of boxes.
 const toolButton =
-  "min-h-11 shrink-0 border border-line px-3 text-[0.6875rem] uppercase tracking-[0.18em] transition-colors duration-200 hover:border-ivory disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-line";
+  "label-xs inline-flex min-h-11 shrink-0 items-center px-3 text-ivory/75 transition-colors duration-200 hover:text-ivory disabled:cursor-not-allowed disabled:text-ivory/25 aria-pressed:text-ivory aria-pressed:underline aria-pressed:underline-offset-8";
 
 export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string }) {
   const studio = useStudio();
@@ -149,23 +150,20 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
 
   return (
     <div className="mx-auto max-w-[90rem] px-5 pb-10 sm:px-8">
-      <header className="flex flex-wrap items-end justify-between gap-4 py-8">
-        <div>
-          <p className="eyebrow">Face Studio</p>
-          <h1 className="mt-2 font-display text-4xl leading-none sm:text-5xl">Preview it on you.</h1>
-        </div>
-        <p className="max-w-md text-sm leading-relaxed text-ash">
-          A still, approximate virtual preview. It does not show real size, and it is not a fitting or piercing advice.
+      <header className="flex flex-wrap items-end justify-between gap-4 pb-6 pt-8">
+        <h1 className="font-display text-4xl font-light leading-none sm:text-5xl">Face Studio</h1>
+        <p className="label-xs max-w-sm leading-relaxed text-ash">
+          A still, approximate preview. Not real size, not a fitting, not piercing advice.
         </p>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-[15rem_minmax(0,1fr)_20rem]">
+      <div className="grid gap-x-12 gap-y-5 lg:grid-cols-[minmax(0,1fr)_19rem]">
         {/* Piece rail */}
-        <section aria-labelledby="pieces-heading" className="order-2 min-w-0 lg:order-1">
-          <h2 id="pieces-heading" className="eyebrow">
+        <section aria-labelledby="pieces-heading" className="order-2 min-w-0 lg:col-start-1 lg:row-start-2">
+          <h2 id="pieces-heading" className="label-xs text-ash">
             Pieces
           </h2>
-          <ul className="mt-3 flex gap-3 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
+          <ul className="mt-3 flex gap-6 overflow-x-auto pb-2">
             {products.map((product) => {
               const selected = currentProduct.id === product.id;
               return (
@@ -176,14 +174,14 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
                     data-product={product.slug}
                     aria-pressed={selected}
                     onClick={() => chooseProduct(product)}
-                    className={`flex w-40 items-center gap-3 border p-2 text-left transition-colors duration-200 lg:w-full ${
-                      selected ? "border-ivory" : "border-line hover:border-ash"
+                    className={`flex w-44 items-center gap-3 border-b pb-2 text-left transition-colors duration-200 ${
+                      selected ? "border-ivory" : "border-transparent text-ivory/70 hover:text-ivory"
                     }`}
                   >
                     <ProductArtwork product={product} className="h-14 w-12 shrink-0" showLabel={false} />
                     <span className="min-w-0">
-                      <span className="block truncate font-display text-sm leading-tight">{product.title}</span>
-                      <span className="block text-[0.625rem] uppercase tracking-[0.16em] text-ash">
+                      <span className="block truncate font-display text-base font-light leading-tight">{product.title}</span>
+                      <span className="label-xs mt-1 block text-ash">
                         {placementLabel(product.placements[0])}
                       </span>
                     </span>
@@ -198,10 +196,10 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
         {/* On small screens the stage sticks under the header so the jewelry stays visible while adjusting. */}
         <section
           aria-label="Photo stage"
-          className={`order-1 min-w-0 bg-ink lg:static lg:order-2 ${photo ? "sticky top-16 z-20 -mx-5 px-5 pb-1 sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0" : ""}`}
+          className={`order-1 min-w-0 bg-ink lg:static lg:col-start-1 lg:row-start-1 ${photo ? "sticky top-16 z-20 -mx-5 px-5 pb-1 sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0" : ""}`}
         >
           <div
-            className={`relative border border-line bg-coal lg:h-[70dvh] ${photo ? "h-[42dvh] min-h-[16rem]" : "h-[58dvh] min-h-[22rem]"}`}
+            className={`relative bg-coal lg:h-[72dvh] ${photo ? "h-[44dvh] min-h-[16rem]" : "h-[58dvh] min-h-[22rem]"}`}
             data-testid="studio-stage"
           >
             {photo ? (
@@ -225,7 +223,7 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
           </div>
 
           {photo && (
-            <div className="mt-3 flex gap-2 overflow-x-auto lg:flex-wrap" role="toolbar" aria-label="Studio actions">
+            <div className="relative z-10 mx-auto -mt-12 flex w-max max-w-full items-center overflow-x-auto bg-ink/80 px-1 backdrop-blur-sm" role="toolbar" aria-label="Studio actions">
               <button type="button" className={toolButton} onClick={studio.undo} disabled={!studio.canUndo} data-testid="undo">
                 Undo
               </button>
@@ -256,7 +254,7 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
               </button>
               <button
                 type="button"
-                className={`${toolButton} ml-auto`}
+                className={`${toolButton} border-l border-line`}
                 data-testid="clear-photo"
                 onClick={() => {
                   studio.clearPhoto();
@@ -276,9 +274,9 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
         </section>
 
         {/* Controls and look */}
-        <div className="order-3 min-w-0 space-y-8">
+        <div className="order-3 min-w-0 space-y-10 lg:col-start-2 lg:row-span-2 lg:row-start-1">
           <section aria-labelledby="adjust-heading">
-            <h2 id="adjust-heading" className="eyebrow">
+            <h2 id="adjust-heading" className="label-xs text-ash">
               Adjust
             </h2>
 
@@ -290,7 +288,7 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
                   return (
                     <label
                       key={side}
-                      className={`flex min-h-11 cursor-pointer items-center justify-center border text-[0.6875rem] uppercase tracking-[0.16em] has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-garnet-text ${
+                      className={`label-xs flex min-h-11 cursor-pointer items-center border-b has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-garnet-text ${
                         selected ? "border-ivory" : "border-line text-ash"
                       }`}
                     >
@@ -318,7 +316,7 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
                 {activeProduct.components.length > 1 && (
                   <fieldset className="mt-5">
                     <legend className="text-sm">What to move</legend>
-                    <div className="mt-2 flex flex-wrap gap-2">
+                    <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
                       <TargetButton selected={pieceId === null} onClick={() => setSelectedComponent(null)} testId="target-group">
                         Both pieces
                       </TargetButton>
@@ -388,7 +386,7 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
           </section>
 
           <section aria-labelledby="look-heading">
-            <h2 id="look-heading" className="eyebrow">
+            <h2 id="look-heading" className="label-xs text-ash">
               Your look
             </h2>
 
@@ -428,7 +426,7 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
                     id="add-product"
                     value={addProductId}
                     onChange={(e) => setAddProductId(e.target.value)}
-                    className="min-h-11 border border-line bg-ink px-2 text-sm"
+                    className="min-h-11 border-b border-line bg-ink text-sm"
                     data-testid="add-product"
                   >
                     {products.map((p) => (
@@ -444,14 +442,14 @@ export function FaceStudio({ initialProductSlug }: { initialProductSlug?: string
                     id="add-side"
                     value={addSide}
                     onChange={(e) => setAddSide(e.target.value as Side)}
-                    className="min-h-11 border border-line bg-ink px-2 text-sm"
+                    className="min-h-11 border-b border-line bg-ink text-sm"
                     data-testid="add-side"
                   >
                     <option value="left">Wearer&rsquo;s left</option>
                     <option value="right">Wearer&rsquo;s right</option>
                   </select>
                 </div>
-                <button type="button" className={`${toolButton} w-full`} onClick={requestAdd} data-testid="add-piece">
+                <button type="button" className={`${toolButton} !px-0 underline underline-offset-8`} onClick={requestAdd} data-testid="add-piece">
                   Add another piece
                 </button>
 
@@ -518,8 +516,8 @@ function TargetButton({
       aria-pressed={selected}
       onClick={onClick}
       data-testid={testId}
-      className={`min-h-11 border px-3 text-xs transition-colors duration-200 ${
-        selected ? "border-ivory" : "border-line text-ash hover:border-ash"
+      className={`min-h-11 border-b px-1 text-xs transition-colors duration-200 ${
+        selected ? "border-ivory" : "border-transparent text-ash hover:text-ivory"
       }`}
     >
       {children}
@@ -539,7 +537,7 @@ function NudgeButton({
   children: React.ReactNode;
 }) {
   return (
-    <button type="button" aria-label={label} onClick={onClick} data-testid={testId} className="h-11 w-11 border border-line hover:border-ivory">
+    <button type="button" aria-label={label} onClick={onClick} data-testid={testId} className="h-11 w-11 text-ivory/70 hover:text-ivory">
       <span aria-hidden="true">{children}</span>
     </button>
   );
@@ -609,7 +607,7 @@ function LookRow({
   return (
     <li className="py-3" data-testid="look-item" data-product={product.slug}>
       <div className="flex items-baseline justify-between gap-3">
-        <p className="font-display text-base leading-tight">
+        <p className="font-display text-lg font-light leading-tight">
           {product.title}
           {isActive && <span className="ml-2 align-middle text-[0.625rem] uppercase tracking-[0.16em] text-garnet-text">Editing</span>}
         </p>
@@ -619,7 +617,7 @@ function LookRow({
         {placementLabel(item.placement)} · wearer&rsquo;s {item.side}
         {!item.visible && " · hidden"}
       </p>
-      <div className="mt-2 flex gap-2">
+      <div className="-ml-3 mt-1 flex">
         <button type="button" onClick={onEdit} disabled={isActive} className={toolButton}>
           Edit<span className="sr-only"> {product.title}</span>
         </button>

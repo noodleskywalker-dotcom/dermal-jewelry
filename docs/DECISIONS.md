@@ -2,6 +2,38 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-20 — Visual redirection
+
+The owner rejected the first homepage as template-like and named a reference video
+(`youtube.com/watch?v=6U3k4H346Es`). The video is a tutorial that shows three AI-built sites: a
+sculpture-garden site, a personal portfolio and an astronaut scene. Its sites are scroll-scrubbed 3D
+and video scenes made with generated assets.
+
+Taken from the reference:
+- One pinned full-screen frame per chapter. Scrolling moves the camera into the scene rather than down a stack of sections.
+- A numbered chapter index on the right edge and a hairline progress rule.
+- One object and one short statement on screen at a time. Copy crossfades while the scene moves.
+- Light serif at modest sizes, tiny tracked monospace labels, underlined text links with an arrow instead of buttons.
+- A giant wordmark placed behind the subject, on warm paper, before the cut to a dark scene.
+- One rare accent colour.
+
+Deliberately not imitated:
+- Generated 3D scenes, scroll-scrubbed video and environment art. They need paid generation, which is not approved, and generated imagery must not stand in for the product.
+- The reference's copy, logos, statues, columns, portrait and colour scheme.
+- Ambient particles and shattering-glass effects. They do not serve jewelry.
+
+How it is built:
+- `useScrollProgress` writes one CSS variable, `--p`, per chapter. All motion is CSS `calc()` on that variable, so there is no animation library and no per-frame React work.
+- Layers outside their progress window get `visibility: hidden`, so faded-out links cannot be clicked or focused.
+- Pinned stages use `overflow: clip`, so keyboard focus can never scroll a stage sideways. Focusing an off-screen collection piece scrolls the page to bring it into frame.
+- With reduced motion, every chapter renders as a plain unpinned section with all content visible.
+- The homepage header has no background and uses white text with `mix-blend-mode: difference`, so it reads on paper and on ink. Inner pages use a solid bar.
+- Typography is now Cormorant Garamond (display) with Geist and Geist Mono. Bodoni Moda was removed.
+- Object tiles moved from dark tiles with a red glow to warm paper with a soft contact shadow.
+- The Face Studio demonstration on the homepage is a line drawing labeled as an illustration. It uses the same `resolveComponents` layout as the real renderer.
+- Face Studio kept all logic and test ids. Only presentation changed: text controls, a floating tool strip over the stage, a horizontal piece rail and a larger stage.
+- The top "preview build" banner became a small fixed note on the homepage. Inner pages label demo products and prices inline.
+
 ## 2026-09-20 — Milestone 1
 
 - **The master brief is the specification.** `DERMAL_MASTER_BRIEF.md` supersedes the older

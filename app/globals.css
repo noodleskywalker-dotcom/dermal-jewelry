@@ -15,8 +15,11 @@
   /* Deeper garnet for large display type only (3.6:1 on ink, large-text threshold is 3:1). */
   --color-garnet-display: #b8384f;
   --color-silver: #c9ced6;
+  /* Warm paper used for light chapters and object tiles. */
+  --color-bone: #e7e2d8;
+  --color-bone-deep: #d8d2c5;
 
-  --font-display: var(--font-bodoni), "Didot", "Bodoni MT", serif;
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
   --font-sans: var(--font-geist-sans), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
@@ -159,4 +162,59 @@ input[type="range"].studio-range::-moz-range-thumb {
   border-radius: 50%;
   background: var(--color-ivory);
   border: 0;
+}
+
+/* Scroll-driven chapters. --p is the chapter's scroll progress, 0 to 1, set by useScrollProgress. */
+.chapter {
+  position: relative;
+  --p: 0;
+}
+.chapter-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  /* clip, not hidden: a clipped box can never be scrolled by keyboard focus landing on off-screen content. */
+  overflow: clip;
+}
+/* Small underlined text link with an arrow, used instead of buttons. */
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  min-height: 44px;
+  font-size: 0.6875rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 100% 1px;
+  background-position: 0 calc(100% - 12px);
+  background-repeat: no-repeat;
+  transition: background-size 0.4s var(--ease-editorial);
+}
+.text-link:hover {
+  background-size: 0% 1px;
+  background-position: 100% calc(100% - 12px);
+}
+.label-xs {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+/* Entrance used by non-pinned blocks. */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.9s var(--ease-editorial), transform 0.9s var(--ease-editorial);
+  transition-delay: var(--delay, 0ms);
+}
+.reveal[data-in="true"] {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }

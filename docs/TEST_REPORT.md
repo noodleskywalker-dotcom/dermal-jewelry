@@ -1,5 +1,39 @@
 # Test report
 
+## Visual redirection — 20 September 2026
+
+Same machine and method as below, after the homepage, navigation and Face Studio restyle.
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass |
+| `npm run typecheck` | pass |
+| `npm test` | 40 of 40 pass |
+| `npm run test:e2e` | 90 pass, 6 skipped, 0 fail, across desktop Chromium, Pixel 7 emulation and WebKit |
+| `npm run build` | pass |
+| Search of `.next/static` for the Shopify token prefix | 0 files |
+
+Skipped tests are desktop-only behaviour on the mobile project (hover pane, chapter index) and the
+mobile menu test on the desktop projects.
+
+New homepage tests (`tests/e2e/home.spec.ts`):
+- The first screen shows one statement and one action, with no console errors, and the product detail copy is hidden.
+- Scrolling the first chapter raises its progress, shows the product name and both callouts, and hides the opening statement.
+- In the Face Studio chapter the named piece changes from DESERT EYE — LOVE to SAND VORTEX as the visitor scrolls.
+- Vertical scrolling moves the collection sideways, the last piece and the collection link come into view, and the link works.
+- Keyboard focus on an off-screen piece brings it into the frame.
+- Try on opens the preview sheet from the sequence and Escape closes it.
+- The closing chapter leads to Face Studio.
+- Reduced motion produces no pinned stages, no track transform, and every heading and all four pieces visible.
+- Desktop: hovering a piece opens exactly one preview pane, which closes on leave. The chapter index jumps to a chapter and marks it current.
+- Mobile: the menu opens as a full-screen dialog, navigates and closes.
+
+All Milestone 1 Face Studio, preview, look, bag, privacy and checkout-guard tests still pass unchanged,
+apart from selectors for the new mobile menu.
+
+Not tested: real phones, real Safari, scroll smoothness and frame rate on low-end devices, screen readers,
+200% zoom, and the look of the sequence on very short or very wide viewports.
+
 ## Milestone 1 — 20 September 2026
 
 All commands ran locally on Windows 11, Node 24.19, against the dev server at `http://localhost:3000`,

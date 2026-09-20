@@ -10,11 +10,18 @@ Statuses used here: planned, implemented, tested, owner-approved, blocked, defer
 Milestone 1, the first vertical slice, is implemented and tested locally. It is waiting for owner review.
 Nothing is owner-approved yet. Nothing was merged to `main` or deployed to production.
 
+## Visual redirection (20 September 2026)
+
+The owner replaced the first visual direction. The homepage is now a four-chapter scroll sequence
+(the piece, Face Studio, the collection, the close) with a new type system, light and dark chapters,
+a rebuilt navigation and a restyled Face Studio. Status: implemented and tested, awaiting owner review.
+Reasons and limits are in `docs/DECISIONS.md`. Before and after screenshots are in `docs/screenshots/`.
+
 ## What exists
 
 | Area | Status | Notes |
 | --- | --- | --- |
-| Design tokens, fonts, layout, navigation, footer | tested | Dark editorial system in `app/globals.css`. Bodoni Moda for display, Geist for UI. |
+| Design tokens, fonts, layout, navigation, footer | tested | Dark editorial system in `app/globals.css`. Cormorant Garamond for display, Geist and Geist Mono for UI. |
 | Homepage | tested | Hero, placement selector, Collection 001, try-on explanation, transparency section. |
 | Shop with placement filter and search | tested | Filter and search live in the URL. Empty placements show an honest empty state. |
 | Collections index and DESERT EYE page | tested | |

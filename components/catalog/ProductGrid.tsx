@@ -52,7 +52,7 @@ export function ProductGrid({ products, className }: { products: Product[]; clas
 
   return (
     <>
-      <ul className={className ?? "grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 xl:grid-cols-4"}>
+      <ul className={className ?? "grid grid-cols-1 gap-x-8 gap-y-20 sm:grid-cols-2 xl:grid-cols-4 xl:[&>li:nth-child(even)]:mt-24"}>
         {products.map((product) => {
           const open = hover?.id === product.id;
           const panelId = `tryon-panel-${product.slug}`;
@@ -88,16 +88,16 @@ export function ProductGrid({ products, className }: { products: Product[]; clas
               <Link href={`/product/${product.slug}`} className="block" aria-describedby={open ? panelId : undefined}>
                 <ProductArtwork
                   product={product}
-                  className="aspect-[4/5] w-full transition-transform duration-500 ease-[var(--ease-editorial)] group-hover:scale-[1.015]"
+                  className="aspect-[4/5] w-full [&>div]:transition-transform [&>div]:duration-700 [&>div]:ease-[var(--ease-editorial)] group-hover:[&>div]:scale-[1.06]"
                 />
                 <span className="mt-4 flex items-baseline justify-between gap-4">
-                  <span className="font-display text-xl leading-tight">{product.title}</span>
+                  <span className="font-display text-2xl font-light leading-tight">{product.title}</span>
                   <span className="shrink-0 text-sm text-ash">
                     <span className="sr-only">Demo price </span>
                     {formatPrice(product.demoPrice, product.currency)}
                   </span>
                 </span>
-                <span className="mt-1 block text-xs uppercase tracking-[0.18em] text-ash">
+                <span className="label-xs mt-2 block text-ash">
                   {product.placements.map(placementLabel).join(" · ")} · Demo
                 </span>
               </Link>
@@ -110,9 +110,9 @@ export function ProductGrid({ products, className }: { products: Product[]; clas
                   setHover(null);
                   setSheetProduct(product);
                 }}
-                className="mt-4 min-h-11 w-full border border-line text-xs uppercase tracking-[0.22em] transition-colors duration-200 hover:border-ivory"
+                className="text-link mt-1"
               >
-                Try on<span className="sr-only"> {product.title}</span>
+                Try on<span className="sr-only"> {product.title}</span> <span aria-hidden="true">↗</span>
               </button>
 
               {open && hover && (

@@ -14,7 +14,7 @@ export function Modal({
   open: boolean;
   onClose: () => void;
   label: string;
-  variant: "drawer" | "sheet";
+  variant: "drawer" | "sheet" | "full";
   children: React.ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -29,7 +29,9 @@ export function Modal({
   const shape =
     variant === "drawer"
       ? "drawer-in ml-auto mr-0 h-dvh max-h-dvh w-full max-w-md border-l"
-      : "sheet-up mb-0 mt-auto max-h-[88dvh] w-full max-w-none border-t sm:mx-auto sm:max-w-lg";
+      : variant === "full"
+        ? "fade-in h-dvh max-h-dvh w-full max-w-none"
+        : "sheet-up mb-0 mt-auto max-h-[88dvh] w-full max-w-none border-t sm:mx-auto sm:max-w-lg";
 
   return (
     <dialog
