@@ -135,7 +135,7 @@ export function resolveComponents(
       leftPct: (0.5 + sign * c.x + t.dx) * 100,
       topPct: (0.5 + c.y + t.dy) * 100,
       widthPct: c.size * t.scale * 100,
-      rotation: t.rotation,
+      rotation: sign * (c.rotation ?? 0) + t.rotation,
     };
   });
 }

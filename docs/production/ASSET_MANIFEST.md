@@ -19,12 +19,20 @@ top" is a demo configuration, labeled as not approved, and must not be treated a
 
 ## Source of truth for every product asset
 
-Every product image below must be derived from one exact source per form, in this order of preference:
-1. photography of a manufactured sample;
-2. a render from the manufacturer's or jeweller's CAD file;
-3. a commissioned illustration signed off by the owner as the exact design.
+Two classes of product art are recognised, and they must not be confused.
 
-A generative model must not draw the jewelry. It may draw backgrounds, skin, sand and light only.
+**PROTOTYPE PRODUCT ART**, for the website prototype only. A signed-off illustration based on the
+approved design may be used as the exact visual asset, even if it began in an AI-assisted
+concept-design process. It is not proof of manufactured dimensions, metal grade, gemstone identity,
+threading, compatibility or actual finish, and the site keeps those fields "Unverified".
+
+**COMMERCIAL PRODUCT ASSET**, required before commercial launch: a render from the manufacturer's or
+jeweller's CAD file, or photography of the manufactured product. It replaces the prototype art by a
+file swap at the same paths, with no change to placement geometry or UI.
+
+In both classes, campaign and reveal generators must not draw the jewelry into a scene. They draw
+backgrounds, skin, sand and light only, and the product art is composited separately.
+File paths, per-piece requirements and the composition metadata are in `ASSET_SLOT.md`.
 
 ## Assets per form
 

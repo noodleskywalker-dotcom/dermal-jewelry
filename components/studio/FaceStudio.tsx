@@ -23,7 +23,6 @@ import {
   updateTweak,
 } from "@/lib/studio/look";
 import type { LookItem, Side } from "@/lib/studio/types";
-import { hasExactAsset } from "@/components/catalog/FormVisual";
 import { ProductArtwork } from "@/components/catalog/ProductArtwork";
 import { LookRenderer, type LookInteraction } from "./LookRenderer";
 import { PhotoPicker } from "./PhotoPicker";
@@ -293,7 +292,8 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
         </section>
 
         {/* Controls and look */}
-        <div className="order-3 min-w-0 space-y-10 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+        {/* On small screens the stage is pinned above this panel, so focused controls keep clear of it. */}
+        <div className="order-3 min-w-0 space-y-10 max-lg:[&_button]:scroll-mt-[62dvh] max-lg:[&_input]:scroll-mt-[62dvh] max-lg:[&_select]:scroll-mt-[62dvh] lg:col-start-2 lg:row-span-2 lg:row-start-1">
           <section aria-labelledby="adjust-heading">
             <h2 id="adjust-heading" className="label-xs text-ash">
               Adjust
@@ -356,12 +356,12 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
 
             {active && activeProduct ? (
               <>
-                {formOf(activeProduct, active.formId).components.length > 1 && !hasExactAsset(activeProduct, active.formId, active.side) && (
+                {formOf(activeProduct, active.formId).components.length > 1 && (
                   <fieldset className="mt-5">
-                    <legend className="text-sm">What to move</legend>
+                    <legend className="text-sm">Move</legend>
                     <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
                       <TargetButton selected={pieceId === null} onClick={() => setSelectedComponent(null)} testId="target-group">
-                        Both pieces
+                        Pair
                       </TargetButton>
                       {formOf(activeProduct, active.formId).components.map((c) => (
                         <TargetButton
@@ -370,7 +370,8 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
                           onClick={() => setSelectedComponent(c.id)}
                           testId={`target-${c.id}`}
                         >
-                          {c.label}
+                          {/* "Symbol (upper, outer)" reads as "Symbol" here; the full label stays on the drag handle. */}
+                          {c.label.split(" (")[0]}
                         </TargetButton>
                       ))}
                     </div>

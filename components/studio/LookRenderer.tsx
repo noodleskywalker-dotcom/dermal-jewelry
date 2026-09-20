@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { catalog } from "@/lib/catalog";
 import { containRect, zoomedRect, pxDeltaToGroupUnits, pxDeltaToNormalized, resolveComponents, ZERO_TWEAK } from "@/lib/studio/geometry";
 import type { ComponentTweak, GroupTransform, LookItem, StudioPhoto } from "@/lib/studio/types";
-import { FormVisual, hasExactAsset } from "@/components/catalog/FormVisual";
-import { JewelryArt } from "./JewelryArt";
+import { PieceArt } from "@/components/catalog/FormVisual";
 
 // The single renderer for jewelry on a photo. Face Studio, product-card previews and the mobile
 // try-on sheet all use it, so every surface shows the same placement.
@@ -103,9 +102,7 @@ function PlacedItem({
 
   const components = resolveComponents(product, item);
   const isActive = interaction?.activeUid === item.uid;
-  // A form shown from one exact image keeps its approved spacing, so its pieces are not moved separately.
-  const exact = hasExactAsset(product, item.formId, item.side);
-  const pieceMode = !exact && Boolean(interaction && isActive && interaction.selectedComponent);
+  const pieceMode = Boolean(interaction && isActive && interaction.selectedComponent);
 
   const groupStyle: React.CSSProperties = {
     left: `${item.group.x * 100}%`,
@@ -115,7 +112,9 @@ function PlacedItem({
     transform: `translate(-50%, -50%) rotate(${item.group.rotation}deg)`,
   };
 
-  const drawn = components.map((c) => {
+  // Each piece is its own source image (or drawn fallback), so pieces stay individually movable.
+  const art = components.map((c) => {
+    const piece = <PieceArt product={product} formId={item.formId} componentId={c.id} art={c.art} side={item.side} />;
     const style: React.CSSProperties = {
       left: `${c.leftPct}%`,
       top: `${c.topPct}%`,
@@ -148,17 +147,16 @@ function PlacedItem({
             );
           }}
         >
-          <JewelryArt art={c.art} />
+          {piece}
         </DragHandle>
       );
     }
     return (
       <span key={c.id} data-testid={`piece-${c.id}`} className="pointer-events-none absolute block" style={style}>
-        <JewelryArt art={c.art} />
+        {piece}
       </span>
     );
   });
-  const art = exact ? <FormVisual product={product} formId={item.formId} side={item.side} /> : drawn;
 
   if (!interaction) {
     return (

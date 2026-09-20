@@ -21,6 +21,27 @@ export type ProductComponent = {
   y: number;
   /** Width as a fraction of the group unit. */
   size: number;
+  /** Default rotation in degrees. Omitted means 0. */
+  rotation?: number;
+  /**
+   * True when the piece looks the same from either side, so one image serves both.
+   * A piece that is not symmetric (the symbol) is still never mirrored: its one approved
+   * orientation is reused on the other side unless a dedicated right-side image is supplied.
+   */
+  symmetric?: boolean;
+};
+
+/** How trustworthy the artwork for a form is. It says nothing about the physical product. */
+export type ArtClass =
+  | "concept-fallback" // code-drawn stand-in
+  | "prototype-product-art" // signed-off illustration for the website prototype only
+  | "commercial-product-asset"; // manufacturer or CAD render, or photography of the made product
+
+/** The approved default relationship between a form's pieces. The pieces themselves are in `components`. */
+export type Composition = {
+  approved: boolean;
+  artClass: ArtClass;
+  note: string;
 };
 
 export type SpecStatus = "unverified" | "verified";
@@ -38,6 +59,8 @@ export type ProductForm = {
   /** Placement profile used for previews and Face Studio defaults. */
   placement: PlacementId;
   components: ProductComponent[];
+  /** Approval and artwork status of this arrangement. Omitted means unapproved concept fallback. */
+  composition?: Composition;
   /** Default group width as a fraction of the photo width. */
   defaultScale: number;
   /** Demo-only placeholder price, not an approved selling price. */

@@ -112,14 +112,14 @@ test.describe("forms in Face Studio", () => {
     const item = page.getByTestId("placed-item");
     await expect(item).toHaveCount(1);
     await expect(page.getByTestId("piece-symbol")).toHaveCount(1);
-    await expect(page.getByTestId("piece-gem")).toHaveCount(0);
+    await expect(page.getByTestId("piece-gemstone")).toHaveCount(0);
     const src = await page.getByTestId("photo-frame").locator("img").getAttribute("src");
 
     await mouseDrag(page, item, 30, 25);
     const dermalPlaced = await relativeCentre(page, item);
 
     await page.getByTestId("studio-form-anti-eyebrow").click();
-    await expect(page.getByTestId("piece-gem")).toHaveCount(1);
+    await expect(page.getByTestId("piece-gemstone")).toHaveCount(1);
     const pair = await relativeCentre(page, item);
     // The pair starts from its own anti-eyebrow default, not from the cheek position.
     expect(pair.y).toBeLessThan(dermalPlaced.y - 0.03);

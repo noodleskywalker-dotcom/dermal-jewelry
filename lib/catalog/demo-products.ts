@@ -84,9 +84,16 @@ export const demoProducts: Product[] = [
         status: "available",
         placement: "anti-eyebrow",
         components: [
-          { id: "symbol", label: "Symbol (upper, outer)", art: "love-symbol", x: 0.3, y: -0.2, size: 0.48 },
-          { id: "gem", label: "Gemstone (lower, inner)", art: "garnet-gem", x: -0.28, y: 0.2, size: 0.2 },
+          // Approved default composition. x and y are offsets from the pair's centre in pair units,
+          // authored for the wearer's left: +x is outward, +y is down. size is the piece's width.
+          { id: "symbol", label: "Symbol (upper, outer)", art: "love-symbol", x: 0.3, y: -0.2, size: 0.48, rotation: 0 },
+          { id: "gemstone", label: "Gemstone (lower, inner)", art: "garnet-gem", x: -0.28, y: 0.2, size: 0.2, rotation: 0, symmetric: true },
         ],
+        composition: {
+          approved: true,
+          artClass: "concept-fallback",
+          note: "Symbol upper and outer, gemstone lower and inner, on the approved diagonal. Artwork is the code-drawn fallback until prototype product art is supplied.",
+        },
         defaultScale: 0.12,
         demoPrice: 390,
         packageContents: "Package contents are not confirmed yet. This concept shows two decorative tops.",

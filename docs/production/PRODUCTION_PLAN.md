@@ -201,7 +201,7 @@ image overlays inside the existing renderer.
 
 1. **The public identity**: reveal and campaign use an original DESERT EYE figure, not the franchise character. Yes or no.
 2. **The 7.0 second storyboard** in section 2, including that the jewelry is composited and never generated.
-3. **The exact anti-eyebrow product source** (photo, CAD render or signed-off illustration). Without it there is nothing exact to composite, and the site keeps the labeled concept artwork.
+3. **The anti-eyebrow product art**, as two transparent files (`symbol`, `gemstone`; see `ASSET_SLOT.md`). For the prototype a signed-off illustration is enough, classified as PROTOTYPE PRODUCT ART. CAD renders or photography replace it before commercial launch. Without it the site keeps the labeled concept artwork.
 4. **The design of the micro dermal and nose forms**, or confirmation that they stay "design required" for now.
 5. **The three still prompts and the start-frame prompt** in section 3, word for word.
 6. **The minimum test plan** in section 4: 3 generations, about 8 of the 10 available credits.

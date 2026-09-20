@@ -9,7 +9,7 @@ test.describe("photo selection", () => {
 
     // Upper/outer symbol, lower/inner gemstone on the wearer's left (viewer's right).
     const symbol = await page.getByTestId("piece-symbol").boundingBox();
-    const gem = await page.getByTestId("piece-gem").boundingBox();
+    const gem = await page.getByTestId("piece-gemstone").boundingBox();
     expect(symbol!.y).toBeLessThan(gem!.y);
     expect(symbol!.x).toBeGreaterThan(gem!.x);
 
@@ -88,18 +88,63 @@ test.describe("adjusting the jewelry", () => {
     expect(reset.y).toBeCloseTo(start.y, 3);
   });
 
-  test("one piece can be adjusted without moving the other", async ({ page }) => {
+  test("move the pair, the symbol alone and the gemstone alone, then reset to the approved arrangement", async ({ page }) => {
     await openStudioWithPhoto(page);
-    const symbolBefore = await page.getByTestId("piece-symbol").boundingBox();
-    const gemBefore = await page.getByTestId("piece-gem").boundingBox();
+    const symbol = page.getByTestId("piece-symbol");
+    const gemstone = page.getByTestId("piece-gemstone");
+    await expect(page.getByTestId("target-group")).toHaveText("Pair");
+    await expect(page.getByTestId("target-symbol")).toHaveText("Symbol");
+    await expect(page.getByTestId("target-gemstone")).toHaveText("Gemstone");
 
-    await page.getByTestId("target-gem").click();
-    await mouseDrag(page, page.getByTestId("piece-gem"), 30, 20);
+    // Positions are compared relative to the photo, so page scrolling cannot affect them.
+    const where = async () => ({ symbol: await relativeCentre(page, symbol), gemstone: await relativeCentre(page, gemstone) });
+    const approved = await where();
+    expect(approved.symbol.y).toBeLessThan(approved.gemstone.y);
+    expect(approved.symbol.x).toBeGreaterThan(approved.gemstone.x);
 
-    const symbolAfter = await page.getByTestId("piece-symbol").boundingBox();
-    const gemAfter = await page.getByTestId("piece-gem").boundingBox();
-    expect(gemAfter!.x).toBeGreaterThan(gemBefore!.x + 15);
-    expect(symbolAfter!.x).toBeCloseTo(symbolBefore!.x, 0);
+    // On a phone the photo stage stays pinned at the top, so bring each control to the lower
+    // part of the screen before pressing it, as a customer scrolling the panel would.
+    const press = async (testId: string) => {
+      const control = page.getByTestId(testId);
+      await control.evaluate((el) => el.scrollIntoView({ block: "end" }));
+      await control.click();
+    };
+
+    // Gemstone alone.
+    await press("target-gemstone");
+    await mouseDrag(page, gemstone, 30, 20);
+    const afterGemstone = await where();
+    expect(afterGemstone.gemstone.x).toBeGreaterThan(approved.gemstone.x + 0.02);
+    expect(afterGemstone.symbol.x).toBeCloseTo(approved.symbol.x, 3);
+    expect(afterGemstone.symbol.y).toBeCloseTo(approved.symbol.y, 3);
+
+    // Symbol alone.
+    await press("target-symbol");
+    await mouseDrag(page, symbol, -25, -30);
+    const afterSymbol = await where();
+    expect(afterSymbol.symbol.y).toBeLessThan(afterGemstone.symbol.y - 0.015);
+    expect(afterSymbol.gemstone.x).toBeCloseTo(afterGemstone.gemstone.x, 3);
+    expect(afterSymbol.gemstone.y).toBeCloseTo(afterGemstone.gemstone.y, 3);
+
+    // The pair as a whole: both pieces travel together and keep their new spacing.
+    await press("target-group");
+    await mouseDrag(page, page.getByTestId("placed-item"), -60, 40);
+    const afterPair = await where();
+    expect(afterPair.symbol.x - afterPair.gemstone.x).toBeCloseTo(afterSymbol.symbol.x - afterSymbol.gemstone.x, 3);
+    expect(afterPair.symbol.x).toBeLessThan(afterSymbol.symbol.x - 0.03);
+    await page.getByTestId("scale").fill("20");
+    await page.getByTestId("rotation").fill("15");
+    await expect(page.getByTestId("placed-item")).toHaveAttribute("style", /rotate\(15deg\)/);
+
+    // Reset restores the exact approved default arrangement.
+    await page.getByTestId("reset").click();
+    const reset = await where();
+    for (const piece of ["symbol", "gemstone"] as const) {
+      expect(reset[piece].x).toBeCloseTo(approved[piece].x, 3);
+      expect(reset[piece].y).toBeCloseTo(approved[piece].y, 3);
+      expect(reset[piece].widthRatio).toBeCloseTo(approved[piece].widthRatio, 3);
+    }
+    await expect(page.getByTestId("rotation-value")).toHaveText("0°");
   });
 
   test("keyboard and buttons work instead of dragging", async ({ page }) => {
@@ -150,7 +195,7 @@ test.describe("adjusting the jewelry", () => {
 
     // Symbol stays outer (now towards the viewer's left) and is never flipped.
     const symbol = await page.getByTestId("piece-symbol").boundingBox();
-    const gem = await page.getByTestId("piece-gem").boundingBox();
+    const gem = await page.getByTestId("piece-gemstone").boundingBox();
     expect(symbol!.x).toBeLessThan(gem!.x);
     const transform = await page.getByTestId("piece-symbol").evaluate((el) => (el as HTMLElement).style.transform);
     expect(transform).not.toMatch(/scale|matrix/);

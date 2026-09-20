@@ -1,80 +1,118 @@
 # Exact product asset slot
 
-The code-drawn jewelry is temporary. It stays only as a fallback until the exact asset is supplied.
+The code-drawn jewelry is temporary. It stays only as a fallback until the exact assets are supplied.
 No new design was invented to prepare this slot.
 
-## Where the file goes
+## Source files: one transparent image per piece
 
 ```text
-public/products/desert-eye-love/anti-eyebrow.webp        wearer's left, the approved orientation (required)
-public/products/desert-eye-love/anti-eyebrow.right.webp  wearer's right (optional, see below)
+public/products/desert-eye-love/anti-eyebrow/symbol.webp      required
+public/products/desert-eye-love/anti-eyebrow/gemstone.webp    required
+
+public/products/desert-eye-love/anti-eyebrow/symbol.right.webp     optional
+public/products/desert-eye-love/anti-eyebrow/gemstone.right.webp   optional
 ```
 
 `.png` is accepted in place of `.webp`. If both exist, `.webp` is used.
-The general pattern is `public/products/<product-slug>/<form-id>[.right].<webp|png>`, so other
-products and forms use the same slot later (`micro-dermal`, `nose`, once those designs exist).
+General pattern: `public/products/<product-slug>/<form-id>/<component-id>[.right].<webp|png>`.
+The file name must equal the component id in the form's metadata (`symbol`, `gemstone`).
 
-After adding or removing a file, run `npm run assets:sync`. It also runs automatically before
-`npm run dev` and `npm run build`. It rewrites `lib/catalog/asset-manifest.json`, which is committed
-together with the image.
+After adding or removing a file, run `npm run assets:sync`. It also runs before `npm run dev` and
+`npm run build`. It rewrites `lib/catalog/asset-manifest.json`, which is committed with the images.
 
-## What the file must be
+**Both pieces are needed.** If either file is missing, the whole form keeps the drawn fallback, so
+exact art and drawn art are never mixed inside one piece of jewelry.
+
+## What each file must be
 
 - Transparent background: WebP with alpha, or PNG-24 with alpha.
-- One image of the **whole pair**, in the approved arrangement: the hollow metallic symbol upper and outer, the small deep-red faceted gemstone lower and inner, with the approved spacing and the approved diagonal.
-- Oriented for the **wearer's left**, which is how the approved reference shows it: the symbol is toward the upper right of the image, the gemstone toward the lower left.
-- **Cropped tightly** to the pair, with no more than about 2% transparent margin on any side. The site fits the image by its width, so spare margin would make the jewelry look smaller.
-- Straight-on view, as it would sit on skin. No perspective tilt.
-- No face, no skin, no background, no sand, no text, no watermark.
-- No cast shadow baked in. A very soft contact shadow directly under the metal is acceptable; the site adds its own soft shadow on paper surfaces.
-- No grey ball or stud anywhere.
-- Derived from an exact source: a photograph of a sample, a render from the maker's CAD file, or an illustration the owner has signed off. It must not be drawn by a generative model.
+- **One piece only**, cropped tightly to it (about 2% transparent margin). The site fits each image by its width to that piece's `size`, so spare margin makes the piece look smaller.
+- `symbol`: the hollow metallic symbol, upright in its approved orientation. The openings must be truly transparent so skin shows through.
+- `gemstone`: the small deep-red faceted gemstone in its setting.
+- Straight-on view. No face, skin, background, sand, text or watermark. No grey ball or stud.
+- No cast shadow baked in. A very soft contact shadow directly under the metal is acceptable; paper surfaces add their own soft shadow.
+- Recommended size: **symbol 1600 px wide, gemstone 800 px wide** (the gemstone is drawn at about 0.42 of the symbol's width). Minimum 800 px and 400 px. sRGB, 8 bits per channel. Target under 250 KB and 100 KB as WebP.
+- Aspect: whatever the tight crop gives. The site reads the height from the file.
 
-## Size and aspect
+## Default composition metadata
 
-- Recommended: **2400 px on the long edge**, which for this pair is the width. The authored layout of the pair is about 0.92 wide by 0.74 tall, so expect roughly **2400 × 1930 px** (about 5:4). The exact aspect is whatever the approved spacing gives; the site reads the height from the file.
-- Minimum: 1200 px wide. Below that the reveal ending and the product page look soft on high-density screens.
-- Target file size: under 400 KB as WebP. It is loaded once and reused on every surface.
-- Colour: sRGB, 8 bits per channel.
+The relationship between the two pieces is **data, not pixels**. It lives with the form in
+`lib/catalog/demo-products.ts`:
+
+```ts
+{
+  id: "anti-eyebrow",
+  placement: "anti-eyebrow",
+  defaultScale: 0.12,            // width of the pair's unit box as a fraction of the photo width
+  components: [
+    // x, y: offset of the piece's centre from the pair's centre, in pair units,
+    //       authored for the wearer's LEFT. +x is outward, +y is down.
+    // size: the piece's width in pair units.   rotation: degrees, default 0.
+    { id: "symbol",   art: "love-symbol", x:  0.30, y: -0.20, size: 0.48, rotation: 0 },
+    { id: "gemstone", art: "garnet-gem",  x: -0.28, y:  0.20, size: 0.20, rotation: 0, symmetric: true },
+  ],
+  composition: {
+    approved: true,                          // symbol upper + outer, gemstone lower + inner, approved diagonal
+    artClass: "concept-fallback",            // becomes "prototype-product-art", later "commercial-product-asset"
+    note: "…",
+  },
+}
+```
+
+These numbers reproduce the currently approved anti-eyebrow composition exactly; they were not
+changed. `art` names the drawn fallback used while a file is missing. If the signed-off artwork needs
+slightly different spacing or scale, only these numbers change. No component or layout code changes.
+
+## How it is used
+
+Every surface composes the same two images through the same metadata, so there is one
+representation of the piece:
+
+| Surface | How |
+| --- | --- |
+| Product page, shop, collections, homepage, bag thumbnail, Face Studio piece rail | `ProductArtwork` → `FormVisual` |
+| Placement preview on the featureless head | `PlacementPreview` → `FormVisual` |
+| Personalized previews (hover panel, Try on sheet, product page) | `TryOnPreview` → `LookRenderer` → `PieceArt` |
+| Face Studio stage | `LookRenderer` → `PieceArt` |
+| Reveal still and final reveal frame | `RevealPlayer` → `FormVisual` |
+
+`FormVisual` and `PieceArt` are in `components/catalog/FormVisual.tsx`. No precomposed derivative is
+generated; two small images are composed in the browser. If one is ever wanted for performance, it
+must be rendered from these same two files and this metadata, never redrawn by hand.
+
+## Face Studio
+
+Because the pieces are separate images, the **Move** control keeps all three targets: **Pair**,
+**Symbol**, **Gemstone**. The pair can be moved, scaled and rotated; each piece can be moved on its
+own. **Reset** clears every adjustment and returns to the default composition above, exactly.
+Moving one piece is a visual preview and does not describe a real spacing or fit.
 
 ## The wearer's right
 
-The image is never flipped, because flipping would mirror the symbol. If only the left file exists,
-the wearer's right side keeps the fallback artwork. To cover it, supply `anti-eyebrow.right.webp`:
-the same two pieces with their positions mirrored (symbol toward the upper left, gemstone toward the
-lower right) and the symbol itself **not** mirrored.
+Only positions mirror. The symbol image is **never flipped**. Without `symbol.right.webp`, the one
+approved `symbol.webp` is reused on the right in its approved, non-mirrored orientation, at the
+mirrored position. Supply a `.right` file only if the artwork genuinely differs on that side, for
+example a lit edge that should face the other way. The gemstone is marked `symmetric` and normally
+needs no right-side file.
 
-## Every place that uses it
+## Prototype art versus commercial asset
 
-All of these draw through one component, `components/catalog/FormVisual.tsx`, so they switch together
-the moment the file is present:
+For the **website prototype**, a signed-off illustration based on the approved design may be used as
+the exact visual asset, even if it began in an AI-assisted concept-design process. It must be
+classified internally as **PROTOTYPE PRODUCT ART**: set `composition.artClass` to
+`"prototype-product-art"` and record it in `docs/ASSET_REGISTER.md`.
 
-| Surface | Component |
-| --- | --- |
-| Face Studio stage, and its drag handle | `components/studio/LookRenderer.tsx` |
-| Personalized preview on shop cards (hover panel and Try on sheet) and on the product page | `components/catalog/TryOnPreview.tsx`, through `LookRenderer` |
-| Placement preview on the featureless head | `components/catalog/PlacementPreview.tsx` |
-| Product tiles in the shop, collections, "More pieces" and the homepage grid | `components/catalog/ProductArtwork.tsx` |
-| Homepage opening, featured family section and Face Studio demonstration | `components/home/HomeSections.tsx` |
-| Reveal still, and the final jewelry frame of the reveal | `components/reveal/RevealPlayer.tsx` |
-| Demo bag thumbnail, and the piece rail in Face Studio | `components/cart/BagContents.tsx`, `components/studio/FaceStudio.tsx`, through `ProductArtwork` |
+Prototype product art is **not** proof of manufactured dimensions, metal grade, gemstone identity,
+threading, compatibility or actual finish. The site's specification table stays "Unverified".
 
-The asset is placed over the bounding box of the form's authored layout (`layoutBounds` in
-`lib/catalog/assets.ts`), so it sits where the fallback sits, at the same size. Default size and
-position in Face Studio do not change.
+Before commercial launch, replace it with manufacturer or CAD-derived renders, or real photography of
+the manufactured product, and set `artClass` to `"commercial-product-asset"`. The replacement is a
+file swap at the same paths. Placement geometry and UI do not change; at most the `x`, `y` and `size`
+numbers are re-measured against the real piece.
 
-One behaviour changes when an exact asset is in use: "What to move" (adjusting one piece on its own)
-is hidden for that form, because a single approved image keeps its approved spacing. Moving, scaling
-and rotating the whole pair work as before.
+## Reveal and sand-frame grade
 
-## The reveal
-
-The final jewelry frame was already a separate overlay, never part of any footage. It now draws
-through `FormVisual` too. When the exact asset is added it replaces the fallback in the reveal ending
-with no change to the timing: 5.5 seconds of scene, then 1.5 seconds of jewelry.
-
-## Sand-frame grade
-
-The generated sand frame is paler and cooler than the dunes in the start frame. A presentation-only
-CSS filter (`.concept-sand` in `app/globals.css`) warms and deepens it wherever the prototype shows
-it. The image files in `references/generated/` are untouched.
+The final jewelry frame of the reveal is a separate overlay drawn through `FormVisual`, never part of
+any footage, so adding the assets changes the ending's artwork and nothing about its timing.
+The development-only prototype warms the generated sand frame with a presentation-only CSS filter
+(`.concept-sand`); the image files are untouched.
