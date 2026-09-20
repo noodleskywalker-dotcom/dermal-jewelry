@@ -31,6 +31,9 @@ A labeled **test pattern** (`public/fixtures/reveal-test-pattern.webm`, made by
 "TEST PATTERN, not campaign media" and a timer. It is offered only by a development server through
 `?revealFixture=1`; a production build ignores that parameter. It is not the campaign scene.
 
+> The production-ready storyboard, prompts, generation plans and media specification now live in
+> `docs/production/PRODUCTION_PLAN.md`. The storyboard below is the earlier outline it was built from.
+
 ## Storyboard for approval: DESERT EYE — LOVE, 7.0 seconds
 
 This is a proposal. It is not permission to generate paid media, and nothing has been generated.

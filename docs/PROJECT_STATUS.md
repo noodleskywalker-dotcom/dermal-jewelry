@@ -31,6 +31,20 @@ Details are in `docs/DECISIONS.md` and `docs/REVEALS.md`.
 | Metal-sweep loop for originals | implemented, not owner-approved | Drawn in CSS, no media file. |
 | Featureless-head placement preview | tested | Approved device, labeled as not a person. |
 
+## Asset production phase (started 20 September 2026)
+
+The interaction architecture is approved as the working foundation. No redesign and no new major
+features are planned. Work is now art direction and asset production, and **nothing has been
+generated or spent yet**.
+
+- `docs/production/ASSET_MANIFEST.md`: the seven assets needed per form. Anti-eyebrow assets are needed; micro dermal and nose are **design required**.
+- `docs/production/PRODUCTION_PLAN.md`: the public IP boundary, the 7.0 second storyboard, exact Higgsfield prompts and shot specifications, the minimum test plan (3 generations, about 8 credits), the premium plan (about 110 credits), three katana-geometry directions for an original piece, the media specification, and the list of approvals needed before any generation.
+
+Missing art is documented rather than imitated in code. The site keeps its labeled concept artwork
+and stills until real assets arrive.
+
+Next concrete step: owner approvals in section 8 of the production plan.
+
 ## Earlier visual redirection
 
 The type system, palette, text links, blended homepage header, mobile menu and restyled Face Studio
