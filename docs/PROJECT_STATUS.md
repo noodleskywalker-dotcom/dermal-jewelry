@@ -79,6 +79,15 @@ Made after the owner's visual review. It is tested locally and **not owner-appro
 | Try on without a photo | tested | Featureless head stand-in. The grid fixture is for tests only. |
 | Original designs on the story page, KIRI as Original / Concept | tested | Words only for KIRI: no artwork, price or product. |
 
+### Layout frozen, asset creation next (21 September 2026)
+
+The owner's brief after the refinement review states that the current interaction and layout
+architecture is approved as the working base, and that visual layout changes stop. The next phase is
+asset creation. `docs/production/PRODUCTION_QUEUE.md` lists the eight assets in the owner's order, with
+dimensions, background, crop, angle, where each is used, whether current tools can make it, whether it
+needs Higgsfield credits, whether product geometry is untouched, and whether it is internal only.
+Nothing has been generated and no credits have been spent. Five owner decisions are listed there.
+
 ## Asset production phase (started 20 September 2026)
 
 The interaction architecture is approved as the working foundation. No redesign and no new major
