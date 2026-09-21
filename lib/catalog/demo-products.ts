@@ -147,6 +147,13 @@ export const demoProducts: Product[] = [
       { label: "Stone", value: "Deep-red faceted gemstone. Identity not yet verified.", status: "unverified" },
       ...unverifiedSpecs(),
     ],
+    // The owner's proposal, 21 September 2026. No maker has confirmed any of it, and the stone is not named.
+    materials: [
+      { part: "Tops", value: "Openwork symbol, red-faced metal", status: "Prototype art" },
+      { part: "Stone", value: "Deep-red faceted gemstone", status: "Not confirmed" },
+      { part: "Post and base", value: "Titanium", status: "Proposed" },
+      { part: "Finish", value: "Polished", status: "Proposed" },
+    ],
   }),
   family({
     id: "demo-crimson-orbit",

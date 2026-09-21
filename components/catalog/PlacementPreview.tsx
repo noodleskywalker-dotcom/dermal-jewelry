@@ -18,26 +18,55 @@ export function PlacementPreview({ product, formId }: { product: Product; formId
   const anchor = ANCHORS[form.placement];
 
   return (
-    <figure data-testid="placement-preview" data-form={form.id} data-placement={form.placement} className="relative aspect-[4/5] w-full overflow-hidden bg-bone">
+    <figure data-testid="placement-preview" data-form={form.id} data-placement={form.placement} className="relative aspect-[4/5] w-full overflow-hidden bg-bone text-ink">
+      {/* A smooth sculpted head, built only from soft light and shade. There are no drawn lines. */}
       <svg viewBox="0 0 800 1000" className="absolute inset-0 h-full w-full" aria-hidden="true">
         <defs>
-          <linearGradient id="head-form" x1="0.1" y1="0" x2="0.9" y2="1">
-            <stop offset="0" stopColor="#d9d3c6" />
-            <stop offset="0.55" stopColor="#c4bdaf" />
-            <stop offset="1" stopColor="#a39c8e" />
+          <linearGradient id="head-ground" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#f6f3ec" />
+            <stop offset="1" stopColor="#e6e0d3" />
           </linearGradient>
-          <radialGradient id="head-light" cx="0.36" cy="0.3" r="0.7">
-            <stop offset="0" stopColor="#f3efe6" stopOpacity="0.9" />
-            <stop offset="1" stopColor="#f3efe6" stopOpacity="0" />
+          <linearGradient id="head-form" x1="0.15" y1="0" x2="0.85" y2="1">
+            <stop offset="0" stopColor="#ece7dc" />
+            <stop offset="0.5" stopColor="#d9d2c4" />
+            <stop offset="1" stopColor="#b9b1a1" />
+          </linearGradient>
+          <radialGradient id="head-light" cx="0.34" cy="0.26" r="0.62">
+            <stop offset="0" stopColor="#ffffff" stopOpacity="0.85" />
+            <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
           </radialGradient>
+          <radialGradient id="head-core" cx="0.72" cy="0.7" r="0.6">
+            <stop offset="0" stopColor="#8f8676" stopOpacity="0.5" />
+            <stop offset="1" stopColor="#8f8676" stopOpacity="0" />
+          </radialGradient>
+          <filter id="head-soft" filterUnits="userSpaceOnUse" x="0" y="0" width="800" height="1000">
+            <feGaussianBlur stdDeviation="16" />
+          </filter>
+          <filter id="head-softer" filterUnits="userSpaceOnUse" x="0" y="0" width="800" height="1000">
+            <feGaussianBlur stdDeviation="30" />
+          </filter>
+          <clipPath id="head-clip">
+            <path d="M400 96 C566 96 646 236 640 416 C635 566 590 700 520 778 C482 820 318 820 280 778 C210 700 165 566 160 416 C154 236 234 96 400 96 Z" />
+          </clipPath>
         </defs>
-        {/* Neck and shoulders, then the head: smooth planes, no features. */}
-        <path d="M300 760 C300 850 250 900 120 940 L120 1000 L680 1000 L680 940 C550 900 500 850 500 760 Z" fill="url(#head-form)" />
-        <path d="M400 110 C560 110 640 240 636 410 C632 560 590 690 520 770 C480 815 320 815 280 770 C210 690 168 560 164 410 C160 240 240 110 400 110 Z" fill="url(#head-form)" />
-        <path d="M400 110 C560 110 640 240 636 410 C632 560 590 690 520 770 C480 815 320 815 280 770 C210 690 168 560 164 410 C160 240 240 110 400 110 Z" fill="url(#head-light)" />
-        {/* The faintest planes for brow and nose so placements can be read. */}
-        <path d="M250 410 C310 380 360 384 384 404 M416 404 C440 384 490 380 550 410" fill="none" stroke="#8f887a" strokeOpacity="0.28" strokeWidth="5" strokeLinecap="round" />
-        <path d="M400 420 C394 490 380 540 372 570 C384 590 416 590 428 570" fill="none" stroke="#8f887a" strokeOpacity="0.3" strokeWidth="5" strokeLinecap="round" />
+        <rect width="800" height="1000" fill="url(#head-ground)" />
+        <ellipse cx="400" cy="985" rx="330" ry="26" fill="#9a917f" opacity="0.18" filter="url(#head-soft)" />
+        {/* Neck and shoulders. */}
+        <path d="M312 740 C312 850 262 900 96 946 L96 1000 L704 1000 L704 946 C538 900 488 850 488 740 Z" fill="url(#head-form)" />
+        <ellipse cx="400" cy="800" rx="150" ry="46" fill="#8f8676" opacity="0.4" filter="url(#head-soft)" />
+        {/* The head, then its light and its turning edge. */}
+        <path d="M400 96 C566 96 646 236 640 416 C635 566 590 700 520 778 C482 820 318 820 280 778 C210 700 165 566 160 416 C154 236 234 96 400 96 Z" fill="url(#head-form)" />
+        <g clipPath="url(#head-clip)">
+          <rect width="800" height="1000" fill="url(#head-core)" />
+          <rect width="800" height="1000" fill="url(#head-light)" />
+          {/* Eye sockets, the bridge and tip of the nose, and the hollow under it: shade only. */}
+          <ellipse cx="300" cy="432" rx="78" ry="34" fill="#9c9382" opacity="0.34" filter="url(#head-softer)" />
+          <ellipse cx="500" cy="432" rx="78" ry="34" fill="#9c9382" opacity="0.34" filter="url(#head-softer)" />
+          <ellipse cx="392" cy="500" rx="16" ry="92" fill="#ffffff" opacity="0.5" filter="url(#head-soft)" />
+          <ellipse cx="428" cy="520" rx="20" ry="80" fill="#8f8676" opacity="0.26" filter="url(#head-soft)" />
+          <ellipse cx="402" cy="604" rx="46" ry="16" fill="#8f8676" opacity="0.3" filter="url(#head-soft)" />
+          <ellipse cx="400" cy="676" rx="64" ry="14" fill="#8f8676" opacity="0.16" filter="url(#head-soft)" />
+        </g>
       </svg>
 
       {anchor && (
@@ -51,7 +80,7 @@ export function PlacementPreview({ product, formId }: { product: Product; formId
 
       <figcaption className="label-xs absolute inset-x-3 bottom-3 flex justify-between gap-4 text-ink/60">
         <span>{form.label} · wearer&rsquo;s left</span>
-        <span>Featureless form, not a person. Approximate.</span>
+        <span>Sculpted form, not a person. Approximate.</span>
       </figcaption>
     </figure>
   );

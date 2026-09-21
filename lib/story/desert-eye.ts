@@ -1,3 +1,4 @@
+import { SAND_EFFECT } from "./sand-effect";
 import type { CollectionStory } from "./types";
 
 // DESERT EYE. The character is INTERNAL concept material pending a rights review.
@@ -45,27 +46,8 @@ export const desertEyeStory: CollectionStory = {
       brief: "Generic sand effect on blue, no character in it, keyed in the browser. A cleaner take would enter from a point inside the frame on a truly flat ground.",
     },
   ],
-  // Measured from the clip itself (references/generated/stage2/07-analysis.json), not from its prompt.
-  effect: {
-    slot: "sandfx",
-    width: 1280,
-    height: 720,
-    startAt: 0.6,
-    // The model ignored "a quarter in from the left": the stream enters at the left edge, at floor height.
-    emission: { x: 0.012, y: 0.74 },
-    // Top of the cork stopper on the seated picture.
-    origin: { x: 0.31, y: 0.255 },
-    // Pinned to the gourd while it is a ribbon. When it bursts, at about 2.6 s, it drops to the ground
-    // the figure sits on, where the footage's own floor then lines up with the page.
-    settleFrom: 2.5,
-    settleTo: 3.7,
-    coveredAt: 4.7,
-    edgeFeather: 0.02,
-    floor: { y: 0.762, until: 2.5 },
-    // The generated ground is a blue studio with a gradient, a floor and shadows, not a flat key. The key
-    // colour is the median corner of the first frame; the matte itself does not depend on it.
-    key: { key: [42 / 255, 90 / 255, 124 / 255], solidAt: -0.3, clearAt: 0.1 },
-  },
+  // Top of the cork stopper on the seated picture.
+  effect: { ...SAND_EFFECT, origin: { x: 0.31, y: 0.255 } },
   // The still is held, sand leaves the gourd, spreads, covers the page, and the cut happens under it.
   beats: [
     { id: "hold", from: 0, to: 0.6, title: "Still", caption: "The seated figure, still" },

@@ -7,10 +7,11 @@ import type { Product } from "@/lib/catalog/types";
 import { AddToBagButton } from "@/components/cart/AddToBagButton";
 import { RevealPlayer, type ConceptStills } from "@/components/reveal/RevealPlayer";
 import { useFormChoice } from "@/components/studio/useFormChoice";
+import { PieceAssembly } from "./PieceAssembly";
 import { PlacementPreview } from "./PlacementPreview";
 import { TryOnPreview } from "./TryOnPreview";
 
-type ViewId = "reveal" | "placement" | "tryon";
+type ViewId = "piece" | "reveal" | "placement" | "tryon";
 
 // One customer-facing page per design family. The chosen piercing form lives in the shared Studio
 // provider, so the reveal, the placement preview, the try-on, Face Studio and the bag always agree.
@@ -29,6 +30,8 @@ export function FamilyExperience({
   const { form, choose } = useFormChoice(product, initialFormId);
 
   const views: { id: ViewId; label: string }[] = [
+    // The whole piercing, assembled, comes first.
+    { id: "piece", label: "The piece" },
     ...(product.reveal.mode !== "none" ? [{ id: "reveal" as const, label: "Concept reveal" }] : []),
     { id: "placement", label: "Placement preview" },
     { id: "tryon", label: "Try on your face" },
@@ -56,7 +59,7 @@ export function FamilyExperience({
   return (
     <div className="grid gap-12 lg:grid-cols-[1.15fr_1fr]" data-testid="family" data-form={form.id}>
       <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
-        <div role="tablist" aria-label="Ways to look at this piece" className="flex gap-x-7 overflow-x-auto whitespace-nowrap border-b border-line">
+        <div role="tablist" aria-label="Ways to look at this piece" className="flex gap-x-7 overflow-x-auto whitespace-nowrap border-b border-ink/15">
           {views.map((v, i) => (
             <button
               key={v.id}
@@ -71,7 +74,7 @@ export function FamilyExperience({
               tabIndex={view === v.id ? 0 : -1}
               onClick={() => setView(v.id)}
               onKeyDown={(e) => onTabKey(e, i)}
-              className={`label-xs -mb-px inline-flex min-h-11 items-center border-b ${view === v.id ? "border-ivory text-ivory" : "border-transparent text-ash hover:text-ivory"}`}
+              className={`label-xs -mb-px inline-flex min-h-11 items-center border-b ${view === v.id ? "border-ink text-ink" : "border-transparent text-ink/55 hover:text-ink"}`}
             >
               {v.label}
             </button>
@@ -81,6 +84,7 @@ export function FamilyExperience({
         {/* Width is tied to the window height so the whole 4:5 frame fits on screen, even in short windows. */}
         <div role="tabpanel" id={`panel-${view}`} aria-labelledby={`tab-${view}`} className="mt-5 w-full max-w-[max(16rem,60svh)]">
           {/* Keyed by product so leaving a product always unmounts, and so stops, its reveal. */}
+          {view === "piece" && <PieceAssembly key={product.id} product={product} formId={form.id} />}
           {view === "reveal" && <RevealPlayer key={product.id} product={product} formId={form.id} fixtureSrc={fixtureSrc} concept={concept} />}
           {view === "placement" && <PlacementPreview product={product} formId={form.id} />}
           {view === "tryon" && (
@@ -107,8 +111,8 @@ export function FamilyExperience({
               return (
                 <label
                   key={f.id}
-                  className={`flex min-h-11 items-center border-b text-sm has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-garnet-text ${
-                    selected ? "border-ivory text-ivory" : pending ? "cursor-not-allowed border-transparent text-ash/60" : "cursor-pointer border-transparent text-ash hover:text-ivory"
+                  className={`flex min-h-11 items-center border-b text-sm has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-garnet ${
+                    selected ? "border-ink text-ink" : pending ? "cursor-not-allowed border-transparent text-ink/35" : "cursor-pointer border-transparent text-ink/55 hover:text-ink"
                   }`}
                 >
                   <input
@@ -142,14 +146,14 @@ export function FamilyExperience({
           <Link
             href={`/face-studio?product=${product.slug}&form=${form.id}`}
             data-testid="try-it-on"
-            className="inline-flex min-h-12 items-center justify-center border border-ivory px-7 text-xs uppercase tracking-[0.22em] transition-colors duration-200 hover:bg-ivory hover:text-ink"
+            className="inline-flex min-h-12 items-center justify-center self-start border border-ink px-7 text-xs uppercase tracking-[0.22em] transition-colors duration-200 hover:bg-ink hover:text-ivory"
           >
             Try it on
           </Link>
         </div>
         <p className="text-xs leading-relaxed text-ash">Demo shopping only. Checkout is disabled and nothing can be ordered.</p>
 
-        <section aria-labelledby="included-heading" className="mt-10 border-t border-line pt-6">
+        <section aria-labelledby="included-heading" className="mt-10 border-t border-ink/15 pt-6">
           <h2 id="included-heading" className="label-xs text-ash">
             What&rsquo;s included · {form.label}
           </h2>

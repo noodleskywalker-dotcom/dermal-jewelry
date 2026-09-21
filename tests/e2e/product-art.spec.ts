@@ -59,7 +59,10 @@ test.describe("prototype product art", () => {
     // Product page: still, placement head, and the honest label.
     await page.goto("/product/desert-eye-love");
     await waitForArt(page);
-    expect((await inspect(page.getByTestId("reveal-player"))).every((p) => p.loaded)).toBe(true);
+    // The page opens on the whole piece, assembled from the same product images.
+    const assembled = await inspect(page.getByTestId("piece-assembly"));
+    expect(assembled.map((p) => p.component).sort()).toEqual(["gemstone", "symbol"]);
+    expect(assembled.every((p) => p.loaded && !p.flipped)).toBe(true);
     await page.getByRole("tab", { name: "Placement preview" }).click();
     const placed = await inspect(page.getByTestId("placement-preview"));
     expect(placed.map((p) => p.component)).toEqual(["symbol", "gemstone"]);

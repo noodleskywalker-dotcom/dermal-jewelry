@@ -7,7 +7,7 @@ test.describe("storefront navigation", () => {
     page.on("pageerror", (e) => errors.push(e.message));
 
     await page.goto("/collections");
-    await page.getByRole("link", { name: /View DESERT EYE/ }).click();
+    await page.getByRole("link", { name: "View DESERT EYE", exact: true }).click();
     await expect(page).toHaveURL(/\/collections\/desert-eye$/);
     // DESERT EYE is a story-driven collection: borderless jewelry objects instead of product cards.
     await expect(page.getByTestId("product-card")).toHaveCount(0);

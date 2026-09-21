@@ -108,6 +108,11 @@ export type Product = {
   defaultFormId: FormId;
   reveal: RevealConfig;
   specs: { label: string; value: string; status: SpecStatus }[];
+  /**
+   * What each part is made of, as far as anyone has said. "Proposed" is the owner's intention, not a
+   * maker's confirmation. Nothing here is a verified fact until a supplier confirms it.
+   */
+  materials?: { part: string; value: string; status: "Proposed" | "Not confirmed" | "Prototype art" }[];
 
   // Convenience copies of the default form, used by listings and filters.
   placements: PlacementId[];

@@ -17,8 +17,10 @@ export function Navbar() {
   const bag = useBag();
   const count = bagCount(bag);
   const [menuOpen, setMenuOpen] = useState(false);
-  const overlay = pathname === "/";
-  const light = site.collections.some((c) => c.stage === "light" && pathname === `/collections/${c.slug}`);
+  const overlay = false;
+  // Pages that stand on paper: the landing page, the selection, story-driven collections and product pages.
+  const light =
+    pathname === "/" || pathname === "/collections" || pathname.startsWith("/product/") || site.collections.some((c) => c.stage === "light" && pathname === `/collections/${c.slug}`);
 
   const linkClass = "label-xs inline-flex min-h-11 items-center opacity-80 transition-opacity duration-200 hover:opacity-100";
 

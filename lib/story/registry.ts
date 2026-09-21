@@ -39,3 +39,20 @@ export function internalStoryMedia(story: CollectionStory, internal: boolean): S
     sandfx: "/api/dev-concept/sandfx",
   };
 }
+
+export type MascotMedia = { idle: string; blink: string; yawn: string; page: string; look: string };
+
+/**
+ * The homepage mascot is a franchise character in a cute style, so it is internal concept material
+ * like the rest: a development server gets its pictures, every build gets none and shows jewelry instead.
+ */
+export function internalMascotMedia(internal: boolean): MascotMedia | null {
+  if (!internal) return null;
+  const at = (pose: string) => `/api/dev-concept/chibi-${pose}`;
+  return { idle: at("idle"), blink: at("blink"), yawn: at("yawn"), page: at("page"), look: at("look") };
+}
+
+/** The sand clip for page transitions. Development server only, like the rest of the internal media. */
+export function internalSandSource(internal: boolean): string | undefined {
+  return internal ? "/api/dev-concept/sandfx" : undefined;
+}

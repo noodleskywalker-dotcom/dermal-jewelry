@@ -6,6 +6,11 @@ const FAMILY = "/product/desert-eye-love";
 // The visually hidden radio is operated through its label, the way a customer does it.
 const chooseForm = (page: Page, formId: string) => page.locator("label", { has: page.getByTestId(`form-${formId}`) }).click();
 const tab = (page: Page, name: string) => page.getByRole("tab", { name });
+// The family page opens on "The piece". The concept reveal is one tab along.
+const gotoReveal = async (page: Page, url: string) => {
+  await page.goto(url);
+  await tab(page, "Concept reveal").click();
+};
 
 test.describe("design family: piercing forms", () => {
   test("changing form updates identifier, visual, piece count, preview, price, package and address", async ({ page }) => {
@@ -56,7 +61,7 @@ test.describe("design family: piercing forms", () => {
   });
 
   test("the chosen form holds across every view, through a reveal, and into the bag", async ({ page }) => {
-    await page.goto(`${FAMILY}?revealFixture=1`);
+    await gotoReveal(page, `${FAMILY}?revealFixture=1`);
     await chooseForm(page, "micro-dermal");
 
     await expect(page.getByTestId("reveal-player")).toHaveAttribute("data-form", "micro-dermal");
@@ -141,7 +146,7 @@ test.describe("concept reveal", () => {
   test("without approved media it is a deliberate still, never a broken player", async ({ page }) => {
     const media: string[] = [];
     page.on("request", (r) => /\.(webm|mp4|mov)(\?|$)/.test(r.url()) && media.push(r.url()));
-    await page.goto(FAMILY);
+    await gotoReveal(page, FAMILY);
     const player = page.getByTestId("reveal-player");
     await expect(player).toBeVisible();
     await expect(page.getByTestId("reveal-status")).toContainText("Reveal in preparation");
@@ -157,7 +162,7 @@ test.describe("concept reveal", () => {
     test.skip(isMobile, "hover is a desktop pointer behaviour");
     const media: string[] = [];
     page.on("request", (r) => r.url().includes("reveal-test-pattern") && media.push(r.url()));
-    await page.goto(`${FAMILY}?revealFixture=1`);
+    await gotoReveal(page, `${FAMILY}?revealFixture=1`);
     await page.getByTestId("reveal-player").hover();
     await page.waitForTimeout(800);
     await expect(page.getByTestId("reveal-player")).toHaveAttribute("data-state", "idle");
@@ -166,7 +171,7 @@ test.describe("concept reveal", () => {
   });
 
   test("media that fails to load falls back to the still with a clear message", async ({ page }) => {
-    await page.goto(`${FAMILY}?revealFixture=missing`);
+    await gotoReveal(page, `${FAMILY}?revealFixture=missing`);
     await page.getByTestId("reveal-watch").click();
     await expect(page.getByTestId("reveal-status")).toContainText("couldn't play");
     await expect(page.getByTestId("reveal-player")).toHaveAttribute("data-state", "failed");
@@ -176,14 +181,14 @@ test.describe("concept reveal", () => {
 
   test("reduced motion offers the still only", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto(`${FAMILY}?revealFixture=1`);
+    await gotoReveal(page, `${FAMILY}?revealFixture=1`);
     await expect(page.getByTestId("reveal-status")).toContainText("Reduced motion is on");
     await expect(page.getByTestId("reveal-watch")).toHaveCount(0);
   });
 
   test("the local stills prototype plays, skips, replays and ends on the chosen form", async ({ page }) => {
     // The two stills are internal and gitignored. The sequence must behave the same when they are absent.
-    await page.goto(`${FAMILY}?revealFixture=concept&form=micro-dermal`);
+    await gotoReveal(page, `${FAMILY}?revealFixture=concept&form=micro-dermal`);
     const player = page.getByTestId("reveal-player");
     await expect(page.getByTestId("reveal-concept-tag")).toContainText("not the final cinematic");
     await expect(player).toHaveAttribute("data-state", "idle");
@@ -203,7 +208,7 @@ test.describe("concept reveal", () => {
   });
 
   test("the original piece has a short product-led reveal with replay", async ({ page }) => {
-    await page.goto("/product/crimson-orbit");
+    await gotoReveal(page, "/product/crimson-orbit");
     const player = page.getByTestId("reveal-player");
     await page.getByTestId("reveal-watch").click();
     await expect(player).toHaveAttribute("data-state", "playing");
@@ -220,7 +225,7 @@ test.describe("concept reveal playback (test pattern)", () => {
   test.skip(({ browserName }) => browserName === "webkit", "test-pattern codec is not available in this WebKit build");
 
   test("play, skip, final frame for the chosen form, replay, sound, expand and close", async ({ page }) => {
-    await page.goto(`${FAMILY}?revealFixture=1&form=micro-dermal`);
+    await gotoReveal(page, `${FAMILY}?revealFixture=1&form=micro-dermal`);
     const player = page.getByTestId("reveal-player");
     await expect(page.getByTestId("reveal-fixture-tag")).toContainText("test pattern");
 
@@ -259,7 +264,7 @@ test.describe("concept reveal playback (test pattern)", () => {
 
   test("the artwork itself is a button, and a mini-scene ends by its ceiling", async ({ page }) => {
     test.setTimeout(40_000);
-    await page.goto(`${FAMILY}?revealFixture=1`);
+    await gotoReveal(page, `${FAMILY}?revealFixture=1`);
     await expect(page.getByTestId("reveal-artwork")).toHaveAccessibleName(/Watch the sand reveal/);
     await page.getByTestId("reveal-artwork").click();
     const player = page.getByTestId("reveal-player");

@@ -2,6 +2,48 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-21 — New direction: jewelry brand first (landing page, sideways selection, whole piece)
+
+The owner judged the DESERT EYE presentation not good enough and changed the UX and visual direction:
+cleaner, smoother, more premium, a jewelry brand first, cute in places. This supersedes the dark
+five-section homepage. The DESERT EYE collection stage still exists at its address but is no longer
+the way in, and no further work goes into it in its current form.
+
+- **Landing page on paper.** One calm screen: a headline, two actions (**View on your face** → Face
+  Studio, **View selection** → the selection), a small companion, then a quiet row of pieces. The
+  old `HomeSections` were deleted. Nothing is pinned or driven by scroll.
+- **Mini mascot.** A cute chibi figure lying on the floor reading, mini gourd on his back. He is five
+  registered stills (idle, blink, yawn, page turned, looking up with a hand raised), generated as
+  variations of one frame so they overlay exactly, and swapped by the page. A video of this character
+  cannot be generated on this platform (`ip_detected`), so stills are the route. Idle life is small: a
+  blink every few seconds, a page now and then, a rare yawn, a slow breathing scale. Pressing him makes
+  him look up, and half a second later sand leaves the mini gourd, covers the page, and the selection
+  opens under it. Skip and Escape open it at once. With reduced motion he holds still and is a link.
+- **The mascot is internal concept art like every character picture.** Only a development server has
+  it. A build shows the featured piece in its place and the transition is a plain link.
+- **The sand transition lives above every route** (`components/transition/SandTransition.tsx`), so it
+  survives the navigation it hides. It reuses the keyed sand clip; its numbers moved to
+  `lib/story/sand-effect.ts` so the collection story and the transition share one source. The clip is
+  the clock: the route changes only once the sand covers the page.
+- **The selection is sideways.** `/collections` is a horizontal scroller with snap points, one floating
+  family per slide with a lot of air. A finger swipes it; arrows, arrow keys and `?family=` step it.
+  It is an ordinary scroller: vertical scrolling is never taken over, so this is not the scroll-driven
+  horizontal movement that was ruled out earlier. The owner asked for sideways browsing explicitly.
+  Piercing type is switched in place and feeds the shared form choice, the bag and the product page.
+- **The product page opens on the whole piece.** A new first view, "The piece", shows the tops, the
+  posts and the base, brought together on load in about three seconds, then what each part is. It is a
+  page animation, not a video, so it can follow the chosen form. The hardware is a **schematic**: a
+  surface bar for the pair, an anchor for the micro dermal, a stud for the nose. Its type, size and
+  thread are not confirmed by a maker, the page says so, and no measurement is given.
+- **Materials are the owner's proposal, labelled as such.** "Titanium · Proposed", "Polished ·
+  Proposed". The owner's example named the stone "Ruby"; the page does **not**, because the standing
+  rule is "deep-red faceted gemstone" until a supplier confirms it, and the owner's own brief says to
+  state only what is confirmed or proposed. It reads "Deep-red faceted gemstone · Not confirmed".
+- **The face was replaced.** The placement head is now a smooth sculpted form built only from soft
+  light and shade, with no drawn lines. A test counts stroked elements and expects none.
+- **Paper pages.** The landing page, the selection and product pages stand on paper with the light
+  navigation. Shop, Face Studio, the bag and About keep the ink theme for now.
+
 ## 2026-09-21 — Seated figure and the sand reveal (supersedes the fight storyboard)
 
 The owner replaced the story direction: the figure **sits calmly beside the products**; a press sends

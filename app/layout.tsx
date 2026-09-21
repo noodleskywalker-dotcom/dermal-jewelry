@@ -5,6 +5,8 @@ import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { PreviewNote } from "@/components/layout/PreviewNote";
 import { StudioProvider } from "@/components/studio/StudioProvider";
+import { SandTransitionProvider } from "@/components/transition/SandTransition";
+import { internalSandSource, isInternalReview } from "@/lib/story/registry";
 import { site } from "@/lib/config/site";
 import "./globals.css";
 
@@ -48,13 +50,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </a>
         {/* The Studio provider sits above every route so a chosen photo survives client-side navigation. */}
         <StudioProvider>
-          <Navbar />
-          <main id="main" className="flex-1">
-            {children}
-          </main>
-          <Footer />
-          <BagDrawer />
-          <PreviewNote />
+          {/* A build has no clip, so there the transition is simply a link. */}
+          <SandTransitionProvider src={internalSandSource(isInternalReview())}>
+            <Navbar />
+            <main id="main" className="flex-1">
+              {children}
+            </main>
+            <Footer />
+            <BagDrawer />
+            <PreviewNote />
+          </SandTransitionProvider>
         </StudioProvider>
       </body>
     </html>

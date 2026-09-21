@@ -12,6 +12,12 @@ const FILES: Record<string, string[]> = {
   // Owner-approved Stage 1 stills, 21 September 2026.
   seated: ["generated", "stage1", "03-seated-c.png"],
   "closeup-clean": ["generated", "stage1", "05-closeup-b.png"],
+  // Homepage mascot poses, generated 21 September 2026. Internal, like every character picture.
+  "chibi-idle": ["generated", "chibi", "01-idle.png"],
+  "chibi-blink": ["generated", "chibi", "02-blink.png"],
+  "chibi-yawn": ["generated", "chibi", "03-yawn.png"],
+  "chibi-page": ["generated", "chibi", "04-page.png"],
+  "chibi-look": ["generated", "chibi", "05-look.png"],
   // Generic sand effect on blue. It contains no character.
   sandfx: ["generated", "stage2", "07-sand-only-a.mp4"],
 };

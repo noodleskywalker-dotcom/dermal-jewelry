@@ -982,3 +982,127 @@ input[type="range"].studio-range::-moz-range-thumb {
     transform: scaleX(1);
   }
 }
+
+/* ───────── Landing, selection and the assembled piece ───────── */
+.landing-float {
+  animation: story-float 7s ease-in-out infinite alternate;
+}
+/* The mascot is a stack of registered stills on white, multiplied into the paper so it has no edge. */
+.mascot-layer {
+  transition: opacity 0.12s linear;
+  /* The generated ground is a hair short of pure white. Lifted to white, it vanishes into the paper. */
+  filter: brightness(1.05) contrast(1.05);
+}
+/* The animated wrapper is its own group, so the multiply has to sit on it, not on the pictures inside. */
+.mascot-body {
+  mix-blend-mode: multiply;
+  transform-origin: 50% 100%;
+  animation: mascot-breathe 4.8s ease-in-out infinite;
+}
+.mascot[data-pose="look"] .mascot-body {
+  animation: mascot-perk 0.5s var(--ease-editorial) both;
+}
+@keyframes mascot-breathe {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: scale(1.012, 0.992) translateY(0.3%);
+  }
+}
+@keyframes mascot-perk {
+  0% {
+    transform: none;
+  }
+  45% {
+    transform: translateY(-2.2%) scale(1.02);
+  }
+  100% {
+    transform: translateY(-0.8%) scale(1.01);
+  }
+}
+.sand-transition {
+  pointer-events: none;
+  transition: opacity 0.8s ease-in;
+}
+.sand-transition button {
+  pointer-events: auto;
+}
+.sand-transition[data-leaving="true"] {
+  opacity: 0;
+}
+
+/* A sideways scroller. Vertical scrolling of the page is never taken over. */
+.selection-rail {
+  scrollbar-width: none;
+  scroll-padding-inline: 8vw;
+  padding-inline: 8vw;
+  gap: 6vw;
+  min-height: min(44rem, calc(100svh - 12rem));
+}
+.selection-rail::-webkit-scrollbar {
+  display: none;
+}
+.selection-slide {
+  width: 84vw;
+  padding-block: 1.5rem 5rem;
+  opacity: 0.35;
+  transition: opacity 0.6s var(--ease-editorial);
+}
+.selection-slide[data-current="true"] {
+  opacity: 1;
+}
+.selection-object {
+  transition: transform 0.8s var(--ease-editorial);
+  transform: scale(0.86);
+}
+.selection-slide[data-current="true"] .selection-object {
+  transform: none;
+}
+@media (min-width: 1024px) {
+  .selection-rail {
+    scroll-padding-inline: 14vw;
+    padding-inline: 14vw;
+    gap: 4vw;
+  }
+  .selection-slide {
+    width: 72vw;
+    padding-block: 2rem 6rem;
+  }
+}
+
+/* The piece comes together: base, posts, stone, symbol, then what each part is. */
+.assembly {
+  background: linear-gradient(170deg, #f7f4ee 0%, #ece6da 100%);
+}
+.assembly-part {
+  opacity: 0;
+  animation: assembly-in 1.1s var(--ease-editorial) var(--at) both;
+}
+.assembly-note {
+  opacity: 0;
+  animation: rise 0.6s var(--ease-editorial) var(--at) both;
+}
+/* With reduced motion the piece is simply there: no waiting for a delay either. */
+@media (prefers-reduced-motion: reduce) {
+  .assembly-part,
+  .assembly-note {
+    animation-delay: 0s !important;
+  }
+  .mascot-body,
+  .landing-float,
+  .story-piece-float {
+    animation: none !important;
+  }
+}
+@keyframes assembly-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--from));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

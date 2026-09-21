@@ -114,6 +114,18 @@ fight. Built and tested locally, **not pushed**, not owner-approved. Higgsfield 
 | Media not ready or not keyable | tested | Story is skipped to the product, never imitated, not marked seen. |
 | Known defects | open | For about 0.6 s as the sand bursts, the clip's left edge and its floor show as straight edges. The final sand is darker and more orange than the page's sand. Both need a cleaner clip. |
 
+### New direction: jewelry brand first (21 September 2026)
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Landing page on paper with two main actions | tested | View on your face, View selection. Old homepage sections deleted. |
+| Mini mascot with idle life and press interaction | tested | Five stills, internal only. 10 credits. A build shows the featured piece instead. |
+| Sand transition from the mini gourd into the selection | tested | Keyed clip, route changes under full cover, Skip and Escape, plain link with reduced motion or no clip. |
+| Sideways selection with in-place piercing type | tested | Swipe, arrows, keys, `?family=`. Vertical scroll untouched. |
+| Product page: the whole piece, assembled, with material notes | tested | Schematic hardware per form. Materials labelled Proposed / Not confirmed. Stone not named. |
+| Sculpted placement head | tested | Shading only, no drawn lines. |
+| Still placeholder | open | Mascot and sand are internal-only. Hardware is a schematic, not the real part. Symbol and stone are prototype art. Shop, Face Studio, bag and About are still on the ink theme. The sand clip keeps its known edge and colour defects. |
+
 ## Asset production phase (started 20 September 2026)
 
 The interaction architecture is approved as the working foundation. No redesign and no new major
@@ -181,7 +193,7 @@ Vercel's Hobby plan is for non-commercial use; confirm the plan before any comme
 
 ## Routes to review
 
-`/`, `/shop`, `/shop?placement=dermal`, `/collections`, `/collections/desert-eye`,
+`/`, `/collections` (the selection), `/collections?family=crimson-orbit`, `/shop`, `/shop?placement=dermal`, `/collections`, `/collections/desert-eye`,
 `/collections/desert-eye?product=desert-eye-love&form=nose`,
 `/product/desert-eye-love`, `/face-studio`, `/face-studio?product=sand-vortex`, `/cart`, `/about`.
 

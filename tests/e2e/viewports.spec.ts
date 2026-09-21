@@ -9,7 +9,7 @@ const SIZES = [
   { name: "wide-desktop", width: 2560, height: 1200 },
 ];
 
-const ROUTES = ["/", "/product/desert-eye-love", "/shop", "/face-studio", "/collections/desert-eye", "/collections/desert-eye?product=desert-eye-love&form=nose"];
+const ROUTES = ["/", "/product/desert-eye-love", "/shop", "/face-studio", "/collections", "/collections/desert-eye", "/collections/desert-eye?product=desert-eye-love&form=nose"];
 
 test.describe("layouts at unusual sizes", () => {
   test.skip(({ browserName, isMobile }) => browserName !== "chromium" || Boolean(isMobile), "sizes are set explicitly, once, in desktop Chromium");

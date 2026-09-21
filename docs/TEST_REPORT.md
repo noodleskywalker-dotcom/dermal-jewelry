@@ -1,5 +1,36 @@
 # Test report
 
+## New direction: landing page, selection, whole piece — 21 September 2026
+
+Browser results are **browser emulation on a Windows desktop** against a development server.
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 problems |
+| `npm run typecheck` | pass, 0 errors |
+| `npm test` | 77 of 77 pass |
+| `npm run test:e2e` | 197 pass, 37 skipped, 0 fail |
+| `npm run build` | pass; 0 client chunks contain the character's name, the dev media route or the mascot |
+
+New browser tests (`home.spec.ts`, `selection.spec.ts`): paper background and light navigation; both
+actions inside the first screen, 44 px or taller, leading to Face Studio and the selection; nothing
+pinned and the wheel moving the page one-to-one; the teaser opening the selection on the chosen family;
+the mascot doing something small within seconds, returning to idle, never looking up or starting
+anything by himself, with exactly one still showing; a press making him look up, the sand entering
+within 3 px of the mini gourd, the route changing only after full cover, and the selection opening on
+DESERT EYE — LOVE; Skip; reduced motion as a plain link; slides side by side in one row with no sideways
+page overflow; arrows, arrow keys and `?family=`; the rail being an ordinary snap scroller that leaves
+the wheel to the page; piercing type switched in place carrying into the bag and the product page; the
+piece view showing base, posts and tops, 2 posts for the pair and 1 for the singles, its notes reading
+Titanium / Proposed and Deep-red faceted gemstone / Not confirmed and never ruby, garnet, verified or
+certified; reduced motion showing the piece assembled at once; the head having no stroked elements.
+
+Defects found by these tests and fixed: visually hidden radio inputs of far slides widened the page by
+up to 562 px; the assembly kept its start delays under reduced motion and stayed invisible; a swipe made
+before hydration was not read; a press during his look-up animation measured the gourd 7 px off.
+Earlier tests were updated for the new default tab and for a second "View DESERT EYE" link.
+
+
 ## Seated figure and sand reveal — 21 September 2026
 
 Browser results are **browser emulation on a Windows desktop** against a development server.

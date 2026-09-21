@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FamilyExperience } from "@/components/catalog/FamilyExperience";
-import { ProductGrid } from "@/components/catalog/ProductGrid";
 import { catalog } from "@/lib/catalog";
 
 export function generateStaticParams() {
@@ -39,17 +38,11 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
   const product = catalog.getProduct(slug);
   if (!product) notFound();
 
-  // Related means the same placement first, then the rest. Never random.
-  const others = catalog.listProducts().filter((p) => p.id !== product.id);
-  const related = [
-    ...others.filter((p) => p.placements.some((pl) => product.placements.includes(pl))),
-    ...others.filter((p) => !p.placements.some((pl) => product.placements.includes(pl))),
-  ].slice(0, 3);
-
   return (
+    <div className="story-light">
     <div className="mx-auto max-w-[90rem] px-5 py-10 sm:px-8">
       <nav aria-label="Breadcrumb" className="label-xs text-ash">
-        <Link href="/shop" className="hover:text-ivory">Shop</Link>
+        <Link href="/collections" className="hover:text-ink">Selection</Link>
         <span aria-hidden="true"> / </span>
         <span aria-current="page">{product.title}</span>
       </nav>
@@ -58,15 +51,15 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
         <FamilyExperience product={product} initialFormId={first(query.form)} fixtureSrc={fixtureFor(first(query.revealFixture))} concept={conceptFor(first(query.revealFixture), slug)} />
       </div>
 
-      <section aria-labelledby="specs-heading" className="mt-16 max-w-2xl border-t border-line pt-6">
+      <section aria-labelledby="specs-heading" className="mt-16 max-w-2xl border-t border-ink/15 pt-6">
         <h2 id="specs-heading" className="label-xs text-ash">Specifications</h2>
-        <dl className="mt-3 divide-y divide-line text-sm">
+        <dl className="mt-3 divide-y divide-ink/10 text-sm">
           {product.specs.map((spec) => (
             <div key={spec.label} className="grid grid-cols-[9rem_1fr] gap-4 py-3">
               <dt className="text-ash">{spec.label}</dt>
               <dd>
                 {spec.value}
-                {spec.status === "unverified" && <span className="label-xs ml-2 whitespace-nowrap text-garnet-text">Unverified</span>}
+                {spec.status === "unverified" && <span className="label-xs ml-2 whitespace-nowrap text-garnet">Unverified</span>}
               </dd>
             </div>
           ))}
@@ -77,12 +70,12 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
         </p>
       </section>
 
-      <section aria-labelledby="related-heading" className="mt-24 border-t border-line pt-12">
-        <h2 id="related-heading" className="font-display text-4xl font-light">More pieces</h2>
-        <div className="mt-10">
-          <ProductGrid products={related} className="grid grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3" />
-        </div>
-      </section>
+      <p className="mt-16 border-t border-ink/15 pt-6">
+        <Link href="/collections" className="text-link">
+          <span aria-hidden="true">←</span> Back to the selection
+        </Link>
+      </p>
+    </div>
     </div>
   );
 }
