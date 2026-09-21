@@ -16,7 +16,7 @@ import { KeyedEffect } from "@/components/story/KeyedEffect";
 export type SandOrigin = { x: number; y: number; pictureWidth: number };
 type Play = (options: { origin: SandOrigin; href: string }) => void;
 
-const SandContext = createContext<{ play: Play; available: boolean }>({ play: () => {}, available: false });
+const SandContext = createContext<{ play: Play; available: boolean; busy: boolean }>({ play: () => {}, available: false, busy: false });
 export const useSandTransition = () => useContext(SandContext);
 
 const LOAD_TIMEOUT_MS = 6000;
@@ -28,6 +28,8 @@ export function SandTransitionProvider({ src, children }: { /** Development-serv
   const reduced = useReducedMotion();
   const [job, setJob] = useState<Job | null>(null);
   const [leaving, setLeaving] = useState(false);
+  // True from the press until the clip is playing, so the caller can hold its pose while the clip loads.
+  const [loading, setLoading] = useState(false);
   const pushed = useRef(false);
   const skip = useRef<HTMLButtonElement>(null);
   const effect = useMemo<StoryEffect>(() => ({ ...SAND_EFFECT, origin: { x: 0, y: 0 } }), []);
@@ -47,6 +49,7 @@ export function SandTransitionProvider({ src, children }: { /** Development-serv
         router.push(href);
         return;
       }
+      setLoading(true);
       const video = document.createElement("video");
       video.muted = true;
       video.playsInline = true;
@@ -55,6 +58,7 @@ export function SandTransitionProvider({ src, children }: { /** Development-serv
       const fallback = setTimeout(() => {
         if (settled) return;
         settled = true;
+        setLoading(false);
         router.push(href);
       }, LOAD_TIMEOUT_MS);
       video.oncanplaythrough = () => {
@@ -63,12 +67,14 @@ export function SandTransitionProvider({ src, children }: { /** Development-serv
         clearTimeout(fallback);
         pushed.current = false;
         setLeaving(false);
+        setLoading(false);
         setJob({ video, origin, href });
       };
       video.onerror = () => {
         if (settled) return;
         settled = true;
         clearTimeout(fallback);
+        setLoading(false);
         router.push(href);
       };
       video.src = src;
@@ -123,7 +129,7 @@ export function SandTransitionProvider({ src, children }: { /** Development-serv
     return () => window.removeEventListener("keydown", onKey);
   }, [job, skipNow]);
 
-  const value = useMemo(() => ({ play, available }), [play, available]);
+  const value = useMemo(() => ({ play, available, busy: loading || job !== null }), [play, available, loading, job]);
 
   return (
     <SandContext.Provider value={value}>

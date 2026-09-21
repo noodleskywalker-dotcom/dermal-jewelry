@@ -40,7 +40,7 @@ export function PhotoPicker({
         disabled={loading}
         aria-describedby={error ? errorId : undefined}
         onClick={() => inputRef.current?.click()}
-        className={`inline-flex min-h-12 items-center justify-center bg-ivory px-7 text-xs uppercase tracking-[0.22em] text-ink transition-colors duration-200 hover:bg-white disabled:opacity-60 ${
+        className={`inline-flex min-h-12 items-center justify-center bg-ink px-7 text-xs uppercase tracking-[0.22em] text-ivory transition-colors duration-200 hover:bg-garnet disabled:opacity-60 ${
           compact ? "w-full" : ""
         }`}
       >

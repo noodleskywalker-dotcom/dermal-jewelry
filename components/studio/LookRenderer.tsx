@@ -129,7 +129,7 @@ function PlacedItem({
           key={c.id}
           testId={`piece-${c.id}`}
           label={`Move ${c.label}. Arrow keys nudge it.`}
-          className={`absolute ${selected ? "outline outline-1 outline-offset-4 outline-ivory/70" : ""}`}
+          className={`absolute ${selected ? "outline outline-1 outline-offset-4 outline-white/90 shadow-[0_0_0_1px_rgba(12,12,13,0.35)]" : ""}`}
           style={style}
           frameRef={frameRef}
           onStart={() => item.tweaks[c.id] ?? ZERO_TWEAK}
@@ -180,7 +180,7 @@ function PlacedItem({
       testId="placed-item"
       dataProduct={product.slug}
       label={`Move ${product.title} on the wearer's ${item.side} side. Arrow keys nudge it.`}
-      className={`absolute ${isActive ? "outline outline-1 outline-offset-8 outline-ivory/60" : ""}`}
+      className={`absolute ${isActive ? "outline outline-1 outline-offset-8 outline-white/90 shadow-[0_0_0_1px_rgba(12,12,13,0.35)]" : ""}`}
       style={groupStyle}
       frameRef={frameRef}
       onFocusOrPress={() => interaction.onSelectItem(item.uid)}

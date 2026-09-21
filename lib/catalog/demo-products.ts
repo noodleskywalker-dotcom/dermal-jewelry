@@ -147,13 +147,14 @@ export const demoProducts: Product[] = [
       { label: "Stone", value: "Deep-red faceted gemstone. Identity not yet verified.", status: "unverified" },
       ...unverifiedSpecs(),
     ],
-    // The owner's proposal, 21 September 2026. No maker has confirmed any of it, and the stone is not named.
+    // The owner's wording, 21 September 2026. No maker has confirmed any of it, and the stone is not named.
     materials: [
-      { part: "Tops", value: "Openwork symbol, red-faced metal", status: "Prototype art" },
-      { part: "Stone", value: "Deep-red faceted gemstone", status: "Not confirmed" },
-      { part: "Post and base", value: "Titanium", status: "Proposed" },
-      { part: "Finish", value: "Polished", status: "Proposed" },
+      { id: "metal", label: "Titanium", status: "Proposed" },
+      { id: "stone", label: "Deep-red faceted gemstone", status: "Material not yet confirmed" },
+      { id: "finish", label: "Polished finish", status: "Proposed" },
     ],
+    // Architecture only. No clip exists, and none may be generated without the owner's approval.
+    assembly: { themed: { id: "sand-spirit", description: "A small sand spirit is drawn toward the piece, dissolves into grains, and the grains flow into the jewelry.", status: "not-produced" } },
   }),
   family({
     id: "demo-crimson-orbit",

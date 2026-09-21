@@ -6,15 +6,18 @@ import { formatPrice } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { AddToBagButton } from "@/components/cart/AddToBagButton";
 import { RevealPlayer, type ConceptStills } from "@/components/reveal/RevealPlayer";
+import { SandLayer } from "@/components/story/SandLayer";
 import { useFormChoice } from "@/components/studio/useFormChoice";
+import { motionOf } from "./FloatingObject";
 import { PieceAssembly } from "./PieceAssembly";
 import { PlacementPreview } from "./PlacementPreview";
 import { TryOnPreview } from "./TryOnPreview";
 
 type ViewId = "piece" | "reveal" | "placement" | "tryon";
 
-// One customer-facing page per design family. The chosen piercing form lives in the shared Studio
-// provider, so the reveal, the placement preview, the try-on, Face Studio and the bag always agree.
+// One customer-facing page per design family: a large airy stage on about two thirds of the screen,
+// and very little beside it. The chosen piercing form lives in the shared Studio provider, so the
+// piece, the reveal, the placement preview, the try-on, Face Studio and the bag always agree.
 export function FamilyExperience({
   product,
   initialFormId,
@@ -57,9 +60,25 @@ export function FamilyExperience({
   };
 
   return (
-    <div className="grid gap-12 lg:grid-cols-[1.15fr_1fr]" data-testid="family" data-form={form.id}>
-      <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
-        <div role="tablist" aria-label="Ways to look at this piece" className="flex gap-x-7 overflow-x-auto whitespace-nowrap border-b border-ink/15">
+    <div className="grid gap-x-16 gap-y-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]" data-testid="family" data-form={form.id}>
+      <div className="min-w-0 lg:sticky lg:top-20 lg:self-start">
+        <div role="tabpanel" id={`panel-${view}`} aria-labelledby={`tab-${view}`} className="relative flex w-full items-center justify-center lg:min-h-[min(74svh,46rem)]">
+          {/* DESERT EYE alone stands on a little sand. Every other family stands on plain paper. */}
+          {view === "piece" && motionOf(product, form.id) === "sand" && <SandLayer className="product-sand" />}
+          {view === "piece" ? (
+            <PieceAssembly key={product.id} product={product} formId={form.id} />
+          ) : (
+            // The other views keep their 4:5 frame, sized to fit the window.
+            <div className="w-full max-w-[max(16rem,56svh)]">
+              {/* Keyed by product so leaving a product always unmounts, and so stops, its reveal. */}
+              {view === "reveal" && <RevealPlayer key={product.id} product={product} formId={form.id} fixtureSrc={fixtureSrc} concept={concept} />}
+              {view === "placement" && <PlacementPreview product={product} formId={form.id} />}
+              {view === "tryon" && <TryOnPreview product={product} formId={form.id} allowUpload />}
+            </div>
+          )}
+        </div>
+
+        <div role="tablist" aria-label="Ways to look at this piece" className="mt-4 flex gap-x-7 overflow-x-auto whitespace-nowrap sm:justify-center">
           {views.map((v, i) => (
             <button
               key={v.id}
@@ -74,93 +93,65 @@ export function FamilyExperience({
               tabIndex={view === v.id ? 0 : -1}
               onClick={() => setView(v.id)}
               onKeyDown={(e) => onTabKey(e, i)}
-              className={`label-xs -mb-px inline-flex min-h-11 items-center border-b ${view === v.id ? "border-ink text-ink" : "border-transparent text-ink/55 hover:text-ink"}`}
+              className={`label-xs inline-flex min-h-11 items-center border-b ${view === v.id ? "border-ink text-ink" : "border-transparent text-ash hover:text-ink"}`}
             >
               {v.label}
             </button>
           ))}
         </div>
-
-        {/* Width is tied to the window height so the whole 4:5 frame fits on screen, even in short windows. */}
-        <div role="tabpanel" id={`panel-${view}`} aria-labelledby={`tab-${view}`} className="mt-5 w-full max-w-[max(16rem,60svh)]">
-          {/* Keyed by product so leaving a product always unmounts, and so stops, its reveal. */}
-          {view === "piece" && <PieceAssembly key={product.id} product={product} formId={form.id} />}
-          {view === "reveal" && <RevealPlayer key={product.id} product={product} formId={form.id} fixtureSrc={fixtureSrc} concept={concept} />}
-          {view === "placement" && <PlacementPreview product={product} formId={form.id} />}
-          {view === "tryon" && (
-            <div className="max-w-sm">
-              <TryOnPreview product={product} formId={form.id} allowUpload />
-            </div>
-          )}
-        </div>
       </div>
 
-      <div>
-        <p className="label-xs text-ash">
-          {product.origin === "anime-inspired" ? "Anime-inspired design · not an official collaboration" : "Original design"} · Demo product
-        </p>
-        <h1 className="mt-4 font-display text-5xl font-light leading-[0.95] sm:text-6xl">{product.title}</h1>
-        <p className="mt-6 text-base leading-relaxed text-ash">{product.story}</p>
+      <div className="lg:pt-[12svh]">
+        <p className="label-xs text-ash">{product.origin === "anime-inspired" ? "Anime-inspired design · not an official collaboration" : "Original design"} · Demo product</p>
+        <h1 className="mt-5 font-display text-[clamp(2.5rem,3.6vw,3.75rem)] font-light leading-[1.02] tracking-[0.03em]">{product.title}</h1>
 
         <fieldset className="mt-9">
-          <legend className="label-xs text-ash">Piercing form</legend>
-          <div className="mt-3 flex flex-wrap gap-x-7 gap-y-1">
-            {product.forms.map((f) => {
+          <legend className="sr-only">Piercing form</legend>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            {product.forms.map((f, n) => {
               const pending = f.status !== "available";
               const selected = !pending && f.id === form.id;
               return (
-                <label
-                  key={f.id}
-                  className={`flex min-h-11 items-center border-b text-sm has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-garnet ${
-                    selected ? "border-ink text-ink" : pending ? "cursor-not-allowed border-transparent text-ink/35" : "cursor-pointer border-transparent text-ink/55 hover:text-ink"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name={`form-${product.id}`}
-                    value={f.id}
-                    checked={selected}
-                    disabled={pending}
-                    onChange={() => chooseForm(f.id)}
-                    data-testid={`form-${f.id}`}
-                    className="sr-only"
-                  />
-                  {f.label}
-                  {pending && <span className="label-xs ml-2">Concept pending</span>}
-                </label>
+                <span key={f.id} className="flex items-center gap-x-5">
+                  {n > 0 && <span aria-hidden="true" className="text-ash">·</span>}
+                  <label
+                    className={`label-xs flex min-h-11 items-center border-b has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-garnet ${
+                      selected ? "border-ink text-ink" : pending ? "cursor-not-allowed border-transparent text-ink/35" : "cursor-pointer border-transparent text-ash hover:text-ink"
+                    }`}
+                  >
+                    <input type="radio" name={`form-${product.id}`} value={f.id} checked={selected} disabled={pending} onChange={() => chooseForm(f.id)} data-testid={`form-${f.id}`} className="sr-only" />
+                    {f.label}
+                    {pending && <span className="ml-2 normal-case tracking-normal">Concept pending</span>}
+                  </label>
+                </span>
               );
             })}
           </div>
         </fieldset>
 
-        <p className="mt-7 font-display text-3xl font-light" data-testid="family-price">
+        <p className="mt-8 font-display text-3xl font-light tracking-[0.06em]" data-testid="family-price">
           <span className="label-xs mr-3 align-middle text-ash">Demo price</span>
           {formatPrice(form.demoPrice, product.currency)}
         </p>
-        <p className="mt-3 text-sm leading-relaxed text-ash" data-testid="family-form-note">
-          {form.note}
-        </p>
 
-        <div className="mt-7 grid gap-3 sm:grid-cols-2">
-          <AddToBagButton product={product} formId={form.id} />
-          <Link
-            href={`/face-studio?product=${product.slug}&form=${form.id}`}
-            data-testid="try-it-on"
-            className="inline-flex min-h-12 items-center justify-center self-start border border-ink px-7 text-xs uppercase tracking-[0.22em] transition-colors duration-200 hover:bg-ink hover:text-ivory"
-          >
-            Try it on
-          </Link>
-        </div>
+        <Link href={`/face-studio?product=${product.slug}&form=${form.id}`} data-testid="try-it-on" className="text-link mt-6">
+          Try on <span aria-hidden="true">↗</span>
+        </Link>
+
+        <AddToBagButton product={product} formId={form.id} className="mt-5 max-w-sm" />
         <p className="text-xs leading-relaxed text-ash">Demo shopping only. Checkout is disabled and nothing can be ordered.</p>
 
-        <section aria-labelledby="included-heading" className="mt-10 border-t border-ink/15 pt-6">
-          <h2 id="included-heading" className="label-xs text-ash">
-            What&rsquo;s included · {form.label}
-          </h2>
-          <p className="mt-3 text-sm leading-relaxed text-ash" data-testid="family-package">
-            {form.packageContents}
-          </p>
-        </section>
+        <details className="mt-10 border-t border-line pt-3">
+          <summary className="label-xs flex min-h-11 cursor-pointer items-center text-ash hover:text-ink">About this piece</summary>
+          <p className="mt-2 text-sm leading-relaxed text-ash">{product.story}</p>
+        </details>
+        {/* Kept in plain sight, not folded away: how final this form is, and what is in the package. */}
+        <p className="mt-4 text-sm leading-relaxed text-ash" data-testid="family-form-note">
+          {form.note}
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-ash" data-testid="family-package">
+          {form.packageContents}
+        </p>
       </div>
     </div>
   );

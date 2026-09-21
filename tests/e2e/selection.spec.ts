@@ -35,6 +35,10 @@ test.describe("the selection: sideways browsing", () => {
 
     await page.goto("/collections?family=void-stud");
     await expect(current(page)).toHaveAttribute("data-product", "void-stud");
+    // The last family is followed by one design that exists only as a direction, and the rail ends there.
+    await page.getByTestId("selection-next").click();
+    await expect(page.locator('[data-testid="selection-concept"][data-current="true"]')).toHaveCount(1);
+    await expect(page.getByTestId("selection-index")).toHaveText(/05 \/ 05/);
     await expect(page.getByTestId("selection-next")).toBeDisabled();
     expect(errors).toEqual([]);
   });
@@ -90,7 +94,7 @@ test.describe("product page: the whole piece", () => {
     await expect(assembly).toHaveAttribute("data-hardware", "bar");
     // Tops, posts and base are all there.
     for (const part of ["base", "posts", "symbol", "gemstone"]) await expect(assembly.locator(`[data-part="${part}"]`)).toHaveCount(1);
-    await expect(assembly.locator('[data-part="posts"] rect')).toHaveCount(2);
+    await expect(assembly.locator('[data-part="posts"] [data-post]')).toHaveCount(2);
 
     // It comes together by itself and ends fully visible.
     await expect.poll(async () => assembly.locator('[data-part="symbol"]').evaluate((el) => getComputedStyle(el).opacity), { timeout: 6000 }).toBe("1");
@@ -98,10 +102,10 @@ test.describe("product page: the whole piece", () => {
     await expect(notes).toContainText("Titanium");
     await expect(notes).toContainText("Proposed");
     await expect(notes).toContainText("Deep-red faceted gemstone");
-    await expect(notes).toContainText("Not confirmed");
+    await expect(notes).toContainText("Material not yet confirmed");
     // The stone is never named, and nothing is called verified.
     await expect(assembly).not.toContainText(/ruby|sapphire|garnet|verified|certified/i);
-    await expect(assembly).toContainText(/schematic/i);
+    await expect(assembly).toContainText(/shown conceptually/i);
 
     // Replay runs it again, and shopping is never blocked by it.
     await page.getByTestId("assembly-replay").click();
@@ -110,7 +114,7 @@ test.describe("product page: the whole piece", () => {
     // Each form shows its own hardware.
     await page.locator("label", { has: page.getByTestId("form-micro-dermal") }).click();
     await expect(assembly).toHaveAttribute("data-hardware", "anchor");
-    await expect(assembly.locator('[data-part="posts"] rect')).toHaveCount(1);
+    await expect(assembly.locator('[data-part="posts"] [data-post]')).toHaveCount(1);
     await page.locator("label", { has: page.getByTestId("form-nose") }).click();
     await expect(assembly).toHaveAttribute("data-hardware", "stud");
   });

@@ -5,7 +5,8 @@ import { useRef, useState } from "react";
 import { formatPrice, placementLabel } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { Modal } from "@/components/layout/Modal";
-import { ProductArtwork } from "./ProductArtwork";
+import { FloatingObject } from "./FloatingObject";
+import { artworkLabel } from "./ProductArtwork";
 import { TryOnPreview } from "./TryOnPreview";
 
 const OPEN_DELAY_MS = 200;
@@ -52,8 +53,9 @@ export function ProductGrid({ products, className }: { products: Product[]; clas
 
   return (
     <>
-      <ul className={className ?? "grid grid-cols-1 gap-x-8 gap-y-20 sm:grid-cols-2 xl:grid-cols-4 xl:[&>li:nth-child(even)]:mt-24"}>
-        {products.map((product) => {
+      {/* No tiles: each piece stands on the paper, in a loose staggered column pair with a great deal of air. */}
+      <ul className={className ?? "grid grid-cols-1 gap-x-[10vw] gap-y-24 sm:grid-cols-2 sm:[&>li:nth-child(even)]:mt-40 lg:gap-y-32"}>
+        {products.map((product, i) => {
           const open = hover?.id === product.id;
           const panelId = `tryon-panel-${product.slug}`;
           return (
@@ -61,6 +63,7 @@ export function ProductGrid({ products, className }: { products: Product[]; clas
               key={product.id}
               data-testid="product-card"
               data-product={product.slug}
+              data-object-host
               className={`group relative ${open ? "z-30" : ""}`}
               onPointerEnter={(e) => {
                 if (e.pointerType === "mouse") scheduleOpen(product, e.currentTarget, OPEN_DELAY_MS);
@@ -86,12 +89,14 @@ export function ProductGrid({ products, className }: { products: Product[]; clas
               }}
             >
               <Link href={`/product/${product.slug}`} className="block" aria-describedby={open ? panelId : undefined}>
-                <ProductArtwork
-                  product={product}
-                  className="aspect-[4/5] w-full [&>div]:transition-transform [&>div]:duration-700 [&>div]:ease-[var(--ease-editorial)] group-hover:[&>div]:scale-[1.06]"
-                />
-                <span className="mt-4 flex items-baseline justify-between gap-4">
-                  <span className="font-display text-2xl font-light leading-tight">{product.title}</span>
+                <span role="img" aria-label={`${product.title}: ${artworkLabel(product).toLowerCase()}. ${product.summary}`} className="relative mx-auto block aspect-square w-[min(78%,26rem)]">
+                  <FloatingObject product={product} depth={1} delay={i * -1.1} />
+                </span>
+                <span className="label-xs mt-2 block text-ink/45">
+                  {String(i + 1).padStart(2, "0")} · {artworkLabel(product)}
+                </span>
+                <span className="mt-3 flex items-baseline justify-between gap-4">
+                  <span className="font-display text-3xl font-light leading-tight tracking-[0.03em] sm:text-4xl">{product.title}</span>
                   <span className="shrink-0 text-sm text-ash">
                     <span className="sr-only">Demo price </span>
                     {formatPrice(product.demoPrice, product.currency)}
@@ -119,7 +124,7 @@ export function ProductGrid({ products, className }: { products: Product[]; clas
                 <div
                   id={panelId}
                   data-testid="hover-panel"
-                  className={`fade-in absolute top-0 z-30 hidden w-[19rem] border border-line bg-coal p-5 shadow-[0_30px_80px_rgba(0,0,0,0.6)] md:block ${
+                  className={`fade-in absolute top-0 z-30 hidden w-[19rem] border border-line bg-paper p-5 shadow-[0_30px_80px_rgba(12,12,13,0.10)] md:block ${
                     hover.placement.side === "right"
                       ? "left-full ml-0"
                       : hover.placement.side === "left"
@@ -148,7 +153,7 @@ export function ProductGrid({ products, className }: { products: Product[]; clas
               <button
                 type="button"
                 onClick={() => setSheetProduct(null)}
-                className="min-h-11 px-2 text-xs uppercase tracking-[0.22em] text-ash hover:text-ivory"
+                className="min-h-11 px-2 text-xs uppercase tracking-[0.22em] text-ash hover:text-ink"
               >
                 Close
               </button>

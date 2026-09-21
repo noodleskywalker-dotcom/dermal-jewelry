@@ -31,16 +31,13 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
   };
 
   return (
-    <div className="mx-auto max-w-[90rem] px-5 py-14 sm:px-8">
-      <p className="eyebrow">Shop</p>
-      <h1 className="mt-3 font-display text-5xl leading-none sm:text-7xl">All pieces</h1>
-      <p className="mt-5 max-w-xl text-sm leading-relaxed text-ash">
-        Four demo pieces. Prices are placeholders and nothing can be ordered yet.
-      </p>
+    <div className="mx-auto max-w-[120rem] px-6 pb-32 pt-12 sm:px-10 lg:px-16 lg:pt-20">
+      <p className="label-xs text-ash">Shop · Demo prices · Nothing can be ordered yet</p>
+      <h1 className="mt-6 font-display text-[clamp(3.25rem,7.2vw,7.5rem)] font-light leading-[0.98] tracking-[-0.01em]">All pieces</h1>
 
-      <div className="mt-10 flex flex-wrap items-end justify-between gap-6 border-y border-line py-5">
+      <div className="mt-12 flex flex-wrap items-end justify-between gap-x-10 gap-y-4 lg:mt-16">
         <nav aria-label="Filter by placement">
-          <ul className="flex flex-wrap gap-2">
+          <ul className="flex flex-wrap gap-x-6">
             <li>
               <FilterLink href={hrefFor()} current={!placement}>All</FilterLink>
             </li>
@@ -52,7 +49,7 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
           </ul>
         </nav>
 
-        <form action="/shop" method="get" role="search" className="flex gap-2">
+        <form action="/shop" method="get" role="search" className="flex items-end gap-3">
           {placement && <input type="hidden" name="placement" value={placement} />}
           <label htmlFor="shop-search" className="sr-only">Search pieces</label>
           <input
@@ -62,16 +59,16 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
             defaultValue={query}
             placeholder="Search pieces"
             maxLength={60}
-            className="min-h-11 w-48 border border-line bg-ink px-3 text-sm placeholder:text-ash"
+            className="label-xs min-h-11 w-44 border-0 border-b border-line bg-transparent px-0 placeholder:text-ash focus:border-ink focus:outline-none focus-visible:border-garnet"
           />
-          <button type="submit" className="min-h-11 border border-line px-4 text-xs uppercase tracking-[0.2em] hover:border-ivory">
+          <button type="submit" className="label-xs min-h-11 px-2 text-ash hover:text-ink">
             Search
           </button>
         </form>
       </div>
 
       {products.length > 0 ? (
-        <div className="mt-12">
+        <div className="mt-16 lg:mt-24 lg:px-[6vw]">
           <ProductGrid products={products} />
         </div>
       ) : (
@@ -80,7 +77,7 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
           <p className="mt-3 text-sm text-ash">
             {query ? `Nothing matches “${query}”.` : "This placement doesn’t have pieces in the preview."}
           </p>
-          <Link href="/shop" className="mt-8 inline-flex min-h-11 items-center border border-ivory px-6 text-xs uppercase tracking-[0.22em] hover:bg-ivory hover:text-ink">
+          <Link href="/shop" className="btn-line mt-8">
             Show all pieces
           </Link>
         </div>
@@ -94,8 +91,8 @@ function FilterLink({ href, current, children }: { href: string; current: boolea
     <Link
       href={href}
       aria-current={current ? "true" : undefined}
-      className={`inline-flex min-h-11 items-center border px-4 text-xs uppercase tracking-[0.18em] transition-colors duration-200 ${
-        current ? "border-ivory text-ivory" : "border-line text-ash hover:border-ash"
+      className={`label-xs inline-flex min-h-11 items-center border-b transition-colors duration-300 ${
+        current ? "border-ink text-ink" : "border-transparent text-ash hover:text-ink"
       }`}
     >
       {children}

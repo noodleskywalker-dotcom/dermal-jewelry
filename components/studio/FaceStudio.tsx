@@ -23,6 +23,7 @@ import {
   updateTweak,
 } from "@/lib/studio/look";
 import type { LookItem, Side } from "@/lib/studio/types";
+import { PlacementPreview } from "@/components/catalog/PlacementPreview";
 import { ProductArtwork } from "@/components/catalog/ProductArtwork";
 import { LookRenderer, type LookInteraction } from "./LookRenderer";
 import { PhotoPicker } from "./PhotoPicker";
@@ -32,7 +33,7 @@ const NUDGE = 0.004;
 
 // Quiet text controls. The Studio should read as a styling tool, not a dashboard of boxes.
 const toolButton =
-  "label-xs inline-flex min-h-11 shrink-0 items-center px-3 text-ivory/75 transition-colors duration-200 hover:text-ivory disabled:cursor-not-allowed disabled:text-ivory/25 aria-pressed:text-ivory aria-pressed:underline aria-pressed:underline-offset-8";
+  "label-xs inline-flex min-h-11 shrink-0 items-center px-3 text-ink/75 transition-colors duration-200 hover:text-ink disabled:cursor-not-allowed disabled:text-ink/25 aria-pressed:text-ink aria-pressed:underline aria-pressed:underline-offset-8";
 
 export function FaceStudio({ initialProductSlug, initialFormId }: { initialProductSlug?: string; initialFormId?: string }) {
   const studio = useStudio();
@@ -167,21 +168,21 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
   };
 
   return (
-    <div className="mx-auto max-w-[90rem] px-5 pb-10 sm:px-8">
-      <header className="flex flex-wrap items-end justify-between gap-4 pb-6 pt-8">
-        <h1 className="font-display text-4xl font-light leading-none sm:text-5xl">Face Studio</h1>
+    <div className="mx-auto max-w-[120rem] px-6 pb-10 sm:px-10 lg:px-16">
+      <header className="flex flex-wrap items-end justify-between gap-4 pb-4 pt-6">
+        <h1 className="font-display text-3xl font-light leading-none tracking-[0.03em] sm:text-4xl">Face Studio</h1>
         <p className="label-xs max-w-sm leading-relaxed text-ash">
           A still, approximate preview. Not real size, not a fitting, not piercing advice.
         </p>
       </header>
 
-      <div className="grid gap-x-12 gap-y-5 lg:grid-cols-[minmax(0,1fr)_19rem]">
+      <div className="grid gap-x-14 gap-y-5 lg:grid-cols-[minmax(0,1fr)_17rem]">
         {/* Piece rail */}
         <section aria-labelledby="pieces-heading" className="order-2 min-w-0 lg:col-start-1 lg:row-start-2">
           <h2 id="pieces-heading" className="label-xs text-ash">
             Pieces
           </h2>
-          <ul className="mt-3 flex gap-6 overflow-x-auto pb-2">
+          <ul className="mt-3 flex gap-8 overflow-x-auto pb-2 lg:justify-center">
             {products.map((product) => {
               const selected = currentProduct.id === product.id;
               return (
@@ -192,8 +193,8 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
                     data-product={product.slug}
                     aria-pressed={selected}
                     onClick={() => chooseProduct(product)}
-                    className={`flex w-44 items-center gap-3 border-b pb-2 text-left transition-colors duration-200 ${
-                      selected ? "border-ivory" : "border-transparent text-ivory/70 hover:text-ivory"
+                    className={`flex w-40 items-center gap-3 border-b pb-2 text-left transition-colors duration-500 ${
+                      selected ? "border-ink" : "border-transparent text-ink/70 hover:text-ink"
                     }`}
                   >
                     <ProductArtwork product={product} className="h-14 w-12 shrink-0" showLabel={false} />
@@ -214,34 +215,39 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
         {/* On small screens the stage sticks under the header so the jewelry stays visible while adjusting. */}
         <section
           aria-label="Photo stage"
-          className={`order-1 min-w-0 bg-ink lg:static lg:col-start-1 lg:row-start-1 ${photo ? "sticky top-16 z-20 -mx-5 px-5 pb-1 sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0" : ""}`}
+          className={`order-1 min-w-0 bg-paper lg:static lg:col-start-1 lg:row-start-1 ${photo ? "sticky top-16 z-20 -mx-5 px-5 pb-1 sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0" : ""}`}
         >
           <div
-            className={`relative bg-coal lg:h-[72dvh] ${photo ? "h-[44dvh] min-h-[16rem]" : "h-[58dvh] min-h-[22rem]"}`}
+            className={`relative lg:h-[76dvh] ${photo ? "h-[44dvh] min-h-[16rem]" : "h-[62dvh] min-h-[24rem]"}`}
             data-testid="studio-stage"
           >
             {photo ? (
-              <LookRenderer
-                photo={photo}
-                items={look.items}
-                showJewelry={showJewelry}
-                interaction={interaction}
-                label="Your photo with the selected jewelry. Drag a piece or use the controls to adjust it."
-              />
+              // The customer's own photo settles in where the sculpted head stood.
+              <div className="story-face h-full w-full">
+                <LookRenderer
+                  photo={photo}
+                  items={look.items}
+                  showJewelry={showJewelry}
+                  interaction={interaction}
+                  label="Your photo with the selected jewelry. Drag a piece or use the controls to adjust it."
+                />
+              </div>
             ) : (
-              <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-                <p className="font-display text-3xl sm:text-4xl">Start with a photo.</p>
-                <p className="mt-3 max-w-sm text-sm leading-relaxed text-ash">
-                  A front-facing photo works best. You can move, scale and rotate the jewelry afterwards.
-                </p>
-                <PhotoPicker className="mt-7 max-w-sm" label="Use my photo" />
-                <p className="mt-2 text-xs text-ash">A sample model isn&rsquo;t available yet.</p>
+              // No photo yet: a smooth sculpted head wears the chosen piece at its approved placement.
+              <div data-testid="studio-head" className="flex h-full flex-col items-center">
+                <div className="flex min-h-0 w-full flex-1 items-end justify-center">
+                  <PlacementPreview product={currentProduct} formId={formOf(currentProduct, studio.forms[currentProduct.id]).id} bare />
+                </div>
+                <div className="flex w-full max-w-md flex-col items-center pb-1 pt-3 text-center">
+                  <PhotoPicker className="w-full max-w-[16rem]" label="Use my photo" compact />
+                  <p className="label-xs -mt-2 text-ash">Your photo stays on this device</p>
+                </div>
               </div>
             )}
           </div>
 
           {photo && (
-            <div className="relative z-10 mx-auto -mt-12 flex w-max max-w-full items-center overflow-x-auto bg-ink/80 px-1 backdrop-blur-sm" role="toolbar" aria-label="Studio actions">
+            <div className="relative z-10 mx-auto -mt-12 flex w-max max-w-full items-center overflow-x-auto bg-paper/85 px-1 backdrop-blur-sm" role="toolbar" aria-label="Studio actions">
               <button type="button" className={toolButton} onClick={studio.undo} disabled={!studio.canUndo} data-testid="undo">
                 Undo
               </button>
@@ -296,9 +302,11 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
         <div className="order-3 min-w-0 space-y-10 max-lg:[&_button]:scroll-mt-[62dvh] max-lg:[&_input]:scroll-mt-[62dvh] max-lg:[&_select]:scroll-mt-[62dvh] lg:col-start-2 lg:row-span-2 lg:row-start-1">
           <section aria-labelledby="adjust-heading">
             <h2 id="adjust-heading" className="label-xs text-ash">
-              Adjust
+              {photo ? "Adjust" : "Piercing form"}
             </h2>
 
+            {/* Secondary controls wait until there is a photo to use them on. */}
+            {photo && (
             <fieldset className="mt-3">
               <legend className="text-sm">Side of the face</legend>
               <div className="mt-2 grid grid-cols-2 gap-2">
@@ -308,7 +316,7 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
                     <label
                       key={side}
                       className={`label-xs flex min-h-11 cursor-pointer items-center border-b has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-garnet-text ${
-                        selected ? "border-ivory" : "border-line text-ash"
+                        selected ? "border-ink" : "border-line text-ash"
                       }`}
                     >
                       <input
@@ -329,10 +337,11 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
                 The wearer&rsquo;s left appears on the right of an unmirrored photo.
               </p>
             </fieldset>
+            )}
 
             {currentProduct.forms.length > 1 && (
               <fieldset className="mt-5">
-                <legend className="text-sm">Piercing form</legend>
+                <legend className={photo ? "text-sm" : "sr-only"}>Piercing form</legend>
                 <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
                   {currentProduct.forms.map((form) => {
                     const pending = form.status !== "available";
@@ -424,11 +433,10 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
                   </p>
                 </div>
               </>
-            ) : (
-              <p className="mt-4 text-sm leading-relaxed text-ash">Add a photo to place and adjust a piece.</p>
-            )}
+            ) : null}
           </section>
 
+          {photo && (
           <section aria-labelledby="look-heading">
             <h2 id="look-heading" className="label-xs text-ash">
               Your look
@@ -470,7 +478,7 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
                     id="add-product"
                     value={addProductId}
                     onChange={(e) => setAddProductId(e.target.value)}
-                    className="min-h-11 border-b border-line bg-ink text-sm"
+                    className="min-h-11 border-b border-line bg-paper text-sm"
                     data-testid="add-product"
                   >
                     {products.map((p) => (
@@ -486,7 +494,7 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
                     id="add-side"
                     value={addSide}
                     onChange={(e) => setAddSide(e.target.value as Side)}
-                    className="min-h-11 border-b border-line bg-ink text-sm"
+                    className="min-h-11 border-b border-line bg-paper text-sm"
                     data-testid="add-side"
                   >
                     <option value="left">Wearer&rsquo;s left</option>
@@ -532,10 +540,11 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
               </div>
             )}
           </section>
+          )}
 
           <p className="border-t border-line pt-5 text-xs leading-relaxed text-ash">
             Your photo stays in this browser tab&rsquo;s memory. It is not uploaded, saved or tracked, and it is gone
-            after a reload. <Link href="/about#privacy" className="underline hover:text-ivory">How the preview works</Link>
+            after a reload. <Link href="/about#privacy" className="underline hover:text-ink">How the preview works</Link>
           </p>
         </div>
       </div>
@@ -564,7 +573,7 @@ function TargetButton({
       onClick={onClick}
       data-testid={testId}
       className={`min-h-11 border-b px-1 text-xs transition-colors duration-200 ${
-        selected ? "border-ivory" : "border-transparent text-ash hover:text-ivory"
+        selected ? "border-ink" : "border-transparent text-ash hover:text-ink"
       }`}
     >
       {children}
@@ -584,7 +593,7 @@ function NudgeButton({
   children: React.ReactNode;
 }) {
   return (
-    <button type="button" aria-label={label} onClick={onClick} data-testid={testId} className="h-11 w-11 text-ivory/70 hover:text-ivory">
+    <button type="button" aria-label={label} onClick={onClick} data-testid={testId} className="h-11 w-11 text-ink/70 hover:text-ink">
       <span aria-hidden="true">{children}</span>
     </button>
   );

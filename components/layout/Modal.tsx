@@ -45,7 +45,7 @@ export function Modal({
         if (e.target === e.currentTarget) onClose();
       }}
       // "clear" has no surface and no backdrop: the page stays visible under whatever it draws.
-      className={`${shape} m-0 border-line p-0 open:flex open:flex-col ${variant === "clear" ? "overflow-hidden border-0 bg-transparent text-ink backdrop:bg-transparent" : "bg-coal text-ivory backdrop:bg-black/70"}`}
+      className={`${shape} m-0 border-line p-0 open:flex open:flex-col ${variant === "clear" ? "overflow-hidden border-0 bg-transparent text-ink backdrop:bg-transparent" : "bg-coal text-ink shadow-[0_0_80px_rgba(12,12,13,0.12)] backdrop:bg-ink/20"}`}
     >
       {open ? children : null}
     </dialog>

@@ -1,39 +1,45 @@
 @import "tailwindcss";
 
-/* DERMAL design tokens: dark editorial, product-first (brief §07). */
+/* DERMAL design tokens: ATELIER PAPER, the global system. Flat warm ivory, near-black type, one garnet
+   accent used sparingly, chrome only through product imagery. There is no dark theme.
+   Some token names predate the light system (ash, line, coal, bone); their values are what matter. */
 @theme inline {
+  --color-paper: #fbfaf7;
   --color-ink: #0c0c0d;
-  --color-coal: #19191c;
-  --color-line: #2c2c31;
-  --color-ivory: #f4f0e8;
-  /* Secondary text. 7.9:1 on ink. */
-  --color-ash: #aaa49a;
-  /* Garnet is a surface and border accent. It is too dark for text on ink. */
+  /* Text on ink surfaces: solid buttons only. */
+  --color-ivory: #fbfaf7;
+  /* Secondary text. 5.9:1 on paper. */
+  --color-ash: #66615a;
+  /* Hairline rules. */
+  --color-line: #dedad1;
+  /* Raised surfaces: drawers, sheets, dialogs. The same paper, never a beige card. */
+  --color-coal: #fbfaf7;
   --color-garnet: #8f2337;
-  /* Readable garnet for text and focus on dark surfaces. 5.2:1 on ink. */
-  --color-garnet-text: #e0627a;
-  /* Deeper garnet for large display type only (3.6:1 on ink, large-text threshold is 3:1). */
-  --color-garnet-display: #b8384f;
+  /* Garnet is readable on paper at 8.6:1, so text and display use the same value. */
+  --color-garnet-text: #8f2337;
+  --color-garnet-display: #8f2337;
   --color-silver: #c9ced6;
-  /* Warm paper used for light chapters and object tiles. */
-  --color-bone: #e7e2d8;
-  --color-bone-deep: #d8d2c5;
+  /* Product stills stand on the page itself. */
+  --color-bone: #fbfaf7;
+  --color-bone-deep: #f3f0e9;
 
   --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
   --font-sans: var(--font-geist-sans), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
+  /* 500 to 900 ms, slow out. */
   --ease-editorial: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html {
-  background: var(--color-ink);
-  color-scheme: dark;
+  background: var(--color-paper);
+  color-scheme: light;
 }
 
 body {
-  background: var(--color-ink);
-  color: var(--color-ivory);
+  background: var(--color-paper);
+  color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
@@ -44,7 +50,7 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-garnet-text);
+  outline: 2px solid var(--color-garnet);
   outline-offset: 3px;
 }
 
@@ -373,10 +379,10 @@ input[type="range"].studio-range::-moz-range-thumb {
 }
 /* An ink panel inside the paper environment keeps the site's ordinary dark styling. */
 .story-light .story-dark .text-ash {
-  color: var(--color-ash);
+  color: #aaa49a;
 }
 .story-light .story-dark :focus-visible {
-  outline-color: var(--color-garnet-text);
+  outline-color: #e0627a;
 }
 /* Development-only note. It never renders in a build. */
 .story-dev {
@@ -983,9 +989,210 @@ input[type="range"].studio-range::-moz-range-thumb {
   }
 }
 
-/* ───────── Landing, selection and the assembled piece ───────── */
-.landing-float {
-  animation: story-float 7s ease-in-out infinite alternate;
+/* ───────── ATELIER PAPER: shared pieces ───────── */
+.btn-solid,
+.btn-line {
+  display: inline-flex;
+  min-height: 3.25rem;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 2.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  transition: background-color 0.5s var(--ease-editorial), color 0.5s var(--ease-editorial), border-color 0.5s var(--ease-editorial);
+}
+.btn-solid {
+  background: var(--color-garnet);
+  color: var(--color-ivory);
+}
+.btn-solid:hover {
+  background: var(--color-ink);
+}
+.btn-line {
+  border: 1px solid var(--color-ink);
+}
+.btn-line:hover {
+  background: var(--color-ink);
+  color: var(--color-ivory);
+}
+
+/* ── Floating object: borderless jewelry with a shadow of its own and one small motion per family ── */
+.fo,
+.fo-drift,
+.fo-art,
+.fo-shadow {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+/* Cursor depth: nearer pieces travel further. --mx and --my come from the enclosing depth field. */
+.fo {
+  transform: translate3d(calc(var(--mx, 0) * var(--depth, 1) * -14px), calc(var(--my, 0) * var(--depth, 1) * -10px), 0);
+}
+.fo-drifting {
+  animation: story-float 8s ease-in-out infinite alternate;
+  animation-delay: var(--fo-delay, 0s);
+}
+.fo-art {
+  transition: transform 0.8s var(--ease-settle);
+}
+.fo-shadow {
+  /* The shadow moves a little against the cursor, as if the light stayed where it was. */
+  filter: drop-shadow(calc(var(--mx, 0) * -6px) calc(14px + var(--my, 0) * -4px) 12px rgb(40 30 20 / 0.2)) drop-shadow(0 2px 2px rgb(40 30 20 / 0.28));
+  transition: filter 0.8s var(--ease-settle);
+}
+.fo-glint {
+  position: absolute;
+  width: 22%;
+  aspect-ratio: 1;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.3);
+  background:
+    linear-gradient(90deg, transparent 46%, #fff 50%, transparent 54%),
+    linear-gradient(0deg, transparent 46%, #fff 50%, transparent 54%),
+    radial-gradient(circle, #fff 0%, rgb(255 255 255 / 0.6) 14%, transparent 42%);
+  mask-image: radial-gradient(circle, #000 0%, transparent 70%);
+}
+/* A blade of light. soft-light leaves the paper untouched, so only metal takes it, and it casts no shadow. */
+.fo-blade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(100deg, transparent 44%, rgb(255 255 255 / 0.95) 50%, transparent 56%);
+  mix-blend-mode: soft-light;
+}
+.fo-grain {
+  position: absolute;
+  bottom: 6%;
+  left: calc(50% + var(--gx));
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #a98752;
+  opacity: 0;
+  pointer-events: none;
+}
+:is([data-object-host]:hover, [data-object-host]:focus-within) .fo-art {
+  transform: translateY(-6px) scale(1.06);
+}
+:is([data-object-host]:hover, [data-object-host]:focus-within) .fo[data-motion="gem"] .fo-art {
+  transform: translateY(-6px) scale(1.05) rotate(4deg);
+}
+:is([data-object-host]:hover, [data-object-host]:focus-within) .fo-shadow {
+  animation: story-catch 0.9s var(--ease-editorial) both;
+}
+:is([data-object-host]:hover, [data-object-host]:focus-within) .fo-glint {
+  animation: story-glint 0.8s 0.2s ease-out both;
+}
+:is([data-object-host]:hover, [data-object-host]:focus-within) .fo-blade {
+  animation: fo-blade 0.9s var(--ease-editorial) both;
+}
+:is([data-object-host]:hover, [data-object-host]:focus-within) .fo-grain {
+  animation: story-grain 1s var(--gdelay) ease-out both;
+}
+@keyframes fo-blade {
+  from {
+    opacity: 1;
+    transform: translateX(-60%);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(60%);
+  }
+}
+
+/* ── DESERT EYE layer: a pale patch and a few grains. Never the whole brand. ── */
+.sand-layer {
+  position: absolute;
+  pointer-events: none;
+  display: block;
+}
+.sand-patch {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 50% 50% at 50% 60%, rgb(214 190 150 / 0.55) 0%, rgb(226 208 176 / 0.28) 45%, transparent 72%);
+  filter: blur(6px);
+}
+.sand-drift {
+  position: absolute;
+  border-radius: 50%;
+  background: #b8975f;
+  opacity: 0;
+  animation: sand-drift 15s linear infinite;
+}
+@keyframes sand-drift {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  15%,
+  70% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(46px, -34px);
+  }
+}
+
+.product-sand {
+  left: 4%;
+  right: 4%;
+  bottom: 2%;
+  height: 34%;
+}
+
+/* ── Landing ── */
+.landing-object {
+  width: 21%;
+}
+.landing-object-label {
+  display: block;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+.landing-object-label .font-display {
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+}
+.landing-sand {
+  inset: 34% -18% -12% -22%;
+}
+@media (min-width: 1024px) {
+  .landing-object {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: max(var(--size), 4.5rem);
+    transform: translate(-50%, -50%);
+  }
+  .landing-object-label {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: max-content;
+    opacity: 0;
+    transform: translate(-50%, 6px);
+    transition: opacity 0.5s ease-out, transform 0.6s var(--ease-editorial);
+  }
+  .landing-object-label .font-display {
+    font-size: 1.125rem;
+  }
+  .landing-object:hover .landing-object-label,
+  .landing-object:focus-within .landing-object-label {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+@media (min-width: 1024px) and (hover: none) {
+  .landing-object-label {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
 /* The mascot is a stack of registered stills on white, multiplied into the paper so it has no edge. */
 .mascot-layer {
@@ -1033,76 +1240,308 @@ input[type="range"].studio-range::-moz-range-thumb {
   opacity: 0;
 }
 
-/* A sideways scroller. Vertical scrolling of the page is never taken over. */
+/* ── Selection: one family centred, neighbours faint at the edges ── */
 .selection-rail {
   scrollbar-width: none;
-  scroll-padding-inline: 8vw;
-  padding-inline: 8vw;
-  gap: 6vw;
-  min-height: min(44rem, calc(100svh - 12rem));
+  scroll-snap-type: x mandatory;
+  padding-inline: 9vw;
+  scroll-padding-inline: 9vw;
+  gap: 2vw;
+  cursor: grab;
 }
 .selection-rail::-webkit-scrollbar {
   display: none;
 }
-.selection-slide {
-  width: 84vw;
-  padding-block: 1.5rem 5rem;
-  opacity: 0.35;
-  transition: opacity 0.6s var(--ease-editorial);
+/* Snap is released while a mouse drags, then the rail settles on the nearest family. */
+.selection-rail[data-dragging="true"] {
+  scroll-snap-type: none;
+  cursor: grabbing;
+  user-select: none;
 }
-.selection-slide[data-current="true"] {
-  opacity: 1;
+.selection-rail[data-dragging="true"] a {
+  pointer-events: none;
+}
+.selection-slide {
+  position: relative;
+  flex: none;
+  width: 82vw;
+  scroll-snap-align: center;
+  padding-block: 3.5rem 5.5rem;
+  min-height: calc(100svh - 9.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .selection-object {
-  transition: transform 0.8s var(--ease-editorial);
-  transform: scale(0.86);
+  width: min(62vw, 40svh);
+  opacity: 0.22;
+  transform: scale(0.8);
+  transition: transform 0.9s var(--ease-settle), opacity 0.7s ease-out;
+}
+.selection-info {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s ease-out, transform 0.8s var(--ease-editorial);
 }
 .selection-slide[data-current="true"] .selection-object {
+  opacity: 1;
   transform: none;
+}
+.selection-slide[data-current="true"] .selection-info {
+  opacity: 1;
+  transform: none;
+}
+/* Sand is DESERT EYE's alone. It belongs to that slide and fades as the slide leaves the centre. */
+.selection-sand {
+  left: 50%;
+  top: 30%;
+  width: min(70vw, 46rem);
+  height: 34%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.9s ease-out;
+}
+.selection-accent {
+  position: absolute;
+  left: 0;
+  bottom: 3.5rem;
+  width: min(30vw, 11rem);
+  mix-blend-mode: multiply;
+  filter: brightness(1.05) contrast(1.05);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.9s ease-out;
+}
+.selection-slide[data-current="true"] :is(.selection-sand, .selection-accent) {
+  opacity: 1;
+}
+.selection-progress {
+  position: relative;
+  display: inline-block;
+  width: clamp(4rem, 12vw, 11rem);
+  height: 1px;
+  background: var(--color-line);
+}
+.selection-progress::after {
+  content: "";
+  position: absolute;
+  inset: -0.5px auto -0.5px 0;
+  width: 28%;
+  background: var(--color-ink);
+  left: calc(var(--progress, 0) * 72%);
+}
+/* KIRI has no artwork yet. A single hairline that takes the light stands where the piece will be. */
+.selection-blade {
+  width: 1px;
+  height: 46%;
+  background: linear-gradient(to bottom, transparent, var(--color-ink) 22%, var(--color-ink) 78%, transparent);
+  opacity: 0.55;
 }
 @media (min-width: 1024px) {
   .selection-rail {
-    scroll-padding-inline: 14vw;
-    padding-inline: 14vw;
-    gap: 4vw;
+    padding-inline: 21vw;
+    scroll-padding-inline: 21vw;
+    gap: 0;
   }
   .selection-slide {
-    width: 72vw;
-    padding-block: 2rem 6rem;
+    width: 58vw;
+    min-height: calc(100svh - 8.5rem);
+    padding-block: 3rem 5rem;
+  }
+  .selection-object {
+    width: min(30vw, 46svh);
+  }
+  .selection-accent {
+    left: -12vw;
+    bottom: 4.5rem;
+    width: min(15vw, 13rem);
   }
 }
 
-/* The piece comes together: base, posts, stone, symbol, then what each part is. */
+/* ── The piece: separated, aligned, approached, settled, one sweep of light ── */
 .assembly {
-  background: linear-gradient(170deg, #f7f4ee 0%, #ece6da 100%);
+  aspect-ratio: 1;
+  width: min(100%, 74svh);
+  margin-inline: auto;
+  container-type: size;
 }
 .assembly-part {
+  will-change: transform, opacity;
+  /* A full-size layer that slides apart must never lie over the controls under the stage. */
+  pointer-events: none;
+}
+.assembly-top {
+  translate: -50% -50%;
+  filter: drop-shadow(0 1.6cqh 1.4cqh rgb(40 30 20 / 0.2));
+}
+/* How far each part stands off when the piece is open. */
+.assembly-base {
+  --off: 7cqh;
+}
+.assembly-posts {
+  --off: 1.5cqh;
+}
+.assembly-top {
+  --off: -13cqh;
+}
+.assembly-guides {
   opacity: 0;
-  animation: assembly-in 1.1s var(--ease-editorial) var(--at) both;
+  transition: opacity 0.6s ease-out;
 }
-.assembly-note {
+[data-phase="exploded"] .assembly-guides {
+  opacity: 1;
+}
+[data-phase="assembled"] .assembly-part,
+[data-phase="exploded"] .assembly-part {
+  transition: transform 0.9s var(--ease-settle), filter 0.9s var(--ease-settle);
+}
+[data-phase="exploded"] .assembly-part {
+  transform: translateY(var(--off));
+}
+[data-phase="exploded"] .assembly-top {
+  filter: drop-shadow(0 3.4cqh 2.6cqh rgb(40 30 20 / 0.14));
+}
+[data-phase="intro"] .assembly-part {
   opacity: 0;
-  animation: rise 0.6s var(--ease-editorial) var(--at) both;
 }
-/* With reduced motion the piece is simply there: no waiting for a delay either. */
-@media (prefers-reduced-motion: reduce) {
-  .assembly-part,
-  .assembly-note {
-    animation-delay: 0s !important;
-  }
-  .mascot-body,
-  .landing-float,
-  .story-piece-float {
-    animation: none !important;
-  }
+[data-phase="assembling"] .assembly-base,
+[data-phase="assembling"] .assembly-posts {
+  animation: assembly-hardware var(--assembly) both;
 }
-@keyframes assembly-in {
-  from {
+[data-phase="assembling"] .assembly-top {
+  animation: assembly-top var(--assembly) both;
+  animation-delay: calc(var(--order, 0) * 0.12s);
+}
+/* 0–15% appear apart · 15–45% glide into line. */
+@keyframes assembly-hardware {
+  0% {
     opacity: 0;
-    transform: translateY(var(--from));
+    transform: translateY(calc(var(--off) * 1.5)) scale(1.03);
+    animation-timing-function: ease-out;
   }
-  to {
+  15% {
+    opacity: 1;
+    transform: translateY(var(--off)) scale(1.015);
+    animation-timing-function: cubic-bezier(0.65, 0, 0.2, 1);
+  }
+  45%,
+  100% {
     opacity: 1;
     transform: none;
+  }
+}
+/* Held apart while the hardware aligns · 45–67% approach · 67–82% settle, with the shadow closing in. */
+@keyframes assembly-top {
+  0% {
+    opacity: 0;
+    transform: translateY(calc(var(--off) * 1.25)) scale(1.07);
+    filter: drop-shadow(0 4.5cqh 3.4cqh rgb(40 30 20 / 0.1));
+    animation-timing-function: ease-out;
+  }
+  15%,
+  45% {
+    opacity: 1;
+    transform: translateY(var(--off)) scale(1.05);
+    filter: drop-shadow(0 3.8cqh 3cqh rgb(40 30 20 / 0.12));
+    animation-timing-function: cubic-bezier(0.6, 0, 0.25, 1);
+  }
+  67% {
+    opacity: 1;
+    transform: translateY(calc(var(--off) * 0.06)) scale(1.012);
+    filter: drop-shadow(0 2cqh 1.8cqh rgb(40 30 20 / 0.18));
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.2, 1);
+  }
+  82%,
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: drop-shadow(0 1.6cqh 1.4cqh rgb(40 30 20 / 0.2));
+  }
+}
+.assembly-sweep {
+  position: absolute;
+  inset: 12% 24% 20% 22%;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(102deg, transparent 42%, rgb(255 255 255 / 0.95) 50%, transparent 58%);
+  mix-blend-mode: soft-light;
+}
+[data-phase="assembling"] .assembly-sweep {
+  /* Forwards only: before its turn the sweep keeps its resting opacity of zero and is not seen waiting at the side. */
+  animation: fo-blade calc(var(--assembly) * 0.18) calc(var(--assembly) * 0.82) var(--ease-editorial) forwards;
+}
+.assembly-leaders,
+.assembly-note {
+  opacity: 0;
+  transition: opacity 0.7s ease-out;
+}
+:is([data-phase="assembled"], [data-phase="exploded"]) :is(.assembly-leaders, .assembly-note) {
+  opacity: 1;
+}
+[data-phase="exploded"] .assembly-leaders {
+  opacity: 0;
+}
+.assembly-notes {
+  display: grid;
+  gap: 0.25rem 2rem;
+  margin-top: 0.5rem;
+}
+.assembly-note dt,
+.assembly-note dd {
+  display: block;
+  line-height: 1.5;
+}
+/* On a phone there is no room for labels beside the piece, so they sit as a short list under the stage. */
+@media (max-width: 639px) {
+  .assembly {
+    margin-bottom: 9rem;
+  }
+  .assembly-notes {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-line);
+  }
+  .assembly-note {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .assembly-note dd {
+    flex-shrink: 0;
+    max-width: 45%;
+    text-align: right;
+  }
+}
+@media (min-width: 640px) {
+  .assembly-notes {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    display: block;
+    pointer-events: none;
+  }
+  .assembly-note {
+    position: absolute;
+    left: var(--nx);
+    top: var(--ny);
+    width: max-content;
+    max-width: 11rem;
+    transform: translate(0.6rem, -50%);
+  }
+  .assembly-note[data-side="left"] {
+    transform: translate(calc(-100% - 0.6rem), -50%);
+    text-align: right;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mascot-body,
+  .fo-drifting,
+  .story-piece-float,
+  .sand-drift {
+    animation: none !important;
   }
 }

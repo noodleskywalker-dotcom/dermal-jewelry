@@ -2,6 +2,49 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-21 — HYBRID visual system (owner-approved direction)
+
+The owner approved the HYBRID direction from the concept contact sheet: **Atelier Paper** everywhere,
+and a restrained **Sand and Chrome** layer for DESERT EYE only. Concept images were a direction only.
+No site code, geometry or jewelry artwork was taken from them, and no further credits were spent.
+
+- **Tokens.** One light theme: paper `#FBFAF7`, ink `#0C0C0D`, garnet `#8F2337`. The old token names
+  (`ash`, `line`, `coal`, `bone`) were kept and given light values, so no component needed a second
+  theme. There is no dark navigation bar and no dark page left.
+- **No tiles.** `ProductArtwork` no longer paints a tinted gradient behind the jewelry. The shop is a
+  loose staggered pair of columns of borderless `FloatingObject` pieces, not a product grid of cards.
+  Filters and search are tracked text with a hairline, not boxed chips. The bag and the cart page
+  lost their outer box; quantity buttons lost their borders.
+- **One motion language per family.** `motionOf()` derives it from the piece: DESERT EYE stirs a few
+  grains and glints, a piece with a stone takes a small sparkle, plain metal takes one blade of light.
+  Motion runs on hover or focus. Only a slow drift is constant, and reduced motion stops that too.
+- **Sand is DESERT EYE's alone.** `SandLayer` appears beside the mascot on the homepage and on the
+  DESERT EYE slide of the selection. It belongs to that slide, so it leaves when the next family is
+  centred. KIRI and the originals stay plain paper with a chrome hairline.
+- **Homepage copy** is the approved headline and the two actions only. No tagline and no body copy.
+  The mascot block has no `z-index`: a stacking context would isolate its multiply blend and draw a
+  white rectangle on the paper.
+- **Selection and the wheel.** The owner asked for drag, wheel, arrows and keyboard. The project rule
+  forbids horizontal movement driven by vertical scroll, so the vertical wheel is left to the page.
+  A sideways wheel or trackpad, mouse drag, touch swipe, the Prev and Next buttons and the arrow keys
+  all move the rail. This is a deliberate limit, not an omission.
+- **Assembly timeline.** 0.0 to 0.6 s hardware appears separated, to 1.8 s bar and posts align, to
+  2.7 s the tops approach, to 3.3 s they settle, to 4.0 s one light sweep and a gem glint. No bounce,
+  spin or overshoot. The stage is keyed by form, replay count and motion preference, so it always
+  starts from its own first state. With reduced motion the piece is simply assembled.
+- **Hardware is conceptual and says so.** The tops are the approved prototype artwork. Bar, anchor,
+  stud and posts are our own plain drawing with no measurement. The caption reads "Hardware shown
+  conceptually · type, size and thread not confirmed".
+- **Material callouts are page text** with leader lines, from `product.materials`: "Titanium /
+  Proposed", "Deep-red faceted gemstone / Material not yet confirmed", "Polished finish / Proposed".
+  The words ruby and implant-grade are never used.
+- **Themed assembly is architecture only.** `product.assembly.themed` records the sand-spirit idea
+  with status `not-produced`, and `PieceAssembly` has a `renderIntro` slot. Nothing is generated and
+  the standard assembly never depends on it.
+- **Face Studio before a photo** shows a featureless sculpted head wearing the chosen piece at the
+  approved anchors, one "Use my photo" action and the form selector. Side, look list, add-piece and
+  adjust controls appear only once a photo exists. Privacy handling is unchanged.
+
 ## 2026-09-21 — New direction: jewelry brand first (landing page, sideways selection, whole piece)
 
 The owner judged the DESERT EYE presentation not good enough and changed the UX and visual direction:

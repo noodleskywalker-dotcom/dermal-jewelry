@@ -10,6 +10,30 @@ Statuses used here: planned, implemented, tested, owner-approved, blocked, defer
 Milestone 1, the first vertical slice, is implemented and tested locally. It is waiting for owner review.
 Nothing is owner-approved yet. Nothing was merged to `main` or deployed to production.
 
+## HYBRID visual system (21 September 2026)
+
+The owner approved the HYBRID direction: Atelier Paper everywhere, Sand and Chrome for DESERT EYE only.
+It is implemented across the site on `feat/dermal-first-slice`. It is **not yet owner-reviewed as built**.
+No credits were spent, no concept image was used as site artwork, and Shopify was not touched.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| One light token set, light navigation on every page | tested | Paper `#FBFAF7`, ink `#0C0C0D`, garnet `#8F2337`. No dark page remains. |
+| Homepage | tested | Approved headline and two actions only. Floating pieces with cursor depth. Mascot rests on a small sand patch. |
+| Mascot idle and click-to-sand transition | tested | Internal stills and clip, development server only. Never in a production build. |
+| Selection rail | tested | One family centred, neighbours peek, drag, swipe, arrows, keys, sideways wheel. The vertical wheel stays with the page by project rule. |
+| Sand only on DESERT EYE | tested | The layer belongs to that slide and fades when the next family is centred. KIRI is words and a chrome hairline. |
+| Product page, about two thirds stage | tested | Complete piercing by default: tops, posts, base. Exploded view and replay. |
+| Assembly timeline (4.0 s, no bounce or spin) | tested for states, visually reviewed by the builder | Owner review pending. |
+| Material callouts as page text | tested | "Titanium / Proposed", "Deep-red faceted gemstone / Material not yet confirmed", "Polished finish / Proposed". |
+| Themed sand-spirit assembly | architecture only | `assembly.themed.status` is `not-produced`. No clip exists and none was generated. |
+| Face Studio sculpted head before a photo | tested | Secondary controls appear only with a photo. Privacy handling unchanged. |
+| Shop, cart, bag drawer, mobile menu, About, not-found | tested | Borderless pieces, no tinted tiles, no boxed filters. |
+
+Placeholders that remain: conceptual hardware drawing, prototype product art for DESERT EYE — LOVE,
+drawn concept art for the three originals, KIRI without artwork, internal-only mascot and sand clip
+(the clip still has a straight entry edge for about 0.6 s and a dark final cover), and the reveal video.
+
 ## Final direction (20 September 2026)
 
 The owner's addendum is the current direction: normal vertical scrolling, original and anime-inspired

@@ -18,7 +18,7 @@ const ASPECT = 2528 / 1696;
 // gourd and becomes the transition into the selection. Internal concept art: a build never gets it.
 export function Mascot({ media, href, label }: { media: MascotMedia; href: string; label: string }) {
   const reduced = useReducedMotion();
-  const { play } = useSandTransition();
+  const { play, busy } = useSandTransition();
   const [pose, setPose] = useState<Pose>("idle");
   const [called, setCalled] = useState(false);
   const picture = useRef<HTMLImageElement>(null);
@@ -41,6 +41,23 @@ export function Mascot({ media, href, label }: { media: MascotMedia; href: strin
     return () => timers.forEach(clearTimeout);
   }, [reduced, called]);
 
+  // He holds his look for as long as the sand is loading or playing, so the point the sand was aimed
+  // at never moves under it. Once the transition is over and he is still on screen, he reads again.
+  const wasBusy = useRef(false);
+  useEffect(() => {
+    if (busy) {
+      wasBusy.current = true;
+      return;
+    }
+    if (!wasBusy.current) return;
+    wasBusy.current = false;
+    const timer = setTimeout(() => {
+      setCalled(false);
+      setPose("idle");
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [busy]);
+
   const press = () => {
     if (called) return;
     setCalled(true);
@@ -53,11 +70,6 @@ export function Mascot({ media, href, label }: { media: MascotMedia; href: strin
         // By now he has finished looking up and holds that pose, so the picture is measured as it is drawn.
         const box = el.getBoundingClientRect();
         play({ origin: { ...pointOnContained(box, ASPECT, GOURD), pictureWidth: Math.min(box.width, box.height * ASPECT) * 0.5 }, href });
-        // If the visitor comes back to this page, he is reading again.
-        setTimeout(() => {
-          setCalled(false);
-          setPose("idle");
-        }, 4000);
       },
       reduced ? 0 : 520,
     );

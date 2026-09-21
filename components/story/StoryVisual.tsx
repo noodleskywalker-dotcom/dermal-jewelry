@@ -115,7 +115,7 @@ export function StoryVisual({
         );
       })}
       {captions && (
-        <p className={`label-xs absolute inset-x-5 bottom-5 ${focus.inset ? "text-center text-ink/55" : "text-ivory/85 [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]"}`}>
+        <p className={`label-xs absolute inset-x-5 bottom-5 ${focus.inset ? "text-center text-ink/55" : "text-white/90 [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]"}`}>
           {focus.caption} · concept
         </p>
       )}

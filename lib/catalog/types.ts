@@ -44,6 +44,9 @@ export type Composition = {
   note: string;
 };
 
+/** A material callout. `stone` is shown only on forms that carry a stone. */
+export type MaterialNote = { id: "metal" | "stone" | "finish"; label: string; status: string };
+
 export type SpecStatus = "unverified" | "verified";
 
 export type FormId = "anti-eyebrow" | "micro-dermal" | "nose";
@@ -112,7 +115,9 @@ export type Product = {
    * What each part is made of, as far as anyone has said. "Proposed" is the owner's intention, not a
    * maker's confirmation. Nothing here is a verified fact until a supplier confirms it.
    */
-  materials?: { part: string; value: string; status: "Proposed" | "Not confirmed" | "Prototype art" }[];
+  materials?: MaterialNote[];
+  /** An optional themed opening for the assembly view. The standard assembly never depends on it. */
+  assembly?: { themed?: { id: string; description: string; status: "not-produced" | "available" } };
 
   // Convenience copies of the default form, used by listings and filters.
   placements: PlacementId[];

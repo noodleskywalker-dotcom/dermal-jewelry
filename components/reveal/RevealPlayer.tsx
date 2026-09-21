@@ -48,7 +48,7 @@ export function RevealPlayer({
       )}
       <Modal open={expanded} onClose={() => setExpanded(false)} label={`${product.title} reveal, expanded`} variant="full">
         {expanded && (
-          <div className="flex h-full flex-col bg-ink p-4 sm:p-8">
+          <div className="flex h-full flex-col bg-paper p-4 sm:p-8">
             <div className="flex justify-end">
               <button type="button" data-testid="reveal-close" onClick={() => setExpanded(false)} className="label-xs inline-flex min-h-11 items-center px-2">
                 Close reveal

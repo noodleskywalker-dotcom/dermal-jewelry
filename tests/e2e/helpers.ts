@@ -9,6 +9,15 @@ export async function openStudioWithPhoto(page: Page, query = "") {
   await page.getByTestId("photo-input").first().setInputFiles(FIXTURE);
   await expect(page.getByTestId("photo-frame")).toBeVisible();
   await expect(page.getByTestId("placed-item")).toHaveCount(1);
+  // The photo settles in over most of a second. Measurements wait until it rests.
+  await page.getByTestId("studio-stage").evaluate((stage) =>
+    Promise.all(
+      stage
+        .getAnimations({ subtree: true })
+        .filter((a) => a.effect?.getComputedTiming().iterations !== Infinity)
+        .map((a) => a.finished.catch(() => undefined)),
+    ).then(() => undefined),
+  );
 }
 
 /** Centre of an element relative to the displayed photo, 0..1 on both axes. */

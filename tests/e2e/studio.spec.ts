@@ -255,7 +255,9 @@ test.describe("products, previews and clearing", () => {
 
     await page.getByTestId("clear-photo").click();
     await expect(page.getByTestId("photo-frame")).toHaveCount(0);
-    await expect(page.getByTestId("look-empty")).toBeVisible();
+    // Without a photo the look panel is put away, and the sculpted head stands in again.
+    await expect(page.getByTestId("look-list")).toHaveCount(0);
+    await expect(page.getByTestId("studio-head")).toBeVisible();
 
     if (isMobile) await page.getByRole("button", { name: "Menu" }).click();
     await page.getByRole("link", { name: "Shop", exact: true }).first().click();

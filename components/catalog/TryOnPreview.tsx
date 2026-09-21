@@ -36,7 +36,7 @@ export function TryOnPreview({
 
       {photo ? (
         <>
-          <div className="mt-4 aspect-[4/5] w-full bg-ink">
+          <div className="mt-4 aspect-[4/5] w-full bg-bone-deep">
             <LookRenderer
               photo={photo}
               items={items}

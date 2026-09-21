@@ -37,7 +37,7 @@ export default function AboutPage() {
           This is a preview build. The four pieces are concepts with demo prices. Materials, dimensions and
           compatibility are not verified, and checkout is disabled.
         </p>
-        <Link href="/face-studio" className="mt-8 inline-flex min-h-12 items-center bg-ivory px-8 text-xs uppercase tracking-[0.24em] text-ink hover:bg-white">
+        <Link href="/face-studio" className="btn-solid mt-8">
           Open Face Studio
         </Link>
       </section>

@@ -8,35 +8,18 @@ import { bagActions, useBag } from "@/lib/cart/store";
 import { site } from "@/lib/config/site";
 import { Modal } from "./Modal";
 
-// On the homepage the bar floats over the campaign with no background; white text with
-// mix-blend-difference stays legible over both the light and the dark chapters.
-// A story-driven collection page stands on paper, so there the bar is paper with ink text and no
-// rule. Everywhere else it is a quiet solid ink bar.
+// One light bar on every page: paper, near-black text, no rule. There is no dark bar.
 export function Navbar() {
   const pathname = usePathname();
   const bag = useBag();
   const count = bagCount(bag);
   const [menuOpen, setMenuOpen] = useState(false);
-  const overlay = false;
-  // Pages that stand on paper: the landing page, the selection, story-driven collections and product pages.
-  const light =
-    pathname === "/" || pathname === "/collections" || pathname.startsWith("/product/") || site.collections.some((c) => c.stage === "light" && pathname === `/collections/${c.slug}`);
-
   const linkClass = "label-xs inline-flex min-h-11 items-center opacity-80 transition-opacity duration-200 hover:opacity-100";
 
   return (
     <>
-    <header
-      className={
-        overlay
-          ? "pointer-events-none fixed inset-x-0 top-0 z-40 text-white mix-blend-difference"
-          : light
-            ? "story-light sticky top-0 z-40 text-ink"
-            : "sticky top-0 z-40 border-b border-line bg-ink text-ivory"
-      }
-      data-tone={overlay ? "blend" : light ? "light" : "ink"}
-    >
-      <nav aria-label="Main" className="pointer-events-auto mx-auto flex h-16 max-w-[100rem] items-center justify-between px-5 sm:px-8">
+    <header data-tone="light" className="sticky top-0 z-40 bg-paper/90 text-ink backdrop-blur-[6px]">
+      <nav aria-label="Main" className="mx-auto flex h-16 max-w-[100rem] items-center justify-between px-5 sm:px-8">
         <Link href="/" className="font-sans text-sm font-medium tracking-[0.42em]" aria-label={`${site.brand} home`}>
           {site.brand}
         </Link>
@@ -55,12 +38,6 @@ export function Navbar() {
         </ul>
 
         <div className="flex items-center gap-5">
-          {/* The wrapper owns the breakpoint, because the link class already sets a display value. */}
-          <span className="hidden md:block">
-            <Link href="/shop#shop-search" className={linkClass}>
-              Search
-            </Link>
-          </span>
           <button type="button" onClick={bagActions.openDrawer} data-testid="open-bag" className={linkClass}>
             Bag <span aria-hidden="true">&nbsp;({count})</span>
             <span className="sr-only">, {count} {count === 1 ? "item" : "items"}</span>

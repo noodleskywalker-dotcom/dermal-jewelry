@@ -11,7 +11,7 @@ import { ProductPieces } from "@/components/catalog/ProductArtwork";
 // A concept that has no artwork yet is shown as words only. Nothing is drawn for it, priced or sold.
 export function OriginalsStrip({ id, products }: { id: string; products: Product[] }) {
   return (
-    <section id={id} aria-labelledby={`${id}-heading`} data-testid="originals-strip" className="scroll-mt-16 bg-ink text-ivory">
+    <section id={id} aria-labelledby={`${id}-heading`} data-testid="originals-strip" className="scroll-mt-16 border-t border-line">
       <div className="mx-auto max-w-[110rem] px-5 sm:px-8 lg:px-12">
         <div className="flex min-h-[5.5rem] items-center justify-between gap-6 border-b border-line">
           <p className="label-xs text-ash">Also at {site.brand}</p>
@@ -43,7 +43,7 @@ export function OriginalsStrip({ id, products }: { id: string; products: Product
               <Link href={`/product/${product.slug}`} className="group block">
                 <p className="label-xs text-ash">Original / Concept artwork</p>
                 <div className="relative mt-2 aspect-[5/3] w-full transition-transform duration-700 ease-[var(--ease-editorial)] group-hover:-translate-y-1">
-                  <ProductPieces product={product} scale={0.22} shadow="dark" />
+                  <ProductPieces product={product} scale={0.22} shadow="soft" />
                 </div>
                 <span className="flex items-baseline justify-between gap-4">
                   <span className="font-display text-3xl font-light leading-tight">{product.title}</span>

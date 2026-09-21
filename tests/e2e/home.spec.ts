@@ -9,7 +9,7 @@ test.describe("landing page", () => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Jewelry for the face you chose.");
     // Paper, not ink, and the navigation matches it.
-    const paper = await page.locator(".story-light").first().evaluate((el) => getComputedStyle(el).backgroundColor);
+    const paper = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
     expect(paper).toBe("rgb(251, 250, 247)");
     await expect(page.locator("header[data-tone]")).toHaveAttribute("data-tone", "light");
 
@@ -125,7 +125,8 @@ test.describe("homepage mascot (internal concept art, development server only)",
     // The page only changes once the sand covers it.
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByTestId("story-effect")).toHaveAttribute("data-covered", "true", { timeout: 10_000 });
-    await expect(page).toHaveURL(/\/collections\?family=desert-eye-love$/, { timeout: 5000 });
+    // A development server may still be compiling the next route, so the address is given time.
+    await expect(page).toHaveURL(/\/collections\?family=desert-eye-love$/, { timeout: 15_000 });
     await expect(sand).toHaveCount(0, { timeout: 8000 });
     await expect(page.locator('[data-testid="selection-slide"][data-current="true"]')).toHaveAttribute("data-product", "desert-eye-love");
   });

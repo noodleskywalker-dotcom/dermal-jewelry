@@ -115,12 +115,12 @@ export function StoryProductExperience({
                   zoom={focusItem ? { x: focusItem.group.x, y: focusItem.group.y, factor: 2.2 } : undefined}
                   label={`Virtual preview of ${product.title}, ${form.label} form, on your photo`}
                 />
-                <p className="label-xs absolute inset-x-5 bottom-5 leading-relaxed text-ivory/85 [text-shadow:0_1px_8px_rgba(0,0,0,0.7)]">
+                <p className="label-xs absolute inset-x-5 bottom-5 leading-relaxed text-ink/85 [text-shadow:0_1px_8px_rgba(0,0,0,0.7)]">
                   On you · approximate preview · not a fitting or a piercing-safety assessment
                 </p>
               </div>
             ) : (
-              <div className="story-dark absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-8 gap-y-2 bg-ink px-5 py-4 text-ivory sm:px-7">
+              <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-8 gap-y-2 border-t border-line bg-paper px-5 py-4 sm:px-7">
                 <div className="max-w-md">
                   <p className="font-display text-2xl font-light leading-tight">See it on you.</p>
                   <p className="mt-1 text-xs leading-relaxed text-ash">Your photo stays in this browser. It is never uploaded, stored or sent anywhere.</p>

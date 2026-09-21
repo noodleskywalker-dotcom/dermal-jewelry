@@ -27,17 +27,17 @@ export function ProductArtwork({
   /** Group width as a fraction of the box. */
   scale?: number;
   showLabel?: boolean;
-  /** Warm paper for editorial layouts, ink for small thumbnails inside dark UI. */
+  /** Kept for callers; it now only chooses the weight of the contact shadow. */
   tone?: "bone" | "ink" | "none";
 }) {
-  const surface = tone === "bone" ? "bg-bone" : tone === "ink" ? "bg-coal" : "";
+  // No tinted tile behind the jewelry: every tone sits straight on the paper.
+  const surface = "";
   const label = artworkLabel(product, formId);
   return (
     <div
       role="img"
       aria-label={`${product.title}: ${label.toLowerCase()}. ${product.summary}`}
       className={`relative overflow-hidden ${surface} ${className ?? ""}`}
-      style={tone === "bone" ? { backgroundImage: "linear-gradient(165deg, #ece8df 0%, #e2ddd1 55%, #d3cdbf 100%)" } : undefined}
     >
       <ProductPieces product={product} formId={formId} scale={scale} shadow={tone === "ink" ? "dark" : "soft"} />
       {showLabel && (

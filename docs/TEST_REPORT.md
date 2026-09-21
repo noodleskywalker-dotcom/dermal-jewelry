@@ -1,5 +1,49 @@
 # Test report
 
+## HYBRID visual system — 21 September 2026
+
+Browser results are **browser emulation on a Windows desktop** against a development server.
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 problems |
+| `npm run typecheck` | pass, 0 errors |
+| `npm test` | 77 of 77 pass |
+| `npm run test:e2e` | 238 pass, 38 skipped, 0 fail (276 across desktop Chromium, mobile Chromium, desktop WebKit) |
+| `npm run build` | pass; 0 client chunks contain the character's name, the dev media route, the mascot or the sand clip |
+
+New browser tests (`hybrid.spec.ts`): every main route has a paper body and a light navigation bar with
+near-black words; the shop has no filled tile behind a piece and no boxed filter; the sand layer exists
+on the DESERT EYE slide only, is visible while that family is centred, fades when the next family is
+centred, exists on the DESERT EYE product page and on no original's page, the shop, Face Studio or the
+cart; KIRI has a heading and no image, price or sand; a mouse drag moves the rail to the next family
+without opening a product; the piece assembles, opens out, closes and replays, with the owner's exact
+material wording and none of ruby, implant-grade or certified on the page; no video is requested for the
+themed opening; Face Studio without a photo shows the sculpted head wearing the chosen form, with side,
+add-piece, size, undo and look controls absent, and the head following the form selector.
+
+Defects found and fixed in this pass:
+
+- The exploded view slid a full-size hardware layer over the "Assemble" button, which then could not be
+  pressed. Assembly layers no longer take pointer events.
+- The light sweep waited in full view at the side of the stage for 3.3 s before its turn.
+- A `z-index` on the mascot block isolated its multiply blend and drew a white rectangle on the paper.
+- The mascot went back to reading four seconds after a press even if the clip was still loading, so
+  the sand could be aimed at a point that had moved by about 3 px. He now holds his look until the
+  transition is over.
+- On a phone: home labels were cramped, the product stage left a large empty band above the piece, the
+  material notes ran into the caption, and the first tab was cut off.
+- Studio tests measured the jewelry while the photo was still settling in; the helper now waits for it.
+
+Tests updated for the new markup: the homepage paper check, the end of the rail now being KIRI, posts
+counted by `data-post`, "Material not yet confirmed", "shown conceptually", and the look panel being put
+away when a photo is cleared.
+
+Visual review: `references/review/2026-09-21-hybrid/` (local only, 24 frames, desktop 1440 x 900 and
+mobile 412 x 915). Every frame was opened and compared with the HYBRID contact sheet.
+
+Not tested: real devices, Safari on iOS, Firefox, and the feel of the motion, which only the owner can judge.
+
 ## New direction: landing page, selection, whole piece — 21 September 2026
 
 Browser results are **browser emulation on a Windows desktop** against a development server.

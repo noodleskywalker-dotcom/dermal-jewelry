@@ -209,7 +209,7 @@ function Sequence({
       )}
 
       {/* Below the navigation bar, so nothing of the page is written over. */}
-      <div className={`absolute inset-x-0 top-16 flex items-start justify-between gap-4 p-4 sm:p-6 ${dark ? "text-ivory" : "text-ink"}`}>
+      <div className={`absolute inset-x-0 top-16 flex items-start justify-between gap-4 p-4 sm:p-6 ${dark ? "text-ink" : "text-ink"}`}>
         {/* On a phone the page's own heading is right here, so the label is left out and only Skip is shown. */}
         <p data-testid="story-cinematic-tag" className="label-xs invisible leading-relaxed sm:visible">
           {story.storyLabel}
@@ -224,7 +224,7 @@ function Sequence({
       <p role="status" data-testid="story-beat" className="sr-only">
         {ready ? beat.caption : "Loading the story"}
       </p>
-      <div className={`absolute inset-x-0 bottom-0 h-px ${dark ? "text-ivory" : "text-ink"}`}>{ready && <div className="cine-progress h-px w-full bg-current" />}</div>
+      <div className={`absolute inset-x-0 bottom-0 h-px ${dark ? "text-ink" : "text-ink"}`}>{ready && <div className="cine-progress h-px w-full bg-current" />}</div>
     </div>
   );
 }

@@ -14,13 +14,13 @@ export function BagContents({ onNavigate }: { onNavigate?: () => void }) {
 
   if (bag.lines.length === 0) {
     return (
-      <div className="px-6 py-16 text-center" data-testid="bag-empty">
-        <p className="font-display text-3xl">Your demo bag is empty.</p>
+      <div className="px-6 py-16" data-testid="bag-empty">
+        <p className="font-display text-4xl font-light leading-tight">Your demo bag is empty.</p>
         <p className="mt-3 text-sm text-ash">Add a piece from the shop or from Face Studio.</p>
         <Link
           href="/shop"
           onClick={onNavigate}
-          className="mt-8 inline-flex min-h-11 items-center border border-ivory px-6 text-xs uppercase tracking-[0.22em] transition-colors duration-200 hover:bg-ivory hover:text-ink"
+          className="btn-line mt-8"
         >
           Explore the collection
         </Link>
@@ -49,7 +49,7 @@ export function BagContents({ onNavigate }: { onNavigate?: () => void }) {
                     type="button"
                     aria-label={`Decrease quantity of ${product.title}, ${form.label}`}
                     onClick={() => bagActions.setQuantity(product.id, form.id, line.quantity - 1)}
-                    className="h-11 w-11 border border-line text-lg hover:border-ivory"
+                    className="h-11 w-11 text-lg text-ash hover:text-ink"
                   >
                     −
                   </button>
@@ -62,14 +62,14 @@ export function BagContents({ onNavigate }: { onNavigate?: () => void }) {
                     aria-label={`Increase quantity of ${product.title}, ${form.label}`}
                     disabled={line.quantity >= MAX_QUANTITY}
                     onClick={() => bagActions.setQuantity(product.id, form.id, line.quantity + 1)}
-                    className="h-11 w-11 border border-line text-lg hover:border-ivory disabled:opacity-40"
+                    className="h-11 w-11 text-lg text-ash hover:text-ink disabled:opacity-40"
                   >
                     +
                   </button>
                   <button
                     type="button"
                     onClick={() => bagActions.remove(product.id, form.id)}
-                    className="ml-auto min-h-11 px-2 text-xs uppercase tracking-[0.18em] text-ash hover:text-ivory"
+                    className="ml-auto min-h-11 px-2 text-xs uppercase tracking-[0.18em] text-ash hover:text-ink"
                   >
                     Remove<span className="sr-only"> {product.title}, {form.label}</span>
                   </button>
@@ -94,7 +94,7 @@ export function BagContents({ onNavigate }: { onNavigate?: () => void }) {
           type="button"
           disabled
           aria-describedby="checkout-note"
-          className="mt-5 min-h-12 w-full cursor-not-allowed border border-line text-xs uppercase tracking-[0.22em] text-ash"
+          className="label-xs mt-5 min-h-12 w-full cursor-not-allowed border-y border-line text-ash"
         >
           Checkout unavailable in preview
         </button>
