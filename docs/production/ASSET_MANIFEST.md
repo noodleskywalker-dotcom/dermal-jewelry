@@ -59,14 +59,31 @@ alpha. Opaque stills are AVIF with a WebP fallback. All crops keep the pair's di
 | Final call-to-action campaign shot (S3) | Homepage close | NEEDED, can be generated. |
 | Approved full-face sample photo | Face Studio sample mode | NEEDED from the owner, with a model release. Must not be generated and presented as a photograph of a real person. |
 
-## Design decisions the owner must make before micro dermal and nose assets exist
+## Story media for the DESERT EYE collection page (added 21 September 2026)
 
-1. Micro dermal: which single element carries the design? Options to choose between, none approved: the symbol alone; the gemstone alone; a new reduced mark.
-2. Nose: is it a nostril stud, and does it use the gemstone, a reduced symbol, or something else?
-3. For both: is the symbol still openwork at that size? This is a manufacturing question for the maker.
+The collection page describes its media as slots in `lib/story/desert-eye.ts`. The interaction is built
+and tested; these are the pictures it is waiting for. Character material is **internal concept only**
+until a rights review. Nothing here has been generated, and generating any of it needs approval first.
 
-Until these are answered, both forms stay **DESIGN REQUIRED** in this manifest and "concept pending" or
-"demo configuration, not approved" on the site.
+| Slot | What belongs in it | Status |
+| --- | --- | --- |
+| `character` | Full standing character on a **transparent** background, facing the jewelry, about 3:4, 2400 px tall. | NEEDED. Today a half-length internal still with a desert background stands in, feathered at the edges. It is not a cutout and not full length. |
+| `closeup` | Extreme close-up of the eye and temple with room for the anti-eyebrow pair, **drawn without jewelry**. | NEEDED. The internal still in use already contains painted jewelry; the product overlay is drawn exactly over it. |
+| nose and cheek framing | Pictures that show the nose and the cheekbone clearly enough for the single forms. | NEEDED. Today both forms zoom into the half-length still. |
+| `sand` | Flat, even sand field that can fill any viewport. | Internal still exists. A cleared version is NEEDED for publication. |
+| `video` | The 0.0 to 5.5 second action ending on full sand, no jewelry in the footage. 16:9 master, plus a 9:16 or 4:5 crop for phones. | **MISSING.** The site plays a labelled storyboard animatic in internal review and nothing in a build. |
+| opponent | Any opponent picture for the one short exchange. | MISSING. A labelled featureless figure stands in. |
+| micro-reaction | 0.5 to 1.5 second character reaction loop (eyes, body, a little sand). | MISSING. A CSS shift of the still and rising sand grains stand in. |
+
+## Design status of the single forms (set by the owner, 21 September 2026)
+
+1. Micro dermal is **concept-approved as the hollow symbol on its own**.
+2. Nose is **concept-approved as the deep-red faceted gemstone on its own**.
+3. Anti-eyebrow remains the **approved prototype composition**.
+
+None of the three is manufacturing-ready, and the site says so on every form. Still open, and a
+question for the maker: whether the symbol can stay openwork at micro-dermal size. In the tables
+above, read "DESIGN REQUIRED" for micro dermal and nose as "concept approved, product art NEEDED".
 
 ## What is deliberately not being done
 

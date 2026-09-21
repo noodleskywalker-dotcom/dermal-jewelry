@@ -352,3 +352,511 @@ input[type="range"].studio-range::-moz-range-thumb {
     transform: none;
   }
 }
+
+/* ───────── Collection story (character-led collection page) ─────────
+   A mostly white environment inside the dark site. Pages still scroll normally: the character is
+   only sticky inside its own section, and nothing here is driven by scroll position. */
+.story-light {
+  --story-paper: #fbfaf7;
+  --story-sand: #c7a877;
+  background: var(--story-paper);
+  color: var(--color-ink);
+  color-scheme: light;
+}
+/* Shared controls are styled for ink surfaces. On paper, secondary text and focus need more contrast. */
+.story-light .text-ash {
+  color: rgb(12 12 13 / 0.64);
+}
+.story-light :focus-visible {
+  outline-color: var(--color-garnet);
+}
+/* An ink panel inside the paper environment keeps the site's ordinary dark styling. */
+.story-light .story-dark .text-ash {
+  color: var(--color-ash);
+}
+.story-light .story-dark :focus-visible {
+  outline-color: var(--color-garnet-text);
+}
+
+.story-canvas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3.5rem 1.25rem;
+  padding-bottom: 4rem;
+}
+.story-piece {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.story-piece:nth-child(even) {
+  margin-top: 3.5rem;
+}
+.story-piece-link {
+  display: block;
+  width: min(100%, calc(var(--size) * 0.8));
+  min-width: 5.5rem;
+}
+.story-piece-art {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  transform: rotate(var(--tilt));
+  transition: transform 0.6s var(--ease-editorial);
+  filter: drop-shadow(0 14px 12px rgb(40 30 20 / 0.22)) drop-shadow(0 2px 2px rgb(40 30 20 / 0.3));
+}
+.story-piece-float {
+  display: block;
+  animation: story-float 7s ease-in-out infinite alternate;
+  animation-delay: var(--float-delay, 0s);
+}
+@keyframes story-float {
+  from {
+    transform: translateY(-3px);
+  }
+  to {
+    transform: translateY(4px);
+  }
+}
+.story-piece-label {
+  margin-top: 0.75rem;
+}
+/* One blade of light and one glint. soft-light leaves the white page untouched, so only metal and stone catch it. */
+.story-sweep {
+  position: absolute;
+  /* Kept inside the object's own box, so it can never widen a narrow page. */
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(105deg, transparent 40%, rgb(255 255 255 / 0.9) 50%, transparent 60%);
+  mix-blend-mode: soft-light;
+}
+.story-glint {
+  position: absolute;
+  width: 16%;
+  aspect-ratio: 1;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.4);
+  background: radial-gradient(circle, #fff 0%, rgb(255 255 255 / 0.7) 22%, transparent 62%);
+}
+.story-grain {
+  position: absolute;
+  bottom: 4%;
+  left: calc(50% + var(--gx));
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--story-sand);
+  opacity: 0;
+  pointer-events: none;
+}
+@keyframes story-sweep {
+  from {
+    opacity: 1;
+    transform: translateX(-70%);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(70%);
+  }
+}
+@keyframes story-glint {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4) rotate(0deg);
+  }
+  45% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(40deg);
+  }
+}
+@keyframes story-grain {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  25% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--gdx), var(--gdy));
+  }
+}
+.story-piece:hover .story-piece-art,
+.story-piece:focus-within .story-piece-art {
+  transform: rotate(calc(var(--tilt) + 3deg)) translateY(-6px) scale(1.07);
+}
+.story-piece:hover .story-sweep,
+.story-piece:focus-within .story-sweep {
+  animation: story-sweep 0.9s var(--ease-editorial) both;
+}
+.story-piece:hover .story-glint,
+.story-piece:focus-within .story-glint {
+  animation: story-glint 0.9s 0.25s ease-out both;
+}
+.story-piece:hover .story-grain,
+.story-piece:focus-within .story-grain {
+  animation: story-grain 1s var(--gdelay) ease-out both;
+}
+
+@media (min-width: 1024px) {
+  .story-canvas {
+    display: block;
+    position: relative;
+    height: 125svh;
+    min-height: 64rem;
+    padding-bottom: 0;
+  }
+  .story-piece,
+  .story-piece:nth-child(even) {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    margin: 0;
+    align-items: center;
+    transform: translate(-50%, -50%);
+  }
+  .story-piece-link {
+    width: var(--size);
+  }
+  .story-piece-label {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: max-content;
+    max-width: 16rem;
+    margin-top: 0.5rem;
+    text-align: center;
+    transform: translateX(-50%);
+  }
+  /* A pair sits inside a larger box than it fills, so its label moves up to meet it. */
+  .story-piece[data-pieces="2"] .story-piece-label {
+    top: 80%;
+  }
+}
+/* Where a pointer can hover, the label waits for it. Touch screens always show it. */
+@media (min-width: 1024px) and (hover: hover) {
+  .story-piece-label {
+    opacity: 0;
+    transform: translateX(-50%) translateY(6px);
+    transition: opacity 0.3s ease-out, transform 0.4s var(--ease-editorial);
+  }
+  .story-piece:hover .story-piece-label,
+  .story-piece:focus-within .story-piece-label {
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+}
+
+/* The character stands on the page itself: no card, no frame. A still with a background is feathered out. */
+.story-figure {
+  display: block;
+  height: 100%;
+  transform-origin: 50% 90%;
+}
+.story-figure-still {
+  mask-image: radial-gradient(ellipse 58% 56% at 48% 44%, #000 38%, transparent 100%), linear-gradient(90deg, transparent 0%, #000 22%, #000 78%, transparent 100%),
+    linear-gradient(180deg, transparent 0%, #000 10%, #000 82%, transparent 100%);
+  mask-composite: intersect;
+}
+.story-character[data-reacting="true"] .story-figure {
+  animation: story-react var(--react-ms) var(--ease-editorial) both;
+}
+.story-character[data-reacting="true"] .story-rise {
+  animation: story-rise var(--react-ms) ease-out both;
+  animation-delay: var(--gdelay);
+}
+.story-rise {
+  position: absolute;
+  bottom: 8%;
+  left: var(--gx);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--story-sand);
+  opacity: 0;
+  pointer-events: none;
+}
+/* Idle, a guarded shift of weight, back to idle. A hint only: it is never the cinematic. */
+@keyframes story-react {
+  0%,
+  100% {
+    transform: none;
+    filter: none;
+  }
+  30% {
+    transform: translateX(1.2%) scale(1.025) skewX(-1.2deg);
+    filter: contrast(1.08);
+  }
+  60% {
+    transform: translateX(-0.6%) scale(1.015) skewX(0.6deg);
+  }
+}
+@keyframes story-rise {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.6);
+  }
+  35% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--gdx), var(--gdy)) scale(1.4);
+  }
+}
+
+/* A picture framed on a point of attention. The jewelry overlay is a child, so it stays pinned to the picture. */
+.story-frame {
+  container-type: size;
+}
+.story-pan {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transition: transform 1s var(--ease-editorial), transform-origin 1s var(--ease-editorial);
+}
+.story-layer {
+  transition: opacity 0.7s ease-out, filter 0.7s ease-out, transform 0.9s var(--ease-editorial);
+}
+/* Centring is left to the translate property, so this only animates scale. */
+@keyframes story-jewel {
+  from {
+    opacity: 0;
+    scale: 0.9;
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+    filter: none;
+  }
+}
+.story-jewel {
+  animation: story-jewel 0.9s 0.35s var(--ease-editorial) both;
+}
+/* CHARACTER → YOUR FACE: the customer's photo settles in as the character lets go. */
+@keyframes story-face {
+  from {
+    opacity: 0;
+    transform: scale(1.06);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+.story-face {
+  animation: story-face 0.9s var(--ease-editorial) both;
+}
+.story-controls > * {
+  animation: rise 0.6s var(--ease-editorial) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 150ms);
+}
+
+/* Storyboard animatic. Each beat's length comes from the story data through --beat. */
+.cine-character,
+.cine-opponent,
+.cine-shield,
+.cine-sand,
+.cine-closeup {
+  position: absolute;
+}
+.cine-character {
+  left: 8%;
+  bottom: 0;
+  height: 82%;
+  aspect-ratio: 3 / 4;
+  transform-origin: 50% 100%;
+}
+.cine-opponent {
+  right: 6%;
+  bottom: 0;
+  height: 70%;
+  aspect-ratio: 3 / 8;
+  opacity: 0;
+  transform-origin: 50% 100%;
+}
+.cine-shield {
+  left: 34%;
+  bottom: 0;
+  width: 22%;
+  height: 78%;
+  opacity: 0;
+  border-radius: 70% 30% 0 0 / 100% 80% 0 0;
+  background: radial-gradient(ellipse at 40% 60%, #d8bd8f 0%, var(--story-sand) 55%, #a98752 100%);
+  filter: blur(5px);
+  transform-origin: 50% 100%;
+}
+.cine-sand {
+  inset: -10%;
+  opacity: 0;
+  background: radial-gradient(ellipse at 30% 70%, #dcc396 0%, var(--story-sand) 50%, #a98752 100%);
+  background-size: cover;
+  background-position: center;
+  /* The eruption opens from the character's side and grows until it covers the lens. */
+  clip-path: circle(0% at 25% 85%);
+}
+.cine-closeup {
+  inset: 0;
+  opacity: 0;
+}
+[data-beat="stance"] .cine-character {
+  animation: cine-stance var(--beat) var(--ease-editorial) both;
+}
+[data-beat="exchange"] .cine-character {
+  animation: cine-guard var(--beat) ease-in-out both;
+}
+[data-beat="exchange"] .cine-opponent {
+  animation: cine-opponent var(--beat) cubic-bezier(0.5, 0, 0.3, 1) both;
+}
+[data-beat="exchange"] .cine-shield {
+  animation: cine-shield var(--beat) ease-out both;
+}
+[data-beat="erupt"] .cine-sand {
+  animation: cine-erupt var(--beat) cubic-bezier(0.6, 0, 0.9, 0.6) both;
+}
+[data-beat="erupt"] .cine-character {
+  transform: scale(1.06);
+}
+[data-beat="fill"] .cine-sand,
+[data-beat="closeup"] .cine-sand {
+  opacity: 1;
+  clip-path: none;
+}
+[data-beat="fill"] .cine-sand {
+  animation: cine-fill var(--beat) ease-out both;
+}
+[data-beat="fill"] .cine-character,
+[data-beat="closeup"] .cine-character {
+  opacity: 0;
+}
+[data-beat="closeup"] .cine-sand {
+  animation: cine-clear var(--beat) ease-in both;
+}
+[data-beat="closeup"] .cine-closeup {
+  animation: cine-closeup var(--beat) var(--ease-editorial) both;
+}
+@keyframes cine-stance {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateX(3%) scale(1.04) skewX(-1.5deg);
+  }
+}
+@keyframes cine-guard {
+  0% {
+    transform: translateX(3%) scale(1.04) skewX(-1.5deg);
+  }
+  30% {
+    transform: translateX(1%) scale(1.03) skewX(1deg);
+  }
+  55% {
+    transform: translateX(5%) scale(1.06) skewX(-2.5deg);
+  }
+  100% {
+    transform: translateX(3%) scale(1.06);
+  }
+}
+/* Attack, blocked, thrown back and out of frame. */
+@keyframes cine-opponent {
+  0% {
+    opacity: 0;
+    transform: translateX(60%);
+  }
+  12% {
+    opacity: 1;
+  }
+  30%,
+  42% {
+    opacity: 1;
+    transform: translateX(-210%) skewX(-10deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-120%) rotate(14deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(160%) translateY(-20%) rotate(50deg);
+  }
+}
+@keyframes cine-shield {
+  0%,
+  18% {
+    opacity: 0;
+    transform: scaleY(0.1);
+  }
+  32%,
+  45% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  62% {
+    opacity: 1;
+    transform: translateX(60%) scaleY(1.05) scaleX(1.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(160%) scaleY(0.8) scaleX(1.8);
+  }
+}
+@keyframes cine-erupt {
+  0% {
+    opacity: 1;
+    clip-path: circle(0% at 25% 85%);
+    transform: scale(1.5);
+  }
+  100% {
+    opacity: 1;
+    clip-path: circle(150% at 25% 85%);
+    transform: scale(1.2);
+  }
+}
+@keyframes cine-fill {
+  from {
+    transform: scale(1.2);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes cine-clear {
+  0%,
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes cine-closeup {
+  0% {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+  60%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.cine-progress {
+  transform-origin: 0 50%;
+  animation: cine-progress var(--total) linear both;
+}
+@keyframes cine-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}

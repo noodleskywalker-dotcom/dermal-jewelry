@@ -46,7 +46,7 @@ describe("demo bag", () => {
             { productId: "gid://shopify/ProductVariant/1", formId: "anti-eyebrow", quantity: 1 },
             { productId: orbit.id, formId: "micro-dermal", quantity: -4 },
             // Concept-pending forms can never be bought.
-            { productId: hero.id, formId: "nose", quantity: 1 },
+            { productId: orbit.id, formId: "anti-eyebrow", quantity: 1 },
             { productId: hero.id, quantity: 1 },
           ],
         },

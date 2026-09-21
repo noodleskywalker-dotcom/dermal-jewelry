@@ -2,6 +2,58 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-21 — Story-driven collection page (DESERT EYE)
+
+The owner drew the interaction wanted for special collection pages. It replaces the product-card
+grid on a collection that has a story. Collections without a story keep the grid.
+
+- **A story is data.** `lib/story/types.ts` describes a story: media slots, the cinematic's beats, the
+  framing of each piercing form, where each jewelry object floats, and readiness. `lib/story/desert-eye.ts`
+  is the only place DESERT EYE's character, opponent, pictures and timings are named. Replacing a
+  character, a clip or a close-up means changing that file and the supplied media, nothing else.
+- **Three states in one section of a normally scrolling page:** browsing, the cinematic (a native
+  dialog opened by a press) and the product experience. The character is sticky only inside its own
+  section on desktop. Nothing is driven by scroll position.
+- **Hover is a hint, a press is the story.** Hovering or keyboard-focusing the character runs a
+  1.2 second reaction. The cinematic starts only from pressing the character or WATCH STORY. This
+  refines the older rule "hover never starts a reveal": hover still never starts one. Hovering a
+  jewelry object only moves light, a glint and a few grains of sand, and shows its label.
+- **Once per session.** One flag, `dermal-story-seen:<collection>`, is kept in `sessionStorage`. After
+  the story has played or been skipped, the character opens the piece directly and the control reads
+  REPLAY STORY. The flag holds nothing about a photo or a person.
+- **Direct product access.** Every jewelry object is a real link carrying `?product=` and `?form=`, and
+  opens the product experience in place without the cinematic. The address never carries anything else.
+- **The cinematic resolves into the product.** The product experience is put in place underneath before
+  the dialog opens, so Skip and Escape land on it at once. There is no navigation to another page.
+- **The jewelry is always an overlay.** The close-up never supplies the jewelry. `StoryVisual` pins a
+  `FormVisual` of the chosen form to an anchor on the picture, so the product asset slot feeds this
+  surface too. The current internal close-up still already has painted jewelry in it; the overlay is
+  drawn exactly over it. A clean close-up without jewelry is listed as a needed asset.
+- **CHARACTER → YOUR FACE.** TRY ON keeps the character layer mounted and lets it go as the customer's
+  photo arrives, drawn by `LookRenderer` with `previewItems`. No second overlay system exists. The photo
+  stays in the Studio provider, in memory, as before.
+- **Internal concept material never leaves a development server.** `lib/story/registry.ts` is read only
+  by server code. Outside a development server, `storyForBuild` removes the working names and briefs,
+  `internalStoryMedia` returns nothing, and `/api/dev-concept/*` answers 404. Every build, including a
+  Vercel preview, therefore draws labelled placeholders. Checked on a local production build: the page
+  contains neither name, no client chunk contains them, and the media route returned 404.
+- **An unfinished story is not shown to customers as finished.** `canPlayCinematic` lets the labelled
+  storyboard animatic play for internal review only. A build plays a cinematic only when footage
+  exists, rights are cleared and the story is approved; until then the character opens the piece and the
+  page says "Story in preparation". With reduced motion the story is always skipped.
+- **The animatic is honest about itself.** It is built from the stills on disk and code-drawn
+  placeholders, it is labelled "not the final cinematic", and the opponent is a labelled featureless
+  figure because no opponent asset exists. No video was generated and no credits were spent.
+- **DESERT EYE — LOVE now has a nose form.** The owner set the prototype status: anti-eyebrow is the
+  approved prototype composition, micro dermal is the concept-approved hollow symbol on its own, nose
+  is the concept-approved deep-red faceted gemstone on its own. Each note says "Not manufacturing-ready".
+  The nose demo price (QAR 190) is the placeholder already used for the other nose concept.
+  CRIMSON ORBIT's anti-eyebrow form is still concept pending and carries the tests for that state.
+- **Paper inside an ink site.** The stage sets `.story-light`. Shared controls written for ink surfaces
+  get darker secondary text and a darker focus ring there; an ink panel inside it opts back with `.story-dark`.
+- **`useFormChoice` / `useChooseForm`** hold the form-selection logic that the family page had inline, so
+  the family page and the story stage cannot drift apart.
+
 ## 2026-09-20 — Final direction (supersedes the pinned-chapter homepage below)
 
 The owner's addendum ends the scroll-driven experiment. The pinned chapters, the `--p` scroll variable,

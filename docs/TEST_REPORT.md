@@ -1,5 +1,53 @@
 # Test report
 
+## Story-driven collection page — 21 September 2026
+
+All browser results are **browser emulation on a Windows desktop** against a development server,
+which is the only place internal concept stills exist. No physical phone, tablet or Mac was used.
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 problems |
+| `npm run typecheck` | pass, 0 errors |
+| `npm test` | 66 of 66 pass (9 new in `tests/unit/story.test.ts`) |
+| `npm run test:e2e` | 151 pass, 20 skipped, 0 fail (desktop Chromium, Pixel 7 emulation, WebKit) |
+| `npm run build` | pass |
+| Search of `.next/static` for the internal character names and the dev media route | 0 files |
+| Local production build (`next start`), `/collections/desert-eye` | no character names in the page, `data-media="placeholder"`, "Story in preparation", `/api/dev-concept/closeup` returned 404 |
+
+Skipped tests are the earlier ones plus three hover tests on the phone project. One earlier full run
+showed five WebKit failures that were `ENOENT` errors on Playwright trace files: a second Playwright
+command had been started at the same time and cleared `test-results`. Run alone, the suite passed.
+
+What the new browser tests (`tests/e2e/story.spec.ts`, 11 tests on three projects) cover:
+- The stage shows the character and four jewelry objects, no product cards, no console errors, and nothing plays during 1.2 seconds of waiting. Each object is a link named with the piece, the form and the demo price.
+- Hovering the character sets the reaction, never opens the cinematic, and returns to idle inside two seconds.
+- Hovering an object shows its name, form, price and TRY ON, and starts nothing.
+- An object opens the product in place with `?product=&form=` in the address; the address alone opens the same form; Back clears it; a piece without a story (SAND VORTEX) is shoppable the same way and adds QAR 350 to the bag.
+- WATCH STORY opens the cinematic from a press, Skip is visible and focused at once, it is labelled "not the final cinematic", and skipping lands on the product with focus on its title, all three piercing types enabled, all three views, QAR 390, the "Not manufacturing-ready" note and a working Add to demo bag.
+- Left alone, it runs stance, exchange, fill and close-up, shows the two-piece product overlay on the close-up, ends between 5 and 9.5 seconds after its first frame (the design is 6.5; the ceiling allows for a busy test machine), then offers Replay story. In the same session, and after a reload, the character opens the piece without replaying. Replay is explicit and Escape skips it.
+- The character is reachable by keyboard, named "Watch the DESERT EYE story", and Enter starts it.
+- Changing piercing type changes the visual's form, the number of overlay pieces (2, 1, 1), the price (390, 190, 220), the note and the address; with stills present the nose uses a different picture from the eye close-up; the placement view and the ordinary product page follow the same form.
+- TRY ON from an object opens the try-on view, says the photo is never uploaded, keeps the character until a photo arrives, then hides it and draws the customer's photo through `LookRenderer` with a `blob:` URL. Changing form changes the pieces on the face. No non-GET request was made, and neither the address nor session storage holds anything about the photo. The photo and form carry into Face Studio.
+- Reduced motion: "View the piece", the story is skipped, no replay control.
+- Normal scrolling, no sideways overflow, every object at least 44 px.
+
+Existing tests changed because DESERT EYE — LOVE now has a nose form: the concept-pending checks moved
+to CRIMSON ORBIT's anti-eyebrow form, the nostril filter now shows two pieces, and the collections test
+follows the new stage. The unusual-size check now also covers the stage and its product state; it found
+a 2 px sideways overflow at 320 px from the light sweep on a tilted object, which was fixed.
+
+Screenshots opened and inspected (not committed, because they contain internal concept stills): stage
+at 1440 × 900 and Pixel 7, object hover, six cinematic frames, product state for all three forms,
+placement, try-on with and without the fixture, and the placeholder stage from a production build.
+Inspection led to these fixes: a rectangular sand eruption became a growing circle, captions that were
+unreadable over the close-up became ink chips, the still's hard edges were feathered on all sides, the
+nose object no longer collides with the pair's label, and the micro-dermal anchor moved off a shadow.
+
+Not tested: real devices, a screen reader, real footage (none exists), and how the animatic feels at
+its true speed to a person, which needs the owner's eye.
+
+
 ## Final direction: design families and reveals — 20 September 2026
 
 All browser results below are **browser emulation on a Windows desktop**. No physical phone, tablet or

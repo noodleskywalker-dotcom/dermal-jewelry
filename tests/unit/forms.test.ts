@@ -8,12 +8,13 @@ const orbit = catalog.getProduct("crimson-orbit")!;
 
 describe("design family forms", () => {
   it("offers only forms whose demo configuration exists", () => {
-    expect(availableForms(hero).map((f) => f.id)).toEqual(["anti-eyebrow", "micro-dermal"]);
-    expect(hero.forms.find((f) => f.id === "nose")?.status).toBe("concept-pending");
+    expect(availableForms(hero).map((f) => f.id)).toEqual(["anti-eyebrow", "micro-dermal", "nose"]);
+    expect(availableForms(orbit).map((f) => f.id)).toEqual(["micro-dermal", "nose"]);
+    expect(orbit.forms.find((f) => f.id === "anti-eyebrow")?.status).toBe("concept-pending");
   });
 
   it("falls back to the default form for unknown or concept-pending forms", () => {
-    expect(formOf(hero, "nose").id).toBe("anti-eyebrow");
+    expect(formOf(orbit, "anti-eyebrow").id).toBe("micro-dermal");
     expect(formOf(hero, "made-up").id).toBe("anti-eyebrow");
     expect(formOf(hero, null).id).toBe("anti-eyebrow");
   });

@@ -31,7 +31,7 @@ test.describe("design family: piercing forms", () => {
     await expect(family).toHaveAttribute("data-form", "micro-dermal");
     await expect(page.getByTestId("family-price")).toContainText("QAR 220");
     await expect(page.getByTestId("family-package")).toContainText("one decorative top");
-    await expect(page.getByTestId("family-form-note")).toContainText("not approved");
+    await expect(page.getByTestId("family-form-note")).toContainText("Not manufacturing-ready");
     await expect(preview).toHaveAttribute("data-placement", "dermal");
     // One piece now, in a different place: not the pair shrunk down.
     await expect(preview.getByTestId("placement-piece")).toHaveCount(1);
@@ -40,12 +40,13 @@ test.describe("design family: piercing forms", () => {
   });
 
   test("a form without a demo configuration is shown as concept pending and cannot be chosen", async ({ page }) => {
-    await page.goto(FAMILY);
-    await expect(page.getByTestId("form-nose")).toBeDisabled();
-    await expect(page.locator("label", { has: page.getByTestId("form-nose") })).toContainText("Concept pending");
-    // Asking for it by address falls back to the default instead of inventing a nose form.
-    await page.goto(`${FAMILY}?form=nose`);
-    await expect(page.getByTestId("family")).toHaveAttribute("data-form", "anti-eyebrow");
+    const ORBIT = "/product/crimson-orbit";
+    await page.goto(ORBIT);
+    await expect(page.getByTestId("form-anti-eyebrow")).toBeDisabled();
+    await expect(page.locator("label", { has: page.getByTestId("form-anti-eyebrow") })).toContainText("Concept pending");
+    // Asking for it by address falls back to the default instead of inventing an anti-eyebrow form.
+    await page.goto(`${ORBIT}?form=anti-eyebrow`);
+    await expect(page.getByTestId("family")).toHaveAttribute("data-form", "micro-dermal");
   });
 
   test("a product and form address opens on that form", async ({ page }) => {
@@ -130,7 +131,7 @@ test.describe("forms in Face Studio", () => {
     expect(back.x).toBeCloseTo(dermalPlaced.x, 2);
     expect(back.y).toBeCloseTo(dermalPlaced.y, 2);
 
-    await expect(page.getByTestId("studio-form-nose")).toBeDisabled();
+    await expect(page.getByTestId("studio-form-nose")).toBeEnabled();
     await expect(page.getByTestId("look-item")).toContainText("Micro dermal form");
     expect(uploads).toEqual([]);
   });

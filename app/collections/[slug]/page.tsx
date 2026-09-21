@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
+import { CollectionStage } from "@/components/story/CollectionStage";
 import { catalog } from "@/lib/catalog";
 import { site } from "@/lib/config/site";
+import { internalStoryMedia, isInternalReview, storyFor, storyForBuild } from "@/lib/story/registry";
 
 const find = (slug: string) => site.collections.find((c) => c.slug === slug);
+const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
 
 export function generateStaticParams() {
   return site.collections.map((c) => ({ slug: c.slug }));
@@ -16,11 +19,30 @@ export async function generateMetadata({ params }: PageProps<"/collections/[slug
   return collection ? { title: `Collection ${collection.number} — ${collection.title}` } : {};
 }
 
-export default async function CollectionPage({ params }: PageProps<"/collections/[slug]">) {
+export default async function CollectionPage({ params, searchParams }: PageProps<"/collections/[slug]">) {
   const { slug } = await params;
   const collection = find(slug);
   if (!collection) notFound();
   const products = catalog.listProducts().filter((p) => p.collection === slug);
+
+  // A story-driven collection replaces the product-card grid with its character-led stage.
+  // Internal concept media and working names reach the page only on a development server.
+  const story = storyFor(slug);
+  if (story) {
+    const query = await searchParams;
+    const internal = isInternalReview();
+    return (
+      <CollectionStage
+        story={storyForBuild(story, internal)}
+        collection={collection}
+        products={products}
+        media={internalStoryMedia(story, internal)}
+        internal={internal}
+        initialProduct={first(query.product)}
+        initialForm={first(query.form)}
+      />
+    );
+  }
 
   return (
     <div className="mx-auto max-w-[90rem] px-5 py-14 sm:px-8">

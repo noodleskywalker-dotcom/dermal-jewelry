@@ -1,6 +1,6 @@
 # DERMAL — project status
 
-Last updated: 20 September 2026. Branch: `feat/dermal-first-slice`.
+Last updated: 21 September 2026. Branch: `feat/dermal-first-slice`.
 
 Statuses used here: planned, implemented, tested, owner-approved, blocked, deferred.
 "Tested" means an automated or recorded check actually ran. See `docs/TEST_REPORT.md`.
@@ -20,7 +20,7 @@ Details are in `docs/DECISIONS.md` and `docs/REVEALS.md`.
 | Area | Status | Notes |
 | --- | --- | --- |
 | Normal-scroll homepage | tested | Opening, featured family, Face Studio demonstration, the pieces, close. |
-| Design-family page, DESERT EYE — LOVE | tested | Anti-eyebrow and micro dermal are available. Nose is concept pending and cannot be chosen. |
+| Design-family page, DESERT EYE — LOVE | tested | Anti-eyebrow, micro dermal and nose are available (nose since 21 September 2026). |
 | Original example, CRIMSON ORBIT | tested | Micro dermal and nose are available. Anti-eyebrow is concept pending. |
 | Form switching (visual, piece count, placement preview, price, package, URL) | tested | |
 | Form consistency across reveal, placement preview, try-on, Face Studio and bag | tested | Shared selection in the Studio provider. |
@@ -30,6 +30,34 @@ Details are in `docs/DECISIONS.md` and `docs/REVEALS.md`.
 | Gaara-inspired mini-scene | **media missing** | Player implemented, storyboard prepared, source video missing, not approved. Customers see a still with "Reveal in preparation". |
 | Metal-sweep loop for originals | implemented, not owner-approved | Drawn in CSS, no media file. |
 | Featureless-head placement preview | tested | Approved device, labeled as not a person. |
+
+## Story-driven collection page (21 September 2026)
+
+The owner's drawn interaction for special collection pages is implemented for DESERT EYE and tested
+locally. It is **not owner-approved yet**, was not merged, and was not deployed. No video was generated,
+no Higgsfield credits were spent, and Shopify was not touched.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| White full-viewport stage, character on the left, no card or frame | tested | `/collections/desert-eye`. Collections without a story keep the product grid. |
+| Borderless floating jewelry objects with small labels | tested | Four objects: three forms of DESERT EYE — LOVE and SAND VORTEX. Each is a link with the name, form, demo price and TRY ON. |
+| Object hover micro-interactions | implemented, inspected by screenshot | Lift, slight rotation, light sweep, gemstone glint, sand grains, label. Hover never plays a story. |
+| Character micro-reaction on hover or keyboard focus | tested | 1.2 seconds, then idle. Tested that it never opens the cinematic. |
+| Cinematic from a press or WATCH STORY | tested | 6.5 seconds in five beats from story data. Skip → focused at once, Escape skips. **It is a labelled storyboard animatic from stills and placeholders, not a film.** |
+| Resolves into the product experience, in place | tested | Piercing type, views (Concept, Placement, Try on), demo price, Add to demo bag, link to full details. |
+| Piercing-type transition | tested | Anti-eyebrow: eye and temple close-up. Nose: attention moves to the nose, single gemstone. Micro dermal: single symbol on the cheekbone. Framing is data per form. |
+| CHARACTER → YOUR FACE try-on | tested | Same `LookRenderer`, same in-memory photo. Tested: blob URL only, no non-GET request, nothing in the address or session storage. |
+| Skip, once per session, REPLAY STORY | tested | One `sessionStorage` flag per collection. |
+| Direct product access | tested | Object press and `?product=&form=` address both skip the cinematic. |
+| Mobile | tested (Pixel 7 emulation) | Character, then WATCH STORY "or tap the character", then tappable objects. No hover dependence. |
+| Reduced motion | tested | Story skipped, piece opens directly. |
+| Internal media kept off every build | tested on a local production build | Page and client chunks contain no character names; `/api/dev-concept/*` returned 404; placeholders drawn. |
+| DESERT EYE — LOVE nose form | tested | Now available as the concept-approved single gemstone. All three forms say "Not manufacturing-ready". |
+
+Limits that remain: the character is a half-length still with a background, not a full standing
+cutout; there is no opponent picture, no reaction loop and no footage; the close-up still already
+contains painted jewelry under the overlay. These are listed in `docs/production/ASSET_MANIFEST.md`.
+Decisions are in `docs/DECISIONS.md`, rules in `docs/REVEALS.md`.
 
 ## Asset production phase (started 20 September 2026)
 
@@ -59,7 +87,7 @@ from the earlier redirection remain. Its scroll mechanics were superseded and de
 | Design tokens, fonts, layout, navigation, footer | tested | Dark editorial system in `app/globals.css`. Cormorant Garamond for display, Geist and Geist Mono for UI. |
 | Homepage | tested | Five normally scrolling sections. See "Final direction" above. |
 | Shop with placement filter and search | tested | Filter and search live in the URL. Empty placements show an honest empty state. |
-| Collections index and DESERT EYE page | tested | |
+| Collections index and DESERT EYE page | tested | DESERT EYE is now the story-driven stage described above. |
 | Product page (all four demo products) | tested | Demo price, unverified specs, package note, inline try-on, add to demo bag. |
 | Demo catalog behind a provider interface | tested | `lib/catalog`. Demo ids start with `demo-`. |
 | Face Studio, local photo | tested | Validation, local decode and re-encode, drag, scale, rotate, per-piece adjust, nudge, reset, undo, redo, side, before/after, product switch, clear photo. |
@@ -99,6 +127,7 @@ Vercel's Hobby plan is for non-commercial use; confirm the plan before any comme
 ## Routes to review
 
 `/`, `/shop`, `/shop?placement=dermal`, `/collections`, `/collections/desert-eye`,
+`/collections/desert-eye?product=desert-eye-love&form=nose`,
 `/product/desert-eye-love`, `/face-studio`, `/face-studio?product=sand-vortex`, `/cart`, `/about`.
 
 ## Next concrete task

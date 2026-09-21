@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { formatPrice, formOf } from "@/lib/catalog";
+import { useRef, useState } from "react";
+import { formatPrice } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
-import { activeItem, setForm } from "@/lib/studio/look";
 import { AddToBagButton } from "@/components/cart/AddToBagButton";
 import { RevealPlayer, type ConceptStills } from "@/components/reveal/RevealPlayer";
-import { useStudio } from "@/components/studio/StudioProvider";
+import { useFormChoice } from "@/components/studio/useFormChoice";
 import { PlacementPreview } from "./PlacementPreview";
 import { TryOnPreview } from "./TryOnPreview";
 
@@ -27,9 +26,7 @@ export function FamilyExperience({
   /** Development-only stills for the local reveal prototype. */
   concept?: ConceptStills;
 }) {
-  const studio = useStudio();
-  const { forms, selectForm, change } = studio;
-  const form = formOf(product, forms[product.id] ?? initialFormId);
+  const { form, choose } = useFormChoice(product, initialFormId);
 
   const views: { id: ViewId; label: string }[] = [
     ...(product.reveal.mode !== "none" ? [{ id: "reveal" as const, label: "Concept reveal" }] : []),
@@ -39,22 +36,8 @@ export function FamilyExperience({
   const [view, setView] = useState<ViewId>(views[0].id);
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
-  // A form named in the URL is applied once. It is validated by formOf, and it is only ever a form id.
-  const applied = useRef<string | null>(null);
-  useEffect(() => {
-    const key = `${product.id}|${initialFormId ?? ""}`;
-    if (!initialFormId || applied.current === key) return;
-    applied.current = key;
-    selectForm(product.id, formOf(product, initialFormId).id);
-  }, [product, initialFormId, selectForm]);
-
   const chooseForm = (formId: string) => {
-    selectForm(product.id, formId);
-    // Keep Face Studio in step when this design is the piece being edited there.
-    change((look) => {
-      const current = activeItem(look);
-      return current && current.productId === product.id && current.formId !== formId ? setForm(look, current.uid, product, formId) : look;
-    });
+    choose(formId);
     // Shareable address for this product and form. Nothing about a photo is ever written to the URL.
     const url = new URL(window.location.href);
     url.searchParams.set("form", formId);

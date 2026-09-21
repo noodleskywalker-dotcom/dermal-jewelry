@@ -9,10 +9,14 @@ test.describe("storefront navigation", () => {
     await page.goto("/collections");
     await page.getByRole("link", { name: /View DESERT EYE/ }).click();
     await expect(page).toHaveURL(/\/collections\/desert-eye$/);
-    await expect(page.getByTestId("product-card")).toHaveCount(2);
+    // DESERT EYE is a story-driven collection: borderless jewelry objects instead of product cards.
+    await expect(page.getByTestId("product-card")).toHaveCount(0);
+    await expect(page.getByTestId("story-piece")).toHaveCount(4);
 
-    await page.getByTestId("product-card").first().getByRole("link").first().click();
-    await expect(page).toHaveURL(/\/product\/desert-eye-love$/);
+    await page.getByTestId("story-piece-link").first().click();
+    await expect(page.getByTestId("story-product")).toHaveAttribute("data-product", "desert-eye-love");
+    await page.getByTestId("story-details").click();
+    await expect(page).toHaveURL(/\/product\/desert-eye-love\?form=anti-eyebrow$/);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("DESERT EYE — LOVE");
     await expect(page.getByText("Demo price").first()).toBeVisible();
     await expect(page.getByText("Unverified").first()).toBeVisible();
@@ -30,7 +34,7 @@ test.describe("storefront navigation", () => {
     await page.goto("/shop?placement=dermal");
     await expect(page.getByTestId("product-card")).toHaveCount(3);
     await page.goto("/shop?placement=nostril");
-    await expect(page.getByTestId("product-card")).toHaveCount(1);
+    await expect(page.getByTestId("product-card")).toHaveCount(2);
     await page.goto("/shop?placement=septum");
     await expect(page.getByTestId("shop-empty")).toBeVisible();
     await page.goto("/shop?q=vortex");
