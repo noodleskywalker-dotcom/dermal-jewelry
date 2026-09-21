@@ -14,7 +14,7 @@ export function Modal({
   open: boolean;
   onClose: () => void;
   label: string;
-  variant: "drawer" | "sheet" | "full";
+  variant: "drawer" | "sheet" | "full" | "clear";
   children: React.ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -31,6 +31,8 @@ export function Modal({
       ? "drawer-in ml-auto mr-0 h-dvh max-h-dvh w-full max-w-md border-l"
       : variant === "full"
         ? "fade-in h-dvh max-h-dvh w-full max-w-none"
+        : variant === "clear"
+          ? "h-dvh max-h-dvh w-full max-w-none"
         : "sheet-up mb-0 mt-auto max-h-[88dvh] w-full max-w-none border-t sm:mx-auto sm:max-w-lg";
 
   return (
@@ -42,7 +44,8 @@ export function Modal({
         // A click on the dialog element itself is a click on the backdrop.
         if (e.target === e.currentTarget) onClose();
       }}
-      className={`${shape} m-0 border-line bg-coal p-0 text-ivory backdrop:bg-black/70 open:flex open:flex-col`}
+      // "clear" has no surface and no backdrop: the page stays visible under whatever it draws.
+      className={`${shape} m-0 border-line p-0 open:flex open:flex-col ${variant === "clear" ? "overflow-hidden border-0 bg-transparent text-ink backdrop:bg-transparent" : "bg-coal text-ivory backdrop:bg-black/70"}`}
     >
       {open ? children : null}
     </dialog>

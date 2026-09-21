@@ -1,69 +1,105 @@
 import type { CollectionStory } from "./types";
 
-// DESERT EYE. The character and the opponent are INTERNAL concept material pending a rights review.
-// A production build never receives their pictures or their names: it draws labelled placeholders.
-// To change the character, the clip or a close-up, change this file and the supplied media only.
+// DESERT EYE. The character is INTERNAL concept material pending a rights review.
+// A production build never receives its pictures or its name: it draws labelled placeholders.
+// To change the character, the effect footage or a close-up, change this file and the supplied media only.
+//
+// Direction since 21 September 2026: he sits calmly beside the products. A press sends sand from his
+// gourd across the page, and the cut to the close-up happens under it. No opponent, no fight.
 export const desertEyeStory: CollectionStory = {
   collection: "desert-eye",
   productSlug: "desert-eye-love",
   publicCharacterLabel: "Story character",
   internal: {
     character: "Gaara",
-    opponent: "Rock Lee-inspired opponent",
+    opponent: "",
     notice: "Internal concept prototype. Not an official collaboration and not cleared for publication.",
   },
   microReactionMs: 1000,
   storyLabel: "Story 01",
-  face: { x: 0.28, y: 0.15, w: 0.28, h: 0.2 },
   slots: [
     {
       id: "character",
       kind: "character",
-      aspect: 1792 / 2400,
-      brief: "FULL-STANDING CHARACTER ASSET REQUIRED: transparent background, facing the jewelry. Today only a half-length still with a desert background exists, shown as half-length.",
+      aspect: 1,
+      ground: "white",
+      brief: "Owner-approved internal still (21 September 2026): seated, whole figure, original gourd behind him, plain white ground. A transparent cutout would still be better.",
     },
     {
       id: "closeup",
       kind: "closeup",
-      aspect: 1373 / 1145,
-      brief: "CLEAN HIGH-RES CLOSE-UP WITHOUT JEWELRY REQUIRED: eye and temple with room for the anti-eyebrow pair, so the product overlay is the only jewelry.",
-      // The approved internal reference already shows the pair. It is kept as that reference, untouched.
-      paintedJewelry: true,
+      aspect: 2304 / 1856,
+      brief: "Owner-approved internal still (21 September 2026): clean eye and temple with NO jewelry, so the product overlay is the only jewelry.",
     },
-    { id: "sand", kind: "sand", aspect: 1792 / 2400, brief: "Flat, even sand field that can fill the whole viewport as the hidden cut." },
-    { id: "video", kind: "video", aspect: 16 / 9, brief: "The 0.0 to 5.5 second action, ending on full sand. No jewelry in the footage." },
+    {
+      id: "portrait",
+      kind: "character",
+      aspect: 1792 / 2400,
+      brief: "Half-length internal still, used only to frame the nose and cheekbone until form-specific close-ups exist.",
+    },
+    { id: "sand", kind: "sand", aspect: 1792 / 2400, brief: "Flat, even sand field." },
+    {
+      id: "sandfx",
+      kind: "effect",
+      aspect: 1280 / 720,
+      brief: "Generic sand effect on blue, no character in it, keyed in the browser. A cleaner take would enter from a point inside the frame on a truly flat ground.",
+    },
   ],
+  // Measured from the clip itself (references/generated/stage2/07-analysis.json), not from its prompt.
+  effect: {
+    slot: "sandfx",
+    width: 1280,
+    height: 720,
+    startAt: 0.6,
+    // The model ignored "a quarter in from the left": the stream enters at the left edge, at floor height.
+    emission: { x: 0.012, y: 0.74 },
+    // Top of the cork stopper on the seated picture.
+    origin: { x: 0.31, y: 0.255 },
+    // Pinned to the gourd while it is a ribbon. When it bursts, at about 2.6 s, it drops to the ground
+    // the figure sits on, where the footage's own floor then lines up with the page.
+    settleFrom: 2.5,
+    settleTo: 3.7,
+    coveredAt: 4.7,
+    edgeFeather: 0.02,
+    floor: { y: 0.762, until: 2.5 },
+    // The generated ground is a blue studio with a gradient, a floor and shadows, not a flat key. The key
+    // colour is the median corner of the first frame; the matte itself does not depend on it.
+    key: { key: [42 / 255, 90 / 255, 124 / 255], solidAt: -0.3, clearAt: 0.1 },
+  },
+  // The still is held, sand leaves the gourd, spreads, covers the page, and the cut happens under it.
   beats: [
-    { id: "stance", from: 0, to: 0.8, title: "Stance", caption: "Leaves the idle stance" },
-    { id: "exchange", from: 0.8, to: 3.5, title: "Exchange", caption: "Attack, sand defence, counter, opponent pushed away" },
-    { id: "erupt", from: 3.5, to: 4.7, title: "Eruption", caption: "Sand erupts toward the camera" },
-    { id: "fill", from: 4.7, to: 5.5, title: "Sand", caption: "Sand fills the frame: the hidden cut" },
-    { id: "closeup", from: 5.5, to: 6.5, title: "The eye", caption: "Close-up of the eye and temple, jewelry worn" },
+    { id: "hold", from: 0, to: 0.6, title: "Still", caption: "The seated figure, still" },
+    { id: "flow", from: 0.6, to: 2.8, title: "Sand", caption: "Sand rises from the gourd" },
+    { id: "spread", from: 2.8, to: 5.3, title: "Sand", caption: "The sand spreads toward the viewer" },
+    { id: "cover", from: 5.3, to: 5.7, title: "Sand", caption: "Sand covers the page: the hidden cut" },
+    { id: "closeup", from: 5.7, to: 6.9, title: "The eye", caption: "Close-up of the eye and temple, jewelry worn" },
   ],
   focus: {
     "anti-eyebrow": {
       slot: "closeup",
-      x: 0.56,
-      y: 0.54,
-      zoom: 1.12,
-      anchor: { x: 0.66, y: 0.595 },
-      scale: 0.2,
+      // Looks at the pair. A wide panel still shows the whole eye; a tall phone shows the eye's corner and the pair.
+      x: 0.63,
+      y: 0.58,
+      zoom: 1,
+      // Below and outside the outer corner of the eye, on clean skin.
+      anchor: { x: 0.635, y: 0.665 },
+      scale: 0.23,
       caption: "Eye and temple",
     },
     "micro-dermal": {
-      slot: "character",
+      slot: "portrait",
       x: 0.45,
       y: 0.26,
       zoom: 2.3,
       anchor: { x: 0.511, y: 0.299 },
       // Drawn a little larger than life so the piece can be read at this crop. It is a concept view, not a fitting.
       scale: 0.036,
-      // The half-length still is 1792 px wide. A smaller window keeps this crop near its real pixels.
+      // The half-length portrait is 1792 px wide. A smaller window keeps this crop near its real pixels.
       inset: 0.64,
       caption: "Cheekbone, concept placement",
     },
     nose: {
-      slot: "character",
+      slot: "portrait",
       x: 0.39,
       y: 0.29,
       zoom: 2.6,

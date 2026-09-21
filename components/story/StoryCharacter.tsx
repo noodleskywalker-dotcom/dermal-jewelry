@@ -54,6 +54,9 @@ export function StoryCharacter({
   reactionMs,
   onPress,
   buttonRef,
+  pictureRef,
+  ground = "scene",
+  quiet = false,
 }: {
   /** Internal still, when this build has one. Otherwise the placeholder form is drawn. */
   src?: string;
@@ -64,6 +67,12 @@ export function StoryCharacter({
   reactionMs: number;
   onPress: () => void;
   buttonRef?: React.RefObject<HTMLButtonElement | null>;
+  /** The picture element itself, so a point on it can be found on the page. */
+  pictureRef?: React.RefObject<HTMLImageElement | null>;
+  /** "white": drawn on plain white and multiplied into the page, so it has no edge. "scene": has its own background. */
+  ground?: "white" | "scene";
+  /** True while the story plays over the figure: it holds still, because it is a still. */
+  quiet?: boolean;
 }) {
   const reduced = useReducedMotion();
   const [reacting, setReacting] = useState(false);
@@ -119,8 +128,8 @@ export function StoryCharacter({
       ref={button}
       type="button"
       data-testid="story-character"
-      data-reacting={reacting}
-      data-near={near}
+      data-reacting={reacting && !quiet}
+      data-near={near && !quiet}
       data-media={still ? "internal-still" : "placeholder"}
       aria-label={label}
       onClick={onPress}
@@ -136,11 +145,18 @@ export function StoryCharacter({
       {still ? (
         // An internal still from the development server. It is never optimised, cached or deployed.
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt="" draggable={false} onError={() => setFailed(true)} className="story-figure story-figure-still select-none object-cover" />
+        <img
+          ref={pictureRef}
+          src={src}
+          alt=""
+          draggable={false}
+          onError={() => setFailed(true)}
+          className={`story-figure select-none ${ground === "white" ? "story-figure-cutout" : "story-figure-still object-cover"}`}
+        />
       ) : (
         <PlaceholderFigure className="story-figure story-figure-placeholder" />
       )}
-      {still && <span aria-hidden="true" className="story-veil" />}
+      {still && ground !== "white" && <span aria-hidden="true" className="story-veil" />}
       <span aria-hidden="true" className="story-puff" />
       {RISE.map((g, i) => (
         <span key={i} aria-hidden="true" className="story-rise" style={{ "--gx": g.gx, "--gs": g.gs, "--gdx": g.gdx, "--gdy": g.gdy, "--gdelay": g.gdelay } as React.CSSProperties} />

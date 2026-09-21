@@ -431,6 +431,22 @@ input[type="range"].studio-range::-moz-range-thumb {
   transform-origin: 30% 100%;
   transition: transform 0.7s var(--ease-editorial);
 }
+/* A picture drawn on plain white needs no mask: multiplied into the paper, its white is the page. */
+.story-figure-cutout {
+  max-width: none;
+  object-fit: contain;
+  object-position: left bottom;
+  mix-blend-mode: multiply;
+}
+/* On a phone the seated figure fills the width, so the first piece floats in the empty corner above his knee. */
+@media (max-width: 1023px) {
+  .story-browse[data-figure="white"] .story-piece:first-child {
+    top: calc(-58svh + 3svh);
+  }
+  .story-browse[data-figure="white"] .story-piece:first-child .story-piece-link {
+    width: min(30vw, 8.5rem);
+  }
+}
 /* One mask layer only. Two composited layers leave a hairline where a fractional edge is antialiased,
    so the sky is thinned out by a veil of paper instead. */
 .story-figure-still {
@@ -781,6 +797,13 @@ input[type="range"].studio-range::-moz-range-thumb {
   .story-figure-placeholder {
     width: auto;
   }
+  .story-figure-cutout {
+    width: 122%;
+  }
+  .story-browse[data-figure="white"] .story-tag {
+    left: 6%;
+    bottom: 6%;
+  }
   .story-tag {
     /* On the sand at his side, where ink reads. */
     left: 9%;
@@ -939,408 +962,13 @@ input[type="range"].studio-range::-moz-range-thumb {
   animation-delay: calc(var(--i, 0) * 70ms + 150ms);
 }
 
-/* ── Concept motion prototype ──
-   A deliberate storyboard: one tone of ink, one tone of sand, brush figures, arcs and speed lines.
-   Each beat's length comes from the story data through --beat. Positions are set once for a wide
-   stage and once for a tall one, so a phone gets its own composition instead of a squeezed one. */
-.cine {
-  --op-w: min(30vw, 50vh);
-  --op-start: translate(104vw, 8vh);
-  --op-hit: translate(38vw, 19vh);
-  --op-shake: translate(37.4vw, 19.6vh);
-  --op-recoil: translate(50vw, 12vh) rotate(16deg);
-  --op-exit: translate(118vw, -14vh) rotate(74deg);
-  --erupt-at: 24% 86%;
+/* ── Story effect ──
+   Keyed sand footage over the live page. It clears by fading once the close-up is in place under it. */
+.story-effect-layer {
+  transition: opacity 0.8s ease-in;
 }
-.cine-land {
-  display: block;
-}
-.cine-port {
-  display: none;
-}
-.cine-character {
-  position: absolute;
-  /* Starts past the stage edge and never skews, so its own left edge can never swing into view. */
-  left: -2%;
-  bottom: 0;
-  height: 88%;
-  transform-origin: 40% 100%;
-  /* The still keeps the stage's left and bottom edges and thins out everywhere else. */
-  mask-image: linear-gradient(90deg, #000 0%, #000 52%, transparent 90%);
-  mask-repeat: no-repeat;
-}
-.cine-character::after {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 18%;
-  pointer-events: none;
-  background: linear-gradient(to bottom, var(--story-paper) 0%, rgb(251 250 247 / 0.7) 45%, transparent 100%);
-}
-.cine-character img {
-  filter: grayscale(1) contrast(1.22) brightness(1.06);
-}
-.cine-ground {
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  height: 22%;
-  pointer-events: none;
-  background: linear-gradient(to top, rgb(199 168 119 / 0.95) 0%, rgb(199 168 119 / 0.4) 55%, transparent 100%);
-}
-@media (orientation: portrait) {
-  .cine {
-    --op-w: min(60vw, 33vh);
-    --op-start: translate(108vw, -4vh);
-    --op-hit: translate(36vw, 17vh);
-    --op-shake: translate(35.2vw, 17.6vh);
-    --op-recoil: translate(40vw, 8vh) rotate(16deg);
-    --op-exit: translate(118vw, -22vh) rotate(74deg);
-    --erupt-at: 34% 82%;
-  }
-  .cine-land {
-    display: none;
-  }
-  .cine-port {
-    display: block;
-  }
-  .cine-character {
-    left: -6%;
-    height: 58%;
-  }
-  .cine-ground {
-    height: 16%;
-  }
-}
-.cine-opponent {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: var(--op-w);
+.story-effect-layer[data-clearing="true"] {
   opacity: 0;
-  transform: var(--op-start);
-  transform-origin: 60% 55%;
-}
-.cine-lines {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  overflow: visible;
-}
-.cine-lines path,
-.cine-lines line {
-  fill: none;
-  stroke-linecap: round;
-}
-.cine-arc {
-  stroke: var(--story-sand);
-  stroke-width: 26px;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  opacity: 0;
-}
-.cine-arc-ink {
-  stroke: var(--color-ink);
-  stroke-width: 2px;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  opacity: 0;
-}
-.cine-speed,
-.cine-burst {
-  stroke: var(--color-ink);
-  stroke-width: 2px;
-  opacity: 0;
-}
-.cine-burst {
-  stroke-width: 3px;
-}
-.cine-flash {
-  position: absolute;
-  inset: 0;
-  background: #fff;
-  mix-blend-mode: difference;
-  opacity: 0;
-  pointer-events: none;
-}
-.cine-sand {
-  position: absolute;
-  inset: -10%;
-  opacity: 0;
-  background: radial-gradient(ellipse at 30% 70%, #dcc396 0%, var(--story-sand) 50%, var(--story-sand-deep) 100%);
-  background-size: cover;
-  background-position: center;
-  /* The eruption opens from the character's side and grows until it covers the lens. */
-  clip-path: circle(0% at var(--erupt-at));
-}
-.cine-closeup {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-}
-
-[data-beat="stance"] .cine-character {
-  animation: cine-stance var(--beat) var(--ease-editorial) both;
-}
-[data-beat="exchange"] .cine-character {
-  animation: cine-guard var(--beat) linear both;
-}
-[data-beat="exchange"] .cine-opponent {
-  animation: cine-opponent var(--beat) linear both;
-}
-[data-beat="exchange"] .cine-speed-in {
-  animation: cine-speed-in var(--beat) linear both;
-}
-[data-beat="exchange"] .cine-arc-1 {
-  animation: cine-arc-1 var(--beat) linear both;
-}
-[data-beat="exchange"] .cine-burst {
-  animation: cine-burst var(--beat) linear both;
-}
-[data-beat="exchange"] .cine-flash {
-  animation: cine-flash var(--beat) steps(1) both;
-}
-[data-beat="exchange"] .cine-arc-2 {
-  animation: cine-arc-2 var(--beat) linear both;
-}
-[data-beat="exchange"] .cine-speed-out {
-  animation: cine-speed-out var(--beat) linear both;
-}
-[data-beat="erupt"] .cine-sand {
-  animation: cine-erupt var(--beat) cubic-bezier(0.6, 0, 0.9, 0.6) both;
-}
-[data-beat="erupt"] .cine-character {
-  transform: translateX(2%) scale(1.05);
-}
-[data-beat="fill"] .cine-sand,
-[data-beat="closeup"] .cine-sand {
-  opacity: 1;
-  clip-path: none;
-}
-[data-beat="fill"] .cine-sand {
-  animation: cine-fill var(--beat) ease-out both;
-}
-[data-beat="fill"] .cine-character,
-[data-beat="closeup"] .cine-character {
-  opacity: 0;
-}
-[data-beat="closeup"] .cine-sand {
-  animation: cine-clear var(--beat) ease-in both;
-}
-[data-beat="closeup"] .cine-closeup {
-  animation: cine-closeup var(--beat) var(--ease-editorial) both;
-}
-@keyframes cine-stance {
-  from {
-    transform: none;
-  }
-  to {
-    transform: translateX(2%) scale(1.03);
-  }
-}
-/* Braces on the hit, holds, then leans into the counter. */
-@keyframes cine-guard {
-  0%,
-  26% {
-    transform: translateX(2%) scale(1.03);
-    animation-timing-function: cubic-bezier(0.2, 0.9, 0.3, 1);
-  }
-  30%,
-  44% {
-    transform: translateX(0.6%) scale(1.02);
-    animation-timing-function: cubic-bezier(0.7, 0, 0.2, 1);
-  }
-  56%,
-  100% {
-    transform: translateX(3.5%) scale(1.05);
-  }
-}
-/* In fast, stopped dead, held for a breath, thrown out. The hold is what sells the block. */
-@keyframes cine-opponent {
-  0% {
-    opacity: 0;
-    transform: var(--op-start);
-    animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.5);
-  }
-  6% {
-    opacity: 1;
-  }
-  28% {
-    opacity: 1;
-    transform: var(--op-hit);
-  }
-  31% {
-    transform: var(--op-shake);
-  }
-  34% {
-    transform: var(--op-hit);
-  }
-  37% {
-    transform: var(--op-shake);
-  }
-  40%,
-  46% {
-    opacity: 1;
-    transform: var(--op-hit);
-    animation-timing-function: cubic-bezier(0.1, 0.8, 0.3, 1);
-  }
-  58% {
-    opacity: 1;
-    transform: var(--op-recoil);
-    animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.6);
-  }
-  92% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: var(--op-exit);
-  }
-}
-@keyframes cine-speed-in {
-  0%,
-  4% {
-    opacity: 0;
-    transform: translateX(10%);
-  }
-  10% {
-    opacity: 0.9;
-  }
-  27% {
-    opacity: 0.9;
-    transform: translateX(-4%);
-  }
-  30%,
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes cine-arc-1 {
-  0%,
-  16% {
-    opacity: 1;
-    stroke-dashoffset: 1;
-    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  28%,
-  48% {
-    opacity: 1;
-    stroke-dashoffset: 0;
-  }
-  60%,
-  100% {
-    opacity: 0;
-    stroke-dashoffset: 0;
-  }
-}
-@keyframes cine-burst {
-  0%,
-  27% {
-    opacity: 0;
-    transform: scale(0.4);
-  }
-  29% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  44% {
-    opacity: 0;
-    transform: scale(1.35);
-  }
-  100% {
-    opacity: 0;
-  }
-}
-/* Two inverted frames on the hit. */
-@keyframes cine-flash {
-  0% {
-    opacity: 0;
-  }
-  28% {
-    opacity: 1;
-  }
-  31% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes cine-arc-2 {
-  0%,
-  45% {
-    opacity: 1;
-    stroke-dashoffset: 1;
-    animation-timing-function: cubic-bezier(0.3, 0.9, 0.2, 1);
-  }
-  60% {
-    opacity: 1;
-    stroke-dashoffset: 0;
-  }
-  82%,
-  100% {
-    opacity: 0;
-    stroke-dashoffset: 0;
-  }
-}
-@keyframes cine-speed-out {
-  0%,
-  56% {
-    opacity: 0;
-    transform: translateX(-6%);
-  }
-  64% {
-    opacity: 0.9;
-  }
-  90% {
-    opacity: 0.6;
-    transform: translateX(8%);
-  }
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes cine-erupt {
-  0% {
-    opacity: 1;
-    clip-path: circle(0% at var(--erupt-at));
-    transform: scale(1.5);
-  }
-  100% {
-    opacity: 1;
-    clip-path: circle(160% at var(--erupt-at));
-    transform: scale(1.2);
-  }
-}
-@keyframes cine-fill {
-  from {
-    transform: scale(1.2);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-@keyframes cine-clear {
-  0%,
-  15% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes cine-closeup {
-  0% {
-    opacity: 0;
-    transform: scale(1.12);
-  }
-  60%,
-  100% {
-    opacity: 1;
-    transform: none;
-  }
 }
 .cine-progress {
   transform-origin: 0 50%;

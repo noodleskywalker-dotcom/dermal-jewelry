@@ -97,6 +97,23 @@ LOVE in all three forms, in every build. Other designs keep their drawn artwork.
 changed to hold the approved proportions; see `docs/DECISIONS.md`. Assets 3 to 8 have **not** started
 and no budget is approved. The owner reviews the jewelry on the site first.
 
+### Seated figure and sand reveal (21 September 2026, local only)
+
+The story direction changed: seated figure, sand from the gourd, full cover, reveal. No opponent, no
+fight. Built and tested locally, **not pushed**, not owner-approved. Higgsfield spend this phase:
+10 credits for five stills (two approved), 5 for one sand clip; one blocked character video was refunded.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Approved seated still on the stage | implemented, inspected | Multiplied into the page: no edge. A still; nothing animates the figure. |
+| Approved clean close-up with product overlay | tested | Overlay is back; no painted jewelry, no ghosting. |
+| Keyed sand effect over the live page | tested | Real alpha from a GPU blue key. 0 fringe pixels, 100% opaque at cover. |
+| Sand starts at the opening of the gourd | tested at six sizes | Within 2 px of the cork, never stretched. |
+| Full cover hides the cut | tested | The footage is the clock. No heading pixels show through. |
+| Skip, Escape, Replay, once per session, reduced motion | tested | Unchanged behaviour. |
+| Media not ready or not keyable | tested | Story is skipped to the product, never imitated, not marked seen. |
+| Known defects | open | For about 0.6 s as the sand bursts, the clip's left edge and its floor show as straight edges. The final sand is darker and more orange than the page's sand. Both need a cleaner clip. |
+
 ## Asset production phase (started 20 September 2026)
 
 The interaction architecture is approved as the working foundation. No redesign and no new major

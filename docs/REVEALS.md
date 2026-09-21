@@ -27,8 +27,9 @@ still hold, with these additions. The story is described in `lib/story/` and dra
   0.5 to 1.5 seconds (1.0 today). Both are hints. Neither starts the cinematic or loads anything.
 - The cinematic starts only from pressing the character or **Watch story**. **Skip →** is on screen and
   focused from the first frame, and Escape skips too. It always ends in the product experience, in place.
-- Target length is 6 to 7 seconds. DESERT EYE runs 6.5: stance 0.0–0.8, one exchange 0.8–3.5,
-  sand erupts 3.5–4.7, sand fills the frame as the hidden cut 4.7–5.5, close-up 5.5–6.5.
+- Target length is 6 to 7 seconds. DESERT EYE runs 6.9: the still is held 0.0–0.6, sand rises from the
+  gourd 0.6–2.8, spreads toward the viewer 2.8–5.3, covers the page as the hidden cut 5.3–5.7, close-up
+  5.7–6.9. There is no opponent and no fight. The sand is generic keyed footage over a still figure.
 - After it has played or been skipped once in a session it does not play again by itself. The control
   reads **Replay story**.
 - Every jewelry object opens its product directly. The cinematic is never required for shopping.

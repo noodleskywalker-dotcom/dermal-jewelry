@@ -32,8 +32,10 @@ export function storyForBuild(story: CollectionStory, internal: boolean): Collec
 export function internalStoryMedia(story: CollectionStory, internal: boolean): StoryMedia {
   if (!internal || story.readiness.characterMedia !== "internal-concept") return {};
   return {
-    character: "/api/dev-concept/start",
+    character: "/api/dev-concept/seated",
+    closeup: "/api/dev-concept/closeup-clean",
+    portrait: "/api/dev-concept/start",
     sand: "/api/dev-concept/sand",
-    closeup: "/api/dev-concept/closeup",
+    sandfx: "/api/dev-concept/sandfx",
   };
 }

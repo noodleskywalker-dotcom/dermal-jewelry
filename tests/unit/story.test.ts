@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { catalog, formOf } from "@/lib/catalog";
-import { beatAt, canPlayCinematic, clampFocus, floatingPieces, totalSeconds } from "@/lib/story";
+import { beatAt, canPlayCinematic, clampFocus, floatingPieces, pointOnContained, totalSeconds } from "@/lib/story";
+import { DEFAULT_KEY, effectPlacement, keyPixel } from "@/lib/story/chroma-key";
 import { internalStoryMedia, storyFor, storyForBuild } from "@/lib/story/registry";
 
 const story = storyFor("desert-eye")!;
@@ -19,11 +20,11 @@ describe("collection story", () => {
       expect(beat.from).toBe(i === 0 ? 0 : story.beats[i - 1].to);
       expect(beat.to).toBeGreaterThan(beat.from);
     });
-    expect(story.beats.map((b) => b.id)).toEqual(["stance", "exchange", "erupt", "fill", "closeup"]);
-    // The action exchange stays short, and full sand comes before the close-up as the hidden cut.
-    const exchange = story.beats.find((b) => b.id === "exchange")!;
-    expect(exchange.to - exchange.from).toBeLessThanOrEqual(3);
-    expect(beatAt(story, 5).id).toBe("fill");
+    expect(story.beats.map((b) => b.id)).toEqual(["hold", "flow", "spread", "cover", "closeup"]);
+    // The still is held briefly, the sand covers the page before the picture changes, and there is no fight.
+    expect(story.beats[0].to).toBeLessThanOrEqual(0.8);
+    expect(JSON.stringify(story.beats)).not.toMatch(/attack|opponent|counter|fight/i);
+    expect(beatAt(story, 5.5).id).toBe("cover");
     expect(beatAt(story, 6).id).toBe("closeup");
     expect(beatAt(story, 99).id).toBe("closeup");
   });
@@ -38,12 +39,12 @@ describe("collection story", () => {
     for (const beat of story.beats) expect(beat.title.length).toBeGreaterThan(2);
   });
 
-  it("withholds the overlay on a close-up that already has jewelry painted in, and says what is required", () => {
+  it("uses the approved clean close-up and the approved seated still on white", () => {
     const closeup = story.slots.find((s) => s.id === "closeup")!;
-    expect(closeup.paintedJewelry).toBe(true);
-    expect(closeup.brief).toMatch(/CLEAN HIGH-RES CLOSE-UP WITHOUT JEWELRY REQUIRED/);
-    expect(story.slots.find((s) => s.id === "character")!.brief).toMatch(/FULL-STANDING CHARACTER ASSET REQUIRED/);
-    expect(story.slots.find((s) => s.id === "character")!.paintedJewelry).toBeUndefined();
+    // The approved clean close-up has no jewelry in it, so the product overlay is back on it.
+    expect(closeup.paintedJewelry).toBeUndefined();
+    expect(closeup.brief).toMatch(/NO jewelry/);
+    expect(story.slots.find((s) => s.id === "character")!.ground).toBe("white");
   });
 
   it("never enlarges the half-length still past its real pixels on a desktop panel", () => {
@@ -82,7 +83,7 @@ describe("collection story", () => {
 
   it("gives a build no internal media, no working names and no production briefs", () => {
     expect(internalStoryMedia(story, false)).toEqual({});
-    expect(Object.keys(internalStoryMedia(story, true))).toEqual(["character", "sand", "closeup"]);
+    expect(Object.keys(internalStoryMedia(story, true)).sort()).toEqual(["character", "closeup", "portrait", "sand", "sandfx"]);
     const built = JSON.stringify(storyForBuild(story, false));
     expect(built).not.toMatch(/gaara|rock lee/i);
     expect(JSON.stringify(storyForBuild(story, true))).toMatch(/Gaara/);
@@ -98,6 +99,8 @@ describe("collection story", () => {
       expect(focus.anchor.x).toBeGreaterThan(0);
       expect(focus.anchor.x).toBeLessThan(1);
     }
+    // The single forms are framed on the half-length portrait, never on the small seated figure.
+    expect(story.focus.nose!.slot).toBe("portrait");
     // The nose is not the eye close-up moved: it has another picture, framing and anchor.
     expect(story.focus.nose!.slot).not.toBe(story.focus["anti-eyebrow"]!.slot);
     expect(story.focus.nose!.anchor).not.toEqual(story.focus["micro-dermal"]!.anchor);
@@ -129,5 +132,63 @@ describe("collection story", () => {
     expect(formOf(hero, "nose").components.map((c) => c.art)).toEqual(["garnet-gem"]);
     expect(formOf(hero, "nose").placement).toBe("nostril");
     for (const id of ["anti-eyebrow", "micro-dermal", "nose"]) expect(formOf(hero, id).note).toMatch(/not manufacturing-ready/i);
+  });
+});
+
+describe("sand effect: keying and placement", () => {
+  const effect = story.effect!;
+
+  it("is generic footage with measured, recorded numbers and no opponent anywhere in the story", () => {
+    expect(effect.slot).toBe("sandfx");
+    expect(effect.startAt).toBeGreaterThanOrEqual(0.4);
+    expect(effect.coveredAt).toBeLessThan(5.04);
+    expect(story.internal.opponent).toBe("");
+    // Full cover arrives before the picture is changed under it.
+    const cover = story.beats.find((b) => b.id === "cover")!;
+    expect(effect.startAt + effect.coveredAt).toBeLessThanOrEqual(cover.from + 0.01);
+  });
+
+  it("clears the blue ground however bright or dark, and keeps sand solid even in deep shadow", () => {
+    const key = effect.key;
+    for (const ground of [[42, 90, 124], [119, 182, 217], [0, 49, 81], [18, 56, 82], [30, 35, 45]]) {
+      expect(keyPixel(ground.map((v) => v / 255) as [number, number, number], key).a, `ground ${ground}`).toBe(0);
+    }
+    for (const sand of [[151, 101, 54], [206, 170, 112], [43, 19, 5], [93, 50, 21], [230, 200, 150]]) {
+      expect(keyPixel(sand.map((v) => v / 255) as [number, number, number], key).a, `sand ${sand}`).toBe(1);
+    }
+  });
+
+  it("leaves no blue in a half-covered edge pixel", () => {
+    const half = [0.5 * 0.6 + 0.5 * (42 / 255), 0.5 * 0.4 + 0.5 * (90 / 255), 0.5 * 0.2 + 0.5 * (124 / 255)] as [number, number, number];
+    const out = keyPixel(half, effect.key);
+    expect(out.a).toBeGreaterThan(0);
+    expect(out.a).toBeLessThan(1);
+    expect(out.b).toBeLessThanOrEqual(Math.max(out.r, out.g));
+    expect(keyPixel([0, 0, 1], DEFAULT_KEY).a).toBe(0);
+  });
+
+  it("pins the sand to the gourd at first and covers the whole viewport at the end, without stretching", () => {
+    const footage = { width: effect.width, height: effect.height };
+    for (const viewport of [{ width: 1440, height: 900 }, { width: 412, height: 915 }, { width: 320, height: 568 }, { width: 844, height: 390 }]) {
+      const target = { x: viewport.width * 0.15, y: viewport.height * 0.35 };
+      const start = effectPlacement(footage, effect.emission, viewport, target, 0, viewport.width * 0.5);
+      expect(start.left + effect.emission.x * start.width).toBeCloseTo(target.x, 5);
+      expect(start.top + effect.emission.y * start.height).toBeCloseTo(target.y, 5);
+      const end = effectPlacement(footage, effect.emission, viewport, target, 1, viewport.width * 0.5);
+      expect(end.left).toBeLessThanOrEqual(0.001);
+      expect(end.top).toBeLessThanOrEqual(0.001);
+      expect(end.left + end.width).toBeGreaterThanOrEqual(viewport.width - 0.001);
+      expect(end.top + end.height).toBeGreaterThanOrEqual(viewport.height - 0.001);
+      for (const place of [start, end]) expect(place.width / place.height).toBeCloseTo(footage.width / footage.height, 5);
+      // Never larger than it has to be to cover.
+      expect(start.width).toBeLessThanOrEqual(end.width + 0.001);
+    }
+  });
+
+  it("finds a point of a contained, bottom-left picture on the page", () => {
+    // A square picture in a tall box sits at the bottom and spans the width.
+    expect(pointOnContained({ left: 10, top: 100, width: 400, height: 500 }, 1, { x: 0.31, y: 0.255 })).toEqual({ x: 10 + 124, y: 100 + 100 + 102 });
+    // In a wide box it spans the height and hugs the left.
+    expect(pointOnContained({ left: 0, top: 64, width: 900, height: 700 }, 1, { x: 0.5, y: 0.5 })).toEqual({ x: 350, y: 64 + 350 });
   });
 });

@@ -1,5 +1,51 @@
 # Test report
 
+## Seated figure and sand reveal — 21 September 2026
+
+Browser results are **browser emulation on a Windows desktop** against a development server.
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 problems |
+| `npm run typecheck` | pass, 0 errors |
+| `npm test` | 77 of 77 pass |
+| `npm run test:e2e` | 170 pass, 37 skipped, 0 fail |
+| `npm run build` | pass; 0 client chunks contain the character's name or the dev media route |
+
+Compositing method check, before any credit was spent: a synthetic sand-on-blue clip, recorded locally
+to lossy WebM, keyed with the project's shader over a white page with black text. 99.7% of pixels clear
+at the start, 100% opaque at full cover, 0 pixels with blue leading. WebKit on this machine could not
+decode that WebM fixture; it does decode the real MP4, and the story tests pass in WebKit.
+
+Measured from the generated clip every 0.1 s: 1280 × 720, 5.04 s; ground corners from (0,49,81) to
+(119,182,217), so not a flat key; clear 99.7% at 0 s; opaque 99.2% at 4.5 s, 99.8% at 4.7 s, 100% from
+4.8 s; 0 fringe pixels in every frame; the stream enters at x 0.01, y 0.74.
+
+New unit tests: beats and their order with no fight words; the ground clears however bright or dark
+and sand stays solid even at (43,19,5); a half-covered edge pixel keeps no blue; placement pins the
+entry point to the target at the start and covers 1440 × 900, 412 × 915, 320 × 568 and 844 × 390 at the
+end with the aspect ratio unchanged; a point on a contained, bottom-left picture.
+
+New browser tests: at 320×568, 360×800, 390×844, 412×915, 844×390 and 1440×900 the sand's entry point
+is within 2 px of the top of the cork, measured in the same frame as the clip's time, the gourd is on
+screen, the canvas is never stretched, and at full cover the canvas spans the whole viewport; far from
+the gourd the page's pixels are byte-identical before and during the early sand, and under full cover
+no ink-black heading pixel shows through; with the footage blocked the story is skipped to the product
+and not marked seen (Chromium only: this WebKit build does not let a test intercept a media request);
+the dialog has a transparent background and the collection stage stays under it.
+
+Failures on the way, all fixed rather than retried: React's development double-mount plus a deliberate
+WebGL context loss left the second canvas unusable, so the story always fell back to the product; a
+hover transform on the figure moved the measured origin by up to 7 px; a wall-clock timeline could reach
+the cut before a stalled clip had covered the page; pressing Watch straight after a reload found the
+figure's picture not yet loaded.
+
+Inspected: both page recordings sampled at 10 frames per second across the whole interaction, plus
+full-size frames at the burst, full cover and reveal, desktop and Pixel 7. A recording cannot be
+watched at speed by this tool; the owner must judge the motion. Frame rate measured while the sand
+played: 60 per second on this desktop. No real phone was used.
+
+
 ## Prototype product art installed — 21 September 2026
 
 Browser results are **browser emulation on a Windows desktop**. No physical device was used.

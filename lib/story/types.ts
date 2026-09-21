@@ -1,4 +1,5 @@
 import type { FormId } from "@/lib/catalog/types";
+import type { KeySettings } from "./chroma-key";
 
 // A collection story is a character-led way into a collection: a character on the page, jewelry
 // objects floating beside it, one short cinematic, and a product experience it resolves into.
@@ -8,11 +9,13 @@ import type { FormId } from "@/lib/catalog/types";
 /** A picture or clip a story can use. Only its shape lives in the app; the pixels are supplied separately. */
 export type StoryMediaSlot = {
   id: string;
-  kind: "character" | "closeup" | "sand" | "video";
+  kind: "character" | "closeup" | "sand" | "video" | "effect";
   /** Width divided by height of the source. */
   aspect: number;
   /** What belongs in this slot, written for whoever produces it. */
   brief: string;
+  /** "white" marks a picture drawn on a plain white ground, which is dropped into the page by multiplying. */
+  ground?: "white" | "scene";
   /**
    * True when the supplied picture already has jewelry painted into it. The product overlay is then
    * withheld and the picture is shown as the prototype reference it is, because drawing the overlay
@@ -40,7 +43,7 @@ export type StoryFocus = {
   caption: string;
 };
 
-export type StoryBeatId = "stance" | "exchange" | "erupt" | "fill" | "closeup";
+export type StoryBeatId = "hold" | "flow" | "spread" | "cover" | "closeup";
 
 export type StoryBeat = {
   id: StoryBeatId;
@@ -51,6 +54,34 @@ export type StoryBeat = {
   title: string;
   /** Plain description of the beat, read out by assistive technology. */
   caption: string;
+};
+
+/**
+ * Effect footage composited over the page: generic sand with no character in it, shot on blue and keyed
+ * in the browser. The character is a still picture. Nothing here animates a body or a face.
+ */
+export type StoryEffect = {
+  /** Media slot that holds the footage. */
+  slot: string;
+  /** Size of the footage in pixels. */
+  width: number;
+  height: number;
+  /** Seconds after the press at which the footage starts. The still is held until then. */
+  startAt: number;
+  /** Where the sand enters the footage, 0 to 1. Measured from the clip, not taken from its prompt. */
+  emission: { x: number; y: number };
+  /** Where that point must sit on the character picture, 0 to 1: the opening of the gourd. */
+  origin: { x: number; y: number };
+  /** Footage seconds over which it moves from "pinned to the origin" to "covering the viewport". */
+  settleFrom: number;
+  settleTo: number;
+  /** Footage second from which every pixel is opaque sand. Measured. */
+  coveredAt: number;
+  /** Width, 0 to 1, over which the frame edge the sand enters through is softened. */
+  edgeFeather: number;
+  /** Height of the footage's floor, 0 to 1, and the footage second until which everything below it is hidden. */
+  floor: { y: number; until: number };
+  key: KeySettings;
 };
 
 /** Where one jewelry object floats on the desktop canvas, in percent of the canvas. */
@@ -86,9 +117,9 @@ export type CollectionStory = {
   microReactionMs: number;
   /** Customer-facing name of the story, such as "Story 01". */
   storyLabel: string;
-  /** Where the character's face is on the `character` picture, 0 to 1. Motion must not cover it. */
-  face: { x: number; y: number; w: number; h: number };
   slots: StoryMediaSlot[];
+  /** Present when the story uses composited effect footage. */
+  effect?: StoryEffect;
   beats: StoryBeat[];
   /** Framing per piercing form of the story's product. */
   focus: Partial<Record<FormId, StoryFocus>>;

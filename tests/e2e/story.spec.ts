@@ -120,11 +120,13 @@ test.describe("DESERT EYE collection stage", () => {
     await expect(cinematic).toBeVisible();
     await expect(page.getByTestId("story-skip")).toBeVisible();
     await expect(page.getByTestId("story-skip")).toBeFocused();
-    // Internal review labels it for what it is. It is never presented as final footage.
+    // Internal review labels it for what it is: a generated sand effect over a still, not final.
     await expect(page.getByTestId("story-cinematic-tag")).toContainText(/concept motion prototype/i);
-    await expect(page.getByTestId("story-cinematic-tag")).toContainText(/not final footage/i);
-    await expect(cinematic).toHaveAttribute("data-footage", "animatic");
-    await expect(cinematic).toHaveAttribute("data-beat", "stance");
+    await expect(page.getByTestId("story-cinematic-tag")).toContainText(/over a still/i);
+    // The page itself stays visible under the effect: the dialog has no surface of its own.
+    expect(await page.getByRole("dialog").evaluate((el) => getComputedStyle(el).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
+    await expect(stage(page)).toHaveAttribute("data-mode", "browse");
+    await expect(cinematic).toHaveAttribute("data-beat", /loading|hold/);
 
     await page.getByTestId("story-skip").click();
     await expect(cinematic).toHaveCount(0);
@@ -146,31 +148,35 @@ test.describe("DESERT EYE collection stage", () => {
     await page.goto(STAGE);
     await page.getByTestId("story-character").click();
     const cinematic = page.getByTestId("story-cinematic");
-    await expect(cinematic).toBeVisible();
-    // Timed from the first frame. The ceiling leaves room for a busy test machine, not for a longer story.
+    // Timed from the moment the media is loaded and the story really starts.
+    await expect(cinematic).toHaveAttribute("data-ready", "true", { timeout: 12_000 });
     const started = Date.now();
     // Beats and the ending are recorded inside the page, so a short beat can never slip between two polls.
     await page.evaluate(() => {
       const root = document.querySelector('[data-testid="story-cinematic"]')!;
-      const log = { beats: [root.getAttribute("data-beat")], ending: "" };
+      const log = { beats: [root.getAttribute("data-beat")], ending: "", covered: false };
       (window as unknown as { __story: typeof log }).__story = log;
       new MutationObserver(() => {
         const beat = root.getAttribute("data-beat");
         if (beat && log.beats[log.beats.length - 1] !== beat) log.beats.push(beat);
+        const fx = root.querySelector<HTMLElement>('[data-testid="story-effect"]');
+        if (beat === "cover" && fx?.dataset.covered === "true") log.covered = true;
         const visual = root.querySelector('[data-testid="story-visual"]');
         if (visual) log.ending = `${visual.getAttribute("data-jewelry")}:${root.querySelectorAll('[data-testid="story-jewel-piece"]').length}`;
       }).observe(root, { attributes: true, childList: true, subtree: true });
     });
-    await expect(cinematic).toHaveCount(0, { timeout: 12_000 });
+    await expect(cinematic).toHaveCount(0, { timeout: 16_000 });
     const seconds = (Date.now() - started) / 1000;
-    const recorded = await page.evaluate(() => (window as unknown as { __story: { beats: string[]; ending: string } }).__story);
-    // A slow machine may attach the recorder after the 0.8 second stance, so the order is checked from the exchange on.
-    expect(recorded.beats.slice(-4)).toEqual(["exchange", "erupt", "fill", "closeup"]);
+    const recorded = await page.evaluate(() => (window as unknown as { __story: { beats: string[]; ending: string; covered: boolean } }).__story);
+    // A slow machine may attach the recorder after the short first beats, so the order is checked from the spread on.
+    expect(recorded.beats.slice(-3)).toEqual(["spread", "cover", "closeup"]);
+    // Full sand was reached before the picture was changed under it.
+    expect(recorded.covered).toBe(true);
     // The close-up never shows a double image: either the clean overlay of the pair, or, while the only
     // close-up on disk already has the pair painted in, that reference alone.
-    expect(["overlay:2", "painted-reference:0"]).toContain(recorded.ending);
-    expect(seconds).toBeGreaterThan(5);
-    expect(seconds).toBeLessThan(9.5);
+    expect(recorded.ending).toBe("overlay:2");
+    expect(seconds).toBeGreaterThan(5.5);
+    expect(seconds).toBeLessThan(10);
     await expect(product(page)).toHaveAttribute("data-form", "anti-eyebrow");
     await expect(page.getByTestId("story-replay")).toContainText("Replay story");
 
@@ -208,9 +214,9 @@ test.describe("DESERT EYE collection stage", () => {
     const visual = page.getByTestId("story-visual");
     await expect(visual).toHaveAttribute("data-form", "anti-eyebrow");
     const before = await visual.getAttribute("data-media");
-    // No ghosting: a close-up with the pair already painted in is kept as that reference, without an overlay.
-    const painted = (await visual.getAttribute("data-jewelry")) === "painted-reference";
-    await expect(visual.getByTestId("story-jewel-piece")).toHaveCount(painted ? 0 : 2);
+    // The clean close-up carries the pair as a product overlay, and only as an overlay.
+    await expect(visual).toHaveAttribute("data-jewelry", "overlay");
+    await expect(visual.getByTestId("story-jewel-piece")).toHaveCount(2);
 
     await chooseForm(page, "nose");
     await expect(product(page)).toHaveAttribute("data-form", "nose");
@@ -225,10 +231,10 @@ test.describe("DESERT EYE collection stage", () => {
       expect(await visual.getAttribute("data-media")).not.toBe(before);
       await expect(visual).toHaveAttribute("data-jewelry", "overlay");
       const panel = (await visual.boundingBox())!;
-      const shown = (await visual.locator('[data-testid="story-window"][data-slot="character"]').boundingBox())!;
+      const shown = (await visual.locator('[data-testid="story-window"][data-slot="portrait"]').boundingBox())!;
       expect(shown.height).toBeLessThan(panel.height * 0.75);
-      const drawn = (await visual.locator('[data-slot="character"] img:not([data-testid="piece-asset"])').boundingBox())!;
-      const natural = await visual.locator('[data-slot="character"] img:not([data-testid="piece-asset"])').evaluate((img: HTMLImageElement) => img.naturalWidth);
+      const drawn = (await visual.locator('[data-slot="portrait"] img:not([data-testid="piece-asset"])').boundingBox())!;
+      const natural = await visual.locator('[data-slot="portrait"] img:not([data-testid="piece-asset"])').evaluate((img: HTMLImageElement) => img.naturalWidth);
       expect(drawn.width).toBeLessThanOrEqual(natural * 1.05);
     }
 
@@ -339,59 +345,103 @@ test.describe("DESERT EYE collection stage", () => {
     { name: "landscape 844 x 390", width: 844, height: 390 },
     { name: "desktop 1440 x 900", width: 1440, height: 900 },
   ]) {
-    test(`the fight keeps the face clear and the opponent on stage at ${size.name}`, async ({ page, browserName, isMobile }) => {
+    test(`the sand starts at the opening of the gourd and ends covering the page at ${size.name}`, async ({ page, browserName, isMobile }) => {
       test.skip(browserName !== "chromium" || Boolean(isMobile), "sizes are set explicitly, once, in desktop Chromium");
+      test.setTimeout(45_000);
       await page.setViewportSize({ width: size.width, height: size.height });
       await page.goto(STAGE);
+      const figure = page.getByTestId("story-character").locator("img");
+      test.skip((await figure.count()) === 0, "internal stills are not on this machine");
       await page.getByTestId("story-watch").click();
       const cinematic = page.getByTestId("story-cinematic");
-      await expect(cinematic).toHaveAttribute("data-beat", "exchange", { timeout: 3000 });
-      const measured = await page.evaluate(() => {
-        // Hold every animation of the exchange at 40% of its length: the kick has landed and is being held.
-        const stageRoot = document.querySelector('[data-testid="story-cinematic"]')!;
-        for (const animation of document.getAnimations()) {
-          const target = (animation.effect as KeyframeEffect | null)?.target;
-          const name = (animation as CSSAnimation).animationName ?? "";
-          if (!target || !stageRoot.contains(target) || name === "cine-progress") continue;
-          const duration = Number(animation.effect!.getComputedTiming().duration);
-          animation.pause();
-          animation.currentTime = duration * 0.4;
-        }
-        const rect = (id: string) => document.querySelector(`[data-testid="${id}"]`)!.getBoundingClientRect();
-        const face = rect("cine-face");
-        const opponent = rect("cine-opponent");
-        // Sample the visible sand arc along its length, in screen pixels.
-        const arcs = [...document.querySelectorAll<SVGPathElement>('[data-testid="cine-arc"]')].filter((a) => getComputedStyle(a.parentElement!).display !== "none");
-        const arc = arcs[0];
-        const matrix = arc.getScreenCTM()!;
-        const length = arc.getTotalLength();
-        const half = parseFloat(getComputedStyle(arc).strokeWidth) / 2;
-        let arcInFace = 0;
-        for (let i = 0; i <= 60; i++) {
-          const pt = arc.getPointAtLength((length * i) / 60).matrixTransform(matrix);
-          if (pt.x > face.left - half && pt.x < face.right + half && pt.y > face.top - half && pt.y < face.bottom + half) arcInFace++;
-        }
-        const overlap = !(opponent.right < face.left || opponent.left > face.right || opponent.bottom < face.top || opponent.top > face.bottom);
-        return {
-          arcs: arcs.length,
-          arcInFace,
-          overlap,
-          opponent: { left: opponent.left, right: opponent.right, top: opponent.top, bottom: opponent.bottom },
-          opacity: getComputedStyle(document.querySelector('[data-testid="cine-opponent"]')!).opacity,
-          beat: document.querySelector('[data-testid="story-cinematic"]')!.getAttribute("data-beat"),
-        };
+      await expect(cinematic).toHaveAttribute("data-ready", "true", { timeout: 12_000 });
+      // Measured inside the page, in the same frame the clip's time is read, while the sand is still a ribbon.
+      const handle = await page.waitForFunction(() => {
+        const live = document.querySelector<HTMLCanvasElement>('[data-testid="story-effect"]');
+        const at = Number(live?.dataset.time ?? 0);
+        if (!live || at < 0.1 || at > 2.2) return null;
+        const img = document.querySelector<HTMLImageElement>('[data-testid="story-character"] img')!;
+        const parent = (img.offsetParent ?? img).getBoundingClientRect();
+        const box = { left: parent.left + img.offsetLeft, bottom: parent.top + img.offsetTop + img.offsetHeight, width: img.offsetWidth, height: img.offsetHeight };
+        const side = Math.min(box.width, box.height);
+        // Top of the cork on the approved seated still, as drawn: contained, bottom-left.
+        const cork = { x: box.left + 0.31 * side, y: box.bottom - side + 0.255 * side };
+        const fx = document.querySelector<HTMLCanvasElement>('[data-testid="story-effect"]')!;
+        const m = new DOMMatrixReadOnly(getComputedStyle(fx).transform);
+        const w = fx.width * m.a;
+        const h = fx.height * m.d;
+        return { at, cork, entry: { x: m.e + 0.012 * w, y: m.f + 0.74 * h }, side, scale: m.a, stretched: Math.abs(m.a - m.d) > 1e-6, corkOnScreen: cork.y > 0 && cork.y < innerHeight };
+      }, null, { timeout: 10_000, polling: "raf" });
+      const measured = (await handle.jsonValue())!;
+      expect(measured.corkOnScreen, "the gourd is on screen when the story starts").toBe(true);
+      expect(Math.abs(measured.entry.x - measured.cork.x), "sand enters at the cork, across").toBeLessThan(2);
+      expect(Math.abs(measured.entry.y - measured.cork.y), "sand enters at the cork, down").toBeLessThan(2);
+      expect(measured.stretched).toBe(false);
+
+      // At full cover the footage spans the whole viewport, so there is no rectangle and nothing leaks.
+      // "Covered" stays set from full cover to the end, so it cannot be missed between two polls.
+      await expect(page.getByTestId("story-effect")).toHaveAttribute("data-covered", "true", { timeout: 10_000 });
+      const cover = await page.evaluate(() => {
+        const fx = document.querySelector<HTMLElement>('[data-testid="story-effect"]')!;
+        const r = fx.getBoundingClientRect();
+        return { left: r.left, top: r.top, right: r.right, bottom: r.bottom, covered: fx.dataset.covered, vw: innerWidth, vh: innerHeight };
       });
-      expect(measured.beat).toBe("exchange");
-      expect(measured.arcs, "one composition per orientation").toBe(1);
-      expect(measured.arcInFace, "the sand arc never crosses the face").toBe(0);
-      expect(measured.overlap, "the opponent never covers the face").toBe(false);
-      expect(Number(measured.opacity)).toBeGreaterThan(0.9);
-      expect(measured.opponent.left).toBeGreaterThanOrEqual(0);
-      expect(measured.opponent.top).toBeGreaterThanOrEqual(0);
-      expect(measured.opponent.right).toBeLessThanOrEqual(size.width + 1);
-      expect(measured.opponent.bottom).toBeLessThanOrEqual(size.height + 1);
+      expect(cover.covered).toBe("true");
+      expect(cover.left).toBeLessThanOrEqual(0.5);
+      expect(cover.top).toBeLessThanOrEqual(0.5);
+      expect(cover.right).toBeGreaterThanOrEqual(cover.vw - 0.5);
+      expect(cover.bottom).toBeGreaterThanOrEqual(cover.vh - 0.5);
+      await page.keyboard.press("Escape");
+      await expect(product(page)).toBeVisible();
     });
   }
+
+  test("the effect is really transparent where there is no sand, and really opaque at full cover", async ({ page, browserName, isMobile }) => {
+    test.skip(browserName !== "chromium" || Boolean(isMobile), "pixels are read once, in desktop Chromium");
+    test.setTimeout(45_000);
+    await page.goto(STAGE);
+    test.skip((await page.getByTestId("story-character").locator("img").count()) === 0, "internal stills are not on this machine");
+    const before = await page.screenshot({ clip: { x: 1100, y: 300, width: 40, height: 40 } });
+    await page.getByTestId("story-watch").click();
+    const cinematic = page.getByTestId("story-cinematic");
+    await expect(cinematic).toHaveAttribute("data-beat", "flow", { timeout: 16_000 });
+    // Far from the gourd, early on, the page is untouched: no tint, no rectangle.
+    const during = await page.screenshot({ clip: { x: 1100, y: 300, width: 40, height: 40 } });
+    expect(during.equals(before)).toBe(true);
+    // "Covered" stays set from full cover to the end, so it cannot be missed between two polls.
+      await expect(page.getByTestId("story-effect")).toHaveAttribute("data-covered", "true", { timeout: 10_000 });
+    // Under full sand the page's black heading cannot be seen anywhere: every sampled pixel is warm sand.
+    const shot = await page.screenshot({ clip: { x: 600, y: 140, width: 340, height: 180 } });
+    const dark = await page.evaluate(async (b64) => {
+      const img = new Image();
+      img.src = "data:image/png;base64," + b64;
+      await img.decode();
+      const c = document.createElement("canvas");
+      c.width = img.width;
+      c.height = img.height;
+      const x = c.getContext("2d")!;
+      x.drawImage(img, 0, 0);
+      const d = x.getImageData(0, 0, c.width, c.height).data;
+      let inky = 0;
+      for (let i = 0; i < d.length; i += 4) if (d[i] < 60 && d[i + 1] < 60 && d[i + 2] < 60 && Math.abs(d[i] - d[i + 2]) < 12) inky++;
+      return inky;
+    }, shot.toString("base64"));
+    expect(dark, "no ink-black heading pixels show through the sand").toBe(0);
+  });
+
+  test("without the footage the story is skipped, never imitated", async ({ page, browserName }) => {
+    test.skip(browserName === "webkit", "this WebKit build does not let a test intercept a media request");
+    await page.route("**/api/dev-concept/sandfx", (route) => route.fulfill({ status: 404, body: "Not found" }));
+    await page.goto(STAGE);
+    test.skip((await page.getByTestId("story-character").locator("img").count()) === 0, "internal stills are not on this machine");
+    await page.getByTestId("story-watch").click();
+    await expect(product(page)).toHaveAttribute("data-product", "desert-eye-love", { timeout: 12_000 });
+    await expect(page.getByTestId("story-cinematic")).toHaveCount(0);
+    await expect(page.getByTestId("story-effect")).toHaveCount(0);
+    // It did not play, so it is not marked as seen.
+    await page.getByTestId("story-back").click();
+    await expect(page.getByTestId("story-watch")).toContainText("Watch story");
+  });
 
   test("on a phone the pieces come one at a time and change sides, not as a product grid", async ({ page, isMobile }) => {
     test.skip(!isMobile, "phone layout");

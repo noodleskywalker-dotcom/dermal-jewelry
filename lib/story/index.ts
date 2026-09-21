@@ -2,7 +2,7 @@ import { formOf } from "@/lib/catalog";
 import type { Product, ProductForm } from "@/lib/catalog/types";
 import type { CollectionStory, ScatterSpot, StoryBeat, StoryFocus } from "./types";
 
-export type { CollectionStory, ScatterSpot, StoryBeat, StoryBeatId, StoryFocus, StoryMedia, StoryMediaSlot } from "./types";
+export type { CollectionStory, ScatterSpot, StoryBeat, StoryBeatId, StoryEffect, StoryFocus, StoryMedia, StoryMediaSlot } from "./types";
 
 // Pure helpers only. The story registry lives in `./registry` and is read by server code, so working
 // names of internal concept characters never travel in a client bundle.
@@ -49,6 +49,16 @@ export function floatingPieces(story: CollectionStory, products: Product[]): Flo
     const form = formOf(product, spot.formId);
     return form.id === spot.formId ? [{ product, form, spot }] : [];
   });
+}
+
+/**
+ * A point of a picture, in page pixels, when the picture is fitted inside a box with
+ * `object-fit: contain` and `object-position: left bottom`. `point` is 0 to 1 across the picture.
+ */
+export function pointOnContained(box: { left: number; top: number; width: number; height: number }, aspect: number, point: { x: number; y: number }): { x: number; y: number } {
+  const width = Math.min(box.width, box.height * aspect);
+  const height = width / aspect;
+  return { x: box.left + point.x * width, y: box.top + box.height - height + point.y * height };
 }
 
 export const STORY_SEEN_PREFIX = "dermal-story-seen:";

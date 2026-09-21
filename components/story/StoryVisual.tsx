@@ -73,12 +73,23 @@ export function StoryVisual({
           >
             <div
               className="story-pan"
-              style={{
-                width: `max(100cqw, calc(100cqh * ${aspect}))`,
-                aspectRatio: String(aspect),
-                transform: `translate(${-f.x * 100}%, ${-f.y * 100}%) scale(${f.zoom})`,
-                transformOrigin: `${f.x * 100}% ${f.y * 100}%`,
-              }}
+              style={
+                framing.zoom <= 1
+                  ? {
+                      // Not zoomed: the picture covers the panel and slides to keep the point of attention
+                      // in view, never past its own edges, whatever the panel's shape.
+                      width: `max(100cqw, calc(100cqh * ${aspect}))`,
+                      aspectRatio: String(aspect),
+                      left: `clamp(100cqw - max(100cqw, 100cqh * ${aspect}), 50cqw - ${framing.x} * max(100cqw, 100cqh * ${aspect}), 0px)`,
+                      top: `clamp(100cqh - max(100cqw, 100cqh * ${aspect}) / ${aspect}, 50cqh - ${framing.y} * max(100cqw, 100cqh * ${aspect}) / ${aspect}, 0px)`,
+                    }
+                  : {
+                      width: `max(100cqw, calc(100cqh * ${aspect}))`,
+                      aspectRatio: String(aspect),
+                      transform: `translate(${-f.x * 100}%, ${-f.y * 100}%) scale(${f.zoom})`,
+                      transformOrigin: `${f.x * 100}% ${f.y * 100}%`,
+                    }
+              }
             >
               {/* An internal still from the development server. It is never optimised, cached or deployed. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}

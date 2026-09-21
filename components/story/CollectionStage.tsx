@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { formOf } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
-import { canPlayCinematic, floatingPieces, STORY_SEEN_PREFIX, type CollectionStory, type StoryMedia } from "@/lib/story";
+import { canPlayCinematic, floatingPieces, pointOnContained, STORY_SEEN_PREFIX, type CollectionStory, type StoryMedia } from "@/lib/story";
 import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 import { useStudio } from "@/components/studio/StudioProvider";
 import { useChooseForm, useFormChoice } from "@/components/studio/useFormChoice";
 import { FloatingPiece } from "./FloatingPiece";
 import { StoryCharacter } from "./StoryCharacter";
-import { StoryCinematic } from "./StoryCinematic";
+import { StoryCinematic, type StoryOutcome } from "./StoryCinematic";
 import { StoryProductExperience, type StoryView } from "./StoryProductExperience";
 
 // "Has this story played in this browser session?" Only that one flag is kept, in sessionStorage.
@@ -77,6 +77,9 @@ export function CollectionStage({
   const [playing, setPlaying] = useState(false);
   const section = useRef<HTMLElement>(null);
   const character = useRef<HTMLButtonElement>(null);
+  const picture = useRef<HTMLImageElement>(null);
+  const outcome = useRef<StoryOutcome | null>(null);
+  const characterSlot = story.slots.find((slot) => slot.id === "character");
 
   const seenKey = `${STORY_SEEN_PREFIX}${story.collection}`;
   const seen = useSyncExternalStore(
@@ -115,16 +118,35 @@ export function CollectionStage({
     toTop();
   };
 
+  // The story plays over the live collection stage, so the stage is shown first, from its top.
   const playStory = () => {
-    // The product experience is already in place underneath, so Skip lands on it at once.
-    openProduct(storyProduct, storyFormId, "concept");
-    setPlaying(true);
+    outcome.current = null;
+    setActive(null);
+    writeAddress(null);
+    section.current?.scrollIntoView({ block: "start", behavior: "auto" });
+    // Two frames: one to draw the stage, one for its picture to be measurable.
+    requestAnimationFrame(() => requestAnimationFrame(() => setPlaying(true)));
   };
 
-  const finishStory = () => {
-    if (!playing) return;
+  // Where the sand must appear: the opening of the gourd, found on the picture as it is drawn now.
+  const getOrigin = useCallback(() => {
+    const el = picture.current;
+    if (!el || !story.effect || !el.complete || !el.naturalWidth) return null;
+    // Measured from layout, not from the drawn box, so a hover transform on the figure cannot move the point.
+    const parent = (el.offsetParent ?? el).getBoundingClientRect();
+    const box = { left: parent.left + el.offsetLeft, top: parent.top + el.offsetTop, width: el.offsetWidth, height: el.offsetHeight };
+    const aspect = el.naturalWidth / el.naturalHeight;
+    return { ...pointOnContained(box, aspect, story.effect.origin), pictureWidth: Math.min(box.width, box.height * aspect) };
+  }, [story.effect]);
+
+  // However it stops, it resolves into the product. It counts as seen only if it really played.
+  const finishStory = (how: StoryOutcome) => {
+    // Only the first outcome counts. Closing the dialog afterwards reports a skip of its own.
+    if (!playing || outcome.current) return;
+    outcome.current = how;
     setPlaying(false);
-    markSeen(seenKey);
+    if (how !== "unavailable") markSeen(seenKey);
+    openProduct(storyProduct, storyFormId, "concept");
   };
 
   // Once the story has played in this session, the character opens the piece and never replays by itself.
@@ -168,7 +190,7 @@ export function CollectionStage({
           onBack={back}
         />
       ) : (
-        <div className="story-browse">
+        <div className="story-browse" data-figure={media.character ? (characterSlot?.ground ?? "scene") : "placeholder"}>
           <header className="story-head lg:px-0">
             <p className="label-xs text-ink/60">Collection {collection.number}</p>
             <h1 className="mt-2 font-display text-5xl font-light leading-none sm:text-7xl lg:mt-3 lg:text-8xl">{collection.title}</h1>
@@ -193,10 +215,13 @@ export function CollectionStage({
           <div className="story-char-wrap">
             <StoryCharacter
               buttonRef={character}
+              pictureRef={picture}
+              ground={characterSlot?.ground}
               src={media.character}
               label={playable && !seen ? `Watch the ${collection.title} story` : `Open ${storyProduct.title}`}
               tag={playable && !seen ? "Watch story" : "View the piece"}
               reactionMs={story.microReactionMs}
+              quiet={playing}
               onPress={pressCharacter}
             />
             <div className="story-ground grain" aria-hidden="true" />
@@ -235,7 +260,7 @@ export function CollectionStage({
         </p>
       )}
 
-      <StoryCinematic open={playing} story={story} media={media} internal={internal} product={storyProduct} formId={storyFormId} onFinish={finishStory} />
+      <StoryCinematic open={playing} story={story} media={media} internal={internal} product={storyProduct} formId={storyFormId} getOrigin={getOrigin} onFinish={finishStory} />
     </section>
   );
 }

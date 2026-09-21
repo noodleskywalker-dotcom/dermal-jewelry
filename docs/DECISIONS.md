@@ -2,6 +2,46 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-21 — Seated figure and the sand reveal (supersedes the fight storyboard)
+
+The owner replaced the story direction: the figure **sits calmly beside the products**; a press sends
+sand from his original gourd across the page; the sand covers the screen; the piercing is revealed.
+**No opponent and no fight.** The brush-fighter animatic and its beats were removed.
+
+- **Approved stills** (internal, gitignored, development server only): the seated figure on plain white
+  (`references/generated/stage1/03-seated-c.png`) and a clean eye and temple close-up with **no jewelry**
+  (`05-closeup-b.png`). The product overlay is back on the close-up, so the jewelry is again only ever an
+  overlay. Nose and micro dermal are still framed on the older half-length portrait.
+- **The figure is a still and stays one.** A picture on plain white is multiplied into the paper, so it
+  has no edge and needs no mask. Nothing animates his body or face, and nothing says it does.
+- **A video of the character cannot be generated on this platform.** One motion test with the seated
+  still as start image ended `ip_detected` and was refunded. It was not retried or worked around.
+- **The sand is separate, generic effect footage** with no character, vessel or jewelry in it, composited
+  over the still by the site. One clip, 5 credits (`references/generated/stage2/07-sand-only-a.mp4`).
+- **Compositing method, validated before spending:** the clip is asked for on blue and keyed in the
+  browser on the GPU, per frame (`lib/story/chroma-key.ts`, `components/story/KeyedEffect.tsx`). The
+  canvas has real per-pixel opacity. It is not a blend mode, not a paid background remover, and a prompt
+  saying "transparent" was never relied on. A synthetic fixture proved it first: 99.7% clear at the
+  start, 100% opaque at full cover, 0 blue-fringe pixels.
+- **The matte uses blue dominance relative to the pixel's own brightness.** The generated "blue screen"
+  was a blue studio with a gradient, a floor and shadows, not a flat key. An absolute key left the
+  shadowed floor as a grey blocky haze and made shadowed sand half transparent; the relative key clears
+  the ground however bright or dark and keeps sand solid even in deep shadow. Unit tests pin both.
+- **Placement is measured, not assumed.** The model ignored "a quarter in from the left": the stream
+  enters at the clip's left edge, at floor height. That point, measured from the clip, is pinned to the
+  top of the cork on the still, found from layout so a hover transform cannot move it. While the sand
+  is a ribbon it stays pinned; when it bursts it drops to the ground the figure sits on, where the
+  clip's own floor lines up with the page; at the end the clip simply covers the viewport. It is only
+  ever scaled uniformly and never beyond cover size. A garbage matte softens the entry edge and hides
+  the clip's floor until the sand lands on it.
+- **Tried and rejected:** reflecting the clip past its entry edge to hide the cut. It reads as an obvious
+  butterfly shape.
+- **The footage is the clock.** While the clip plays, beats follow `video.currentTime`, so a slow device
+  can never reach the cut before the sand has covered the page. A stall of 5 seconds, a load that takes
+  over 12, or a browser that cannot key, all skip the story to the product. It is never imitated.
+- **The dialog is transparent**, so the sand moves over the live page with no frame. The product
+  experience is opened when the story stops, by end, Skip or Escape. Only the first outcome counts.
+
 ## 2026-09-21 — Prototype product art for DESERT EYE — LOVE
 
 The owner answered the production-queue decisions and authorised assets 1 and 2. Layout is frozen.
