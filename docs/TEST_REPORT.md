@@ -1,5 +1,71 @@
 # Test report
 
+## Visual refinement of the DESERT EYE stage — 21 September 2026
+
+All browser results are **browser emulation on a Windows desktop** against a development server, the
+only place internal concept stills exist. No physical phone, tablet or Mac was used.
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 problems |
+| `npm run typecheck` | pass, 0 errors |
+| `npm test` | 70 of 70 pass (4 new) |
+| `npm run test:e2e` | 161 pass, 34 skipped, 0 fail (desktop Chromium, Pixel 7 emulation, WebKit) |
+| `npm run build` | pass |
+| Search of `.next/static` for the internal character names and the dev media route | 0 files |
+| Local production build (`next start`), `/collections/desert-eye` | no character names, no development notes, `data-media="placeholder"`, `data-tone="light"`, "in preparation", KIRI and "Original designs" present, `/api/dev-concept/start` returned 404 |
+
+Skipped tests: the earlier ones, hover tests on the phone project, the phone-layout test on desktop
+projects, and the six fight-composition sizes outside desktop Chromium, where sizes are set explicitly.
+
+Two runs on the way failed and were fixed, not retried until green:
+- Phone: the first piece, floating beside the character, swallowed taps on the middle of the character.
+  Only its jewelry and label take taps now. This was a real defect found by the tests.
+- Two timing checks were flaky when the whole suite ran in parallel: a 0.8 second beat slipped between
+  polls in WebKit, and a wall-clock wait sampled the fight during the throw instead of the block. Beats
+  are now recorded inside the page, and the fight is measured with its animations held at 40%.
+
+What the new and changed browser tests cover:
+- The stage copy has no timings or engineering notes and no collaboration claim; "Story 01" is shown.
+- The navigation on the stage is `data-tone="light"` with no bottom rule and keeps the home link.
+- "Original designs" follows the stage, KIRI is shown as Original / Concept with no `svg` or `img` inside
+  its entry, and CRIMSON ORBIT is linked.
+- The character has a pointer cursor and a WATCH STORY label; a mouse 400 px away leaves `data-near`
+  false, 60 px away sets it true without a reaction; hover reacts and returns to idle inside two seconds;
+  nothing opens.
+- The cinematic is labelled "Concept motion prototype" and "not final footage" and reports `animatic`.
+- The ending is either the clean two-piece overlay or the painted reference with no overlay, never both.
+- Nose and micro dermal use a different picture from the eye close-up, inside a window under 75% of the
+  panel height, with the image drawn no wider than 1.05 times its natural width.
+- Try on without a photo shows the featureless head wearing the chosen form, labelled "not a person",
+  with the character hidden; with a photo the head is gone and the `blob:` photo is drawn. The privacy
+  checks from the first round still pass.
+- First screen: the heading, WATCH STORY, the character and the first piece all start inside it on
+  every project; on desktop the next section starts at least 40 px above the fold and the SCROLL cue
+  links to `#originals`.
+- Fight composition at 320×568, 360×800, 390×844, 412×915, 844×390 and 1440×900: exactly one composition
+  is active, 61 samples along the sand arc (with half its stroke width) never enter the face rectangle,
+  the opponent's box never overlaps it, the opponent is opaque and entirely inside the stage.
+- Phone: after the first piece no two pieces share a row, their centres vary by more than 60 px, and the
+  page has no sideways overflow.
+
+New unit tests: reaction length about a second; every beat titled and a customer-facing story label;
+the painted close-up flagged and both required-asset notes present; the half-length still never drawn
+wider than 1792 px on a 1440 × 900 panel; story collections and the light-navigation flag in step, and
+KIRI present as words only and absent from the catalog.
+
+Screenshots opened and inspected (kept in the gitignored `references/review/2026-09-21-refinement/`):
+desktop stage, interaction, jewelry hover, eight animatic frames, product state, nose, micro dermal, try
+on, originals; phone stage, story entry, two mid-story frames, sand, product state, browsing, try on; and
+a 16-frame contact sheet of the 35.6 second walkthrough recording. Inspection during the pass found and
+fixed: dashed arcs (a stroke effect that ignored the path length), a one-pixel hairline from a two-layer
+mask, the first phone piece landing on the character's ear, a development note over the collection label,
+a hard edge where the sand ended on a phone, a link that ignored its breakpoint, a nose stone too small
+to read, the still's own edge swinging into view when skewed, and a caption cut off by the try-on strip.
+
+Not tested: real devices, a screen reader, real footage, and whether the motion feels right at speed.
+
+
 ## Story-driven collection page — 21 September 2026
 
 All browser results are **browser emulation on a Windows desktop** against a development server,

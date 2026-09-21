@@ -23,8 +23,8 @@ demonstration of physical fit, and they never stand between a customer and shopp
 A story-driven collection page has a character on the page and one special cinematic. The rules above
 still hold, with these additions. The story is described in `lib/story/` and drawn by `components/story/`.
 
-- Hovering or focusing the character gives a reaction of 0.5 to 1.5 seconds (1.2 today). It is a hint.
-  It never starts the cinematic and loads nothing.
+- A mouse coming within reach wakes the character slightly. Hovering or focusing him gives a reaction of
+  0.5 to 1.5 seconds (1.0 today). Both are hints. Neither starts the cinematic or loads anything.
 - The cinematic starts only from pressing the character or **Watch story**. **Skip →** is on screen and
   focused from the first frame, and Escape skips too. It always ends in the product experience, in place.
 - Target length is 6 to 7 seconds. DESERT EYE runs 6.5: stance 0.0–0.8, one exchange 0.8–3.5,
@@ -32,7 +32,11 @@ still hold, with these additions. The story is described in `lib/story/` and dra
 - After it has played or been skipped once in a session it does not play again by itself. The control
   reads **Replay story**.
 - Every jewelry object opens its product directly. The cinematic is never required for shopping.
-- The close-up's jewelry is a product overlay for the chosen form, pinned to the picture.
+- The close-up's jewelry is a product overlay for the chosen form, pinned to the picture. The one
+  exception is a picture that already has jewelry painted in: it is shown as that reference, without
+  an overlay, until a clean picture replaces it.
+- Until footage exists the action is a **concept motion prototype**: a monochrome storyboard animatic,
+  labelled as such in internal review and never presented as final footage.
 - A footage slot (`video`) exists. When a file is supplied it plays under the same timeline and stops
   before the close-up, which always belongs to the page.
 - Outside a development server the story is not playable until footage exists, rights are cleared and it

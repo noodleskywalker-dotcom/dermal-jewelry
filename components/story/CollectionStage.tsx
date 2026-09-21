@@ -42,6 +42,8 @@ function markSeen(key: string) {
 
 type Collection = { slug: string; number: string; title: string; blurb: string };
 
+const UNVERIFIED_NOTE = "Concept pieces with demo prices. Materials, dimensions and compatibility are not verified yet.";
+
 // A story-driven collection page. Three states share one section of an ordinary scrolling page:
 // browsing (character and floating jewelry), the cinematic (a dialog opened by a press), and the
 // product experience. Every route into shopping works without the cinematic.
@@ -53,6 +55,7 @@ export function CollectionStage({
   internal,
   initialProduct,
   initialForm,
+  continuesId,
 }: {
   story: CollectionStory;
   collection: Collection;
@@ -62,6 +65,8 @@ export function CollectionStage({
   internal: boolean;
   initialProduct?: string;
   initialForm?: string;
+  /** Id of the section that follows the stage, when there is one. The scroll cue points at it. */
+  continuesId?: string;
 }) {
   const reducedMotion = useReducedMotion();
   const storyProduct = products.find((p) => p.slug === story.productSlug) ?? products[0];
@@ -141,20 +146,15 @@ export function CollectionStage({
   }, [active]);
 
   const watchLabel = !playable ? "View the piece" : seen ? "Replay story" : "Watch story";
-  const statusNote = reducedMotion
-    ? "Reduced motion is on. The story is skipped and the piece opens directly."
-    : !playable
-      ? "Story in preparation. The piece opens directly."
-      : "About six seconds. Skip at any time. It never plays by itself.";
+
 
   return (
-    <section ref={section} data-testid="story-stage" data-mode={active ? "product" : "browse"} data-internal={internal} className="story-light scroll-mt-16">
+    <section ref={section} data-testid="story-stage" data-mode={active ? "product" : "browse"} data-internal={internal} className="story-light relative scroll-mt-16">
       {active ? (
         <StoryProductExperience
           key={active.id}
           story={story}
           media={media}
-          internal={internal}
           product={active}
           form={form}
           view={view}
@@ -168,58 +168,71 @@ export function CollectionStage({
           onBack={back}
         />
       ) : (
-        <div className="mx-auto grid max-w-[110rem] lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
-          <div className="relative h-[68svh] min-h-[26rem] px-5 pt-6 sm:px-8 lg:sticky lg:top-16 lg:h-[calc(100svh-4rem)] lg:self-start lg:pt-10">
+        <div className="story-browse">
+          <header className="story-head lg:px-0">
+            <p className="label-xs text-ink/60">Collection {collection.number}</p>
+            <h1 className="mt-2 font-display text-5xl font-light leading-none sm:text-7xl lg:mt-3 lg:text-8xl">{collection.title}</h1>
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink/60 lg:mt-5">{collection.blurb}</p>
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-5 lg:mt-5">
+              <button type="button" data-testid="story-watch" onClick={playable ? playStory : pressCharacter} className="text-link">
+                {watchLabel} <span aria-hidden="true">↗</span>
+              </button>
+              <span data-testid="story-label" className="label-xs text-ink/55">
+                {story.storyLabel}
+                {!playable && !reducedMotion && " · in preparation"}
+              </span>
+            </div>
+            {reducedMotion && (
+              <p data-testid="story-status" className="sr-only">
+                Reduced motion is on. The story is skipped and the piece opens directly.
+              </p>
+            )}
+            <p className="mt-6 hidden max-w-xs text-xs leading-relaxed text-ink/55 lg:block">{UNVERIFIED_NOTE}</p>
+          </header>
+
+          <div className="story-char-wrap">
             <StoryCharacter
               buttonRef={character}
               src={media.character}
               label={playable && !seen ? `Watch the ${collection.title} story` : `Open ${storyProduct.title}`}
-              caption={
-                internal
-                  ? `${story.internal.character} · ${story.internal.notice}`
-                  : `${story.publicCharacterLabel} placeholder · not a person · artwork in preparation`
-              }
+              tag={playable && !seen ? "Watch story" : "View the piece"}
               reactionMs={story.microReactionMs}
               onPress={pressCharacter}
             />
+            <div className="story-ground grain" aria-hidden="true" />
           </div>
 
-          <div className="relative px-5 sm:px-8 lg:pl-0 lg:pr-12">
-            <header className="pt-8 lg:absolute lg:z-10 lg:max-w-sm lg:pt-14">
-              <p className="label-xs text-ink/60">Collection {collection.number}</p>
-              <h1 className="mt-3 font-display text-6xl font-light leading-none sm:text-8xl">{collection.title}</h1>
-              <p className="mt-5 max-w-sm text-sm leading-relaxed text-ink/60">
-                {collection.blurb} Concept pieces with demo prices. Materials, dimensions and compatibility are not verified yet.
-              </p>
-              <div className="mt-4 flex flex-wrap items-center gap-x-6">
-                <button type="button" data-testid="story-watch" onClick={playable ? playStory : pressCharacter} className="text-link">
-                  {watchLabel} <span aria-hidden="true">→</span>
-                </button>
-                <span className="label-xs text-ink/60 lg:hidden">or tap the character</span>
-              </div>
-              <p data-testid="story-status" className="label-xs mt-1 max-w-sm leading-relaxed text-ink/60">
-                {statusNote}
-              </p>
-            </header>
+          <ul aria-label={`${collection.title} pieces`} className="story-canvas">
+            {pieces.map((piece, index) => (
+              <FloatingPiece
+                key={`${piece.product.id}:${piece.form.id}`}
+                piece={piece}
+                index={index}
+                collectionSlug={collection.slug}
+                sand
+                onOpen={(nextView) => {
+                  // Straight to the product. The cinematic is never in the way of shopping.
+                  chooseForm(piece.product, piece.form.id);
+                  openProduct(piece.product, piece.form.id, nextView);
+                }}
+              />
+            ))}
+          </ul>
+          <p className="relative z-[2] px-6 pb-10 text-xs leading-relaxed text-ink/55 lg:hidden">{UNVERIFIED_NOTE}</p>
 
-            <ul aria-label={`${collection.title} pieces`} className="story-canvas mt-12 lg:mt-0">
-              {pieces.map((piece, index) => (
-                <FloatingPiece
-                  key={`${piece.product.id}:${piece.form.id}`}
-                  piece={piece}
-                  index={index}
-                  collectionSlug={collection.slug}
-                  sand
-                  onOpen={(nextView) => {
-                    // Straight to the product. The cinematic is never in the way of shopping.
-                    chooseForm(piece.product, piece.form.id);
-                    openProduct(piece.product, piece.form.id, nextView);
-                  }}
-                />
-              ))}
-            </ul>
-          </div>
+          {continuesId && (
+            <a href={`#${continuesId}`} data-testid="story-scroll-cue" className="story-scroll-cue label-xs text-ink/70 hover:text-ink">
+              Scroll
+            </a>
+          )}
         </div>
+      )}
+
+      {/* Development-only. Internal status never appears in a build. */}
+      {internal && (
+        <p data-testid="story-dev-note" className="story-dev absolute bottom-1 right-3 z-[4] hidden text-ink sm:block" title={story.internal.notice}>
+          Dev only · internal concept media · not for publication
+        </p>
       )}
 
       <StoryCinematic open={playing} story={story} media={media} internal={internal} product={storyProduct} formId={storyFormId} onFinish={finishStory} />

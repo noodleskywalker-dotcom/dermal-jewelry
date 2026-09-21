@@ -9,9 +9,15 @@ export const site = {
   },
   /** Original and anime-inspired designs sit side by side. Neither is an official collaboration. */
   collections: [
-    { slug: "desert-eye", number: "001", title: "DESERT EYE", blurb: "Shapes taken from sand and wind." },
-    { slug: "originals", number: "002", title: "ORIGINALS", blurb: "Quiet, product-led forms." },
+    // `stage: "light"` marks a story-driven collection page on paper, which also gets the light navigation bar.
+    { slug: "desert-eye", number: "001", title: "DESERT EYE", blurb: "Shapes taken from sand and wind.", stage: "light" },
+    { slug: "originals", number: "002", title: "ORIGINALS", blurb: "Quiet, product-led forms.", stage: "dark" },
   ],
+  /**
+   * Original designs that exist only as a direction. A working name and a sentence, nothing else:
+   * no artwork, no price, nothing to buy. See docs/production/PRODUCTION_PLAN.md, section 6.
+   */
+  concepts: [{ name: "KIRI", kind: "Original", status: "Concept", note: "Reduced blade geometry. In design, no artwork yet." }],
   currency: "QAR",
   nav: [
     { href: "/shop", label: "Shop" },

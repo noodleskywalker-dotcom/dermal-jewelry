@@ -27,7 +27,6 @@ const VIEWS: { id: StoryView; label: string }[] = [
 export function StoryProductExperience({
   story,
   media,
-  internal,
   product,
   form,
   view,
@@ -39,7 +38,6 @@ export function StoryProductExperience({
 }: {
   story: CollectionStory;
   media: StoryMedia;
-  internal: boolean;
   product: Product;
   form: ProductForm;
   view: StoryView;
@@ -87,23 +85,20 @@ export function StoryProductExperience({
         aria-labelledby={`story-view-${view}`}
         className="fade-in relative h-[62svh] min-h-[22rem] overflow-hidden bg-[#efe9dd] lg:sticky lg:top-16 lg:h-[calc(100svh-4rem)]"
       >
-        {/* The character. It stays mounted under the try-on, so CHARACTER → YOUR FACE is one movement. */}
+        {/* The character. It lets go as another view takes over. */}
         <div
           data-testid="story-character-layer"
-          data-hidden={onFace}
+          data-hidden={view !== "concept"}
           aria-hidden={view !== "concept"}
           className="story-layer absolute inset-0"
-          style={{
-            opacity: view === "placement" || onFace ? 0 : awaitingPhoto ? 0.4 : 1,
-            filter: awaitingPhoto ? "blur(6px) saturate(0.7)" : onFace ? "blur(10px)" : "none",
-            transform: onFace ? "scale(1.08)" : "none",
-          }}
+          style={{ opacity: view === "concept" ? 1 : 0, filter: view === "concept" ? "none" : "blur(10px)", transform: view === "concept" ? "none" : "scale(1.06)" }}
         >
-          <StoryVisual story={story} media={media} product={product} formId={form.id} internal={internal} />
+          <StoryVisual story={story} media={media} product={product} formId={form.id} />
         </div>
 
-        {view === "placement" && (
-          <div className="fade-in absolute inset-0 flex items-center justify-center p-4">
+        {/* The featureless head: the placement view, and the stand-in for a face until the customer adds theirs. */}
+        {(view === "placement" || awaitingPhoto) && (
+          <div data-testid="story-head" className={`fade-in absolute inset-0 flex items-center justify-center p-4 ${awaitingPhoto ? "pb-56 sm:pb-28" : ""}`}>
             <div className="aspect-[4/5] h-full max-w-full">
               <PlacementPreview product={product} formId={form.id} />
             </div>
@@ -120,21 +115,17 @@ export function StoryProductExperience({
                   zoom={focusItem ? { x: focusItem.group.x, y: focusItem.group.y, factor: 2.2 } : undefined}
                   label={`Virtual preview of ${product.title}, ${form.label} form, on your photo`}
                 />
-                <p className="label-xs absolute bottom-4 left-4 max-w-[calc(100%-2rem)] bg-ink/75 px-3 py-2 leading-relaxed text-ivory">
-                  On you · approximate 2D preview · not a fitting or a piercing-safety assessment
+                <p className="label-xs absolute inset-x-5 bottom-5 leading-relaxed text-ivory/85 [text-shadow:0_1px_8px_rgba(0,0,0,0.7)]">
+                  On you · approximate preview · not a fitting or a piercing-safety assessment
                 </p>
               </div>
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center p-6">
-                <div className="story-dark w-full max-w-sm bg-ink p-7 text-ivory">
-                  <p className="label-xs text-ash">Character → your face</p>
-                  <p className="mt-3 font-display text-3xl font-light leading-tight">See it on you.</p>
-                  <p className="mt-3 text-sm leading-relaxed text-ash">
-                    Add a photo and this piece moves from the character to your own face. The photo stays in this browser. It is never
-                    uploaded, stored or sent anywhere.
-                  </p>
-                  <PhotoPicker className="mt-5" label="Use my photo" compact />
+              <div className="story-dark absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-8 gap-y-2 bg-ink px-5 py-4 text-ivory sm:px-7">
+                <div className="max-w-md">
+                  <p className="font-display text-2xl font-light leading-tight">See it on you.</p>
+                  <p className="mt-1 text-xs leading-relaxed text-ash">Your photo stays in this browser. It is never uploaded, stored or sent anywhere.</p>
                 </div>
+                <PhotoPicker className="w-full sm:w-56 [&>p]:mt-1 [&>p]:min-h-0" label="Use my photo" compact />
               </div>
             )}
           </div>

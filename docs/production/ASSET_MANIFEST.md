@@ -59,21 +59,24 @@ alpha. Opaque stills are AVIF with a WebP fallback. All crops keep the pair's di
 | Final call-to-action campaign shot (S3) | Homepage close | NEEDED, can be generated. |
 | Approved full-face sample photo | Face Studio sample mode | NEEDED from the owner, with a model release. Must not be generated and presented as a photograph of a real person. |
 
-## Story media for the DESERT EYE collection page (added 21 September 2026)
+## Story media for the DESERT EYE collection page (updated 21 September 2026)
 
 The collection page describes its media as slots in `lib/story/desert-eye.ts`. The interaction is built
-and tested; these are the pictures it is waiting for. Character material is **internal concept only**
-until a rights review. Nothing here has been generated, and generating any of it needs approval first.
+and tested; these are the assets it is waiting for. Character material is **internal concept only**
+until a rights review. None of this has been generated, generating any of it needs approval first, and
+nothing on the site imitates a finished version of it.
 
-| Slot | What belongs in it | Status |
-| --- | --- | --- |
-| `character` | Full standing character on a **transparent** background, facing the jewelry, about 3:4, 2400 px tall. | NEEDED. Today a half-length internal still with a desert background stands in, feathered at the edges. It is not a cutout and not full length. |
-| `closeup` | Extreme close-up of the eye and temple with room for the anti-eyebrow pair, **drawn without jewelry**. | NEEDED. The internal still in use already contains painted jewelry; the product overlay is drawn exactly over it. |
-| nose and cheek framing | Pictures that show the nose and the cheekbone clearly enough for the single forms. | NEEDED. Today both forms zoom into the half-length still. |
-| `sand` | Flat, even sand field that can fill any viewport. | Internal still exists. A cleared version is NEEDED for publication. |
-| `video` | The 0.0 to 5.5 second action ending on full sand, no jewelry in the footage. 16:9 master, plus a 9:16 or 4:5 crop for phones. | **MISSING.** The site plays a labelled storyboard animatic in internal review and nothing in a build. |
-| opponent | Any opponent picture for the one short exchange. | MISSING. A labelled featureless figure stands in. |
-| micro-reaction | 0.5 to 1.5 second character reaction loop (eyes, body, a little sand). | MISSING. A CSS shift of the still and rising sand grains stand in. |
+| # | Asset | Requirement | What stands in today |
+| --- | --- | --- | --- |
+| 1 | **FULL-STANDING CHARACTER ASSET REQUIRED** | Full standing character on a **transparent** background, facing the jewelry, about 3:4, 2400 px tall or more. | A half-length internal still with a desert background, shown as half-length, thinned into the page at the top and right. |
+| 2 | **CLEAN HIGH-RES CLOSE-UP WITHOUT JEWELRY REQUIRED** | Eye and temple with room for the anti-eyebrow pair, no jewelry painted in, 3000 px wide or more. | The approved internal reference, which already shows the pair. It is shown as that reference with **no overlay**, so there is no double image. The file is not altered. |
+| 3 | High-resolution form-specific close-ups | One picture each that shows the nose and the cheekbone large, without jewelry. | Both forms crop the half-length still inside a smaller window so it is never enlarged past its pixels. |
+| 4 | Exact transparent symbol asset | Per `ASSET_SLOT.md`: straight-on, alpha, the hollow openwork symbol. | Code-drawn concept artwork, a filled glyph with a metal edge. |
+| 5 | Exact transparent gemstone asset | Per `ASSET_SLOT.md`: straight-on, alpha, the deep-red faceted gemstone. | Code-drawn concept artwork. |
+| 6 | Proper opponent and action footage | The 0.0 to 5.5 second action, ending on full sand, no jewelry in frame. 16:9 master and a tall crop. | A labelled **concept motion prototype**: monochrome still, brush-figure opponent, sand arcs, speed lines. |
+| 7 | Final fight footage | The graded, approved edit of asset 6, with rights cleared. | Nothing. A build cannot play a story until this exists and is approved. |
+| 8 | Character micro-reaction loop | 0.5 to 1.5 seconds: eyes, body, a little sand. | A CSS shift of the still, a sand puff and rising grains. |
+| 9 | Cleared sand field | Flat, even sand that can fill any viewport. | An internal still, development server only. |
 
 ## Design status of the single forms (set by the owner, 21 September 2026)
 

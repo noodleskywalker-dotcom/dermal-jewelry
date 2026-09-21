@@ -2,6 +2,56 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-21 — Visual refinement of the DESERT EYE stage
+
+A refinement pass after the owner's visual review. The interaction model and the data-driven story
+architecture did not change. No media was generated, no credits were spent, Shopify was not touched.
+
+- **No vignette.** The half-length internal still keeps the left and bottom edges of the stage and thins
+  out to the right through one mask and at the top through a veil of paper. Two composited mask layers
+  were tried first and left a one-pixel hairline at fractional widths, so there is only ever one.
+  Sand lies across the foot of the whole stage, so the figure stands in something. It is still shown as
+  half-length: **FULL-STANDING CHARACTER ASSET REQUIRED.**
+- **The stage is one screen tall, less a strip.** The sticky character and the 125 svh canvas were
+  dropped. The first row of the next section sits inside the first screen and a quiet SCROLL cue points
+  at it, so the page visibly continues. There is no chapter navigation.
+- **Discovery.** The character has a pointer cursor and a small WATCH STORY label on the sand beside him.
+  A mouse within 140 px wakes him slightly (`data-near`). Hover or keyboard focus gives a reaction of
+  1.0 second: a larger shift of weight, a puff of sand and twelve grains. The story is still press-only.
+- **Concept motion prototype.** The fight is a deliberate storyboard: the still in monochrome, a generic
+  brush-figure opponent in ink, sand arcs drawn on, speed lines, an impact burst, two inverted frames on
+  the hit, and a held block before the throw. The grey mannequin and the tan shield are gone. Internal
+  review labels it "Concept motion prototype · not final footage"; a build cannot play it at all.
+- **Two compositions.** Positions are set once for a wide stage and once for a tall one. Motion lines are
+  authored in percent of the stage and drawn in measured pixels, so a brush stroke keeps one width. The
+  story data names where the face is, and tests check at 320×568, 360×800, 390×844, 412×915, 844×390 and
+  1440×900 that neither the sand arc nor the opponent crosses it and that the opponent is on stage.
+- **Copy.** Timing and behaviour notes left the page. The header says WATCH STORY and "Story 01". Beat
+  captions became short storyboard titles, with the full sentence kept for assistive technology.
+  Internal status is one small development-only line per surface and never renders in a build.
+- **Navigation.** A collection marked `stage: "light"` in `lib/config/site.ts` gets a paper bar with ink
+  text and no rule. The flag lives in site config, not the story registry, so working names still never
+  reach a client bundle. A unit test keeps the flag and the registry in step.
+- **Hover artifact.** The grey smear was the contact shadow of the light-sweep band. The band is gone. The
+  shadow now belongs to a wrapper around the jewelry alone, the metal catches light through a brightness
+  pulse on the piece itself, and a small four-point glint lands on the stone or first metal part.
+- **Phone.** Title, WATCH STORY, the character and the first piece share the first screen. The first piece
+  floats beside his shoulder and only its jewelry and label take taps. The rest come one at a time,
+  changing sides, with sand spilling from the figure's feet into the page. No horizontal scrolling.
+- **Close-ups.** Nose and micro dermal use a 4:5 window at 64% of the panel with paper around it, so the
+  1792 px still is never drawn wider than its real pixels at 1440×900. Their overlays are drawn a little
+  larger than life so the piece can be read; it is a concept view, not a fitting.
+  **CLEAN HIGH-RES CLOSE-UP WITHOUT JEWELRY REQUIRED.**
+- **No double image.** The only eye close-up on disk already has the pair painted in. A slot flagged
+  `paintedJewelry` is shown as the prototype reference it is, with no overlay on top, and the file is
+  never altered. Clearing the flag on a clean still brings the overlay back with no other change. This
+  is a deliberate, recorded exception to "the jewelry is always an overlay".
+- **Try on.** With no customer photo the stand-in is the approved featureless head wearing the chosen
+  form, with a slim "See it on you" strip. The grid test fixture is for tests only and is not in the
+  review package. With a photo the head leaves and the photo settles in, in memory as before.
+- **Brand balance.** Every story-driven stage is followed by "Original designs": CRIMSON ORBIT, VOID STUD
+  and **KIRI** as `Original / Concept`, words only. KIRI has no artwork, no price and is not a product.
+
 ## 2026-09-21 — Story-driven collection page (DESERT EYE)
 
 The owner drew the interaction wanted for special collection pages. It replaces the product-card

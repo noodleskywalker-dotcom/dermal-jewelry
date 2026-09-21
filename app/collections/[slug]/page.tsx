@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
 import { CollectionStage } from "@/components/story/CollectionStage";
+import { OriginalsStrip } from "@/components/story/OriginalsStrip";
 import { catalog } from "@/lib/catalog";
 import { site } from "@/lib/config/site";
 import { internalStoryMedia, isInternalReview, storyFor, storyForBuild } from "@/lib/story/registry";
@@ -31,16 +32,22 @@ export default async function CollectionPage({ params, searchParams }: PageProps
   if (story) {
     const query = await searchParams;
     const internal = isInternalReview();
+    // The brand is not anime only: original designs follow every story-driven stage.
+    const originals = catalog.listProducts().filter((p) => p.origin === "original" && p.collection !== slug);
     return (
-      <CollectionStage
-        story={storyForBuild(story, internal)}
-        collection={collection}
-        products={products}
-        media={internalStoryMedia(story, internal)}
-        internal={internal}
-        initialProduct={first(query.product)}
-        initialForm={first(query.form)}
-      />
+      <>
+        <CollectionStage
+          story={storyForBuild(story, internal)}
+          collection={collection}
+          products={products}
+          media={internalStoryMedia(story, internal)}
+          internal={internal}
+          initialProduct={first(query.product)}
+          initialForm={first(query.form)}
+          continuesId="originals"
+        />
+        <OriginalsStrip id="originals" products={originals} />
+      </>
     );
   }
 

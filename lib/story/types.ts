@@ -13,6 +13,12 @@ export type StoryMediaSlot = {
   aspect: number;
   /** What belongs in this slot, written for whoever produces it. */
   brief: string;
+  /**
+   * True when the supplied picture already has jewelry painted into it. The product overlay is then
+   * withheld and the picture is shown as the prototype reference it is, because drawing the overlay
+   * on top gives a double image. A clean picture clears this flag and the overlay returns.
+   */
+  paintedJewelry?: boolean;
 };
 
 /** Where a form is shown on a picture: the framing and the point the jewelry overlay is pinned to. */
@@ -26,6 +32,11 @@ export type StoryFocus = {
   anchor: { x: number; y: number };
   /** Width of the jewelry group box as a fraction of the picture width. */
   scale: number;
+  /**
+   * Height of the picture window as a fraction of the panel, when the source is too small to fill
+   * the panel at this zoom without going soft. Omitted means the picture fills the panel.
+   */
+  inset?: number;
   caption: string;
 };
 
@@ -36,7 +47,9 @@ export type StoryBeat = {
   /** Seconds from the start of the cinematic. */
   from: number;
   to: number;
-  /** Plain description, shown on the labelled animatic while real media is missing. */
+  /** Short storyboard title shown on the concept motion prototype. */
+  title: string;
+  /** Plain description of the beat, read out by assistive technology. */
   caption: string;
 };
 
@@ -71,6 +84,10 @@ export type CollectionStory = {
   internal: { character: string; opponent: string; notice: string };
   /** Length of the hover hint in milliseconds. It is a hint, never the cinematic. */
   microReactionMs: number;
+  /** Customer-facing name of the story, such as "Story 01". */
+  storyLabel: string;
+  /** Where the character's face is on the `character` picture, 0 to 1. Motion must not cover it. */
+  face: { x: number; y: number; w: number; h: number };
   slots: StoryMediaSlot[];
   beats: StoryBeat[];
   /** Framing per piercing form of the story's product. */

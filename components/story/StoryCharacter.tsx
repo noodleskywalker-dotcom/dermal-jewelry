@@ -5,62 +5,73 @@ import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 
 /**
  * A featureless standing form, in the same spirit as the featureless head in the placement preview.
- * It stands in wherever a character picture is not supplied, and says so. It is not a person.
+ * It stands in wherever a character picture is not supplied. It is not a person.
  */
-export function PlaceholderFigure({ className, tone = "bone" }: { className?: string; tone?: "bone" | "slate" }) {
+export function PlaceholderFigure({ className }: { className?: string }) {
   const id = useId().replace(/[^a-zA-Z0-9_-]/g, "");
-  const [light, mid, deep] = tone === "bone" ? ["#e6e0d3", "#cfc7b7", "#a9a191"] : ["#c9ccd1", "#a5a9b0", "#7b8088"];
   return (
-    <svg viewBox="0 0 300 800" className={className} aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMax meet">
+    <svg viewBox="0 0 300 800" className={className} aria-hidden="true" focusable="false" preserveAspectRatio="xMinYMax meet">
       <defs>
         <linearGradient id={`${id}-form`} x1="0.1" y1="0" x2="0.9" y2="1">
-          <stop offset="0" stopColor={light} />
-          <stop offset="0.55" stopColor={mid} />
-          <stop offset="1" stopColor={deep} />
+          <stop offset="0" stopColor="#e6e0d3" />
+          <stop offset="0.55" stopColor="#cfc7b7" />
+          <stop offset="1" stopColor="#a9a191" />
         </linearGradient>
       </defs>
-      <ellipse cx="150" cy="792" rx="120" ry="8" fill="rgba(40,30,20,0.12)" />
       <g fill={`url(#${id}-form)`}>
         <ellipse cx="150" cy="78" rx="46" ry="56" />
-        <path d="M132 128 L168 128 L172 158 C215 164 238 184 242 226 L254 420 C255 436 232 438 230 422 L214 262 L206 440 L212 770 C212 790 170 790 168 770 L152 480 L148 480 L132 770 C130 790 88 790 88 770 L94 440 L86 262 L70 422 C68 438 45 436 46 420 L58 226 C62 184 85 164 128 158 Z" />
+        <path d="M132 128 L168 128 L172 158 C215 164 238 184 242 226 L254 420 C255 436 232 438 230 422 L214 262 L206 440 L212 800 L168 800 L152 480 L148 480 L132 800 L88 800 L94 440 L86 262 L70 422 C68 438 45 436 46 420 L58 226 C62 184 85 164 128 158 Z" />
       </g>
     </svg>
   );
 }
 
+// Sand lifted by the reaction. Sizes and paths differ so it reads as sand, not as a pattern.
 const RISE = [
-  { gx: "18%", gdx: "-14px", gdy: "-120px", gdelay: "0ms" },
-  { gx: "30%", gdx: "10px", gdy: "-170px", gdelay: "90ms" },
-  { gx: "44%", gdx: "-6px", gdy: "-140px", gdelay: "40ms" },
-  { gx: "58%", gdx: "16px", gdy: "-190px", gdelay: "140ms" },
-  { gx: "70%", gdx: "-10px", gdy: "-130px", gdelay: "60ms" },
-  { gx: "82%", gdx: "12px", gdy: "-160px", gdelay: "180ms" },
+  { gx: "8%", gs: "5px", gdx: "-18px", gdy: "-150px", gdelay: "0ms" },
+  { gx: "15%", gs: "8px", gdx: "12px", gdy: "-230px", gdelay: "70ms" },
+  { gx: "22%", gs: "4px", gdx: "-8px", gdy: "-180px", gdelay: "30ms" },
+  { gx: "29%", gs: "9px", gdx: "20px", gdy: "-270px", gdelay: "120ms" },
+  { gx: "36%", gs: "6px", gdx: "-14px", gdy: "-200px", gdelay: "50ms" },
+  { gx: "43%", gs: "5px", gdx: "16px", gdy: "-250px", gdelay: "150ms" },
+  { gx: "50%", gs: "8px", gdx: "-10px", gdy: "-170px", gdelay: "20ms" },
+  { gx: "57%", gs: "4px", gdx: "22px", gdy: "-290px", gdelay: "100ms" },
+  { gx: "64%", gs: "7px", gdx: "-16px", gdy: "-210px", gdelay: "60ms" },
+  { gx: "71%", gs: "5px", gdx: "10px", gdy: "-160px", gdelay: "140ms" },
+  { gx: "78%", gs: "9px", gdx: "-6px", gdy: "-240px", gdelay: "90ms" },
+  { gx: "85%", gs: "4px", gdx: "18px", gdy: "-190px", gdelay: "40ms" },
 ];
 
-// The character occupies the page itself and is one large button. Hover or keyboard focus gives a
-// short reaction as a hint; only a press does anything more. It never plays the cinematic by itself.
+const NEAR_PX = 140;
+
+// The character occupies the page itself and is one large control, not a card. The pointer coming
+// close wakes it a little, hover or keyboard focus gives a reaction of about a second, and only a
+// press does anything more. It never plays the cinematic by itself.
 export function StoryCharacter({
   src,
   label,
-  caption,
+  tag,
   reactionMs,
   onPress,
   buttonRef,
 }: {
-  /** Internal still, when this build has one. Otherwise the labelled placeholder is drawn. */
+  /** Internal still, when this build has one. Otherwise the placeholder form is drawn. */
   src?: string;
   /** Accessible name: what pressing does. */
   label: string;
-  /** Small editorial label under the figure. */
-  caption: string;
+  /** The small visible label beside the figure, such as "Watch story". */
+  tag: string;
   reactionMs: number;
   onPress: () => void;
-  buttonRef?: React.Ref<HTMLButtonElement>;
+  buttonRef?: React.RefObject<HTMLButtonElement | null>;
 }) {
   const reduced = useReducedMotion();
   const [reacting, setReacting] = useState(false);
+  const [near, setNear] = useState(false);
   const [failed, setFailed] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const own = useRef<HTMLButtonElement>(null);
+  const button = buttonRef ?? own;
 
   useEffect(
     () => () => {
@@ -68,6 +79,29 @@ export function StoryCharacter({
     },
     [],
   );
+
+  // Approach: a mouse within reach of the figure is enough for a first sign of life.
+  useEffect(() => {
+    if (reduced) return;
+    let frame = 0;
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse" || frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const box = button.current?.getBoundingClientRect();
+        if (!box) return;
+        const dx = Math.max(box.left - e.clientX, 0, e.clientX - box.right);
+        const dy = Math.max(box.top - e.clientY, 0, e.clientY - box.bottom);
+        const next = Math.hypot(dx, dy) < NEAR_PX;
+        setNear((prev) => (prev === next ? prev : next));
+      });
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [reduced, button]);
 
   const react = () => {
     if (reduced || timer.current) return;
@@ -82,10 +116,11 @@ export function StoryCharacter({
 
   return (
     <button
-      ref={buttonRef}
+      ref={button}
       type="button"
       data-testid="story-character"
       data-reacting={reacting}
+      data-near={near}
       data-media={still ? "internal-still" : "placeholder"}
       aria-label={label}
       onClick={onPress}
@@ -95,22 +130,24 @@ export function StoryCharacter({
       onFocus={(e) => {
         if (e.currentTarget.matches(":focus-visible")) react();
       }}
-      className="story-character relative block h-full w-full cursor-pointer appearance-none border-0 bg-transparent p-0 text-left"
+      className="story-character absolute inset-0 block appearance-none border-0 bg-transparent p-0 text-left"
       style={{ "--react-ms": `${reactionMs}ms` } as React.CSSProperties}
     >
-      <span className="story-figure">
-        {still ? (
-          // An internal still from the development server. It is never optimised, cached or deployed.
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={src} alt="" draggable={false} onError={() => setFailed(true)} className="story-figure-still block h-full w-full select-none object-cover object-top" />
-        ) : (
-          <PlaceholderFigure className="block h-full w-full" />
-        )}
-      </span>
+      {still ? (
+        // An internal still from the development server. It is never optimised, cached or deployed.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={src} alt="" draggable={false} onError={() => setFailed(true)} className="story-figure story-figure-still select-none object-cover" />
+      ) : (
+        <PlaceholderFigure className="story-figure story-figure-placeholder" />
+      )}
+      {still && <span aria-hidden="true" className="story-veil" />}
+      <span aria-hidden="true" className="story-puff" />
       {RISE.map((g, i) => (
-        <span key={i} aria-hidden="true" className="story-rise" style={{ "--gx": g.gx, "--gdx": g.gdx, "--gdy": g.gdy, "--gdelay": g.gdelay } as React.CSSProperties} />
+        <span key={i} aria-hidden="true" className="story-rise" style={{ "--gx": g.gx, "--gs": g.gs, "--gdx": g.gdx, "--gdy": g.gdy, "--gdelay": g.gdelay } as React.CSSProperties} />
       ))}
-      <span className="label-xs absolute bottom-3 left-0 max-w-[16rem] leading-relaxed text-ink/60">{caption}</span>
+      <span data-testid="story-tag" className="story-tag label-xs">
+        {tag} <span aria-hidden="true">↗</span>
+      </span>
     </button>
   );
 }

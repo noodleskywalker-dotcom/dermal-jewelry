@@ -59,6 +59,26 @@ cutout; there is no opponent picture, no reaction loop and no footage; the close
 contains painted jewelry under the overlay. These are listed in `docs/production/ASSET_MANIFEST.md`.
 Decisions are in `docs/DECISIONS.md`, rules in `docs/REVEALS.md`.
 
+### Visual refinement pass (21 September 2026, later the same day)
+
+Made after the owner's visual review. It is tested locally and **not owner-approved**. Details are in
+`docs/DECISIONS.md`.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Character presence without a vignette | implemented, inspected | Anchored bottom-left, sand across the stage foot. Still half-length: a full-standing cutout is required. |
+| Interaction discovery | tested | Pointer cursor, WATCH STORY label, proximity wake, 1.0 second reaction. Story stays press-only. |
+| Concept motion prototype | tested | Monochrome storyboard animatic replaces the mannequin and shield. Labelled in internal review, unplayable in a build. |
+| Fight composition on phones | tested at six sizes | Face never crossed by the arc or the opponent; opponent on stage at the hit. |
+| First-screen clarity | tested | Desktop: next section peeks in and a SCROLL cue points at it. Phone: title, WATCH STORY, character and first piece on the first screen. |
+| Customer-facing copy | tested | No timing or engineering notes. Internal status is development-only. |
+| Light navigation on the paper stage | tested | Paper bar, ink text, no rule, same destinations. |
+| Jewelry hover artifact | fixed, inspected | No band, no smear. Lift, tilt, light catch, glint, sand grains. |
+| Phone product presentation | tested | One piece at a time, changing sides, no two in a row, no horizontal scroll. |
+| Close-up states | tested | Smaller crisp window for nose and micro dermal. Painted reference shown without an overlay: no ghosting. |
+| Try on without a photo | tested | Featureless head stand-in. The grid fixture is for tests only. |
+| Original designs on the story page, KIRI as Original / Concept | tested | Words only for KIRI: no artwork, price or product. |
+
 ## Asset production phase (started 20 September 2026)
 
 The interaction architecture is approved as the working foundation. No redesign and no new major

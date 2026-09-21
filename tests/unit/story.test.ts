@@ -28,9 +28,44 @@ describe("collection story", () => {
     expect(beatAt(story, 99).id).toBe("closeup");
   });
 
-  it("keeps the hover hint far shorter than the cinematic", () => {
-    expect(story.microReactionMs).toBeGreaterThanOrEqual(500);
-    expect(story.microReactionMs).toBeLessThanOrEqual(1500);
+  it("keeps the hover hint at about a second, far shorter than the cinematic", () => {
+    expect(story.microReactionMs).toBeGreaterThanOrEqual(800);
+    expect(story.microReactionMs).toBeLessThanOrEqual(1200);
+  });
+
+  it("names every beat, and carries a customer-facing story label", () => {
+    expect(story.storyLabel).toBe("Story 01");
+    for (const beat of story.beats) expect(beat.title.length).toBeGreaterThan(2);
+  });
+
+  it("withholds the overlay on a close-up that already has jewelry painted in, and says what is required", () => {
+    const closeup = story.slots.find((s) => s.id === "closeup")!;
+    expect(closeup.paintedJewelry).toBe(true);
+    expect(closeup.brief).toMatch(/CLEAN HIGH-RES CLOSE-UP WITHOUT JEWELRY REQUIRED/);
+    expect(story.slots.find((s) => s.id === "character")!.brief).toMatch(/FULL-STANDING CHARACTER ASSET REQUIRED/);
+    expect(story.slots.find((s) => s.id === "character")!.paintedJewelry).toBeUndefined();
+  });
+
+  it("never enlarges the half-length still past its real pixels on a desktop panel", () => {
+    // A 1440 x 900 window gives the picture panel about 836 px of height. The window is 4:5.
+    const panelHeight = 836;
+    const sourceWidth = 1792;
+    for (const id of ["micro-dermal", "nose"] as const) {
+      const focus = story.focus[id]!;
+      expect(focus.inset).toBeGreaterThan(0.4);
+      const windowHeight = panelHeight * focus.inset!;
+      const windowWidth = windowHeight * 0.8;
+      const aspect = story.slots.find((s) => s.id === focus.slot)!.aspect;
+      const drawnWidth = Math.max(windowWidth, windowHeight * aspect) * focus.zoom;
+      expect(drawnWidth).toBeLessThanOrEqual(sourceWidth);
+    }
+  });
+
+  it("marks story-driven collections for the light navigation, and keeps an original concept as words only", async () => {
+    const { site } = await import("@/lib/config/site");
+    for (const collection of site.collections) expect(collection.stage === "light").toBe(Boolean(storyFor(collection.slug)));
+    expect(site.concepts.map((c) => `${c.name}:${c.kind}/${c.status}`)).toEqual(["KIRI:Original/Concept"]);
+    expect(catalog.listProducts().some((p) => /kiri/i.test(p.title))).toBe(false);
   });
 
   it("plays the unfinished story for internal review only, and never with reduced motion", () => {

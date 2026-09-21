@@ -17,7 +17,8 @@ const STONES = new Set(["garnet-gem", "orbit"]);
 
 // One jewelry object on the open canvas: no card, no frame. The object is a link to this product
 // and form, so it is always directly shoppable, and the small label beside it carries the name, the
-// form, the demo price and TRY ON. Hover only ever moves light across it; it never plays a story.
+// form, the demo price and TRY ON. Hover lifts it, lets the metal catch the light and stirs a few
+// grains of sand; it never plays a story.
 export function FloatingPiece({
   piece,
   index,
@@ -33,7 +34,9 @@ export function FloatingPiece({
   onOpen: (view: "concept" | "tryon") => void;
 }) {
   const { product, form, spot } = piece;
-  const stone = resolveComponents(product, { side: "left", tweaks: {}, formId: form.id }).find((c) => STONES.has(c.art));
+  // The glint lands on the stone when the piece has one, otherwise on its first metal part.
+  const parts = resolveComponents(product, { side: "left", tweaks: {}, formId: form.id });
+  const stone = parts.find((c) => STONES.has(c.art)) ?? parts[0];
 
   return (
     <li
@@ -66,8 +69,9 @@ export function FloatingPiece({
       >
         <span className="story-piece-float">
           <span className="story-piece-art">
-            <FormVisual product={product} formId={form.id} />
-            <span aria-hidden="true" className="story-sweep" />
+            <span className="story-piece-shadow">
+              <FormVisual product={product} formId={form.id} />
+            </span>
             {stone && <span aria-hidden="true" className="story-glint" style={{ left: `${stone.leftPct - stone.widthPct * 0.14}%`, top: `${stone.topPct - stone.widthPct * 0.16}%` }} />}
             {sand &&
               GRAINS.map((g, i) => (
