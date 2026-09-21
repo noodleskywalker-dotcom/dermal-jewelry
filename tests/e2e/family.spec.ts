@@ -114,7 +114,7 @@ test.describe("forms in Face Studio", () => {
     await expect(item).toHaveCount(1);
     await expect(page.getByTestId("piece-symbol")).toHaveCount(1);
     await expect(page.getByTestId("piece-gemstone")).toHaveCount(0);
-    const src = await page.getByTestId("photo-frame").locator("img").getAttribute("src");
+    const src = await page.getByTestId("photo-frame").getByTestId("studio-photo").getAttribute("src");
 
     await mouseDrag(page, item, 30, 25);
     const dermalPlaced = await relativeCentre(page, item);
@@ -124,7 +124,7 @@ test.describe("forms in Face Studio", () => {
     const pair = await relativeCentre(page, item);
     // The pair starts from its own anti-eyebrow default, not from the cheek position.
     expect(pair.y).toBeLessThan(dermalPlaced.y - 0.03);
-    expect(await page.getByTestId("photo-frame").locator("img").getAttribute("src")).toBe(src);
+    expect(await page.getByTestId("photo-frame").getByTestId("studio-photo").getAttribute("src")).toBe(src);
 
     await page.getByTestId("studio-form-micro-dermal").click();
     const back = await relativeCentre(page, item);

@@ -5,7 +5,7 @@ import { formOf } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { clampFocus, type CollectionStory, type StoryFocus, type StoryMedia } from "@/lib/story";
 import { FormVisual } from "@/components/catalog/FormVisual";
-import { ProductPieces } from "@/components/catalog/ProductArtwork";
+import { artworkLabel, ProductPieces } from "@/components/catalog/ProductArtwork";
 
 // The concept view of a story's product: a picture framed on the chosen piercing form, with the
 // jewelry drawn over it as a separate overlay from the product asset. A picture never supplies the
@@ -40,7 +40,7 @@ export function StoryVisual({
     return (
       <div data-testid="story-visual" data-form={form.id} data-media="placeholder" data-jewelry="overlay" className="absolute inset-0" style={{ backgroundImage: "linear-gradient(165deg, #f4f0e7 0%, #e9e2d4 60%, #dcd2bf 100%)" }}>
         <ProductPieces product={product} formId={form.id} scale={form.components.length > 1 ? 0.5 : 0.24} shadow="soft" />
-        {captions && <p className="label-xs absolute inset-x-5 bottom-5 text-ink/55">{form.label} · concept artwork</p>}
+        {captions && <p className="label-xs absolute inset-x-5 bottom-5 text-ink/55">{form.label} · {artworkLabel(product, form.id).toLowerCase()}</p>}
       </div>
     );
   }

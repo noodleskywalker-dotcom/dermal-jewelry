@@ -41,7 +41,20 @@ Two standing rules decide most answers below:
 
 Estimated credits for assets 3 to 7: about 30 to 45. Asset 8 adds about 80 to 160. Current balance: 10.
 
-## Decisions needed from the owner before anything is made
+## Owner decisions, 21 September 2026
+
+1. Hollow means true openwork: red-faced metal, polished edges and sides, transparent negative space.
+2. The repository's glyph outline is approved for prototype product art only, never as manufacturing geometry.
+3. No background-removal service and no upload of internal files. The future character is to be generated
+   on a clean white or simple neutral ground that suits the white stage; a transparent cutout can come later.
+4. No credits approved yet. Assets 1 and 2 first, then a review of the site with them installed, then a
+   budget decision. The live balance is rechecked before any spend.
+5. Already generated working outputs may serve as look references for internal generation. Customer
+   photos, the owner's reference photographs and other files may not.
+
+**Assets 1 and 2 are done** as prototype product art (see `ASSET_SLOT.md`). Assets 3 to 8 have not started.
+
+## Decisions that were needed from the owner (kept for the record)
 
 1. **What "hollow" means for the symbol.** The approved reference shows metal-edged strokes with deep
    red inside them and open space between the strokes. Confirm: red-filled strokes with open gaps, or

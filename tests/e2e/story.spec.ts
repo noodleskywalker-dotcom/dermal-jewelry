@@ -227,8 +227,8 @@ test.describe("DESERT EYE collection stage", () => {
       const panel = (await visual.boundingBox())!;
       const shown = (await visual.locator('[data-testid="story-window"][data-slot="character"]').boundingBox())!;
       expect(shown.height).toBeLessThan(panel.height * 0.75);
-      const drawn = (await visual.locator('[data-slot="character"] img').boundingBox())!;
-      const natural = await visual.locator('[data-slot="character"] img').evaluate((img: HTMLImageElement) => img.naturalWidth);
+      const drawn = (await visual.locator('[data-slot="character"] img:not([data-testid="piece-asset"])').boundingBox())!;
+      const natural = await visual.locator('[data-slot="character"] img:not([data-testid="piece-asset"])').evaluate((img: HTMLImageElement) => img.naturalWidth);
       expect(drawn.width).toBeLessThanOrEqual(natural * 1.05);
     }
 
@@ -268,7 +268,7 @@ test.describe("DESERT EYE collection stage", () => {
     await expect(tryon.getByTestId("photo-frame")).toBeVisible();
     await expect(tryon.getByTestId("placed-item")).toHaveCount(1);
     await expect(tryon.getByTestId("piece-gemstone")).toHaveCount(1);
-    expect(await tryon.getByTestId("photo-frame").locator("img").getAttribute("src")).toMatch(/^blob:/);
+    expect(await tryon.getByTestId("photo-frame").getByTestId("studio-photo").getAttribute("src")).toMatch(/^blob:/);
 
     // The form still drives what is drawn on the face.
     await chooseForm(page, "nose");

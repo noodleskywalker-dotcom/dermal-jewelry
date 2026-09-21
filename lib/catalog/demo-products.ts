@@ -87,12 +87,14 @@ export const demoProducts: Product[] = [
           // Approved default composition. x and y are offsets from the pair's centre in pair units,
           // authored for the wearer's left: +x is outward, +y is down. size is the piece's width.
           { id: "symbol", label: "Symbol (upper, outer)", art: "love-symbol", x: 0.3, y: -0.2, size: 0.48, rotation: 0 },
-          { id: "gemstone", label: "Gemstone (lower, inner)", art: "garnet-gem", x: -0.28, y: 0.2, size: 0.2, rotation: 0, symmetric: true },
+          // size 0.18, not 0.2: the prototype image is cropped tight to the stone, where the drawn fallback
+          // filled only three quarters of its box. 0.18 keeps the stone at the approved 0.37 of the symbol's width.
+          { id: "gemstone", label: "Gemstone (lower, inner)", art: "garnet-gem", x: -0.28, y: 0.2, size: 0.18, rotation: 0, symmetric: true },
         ],
         composition: {
           approved: true,
-          artClass: "concept-fallback",
-          note: "Symbol upper and outer, gemstone lower and inner, on the approved diagonal. Artwork is the code-drawn fallback until prototype product art is supplied.",
+          artClass: "prototype-product-art",
+          note: "Symbol upper and outer, gemstone lower and inner, on the approved diagonal. Prototype product art rendered from the repository's vector geometry. It is not manufacturing geometry.",
         },
         defaultScale: 0.12,
         demoPrice: 390,
@@ -107,8 +109,8 @@ export const demoProducts: Product[] = [
         components: single("symbol", "Symbol top", "love-symbol", 0.8),
         composition: {
           approved: true,
-          artClass: "concept-fallback",
-          note: "Concept-approved as the hollow symbol on its own. It is a single piece, never the pair made smaller.",
+          artClass: "prototype-product-art",
+          note: "Concept-approved as the hollow symbol on its own. It is a single piece, never the pair made smaller. Prototype product art, not manufacturing geometry.",
         },
         defaultScale: 0.055,
         demoPrice: 220,
@@ -120,11 +122,12 @@ export const demoProducts: Product[] = [
         label: "Nose",
         status: "available",
         placement: "nostril",
-        components: [{ id: "gemstone", label: "Gemstone top", art: "garnet-gem", x: 0, y: 0, size: 0.9, symmetric: true }],
+        // size 0.72, not 0.9, for the same reason as the pair's stone: the tight crop would otherwise draw it a quarter larger.
+        components: [{ id: "gemstone", label: "Gemstone top", art: "garnet-gem", x: 0, y: 0, size: 0.72, symmetric: true }],
         composition: {
           approved: true,
-          artClass: "concept-fallback",
-          note: "Concept-approved as the deep-red faceted gemstone on its own. It is a single piece, never the pair made smaller.",
+          artClass: "prototype-product-art",
+          note: "Concept-approved as the deep-red faceted gemstone on its own. It is a single piece, never the pair made smaller. Prototype product art; the stone is not identified.",
         },
         defaultScale: 0.03,
         // Placeholder carried over from the other nose concept. It is not a selling price.

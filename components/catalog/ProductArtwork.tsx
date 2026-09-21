@@ -1,5 +1,14 @@
+import { formOf } from "@/lib/catalog";
+import { formAssets } from "@/lib/catalog/assets";
 import type { Product } from "@/lib/catalog/types";
 import { FormVisual } from "./FormVisual";
+
+/** What the artwork for a form is, in plain words. Prototype art is never called a product photograph. */
+export function artworkLabel(product: Product, formId?: string): string {
+  const form = formOf(product, formId);
+  const exact = Boolean(formAssets(product, form.id, "left"));
+  return exact && form.composition?.artClass === "prototype-product-art" ? "Prototype artwork" : "Concept artwork";
+}
 
 // Product-only still life used wherever final photography is missing. The pieces come from
 // FormVisual, so an exact asset in the slot replaces the concept artwork here as well.
@@ -22,16 +31,17 @@ export function ProductArtwork({
   tone?: "bone" | "ink" | "none";
 }) {
   const surface = tone === "bone" ? "bg-bone" : tone === "ink" ? "bg-coal" : "";
+  const label = artworkLabel(product, formId);
   return (
     <div
       role="img"
-      aria-label={`${product.title}: concept artwork. ${product.summary}`}
+      aria-label={`${product.title}: ${label.toLowerCase()}. ${product.summary}`}
       className={`relative overflow-hidden ${surface} ${className ?? ""}`}
       style={tone === "bone" ? { backgroundImage: "linear-gradient(165deg, #ece8df 0%, #e2ddd1 55%, #d3cdbf 100%)" } : undefined}
     >
       <ProductPieces product={product} formId={formId} scale={scale} shadow={tone === "ink" ? "dark" : "soft"} />
       {showLabel && (
-        <span className={`label-xs absolute bottom-3 left-3 ${tone === "ink" ? "text-ash" : "text-ink/55"}`}>Concept artwork</span>
+        <span className={`label-xs absolute bottom-3 left-3 ${tone === "ink" ? "text-ash" : "text-ink/55"}`}>{label}</span>
       )}
     </div>
   );

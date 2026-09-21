@@ -152,7 +152,7 @@ export function StoryProductExperience({
           tabIndex={-1}
           data-testid="story-product-title"
           className="mt-4 font-display text-5xl font-light leading-[0.95] outline-none sm:text-6xl"
-          style={{ "--i": 2 } as React.CSSProperties}
+          style={{ "--i": 2, outline: "none" } as React.CSSProperties}
         >
           {product.title}
         </h1>

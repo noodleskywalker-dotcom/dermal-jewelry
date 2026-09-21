@@ -13,7 +13,7 @@ test.describe("photo selection", () => {
     expect(symbol!.y).toBeLessThan(gem!.y);
     expect(symbol!.x).toBeGreaterThan(gem!.x);
 
-    const src = await page.getByTestId("photo-frame").locator("img").getAttribute("src");
+    const src = await page.getByTestId("photo-frame").getByTestId("studio-photo").getAttribute("src");
     expect(src).toMatch(/^blob:/);
   });
 
@@ -220,14 +220,14 @@ test.describe("products, previews and clearing", () => {
     const item = page.getByTestId("placed-item");
     await mouseDrag(page, item, -60, 40);
     const placed = await relativeCentre(page, item);
-    const src = await page.getByTestId("photo-frame").locator("img").getAttribute("src");
+    const src = await page.getByTestId("photo-frame").getByTestId("studio-photo").getAttribute("src");
 
     await page.locator('[data-testid="studio-product"][data-product="sand-vortex"]').click();
     await expect(item).toHaveAttribute("data-product", "sand-vortex");
     const switched = await relativeCentre(page, item);
     expect(switched.x).toBeCloseTo(placed.x, 2);
     expect(switched.y).toBeCloseTo(placed.y, 2);
-    expect(await page.getByTestId("photo-frame").locator("img").getAttribute("src")).toBe(src);
+    expect(await page.getByTestId("photo-frame").getByTestId("studio-photo").getAttribute("src")).toBe(src);
   });
 
   test("a product link opens the Studio on that piece", async ({ page }) => {

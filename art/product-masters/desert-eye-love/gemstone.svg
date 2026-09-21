@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+  <defs>
+  <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ffffff"/><stop offset="0.22" stop-color="#aab0b9"/>
+    <stop offset="0.46" stop-color="#f2f4f6"/><stop offset="0.7" stop-color="#6a7079"/>
+    <stop offset="1" stop-color="#d3d7dd"/>
+  </linearGradient>
+  <linearGradient id="metal-side" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#8d939c"/><stop offset="0.5" stop-color="#4a4f57"/><stop offset="1" stop-color="#23262b"/>
+  </linearGradient>
+    <radialGradient id="depth" cx="0.42" cy="0.38" r="0.75">
+      <stop offset="0" stop-color="#c3263f" stop-opacity="0"/><stop offset="0.7" stop-color="#2a040c" stop-opacity="0.35"/><stop offset="1" stop-color="#140206" stop-opacity="0.7"/>
+    </radialGradient>
+    <linearGradient id="table" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#c9304b"/><stop offset="0.5" stop-color="#84162b"/><stop offset="1" stop-color="#3c0813"/>
+    </linearGradient>
+    <clipPath id="stone"><circle cx="500" cy="500" r="410"/></clipPath>
+  </defs>
+  <circle cx="500" cy="500" r="424" fill="none" stroke="url(#metal)" stroke-width="30"/>
+  <g clip-path="url(#stone)">
+    <circle cx="500" cy="500" r="410" fill="#4a0b18"/>
+    <polygon points="705.0,500.0 645.0,645.0 780.3,616.1" fill="rgb(75,12,23)"/>
+    <polygon points="705.0,500.0 780.3,383.9 910.0,500.0 780.3,616.1" fill="rgb(59,9,18)"/>
+    <polygon points="780.3,616.1 910.0,500.0 878.8,656.9" fill="rgb(41,5,12)"/>
+    <polygon points="780.3,616.1 878.8,656.9 789.9,789.9" fill="rgb(65,10,20)"/>
+    <polygon points="645.0,645.0 500.0,705.0 616.1,780.3" fill="rgb(75,12,23)"/>
+    <polygon points="645.0,645.0 780.3,616.1 789.9,789.9 616.1,780.3" fill="rgb(40,5,12)"/>
+    <polygon points="616.1,780.3 789.9,789.9 656.9,878.8" fill="rgb(68,10,21)"/>
+    <polygon points="616.1,780.3 656.9,878.8 500.0,910.0" fill="rgb(38,5,11)"/>
+    <polygon points="500.0,705.0 355.0,645.0 383.9,780.3" fill="rgb(111,19,34)"/>
+    <polygon points="500.0,705.0 616.1,780.3 500.0,910.0 383.9,780.3" fill="rgb(59,9,18)"/>
+    <polygon points="383.9,780.3 500.0,910.0 343.1,878.8" fill="rgb(59,9,18)"/>
+    <polygon points="383.9,780.3 343.1,878.8 210.1,789.9" fill="rgb(117,20,35)"/>
+    <polygon points="355.0,645.0 295.0,500.0 219.7,616.1" fill="rgb(161,29,49)"/>
+    <polygon points="355.0,645.0 383.9,780.3 210.1,789.9 219.7,616.1" fill="rgb(106,18,32)"/>
+    <polygon points="219.7,616.1 210.1,789.9 121.2,656.9" fill="rgb(145,26,44)"/>
+    <polygon points="219.7,616.1 121.2,656.9 90.0,500.0" fill="rgb(129,22,39)"/>
+    <polygon points="295.0,500.0 355.0,355.0 219.7,383.9" fill="rgb(196,36,60)"/>
+    <polygon points="295.0,500.0 219.7,616.1 90.0,500.0 219.7,383.9" fill="rgb(152,27,46)"/>
+    <polygon points="219.7,383.9 90.0,500.0 121.2,343.1" fill="rgb(150,27,45)"/>
+    <polygon points="219.7,383.9 121.2,343.1 210.1,210.1" fill="rgb(193,35,59)"/>
+    <polygon points="355.0,355.0 500.0,295.0 383.9,219.7" fill="rgb(196,36,60)"/>
+    <polygon points="355.0,355.0 219.7,383.9 210.1,210.1 383.9,219.7" fill="rgb(171,31,52)"/>
+    <polygon points="383.9,219.7 210.1,210.1 343.1,121.2" fill="rgb(197,36,60)"/>
+    <polygon points="383.9,219.7 343.1,121.2 500.0,90.0" fill="rgb(146,26,44)"/>
+    <polygon points="500.0,295.0 645.0,355.0 616.1,219.7" fill="rgb(161,29,49)"/>
+    <polygon points="500.0,295.0 383.9,219.7 500.0,90.0 616.1,219.7" fill="rgb(152,27,46)"/>
+    <polygon points="616.1,219.7 500.0,90.0 656.9,121.2" fill="rgb(132,23,40)"/>
+    <polygon points="616.1,219.7 656.9,121.2 789.9,210.1" fill="rgb(142,25,43)"/>
+    <polygon points="645.0,355.0 705.0,500.0 780.3,383.9" fill="rgb(111,19,34)"/>
+    <polygon points="645.0,355.0 616.1,219.7 789.9,210.1 780.3,383.9" fill="rgb(106,18,32)"/>
+    <polygon points="780.3,383.9 789.9,210.1 878.8,343.1" fill="rgb(120,21,36)"/>
+    <polygon points="780.3,383.9 878.8,343.1 910.0,500.0" fill="rgb(56,8,17)"/>
+    <polygon points="705.0,500.0 645.0,645.0 500.0,705.0 355.0,645.0 295.0,500.0 355.0,355.0 500.0,295.0 645.0,355.0" fill="url(#table)"/>
+    <polygon points="602.3,542.4 542.4,602.3 457.6,602.3 397.7,542.4 397.7,457.6 457.6,397.7 542.4,397.7 602.3,457.6" fill="rgba(24,2,8,0.26)"/>
+    <g stroke="rgba(20,2,7,0.22)" stroke-width="3">
+      <line x1="602.3" y1="542.4" x2="681.8" y2="575.3"/><line x1="542.4" y1="602.3" x2="575.3" y2="681.8"/><line x1="457.6" y1="602.3" x2="424.7" y2="681.8"/><line x1="397.7" y1="542.4" x2="318.2" y2="575.3"/><line x1="397.7" y1="457.6" x2="318.2" y2="424.7"/><line x1="457.6" y1="397.7" x2="424.7" y2="318.2"/><line x1="542.4" y1="397.7" x2="575.3" y2="318.2"/><line x1="602.3" y1="457.6" x2="681.8" y2="424.7"/>
+    </g>
+    <g stroke="rgba(255,190,200,0.28)" stroke-width="3" fill="none">
+      <polygon points="705.0,500.0 645.0,645.0 500.0,705.0 355.0,645.0 295.0,500.0 355.0,355.0 500.0,295.0 645.0,355.0"/>
+      <line x1="705.0" y1="500.0" x2="910.0" y2="500.0"/><line x1="645.0" y1="645.0" x2="789.9" y2="789.9"/><line x1="500.0" y1="705.0" x2="500.0" y2="910.0"/><line x1="355.0" y1="645.0" x2="210.1" y2="789.9"/><line x1="295.0" y1="500.0" x2="90.0" y2="500.0"/><line x1="355.0" y1="355.0" x2="210.1" y2="210.1"/><line x1="500.0" y1="295.0" x2="500.0" y2="90.0"/><line x1="645.0" y1="355.0" x2="789.9" y2="210.1"/>
+    </g>
+    <circle cx="500" cy="500" r="410" fill="url(#depth)"/>
+    <circle cx="500" cy="500" r="410" fill="none" stroke="rgba(14,2,5,0.55)" stroke-width="7"/>
+    <ellipse cx="392" cy="352" rx="104" ry="40" fill="rgba(255,255,255,0.42)" transform="rotate(-38 392 352)"/>
+    <ellipse cx="640" cy="668" rx="70" ry="22" fill="rgba(255,200,210,0.22)" transform="rotate(-38 640 668)"/>
+  </g>
+  <g transform="rotate(135 795.6 795.6)">
+      <ellipse cx="795.6" cy="795.6" rx="46" ry="38" fill="url(#metal)" stroke="rgba(20,22,26,0.5)" stroke-width="4"/>
+      <ellipse cx="785.6" cy="785.6" rx="16" ry="9" fill="rgba(255,255,255,0.75)"/>
+    </g>
+    <g transform="rotate(225 204.4 795.6)">
+      <ellipse cx="204.4" cy="795.6" rx="46" ry="38" fill="url(#metal)" stroke="rgba(20,22,26,0.5)" stroke-width="4"/>
+      <ellipse cx="194.4" cy="785.6" rx="16" ry="9" fill="rgba(255,255,255,0.75)"/>
+    </g>
+    <g transform="rotate(315 204.4 204.4)">
+      <ellipse cx="204.4" cy="204.4" rx="46" ry="38" fill="url(#metal)" stroke="rgba(20,22,26,0.5)" stroke-width="4"/>
+      <ellipse cx="194.4" cy="194.4" rx="16" ry="9" fill="rgba(255,255,255,0.75)"/>
+    </g>
+    <g transform="rotate(405 795.6 204.4)">
+      <ellipse cx="795.6" cy="204.4" rx="46" ry="38" fill="url(#metal)" stroke="rgba(20,22,26,0.5)" stroke-width="4"/>
+      <ellipse cx="785.6" cy="194.4" rx="16" ry="9" fill="rgba(255,255,255,0.75)"/>
+    </g>
+</svg>

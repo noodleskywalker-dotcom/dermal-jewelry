@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
@@ -35,15 +35,57 @@ describe("approved default composition", () => {
     expect(symbol.size).toBeGreaterThan(gemstone.size);
   });
 
-  it("classifies today's artwork honestly as the concept fallback", () => {
-    expect(form.composition?.artClass).toBe("concept-fallback");
+  it("classifies the installed artwork as prototype product art, never as a commercial asset", () => {
+    for (const id of ["anti-eyebrow", "micro-dermal", "nose"]) {
+      const composition = formOf(hero, id).composition!;
+      expect(composition.artClass).toBe("prototype-product-art");
+      expect(composition.note).not.toMatch(/ruby|sapphire|garnet\b|titanium|steel|gold/i);
+    }
+    expect(form.composition!.note).toMatch(/not manufacturing geometry/i);
+  });
+
+  it("keeps the approved proportions now that the images are cropped tight to each piece", () => {
+    const [symbol, gemstone] = form.components;
+    // Offsets and the symbol are untouched. Only the stone's width changed, to hold its approved share of the symbol.
+    expect([symbol.x, symbol.y, symbol.size]).toEqual([0.3, -0.2, 0.48]);
+    expect([gemstone.x, gemstone.y]).toEqual([-0.28, 0.2]);
+    expect(gemstone.size / symbol.size).toBeGreaterThan(0.34);
+    expect(gemstone.size / symbol.size).toBeLessThan(0.42);
   });
 });
 
 describe("separate component assets", () => {
-  it("falls back to the drawn artwork while the slot is empty", () => {
-    expect(committedManifest).toEqual({});
-    expect(formAssets(hero, "anti-eyebrow", "left")).toBeNull();
+  it("has the prototype symbol and gemstone installed for every form of the design, and nothing else", () => {
+    expect(committedManifest).toEqual({
+      "desert-eye-love:anti-eyebrow:gemstone:left": `${BASE}/gemstone.webp`,
+      "desert-eye-love:anti-eyebrow:symbol:left": `${BASE}/symbol.webp`,
+      "desert-eye-love:micro-dermal:symbol:left": "/products/desert-eye-love/micro-dermal/symbol.webp",
+      "desert-eye-love:nose:gemstone:left": "/products/desert-eye-love/nose/gemstone.webp",
+    });
+    expect(formAssets(hero, "anti-eyebrow", "left")).toEqual({ symbol: `${BASE}/symbol.webp`, gemstone: `${BASE}/gemstone.webp` });
+    expect(Object.keys(formAssets(hero, "micro-dermal", "left")!)).toEqual(["symbol"]);
+    expect(Object.keys(formAssets(hero, "nose", "left")!)).toEqual(["gemstone"]);
+    // Other designs keep their drawn artwork. No art was invented for them.
+    expect(formAssets(catalog.getProduct("sand-vortex")!, "anti-eyebrow", "left")).toBeNull();
+  });
+
+  it("ships real WebP files with their source masters, and no dedicated mirrored symbol", () => {
+    const at = (...parts: string[]) => path.join(process.cwd(), ...parts);
+    for (const url of Object.values(committedManifest as Record<string, string>)) {
+      const bytes = readFileSync(at("public", url));
+      expect(bytes.subarray(0, 4).toString("latin1")).toBe("RIFF");
+      expect(bytes.subarray(8, 12).toString("latin1")).toBe("WEBP");
+    }
+    // One image serves both sides. The symbol is never flipped, so no right-hand variant exists.
+    expect(Object.keys(committedManifest).some((key) => key.endsWith(":right"))).toBe(false);
+    expect(componentAsset(hero, "anti-eyebrow", "symbol", "right")).toBe(`${BASE}/symbol.webp`);
+    for (const piece of ["symbol", "gemstone"]) {
+      expect(existsSync(at("art", "product-masters", "desert-eye-love", `${piece}.svg`))).toBe(true);
+      expect(readFileSync(at("art", "product-masters", "desert-eye-love", `${piece}.png`)).subarray(1, 4).toString("latin1")).toBe("PNG");
+    }
+    // The symbol master is drawn from the repository's own outline, not from a redrawn one.
+    const glyph = readFileSync(at("lib", "studio", "love-glyph.ts"), "utf8").match(/"(M[^"]+)"/)![1];
+    expect(readFileSync(at("art", "product-masters", "desert-eye-love", "symbol.svg"), "utf8")).toContain(glyph);
   });
 
   it("falls back for the whole form when either piece is missing, never mixing exact and drawn art", () => {
@@ -55,6 +97,8 @@ describe("separate component assets", () => {
     });
     // Another form of the same design is unaffected.
     expect(formAssets(hero, "micro-dermal", "left", { ...SYMBOL, ...GEMSTONE })).toBeNull();
+    // With an empty slot every form still has its drawn fallback.
+    expect(formAssets(hero, "anti-eyebrow", "left", {})).toBeNull();
   });
 
   it("reuses the one approved symbol on the right without any mirrored variant", () => {

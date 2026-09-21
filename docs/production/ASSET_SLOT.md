@@ -1,5 +1,20 @@
 # Exact product asset slot
 
+> **Status, 21 September 2026: the slot is filled with PROTOTYPE PRODUCT ART** for DESERT EYE — LOVE.
+>
+> | File | Size | Bytes | Used by |
+> | --- | --- | --- | --- |
+> | `public/products/desert-eye-love/anti-eyebrow/symbol.webp` | 1600 × 1656 | 214 KB | pair |
+> | `public/products/desert-eye-love/anti-eyebrow/gemstone.webp` | 800 × 800 | 39 KB | pair |
+> | `public/products/desert-eye-love/micro-dermal/symbol.webp` | 1600 × 1656 | 214 KB | micro dermal (same image) |
+> | `public/products/desert-eye-love/nose/gemstone.webp` | 800 × 800 | 39 KB | nose (same image) |
+> | `art/product-masters/desert-eye-love/symbol.svg`, `symbol.png` | vector, 1600 × 1656 lossless | | source masters |
+> | `art/product-masters/desert-eye-love/gemstone.svg`, `gemstone.png` | vector, 800 × 800 lossless | | source masters |
+>
+> Rebuild with `npm run assets:render`. It renders locally from vectors and spends no credits. This is
+> prototype art for the website only. It is not manufacturing geometry, and a commercial asset still
+> needs the maker's CAD render or a photograph of the made piece.
+
 The code-drawn jewelry is temporary. It stays only as a fallback until the exact assets are supplied.
 No new design was invented to prepare this slot.
 

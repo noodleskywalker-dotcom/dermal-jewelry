@@ -1,5 +1,51 @@
 # Test report
 
+## Prototype product art installed — 21 September 2026
+
+Browser results are **browser emulation on a Windows desktop**. No physical device was used.
+
+| Command | Result |
+| --- | --- |
+| `npm run assets:render` | 2 pieces rendered locally, 4 web files written, 0 credits |
+| `npm run assets:sync` | 4 product assets found |
+| `npm run lint` | pass, 0 problems |
+| `npm run typecheck` | pass, 0 errors |
+| `npm test` | 72 of 72 pass |
+| `npm run test:e2e` | 167 pass, 34 skipped, 0 fail (desktop Chromium, Pixel 7 emulation, WebKit) |
+| `npm run build` | pass, "product assets: 4 found" |
+| Local production build | all four `.webp` files answer 200 `image/webp`; the DESERT EYE page references both; character slots still `placeholder`; 0 client chunks with internal names |
+
+The first full run after installing the art had **15 failures, all one cause**: five tests on three
+projects selected "the image inside the photo frame", and the jewelry is made of images now too. The
+customer's photo got its own test id (`studio-photo`) and the selectors name it. No behaviour changed.
+
+New unit tests (`tests/unit/assets.test.ts`): the manifest holds exactly the four files; every listed
+file is a real WebP; both source masters exist and the symbol's SVG contains the repository's glyph
+outline unchanged; no right-hand variant exists and the right side reuses the one symbol; all three
+forms are `prototype-product-art` and no note names a stone or a metal; offsets and the symbol's size
+are untouched and the stone stays between 0.34 and 0.42 of the symbol's width; designs without supplied
+art still fall back to drawn artwork.
+
+New browser tests (`tests/e2e/product-art.spec.ts`, 2 tests on 3 projects):
+- Stage, product page still, placement head, shop card and bag line all draw the real files, fully
+  loaded, at 1600 × 1656 and 800 × 800 natural size, with no failed `/products/` request and no console
+  error. The stone measures between 0.34 and 0.42 of the symbol's drawn width. Micro dermal uses the
+  symbol file and nose uses the gemstone file. SAND VORTEX still has no image art. Cards say "Prototype
+  artwork" for this design and "Concept artwork" for the others.
+- No image has a negative horizontal scale anywhere above it, and none carries a recolouring filter.
+- Face Studio: Pair, Symbol and Gemstone controls are present; switching to the wearer's right swaps the
+  pieces' sides and keeps the symbol above the stone, with the same files, the same width and no flip;
+  selecting the symbol alone and nudging it moves the symbol and leaves the stone where it was.
+
+Screenshots opened and inspected (gitignored `references/review/2026-09-21-jewelry/`, desktop at 2× and
+Pixel 7): stage, each floating piece on its own, pair hover, product page, product close-up, placement
+head, final reveal frame, nose and micro-dermal concepts, try-on stand-in, Face Studio on the labelled
+test fixture for both sides, shop grid, and two frames from a production build. The right-side frame
+shows the character reading correctly, not mirrored.
+
+Not tested: real devices, print or CAD accuracy (there is none to test against), a real face photo.
+
+
 ## Visual refinement of the DESERT EYE stage — 21 September 2026
 
 All browser results are **browser emulation on a Windows desktop** against a development server, the

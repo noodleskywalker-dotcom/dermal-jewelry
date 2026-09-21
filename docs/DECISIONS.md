@@ -2,6 +2,40 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-21 — Prototype product art for DESERT EYE — LOVE
+
+The owner answered the production-queue decisions and authorised assets 1 and 2. Layout is frozen.
+
+- **"Hollow" means true openwork.** A metal body with a deep-red front face, polished metallic edges and
+  sides, every negative space genuinely transparent, no backing plate, no grey stud, no baked shadow.
+  It must read as a small sculptural top, not a printed disc, and not as a thin plain silver outline.
+- **The glyph outline in the repository is approved for prototype product art only:** the website, Face
+  Studio, placement, the reveal prototype and proportion testing. It is **not** manufacturing geometry.
+  Before manufacture it must be rebuilt from maker or CAD geometry and reviewed for manufacturability,
+  minimum stroke thickness, strength, attachment, finishing and exact proportions.
+- **Made locally from vectors, zero credits.** `scripts/render-product-art.mjs` (`npm run assets:render`)
+  builds both pieces as SVG, renders them in headless Chromium, crops to the alpha box with a 2% margin
+  and writes a lossless PNG master and a WebP. The symbol's SVG embeds the outline from
+  `lib/studio/love-glyph.ts` unchanged, and a unit test checks that. No generation service was used.
+- **One image per piece, reused by form.** The symbol serves the anti-eyebrow pair and the micro dermal;
+  the gemstone serves the pair and the nose. No right-hand variant exists: positions mirror, the
+  picture never does. Browser tests check for a negative horizontal scale anywhere above each image.
+- **Two size numbers changed, nothing else.** The images are cropped tight, where the drawn fallback
+  filled about 76% of its box, so the stone would have grown by a quarter. Pair gemstone `size` 0.20 →
+  0.18 keeps it at about 0.37 of the symbol's width, the proportion in the approved reference. Nose
+  gemstone `size` 0.90 → 0.72 keeps its drawn size. All `x`, `y`, the symbol's size and every
+  `defaultScale` are unchanged.
+- **Art class is `prototype-product-art`** for all three forms. Stills say "Prototype artwork" where exact
+  art is installed and "Concept artwork" elsewhere. The stone is only ever "deep-red faceted gemstone".
+- **A manufacturing observation, recorded rather than fixed.** The outline has strokes that do not touch
+  each other. Openwork with no backing plate cannot hold separate islands together, so the made piece
+  will need bridges, a frame or a redrawn outline. The prototype art does not invent any of these.
+- **Character media waits.** No matte service, no upload of internal files, no generation and no credits
+  until the owner has approved the jewelry on the site. Future internal generation may use already
+  generated working outputs as look references (`references/generated/02-start-frame-full.png`,
+  `04-sand-frame-full.png`), never customer photos, the owner's own reference photographs or other
+  files. The live Higgsfield balance must be rechecked before any spend.
+
 ## 2026-09-21 — Visual refinement of the DESERT EYE stage
 
 A refinement pass after the owner's visual review. The interaction model and the data-driven story

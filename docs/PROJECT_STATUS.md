@@ -88,6 +88,15 @@ dimensions, background, crop, angle, where each is used, whether current tools c
 needs Higgsfield credits, whether product geometry is untouched, and whether it is internal only.
 Nothing has been generated and no credits have been spent. Five owner decisions are listed there.
 
+### Prototype product art installed (21 September 2026)
+
+Assets 1 and 2 of the production queue are made and installed: the openwork symbol and the deep-red
+faceted gemstone, rendered locally from vectors with **zero credits**, classified
+`prototype-product-art`. They replace the code-drawn jewelry on every surface that shows DESERT EYE —
+LOVE in all three forms, in every build. Other designs keep their drawn artwork. Two size numbers
+changed to hold the approved proportions; see `docs/DECISIONS.md`. Assets 3 to 8 have **not** started
+and no budget is approved. The owner reviews the jewelry on the site first.
+
 ## Asset production phase (started 20 September 2026)
 
 The interaction architecture is approved as the working foundation. No redesign and no new major
@@ -97,7 +106,7 @@ generated or spent yet**.
 - `docs/production/ASSET_MANIFEST.md`: the seven assets needed per form. Anti-eyebrow assets are needed; micro dermal and nose are **design required**.
 - `docs/production/PRODUCTION_PLAN.md`: the public IP boundary, the 7.0 second storyboard, exact Higgsfield prompts and shot specifications, the minimum test plan (3 generations, about 8 credits), the premium plan (about 110 credits), three katana-geometry directions for an original piece, the media specification, and the list of approvals needed before any generation.
 
-- `docs/production/ASSET_SLOT.md`: the exact product asset slot. Each piece of a form has its own transparent source image (`symbol`, `gemstone`), and the form's composition metadata lays them out on every surface through `components/catalog/FormVisual.tsx`, so Face Studio can still move the pair, the symbol or the gemstone. Prototype product art and commercial product assets are classified separately. **The slot is empty**, so every surface still shows the labeled code-drawn fallback. The development-only reveal prototype and its sand-frame grade are described there too.
+- `docs/production/ASSET_SLOT.md`: the exact product asset slot. Each piece of a form has its own transparent source image (`symbol`, `gemstone`), and the form's composition metadata lays them out on every surface through `components/catalog/FormVisual.tsx`, so Face Studio can still move the pair, the symbol or the gemstone. Prototype product art and commercial product assets are classified separately. The slot was empty until 21 September 2026; it now holds prototype product art for DESERT EYE — LOVE. The development-only reveal prototype and its sand-frame grade are described there too.
 
 Missing art is documented rather than imitated in code. The site keeps its labeled concept artwork
 and stills until real assets arrive.

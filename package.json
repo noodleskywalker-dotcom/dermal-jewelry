@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "assets:sync": "node scripts/sync-product-assets.mjs",
+    "assets:render": "node scripts/render-product-art.mjs && node scripts/sync-product-assets.mjs",
     "predev": "node scripts/sync-product-assets.mjs",
     "dev": "next dev",
     "prebuild": "node scripts/sync-product-assets.mjs",
