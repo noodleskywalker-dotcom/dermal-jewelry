@@ -16,11 +16,12 @@ export default function HomePage() {
       <ScrubHero
         href={`/product/${featured.slug}`}
         frames={{
-          // Placeholder: the assembly beats of the approved product animation, until the hero orbit is made.
-          dir: "/media/product-animation/desert-eye-love/scrub",
-          count: 48,
-          poster: "/media/product-animation/desert-eye-love/scrub-poster.jpg",
-          source: "Prototype product animation · concept hardware · scroll to turn",
+          // MEDIA 01, the approved hero orbit (22 September 2026): one full turn in 72 stills.
+          // The rear of the piece in it is conceptual, never a manufacturing reference.
+          dir: "/media/hero-orbit/desert-eye-love",
+          count: 72,
+          poster: "/media/hero-orbit/desert-eye-love/poster.jpg",
+          source: "Prototype product orbit · concept hardware · scroll to turn",
         }}
       />
       <StorySection still="/media/product-animation/desert-eye-love/story-sand.jpg" href="/collections/desert-eye" />

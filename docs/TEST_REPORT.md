@@ -1,5 +1,20 @@
 # Test report
 
+## MEDIA 01 hero orbit in the scrub — 22 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass |
+| `npm run typecheck` | pass |
+| `npm test` | 77 of 77 pass |
+| `npm run test:e2e` (`--workers=2`) | 290 pass, 46 skipped, 0 fail |
+| `npm run build` | pass |
+
+`home-cinema.spec.ts` now expects 72 orbit frames fetched once from `/media/hero-orbit/desert-eye-love/`
+and the late frame index at or above 66. Review package (local only):
+`references/review/2026-09-22-hero-orbit/` — desktop and Pixel 7 stills, `walkthrough.webm`.
+
+
 ## Cinematic homepage — 22 September 2026
 
 Browser results are **browser emulation on a Windows desktop** against a development server.

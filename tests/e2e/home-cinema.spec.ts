@@ -25,7 +25,7 @@ test.describe("scrub hero", () => {
     const late = await at(0.95);
     expect(early).toBeLessThan(mid);
     expect(mid).toBeLessThan(late);
-    expect(late).toBeGreaterThanOrEqual(45);
+    expect(late).toBeGreaterThanOrEqual(66);
     // Scrolling back turns it back.
     expect(await at(0.5)).toBeLessThan(late);
     // Words: the name early, the second line only past the middle.
@@ -44,17 +44,17 @@ test.describe("scrub hero", () => {
 
   test("the frame set is fetched once, as stills, and no video is on the homepage", async ({ page }) => {
     const frames: string[] = [];
-    page.on("request", (r) => r.url().includes("/scrub/f-") && frames.push(r.url()));
+    page.on("request", (r) => r.url().includes("/hero-orbit/desert-eye-love/f-") && frames.push(r.url()));
     await page.goto("/");
     await expect.poll(() => scrub(page).getAttribute("data-ready"), { timeout: 15000 }).toBe("true");
     await page.waitForLoadState("networkidle");
-    expect(new Set(frames).size).toBe(48);
-    expect(frames.length).toBe(48);
+    expect(new Set(frames).size).toBe(72);
+    expect(frames.length).toBe(72);
     // Scrubbing fetches nothing more.
     const box = (await scrub(page).boundingBox())!;
     await page.evaluate(([y]) => window.scrollTo(0, y), [box.y + box.height * 0.5]);
     await page.waitForTimeout(800);
-    expect(frames.length).toBe(48);
+    expect(frames.length).toBe(72);
     await expect(page.locator("video")).toHaveCount(0);
   });
 

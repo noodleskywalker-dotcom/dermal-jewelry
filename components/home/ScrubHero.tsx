@@ -13,8 +13,9 @@ import { useReducedMotion, useScrollProgress } from "@/lib/motion/useScrollProgr
 // with the same words. Keyboard scrolling scrubs it like any other scroll. Nothing is locked: the
 // section is a little over two screens tall and can be scrolled past at once.
 //
-// Frames come from `film.frames`: today the assembly beats of the approved product animation, a
-// placeholder until the hero orbit (MEDIA 01) is approved and generated. The label says so.
+// Frames are stills of the approved hero orbit (MEDIA 01, 22 September 2026): one full turn of the
+// piece. Its rear side is what the video model imagined and is presentation only, never a
+// manufacturing reference. The label under the stage names the source.
 
 export type ScrubFrames = {
   /** Folder of `f-001.jpg` … `f-NNN.jpg`. Data only, so a server component can pass it. */

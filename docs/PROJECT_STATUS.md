@@ -18,11 +18,15 @@ owner's credit approval, so their sections run on placeholders from the approved
 
 | Area | Status | Notes |
 | --- | --- | --- |
-| Scroll-scrub hero (`ScrubHero`) | tested | One pinned stage, 48 stills scrubbed by scroll, words in order, keyboard scroll, reduced-motion still, frames fetched once. **Placeholder frames** (assembly beats) until MEDIA 01 hero orbit exists. |
+| Scroll-scrub hero (`ScrubHero`) | tested | One pinned stage, 72 stills of the **approved hero orbit (MEDIA 01)** scrubbed by scroll, words in order, keyboard scroll, reduced-motion still, frames fetched once. Rear of the piece in the orbit is conceptual only. |
 | Story section | tested | "DESERT EYE / Sand. Solitude. Identity." with the vortex still and drifting grains. **Placeholder** for MEDIA 02 macro fly-through. |
 | Assembly section | tested | The approved film with the three material lines. Real media. |
 | Cursor light on chrome, KIRI blade sweep | implemented | CSS only. |
-| MEDIA 01 hero orbit, MEDIA 02 macro, hero product image | **awaiting approval** | Exact prompts, models and estimates in the 22 September report: 2 + 96 + 96 credits. Balance 462. Nothing spent. |
+| MEDIA 01 hero orbit | done | `seedance_2_5`, 96 credits. Record in `references/generated/orbit/RECORD.md`. |
+| Hero product image (STEP 1) | rejected | `nano_banana_pro`, 2 credits: symbol and hardware reinterpreted. Film `final.jpg` is the product reference instead. |
+| Identity motion test | passed | `seedance_2_0_mini`, 5 credits. |
+| MEDIA 02 macro fly-through | **awaiting approval** | 96 credits proposed. Story section still on the vortex still. |
+| Credits this stage | 103 spent | Balance 462 → 359. |
 | MEDIA 03 assembly | done | Existing approved film, not regenerated. |
 | MEDIA 04 mascot | done as far as the platform allows | Stills, idle code, sand clip. Character video is blocked by the IP filter; not retried. |
 | Lenis / smooth scroll | not used | Native scroll. |

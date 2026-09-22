@@ -2,6 +2,24 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-22 — MEDIA 01 hero orbit, and the product reference for generation
+
+- **The film's last frame is the product reference for generation.** A generated hero image
+  (`nano_banana_pro`, 2 credits, owner-approved STEP 1) reinterpreted the glyph and the hardware and
+  was rejected; the owner ruled that no image model redraws the jewelry. `final.jpg` of the approved
+  film is the exact reference from now on.
+- **One 5-credit identity test first** (`seedance_2_0_mini`, 5 s, 720p, start image `final.jpg`)
+  kept the symbol, stone, prongs, bar and finish through a 70–80° turn, so the owner approved the
+  full 360° orbit: `seedance_2_5`, 8 s, 1080p, no audio, 96 credits. Records with prompts, jobs and
+  inspections are in `references/generated/orbit-test/RECORD.md` and `references/generated/orbit/RECORD.md`.
+- **The rear of the piece in the orbit is conceptual.** The model imagined it (a red-faced, mirrored
+  back; a half-second translucent ghost of the bar at about 4.5 s). It is presentation only and never
+  a manufacturing reference, as the owner instructed.
+- **Frames, not video, for the scrub.** 72 stills at 9 fps, centre-cropped 1.4× so the piece fills
+  the stage, 1.8 MB, served from `public/media/hero-orbit/desert-eye-love/`. The placeholder frames
+  from the assembly film were removed. The orbit master (HEVC) stays in `references/`.
+- Credits this stage: 2 + 5 + 96 = 103. Balance 462 → 359. MEDIA 02 not generated.
+
 ## 2026-09-22 — Cinematic homepage: one scrubbed moment, story, assembly (no credits)
 
 The owner's cinematic brief of 22 September asks for a scroll-scrubbed hero orbit, a minimal story
