@@ -161,26 +161,17 @@ test.describe("the piece: assembly, exploded view, replay", () => {
   });
 });
 
-test.describe("homepage: one hero piece", () => {
-  test("DESERT EYE is the one large piece with a reflection; the others are small and the mascot is a corner detail", async ({ page }) => {
+test.describe("homepage: the piece is the hero", () => {
+  test("the opening is the piece filling the screen, with no floating teaser pieces, and the bar is transparent until scrolled", async ({ page }) => {
     await page.goto("/");
-    const pieces = page.getByTestId("teaser-piece");
-    await expect(pieces).toHaveCount(4);
-    const hero = page.locator('[data-testid="teaser-piece"][data-hero]');
-    await expect(hero).toHaveCount(1);
-    await expect(hero.getByRole("link")).toHaveAttribute("href", "/collections?family=desert-eye-love");
-    await expect(hero.locator(".fo-reflection")).toHaveCount(1);
-    const heroBox = (await hero.boundingBox())!;
-    for (const other of await page.locator('[data-testid="teaser-piece"]:not([data-hero])').all()) {
-      const box = (await other.boundingBox())!;
-      expect(box.width).toBeLessThan(heroBox.width * 0.4);
-      await expect(other.locator(".fo-reflection")).toHaveCount(0);
-    }
-    const mascot = page.getByTestId("mascot");
-    if ((await mascot.count()) > 0) {
-      const box = (await mascot.boundingBox())!;
-      expect(box.width).toBeLessThan(heroBox.width);
-    }
+    await expect(page.getByTestId("teaser-piece")).toHaveCount(0);
+    const canvas = (await page.getByTestId("scrub-canvas").boundingBox())!;
+    const v = page.viewportSize()!;
+    expect(canvas.width * canvas.height).toBeGreaterThan(v.width * v.height * 0.5);
+    const header = page.locator("header[data-tone]").first();
+    await expect(header).toHaveAttribute("data-scrolled", "false");
+    await page.evaluate(() => window.scrollTo(0, 400));
+    await expect(header).toHaveAttribute("data-scrolled", "true");
   });
 });
 

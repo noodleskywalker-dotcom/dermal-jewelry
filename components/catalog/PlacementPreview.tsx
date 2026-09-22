@@ -7,7 +7,7 @@ import { FormVisual } from "./FormVisual";
 // person. It is separate from a character showcase and from the customer's own photo in Face Studio.
 //
 // Each placement has its own anchor, so a nose form is drawn on the nose and never on the cheek.
-const ANCHORS: Partial<Record<PlacementId, { x: number; y: number }>> = {
+export const ANCHORS: Partial<Record<PlacementId, { x: number; y: number }>> = {
   "anti-eyebrow": { x: 0.665, y: 0.452 },
   dermal: { x: 0.672, y: 0.548 },
   nostril: { x: 0.557, y: 0.566 },

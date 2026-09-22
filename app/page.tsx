@@ -1,31 +1,44 @@
 import { AssemblySection } from "@/components/home/AssemblySection";
-import { Landing } from "@/components/home/Landing";
-import { ScrubHero } from "@/components/home/ScrubHero";
-import { StorySection } from "@/components/home/StorySection";
+import { CraftedInSand } from "@/components/home/CraftedInSand";
+import { FinalCta } from "@/components/home/FinalCta";
+import { FormsStage } from "@/components/home/FormsStage";
+import { LaunchHero } from "@/components/home/LaunchHero";
+import { MaterialDetail } from "@/components/home/MaterialDetail";
+import { SeeItOnYou } from "@/components/home/SeeItOnYou";
+import { SelectionRail } from "@/components/catalog/SelectionRail";
 import { catalog } from "@/lib/catalog";
+import { site } from "@/lib/config/site";
 import { internalMascotMedia, isInternalReview } from "@/lib/story/registry";
 
-// The homepage scrolls normally: the landing, one scrubbed cinematic moment, three words of story,
-// and the piece assembled. The mascot is internal concept art, so only a development server has it.
+const ORBIT = "/media/hero-orbit/desert-eye-love";
+const FILM = "/media/product-animation/desert-eye-love";
+
+// The homepage unfolds like a launch film (the owner's flow of 22 September 2026): the piece turned
+// by scroll with the headline, crafted in sand, material detail, the assembly, the forms, on you,
+// the collection, and a last frame. Normal scrolling between the moments. The mascot is internal
+// concept art, so only a development server has it.
 export default function HomePage() {
   const products = catalog.listProducts();
   const featured = products[0];
+  const mascot = internalMascotMedia(isInternalReview());
   return (
     <>
-      <Landing featured={featured} products={products} mascot={internalMascotMedia(isInternalReview())} />
-      <ScrubHero
-        href={`/product/${featured.slug}`}
-        frames={{
-          // MEDIA 01, the approved hero orbit (22 September 2026): one full turn in 72 stills.
-          // The rear of the piece in it is conceptual, never a manufacturing reference.
-          dir: "/media/hero-orbit/desert-eye-love",
-          count: 72,
-          poster: "/media/hero-orbit/desert-eye-love/poster.jpg",
-          source: "Prototype product orbit · concept hardware · scroll to turn",
-        }}
-      />
-      <StorySection still="/media/product-animation/desert-eye-love/story-sand.jpg" href="/collections/desert-eye" />
+      <LaunchHero frames={{ dir: ORBIT, count: 72, poster: `${ORBIT}/poster.jpg`, source: "Prototype product orbit · concept hardware · scroll to turn" }} />
+      <CraftedInSand still={`${FILM}/story-sand.jpg`} href="/collections/desert-eye" mascot={mascot} />
+      <MaterialDetail frame={`${ORBIT}/f-001.jpg`} />
       <AssemblySection product={featured} />
+      <FormsStage product={featured} still={`${ORBIT}/f-001.jpg`} />
+      <SeeItOnYou product={featured} />
+      <section aria-labelledby="collection-heading" data-testid="collection-section" className="collection-section">
+        <div className="mx-auto max-w-[120rem] px-6 sm:px-10 lg:px-16">
+          <p className="label-xs">07 / COLLECTION</p>
+          <h2 id="collection-heading" className="mt-3 font-display text-[clamp(2rem,3vw,3rem)] font-light uppercase leading-[1.05] tracking-[0.04em]">
+            View the collection
+          </h2>
+        </div>
+        <SelectionRail products={products} concepts={site.concepts} />
+      </section>
+      <FinalCta still={`${ORBIT}/f-060.jpg`} shopHref={`/product/${featured.slug}`} />
     </>
   );
 }

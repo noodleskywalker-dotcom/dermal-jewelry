@@ -2,23 +2,33 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { bagCount } from "@/lib/cart/bag";
 import { bagActions, useBag } from "@/lib/cart/store";
 import { site } from "@/lib/config/site";
 import { Modal } from "./Modal";
 
-// One light bar on every page: paper, near-black text, no rule. There is no dark bar.
+// One light bar on every page: near-black words, no rule, no box. Transparent over the page's
+// opening so a cinematic section can own the whole screen; it quietly takes a veil of paper once
+// the page has scrolled. There is no dark bar.
 export function Navbar() {
   const pathname = usePathname();
   const bag = useBag();
   const count = bagCount(bag);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const linkClass = "label-xs inline-flex min-h-11 items-center opacity-80 transition-opacity duration-200 hover:opacity-100";
+
+  useEffect(() => {
+    const read = () => setScrolled(window.scrollY > 24);
+    read();
+    window.addEventListener("scroll", read, { passive: true });
+    return () => window.removeEventListener("scroll", read);
+  }, []);
 
   return (
     <>
-    <header data-tone="light" className="sticky top-0 z-40 bg-paper/90 text-ink backdrop-blur-[6px]">
+    <header data-tone="light" data-scrolled={scrolled} className={`sticky top-0 z-40 text-ink transition-colors duration-500 ${scrolled ? "bg-paper/85 backdrop-blur-[6px]" : "bg-transparent"}`}>
       <nav aria-label="Main" className="mx-auto flex h-16 max-w-[100rem] items-center justify-between px-5 sm:px-8">
         <Link href="/" className="font-sans text-sm font-medium tracking-[0.42em]" aria-label={`${site.brand} home`}>
           {site.brand}
@@ -37,7 +47,10 @@ export function Navbar() {
           })}
         </ul>
 
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-6">
+          <Link href="/shop#shop-search" className={`${linkClass} hidden md:inline-flex`}>
+            Search
+          </Link>
           <button type="button" onClick={bagActions.openDrawer} data-testid="open-bag" className={linkClass}>
             Bag <span aria-hidden="true">&nbsp;({count})</span>
             <span className="sr-only">, {count} {count === 1 ? "item" : "items"}</span>

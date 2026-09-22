@@ -11,6 +11,26 @@ Milestone 1, the first vertical slice, is implemented and tested locally. The HY
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
 
+## The launch film (22 September 2026, no credits)
+
+The homepage is now a cinematic product site in the owner's nine-section flow (see `docs/DECISIONS.md`).
+Built, tested locally and pushed; **not owner-reviewed as built**. Sections 03 and 04 run on stills
+from the approved film and orbit until MEDIA 02 is approved.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| 01–02 opening: orbit turned by scroll, name then headline and two text-link ways in | tested | One pinned stage. Piece fills the screen; portrait screens enlarge the frame. |
+| 03 Crafted in sand | tested | Vortex still over the viewport, three words, the mascot here only. Placeholder for MEDIA 02. |
+| 04 Material | tested | Three enlarged crops of the orbit frame, "Prototype render, enlarged · not a size". Placeholder for MEDIA 02. |
+| 05 Assembled with intent | tested | The approved film. |
+| 06 The forms | tested | Form switches in place; carries to the product page. |
+| 07 See it on you | tested | Close crop of the sculpted head around the placement. |
+| 08 Collection | tested | The sideways rail on the homepage. |
+| 09 Last frame | tested | Three lines, two links. |
+| Navigation | tested | Transparent over the opening, paper veil after scroll, Search added. |
+| Product page 360° and Exploded views | implemented | `OrbitViewer` from the orbit stills; rear side labelled conceptual. |
+| Face Studio close crop | tested | 1.9× around the chosen placement before a photo. |
+
 ## Cinematic homepage (22 September 2026, no credits)
 
 From the owner's cinematic brief. Built and tested locally; the two new media clips wait for the

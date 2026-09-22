@@ -1,5 +1,25 @@
 # Test report
 
+## The launch film — 22 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass |
+| `npm run typecheck` | pass |
+| `npm test` | 77 of 77 pass |
+| `npm run test:e2e` (`--workers=2`) | 302 pass, 46 skipped, 3 fail in the first run: mobile mascot press blocked by the sand section's copy layer (a `z-index` over the companion). Fixed; `home.spec.ts` + `home-cinema.spec.ts` rerun: 51 pass. |
+| `npm run build` | pass |
+
+Specs rewritten for the new behaviour: `home.spec.ts` (opening, hidden-then-visible ways in, one sticky
+`launch-stage`, collection browser on the page), `home-cinema.spec.ts` (frames follow scroll, name then
+headline, frames fetched once, reduced motion, keyboard, sand, material, assembly, forms, on you, last
+frame), `hybrid.spec.ts` (canvas over half the viewport, no teaser pieces, bar transparent until scrolled).
+
+Review package (local only): `references/review/2026-09-22-launch-film/` — desktop and Pixel 7 for every
+section, product page (film, 360°, exploded), Face Studio (crop, nose, photo), selection, shop, and
+`walkthrough.webm`.
+
+
 ## MEDIA 01 hero orbit in the scrub — 22 September 2026
 
 | Command | Result |

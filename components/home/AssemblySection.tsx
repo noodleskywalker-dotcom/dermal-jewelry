@@ -16,9 +16,9 @@ export function AssemblySection({ product }: { product: Product }) {
           <ProductFilm product={product} film={film} formId={form.id} />
         </div>
         <div className="lg:pt-[8svh]">
-          <p className="label-xs text-ash">The piece</p>
-          <h2 id="assembly-heading" className="mt-3 font-display text-[clamp(2rem,3vw,3rem)] font-light leading-[1.05] tracking-[0.03em]">
-            Assembled from three parts.
+          <p className="label-xs">04 / ASSEMBLY</p>
+          <h2 id="assembly-heading" className="mt-3 font-display text-[clamp(2rem,3vw,3rem)] font-light uppercase leading-[1.05] tracking-[0.04em]">
+            Assembled with intent
           </h2>
           <dl className="mt-10 divide-y divide-line border-y border-line">
             {(product.materials ?? []).map((m) => (

@@ -2,6 +2,48 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-22 — The launch film: homepage as a cinematic product site
+
+The owner's "critical UI override" makes a luxury-watch cinematic site the primary reference: the
+product as the main visual of nearly every section, a launch-film pacing, minimal navigation, text
+links instead of button rectangles, and the rule that where the old DERMAL structure and that
+structure conflict, the cinematic structure wins. No credits were spent; MEDIA 02 is not made.
+
+- **Homepage flow** (`app/page.tsx`): `LaunchHero` (01–02: the approved orbit fills the screen and
+  is turned by scroll, the name first, then the headline and the two ways in; one pinned stage,
+  340 svh), `CraftedInSand` (03: the sand vortex still takes the viewport, three words, the mascot
+  lives here and nowhere else), `MaterialDetail` (04: three enlarged crops of the orbit's front frame,
+  labelled "Prototype render, enlarged · not a size"; stand-in for MEDIA 02), `AssemblySection`
+  (05: the approved film), `FormsStage` (06: the three forms in one stage, the filmed form as the
+  orbit still and the others as the drawn assembly, sharing the Studio provider's choice),
+  `SeeItOnYou` (07: a close crop of the sculpted head around the placement), the `SelectionRail`
+  (08), `FinalCta` (09: three lines, two links). The old `Landing`, `ScrubHero` and `StorySection`
+  were deleted, with their floating teaser pieces and reflection.
+- **The piece is large.** The opening frames are the orbit's 1.4× centre crop shown `object-contain`
+  in the full viewport; on a portrait screen the frame is enlarged 1.45× so the piece fills the
+  width. The forms and detail stages give the piece most of their area. No tiny jewelry, no giant
+  mannequin: Face Studio's bare head is now a 1.9× crop around the chosen placement (`.studio-crop`),
+  and the "on you" section crops the same way.
+- **Navigation** is transparent over the opening and takes a veil of paper once the page has
+  scrolled 24 px (`data-scrolled`); Search joined the right side. No boxes, no icons.
+- **Buttons.** The two ways in are text links with ↗; only "Add to demo bag" is a solid rectangle.
+- **Product page as configurator.** The left stage gained a 360° view (`OrbitViewer`: drag, arrow
+  keys, a slider; the rear side labelled conceptual) and an Exploded view (`PieceAssembly` opening
+  exploded) beside the film, placement and try-on; the right column stays put. The form group is
+  labelled "Form".
+- **Copy** is only the approved lines plus "Crafted in sand", "Sand. Solitude. Identity.",
+  "Assembled with intent", "The forms", "See it on you", "View the collection" and "Your face. Your
+  placement. Your piece." from the owner's flow. Small numbered labels ("01 / DESERT EYE") carry
+  the sections.
+- **Tests were rewritten for the new behaviour**, not preserved for the old layout, as instructed:
+  the opening's canvas covers more than half the viewport, the ways in are hidden until the turn has
+  begun, exactly one sticky stage (`launch-stage`), no teaser pieces, the bar's scrolled state, the
+  sand section's words and single companion, three detail crops with no claims, the forms stage
+  switching in place and carrying to the product page, the cropped head, the collection browser and
+  the last frame.
+- **Not done, deliberately.** No Lenis (native scroll). No new media. The "Crafted in sand" and
+  "Material" sections wait for MEDIA 02 to become cinematic clips.
+
 ## 2026-09-22 — MEDIA 01 hero orbit, and the product reference for generation
 
 - **The film's last frame is the product reference for generation.** A generated hero image

@@ -77,6 +77,8 @@ type Props = {
   sand?: boolean;
   /** Optional themed opening. Call `done` to hand over to the standard assembly. */
   renderIntro?: (done: () => void) => React.ReactNode;
+  /** Open on the exploded view instead of assembling first. */
+  exploded?: boolean;
 };
 
 // A new form, a replay or a change of the motion preference starts a fresh stage, so the sequence
@@ -88,10 +90,10 @@ export function PieceAssembly(props: Props) {
   return <Stage key={`${form.id}:${run}:${reduced}`} {...props} reduced={reduced} onReplay={() => setRun((n) => n + 1)} />;
 }
 
-function Stage({ product, formId, sand, renderIntro, reduced, onReplay }: Props & { reduced: boolean; onReplay: () => void }) {
+function Stage({ product, formId, sand, renderIntro, exploded, reduced, onReplay }: Props & { reduced: boolean; onReplay: () => void }) {
   const form = formOf(product, formId);
   // With reduced motion the piece is simply there.
-  const [phase, setPhase] = useState<Phase>(reduced ? "assembled" : renderIntro ? "intro" : "assembling");
+  const [phase, setPhase] = useState<Phase>(exploded ? "exploded" : reduced ? "assembled" : renderIntro ? "intro" : "assembling");
   const { tops, hardware, metal } = layout(form.placement, product, form.id);
   const hasStone = tops.some((t) => STONES.has(t.art));
   const notes = (product.materials ?? []).filter((n) => n.id !== "stone" || hasStone);

@@ -8,12 +8,13 @@ import { AddToBagButton } from "@/components/cart/AddToBagButton";
 import { RevealPlayer, type ConceptStills } from "@/components/reveal/RevealPlayer";
 import { useFormChoice } from "@/components/studio/useFormChoice";
 import { motionOf } from "./FloatingObject";
+import { OrbitViewer } from "./OrbitViewer";
 import { PieceAssembly } from "./PieceAssembly";
 import { ProductFilm } from "./ProductFilm";
 import { PlacementPreview } from "./PlacementPreview";
 import { TryOnPreview } from "./TryOnPreview";
 
-type ViewId = "piece" | "reveal" | "placement" | "tryon";
+type ViewId = "piece" | "orbit" | "exploded" | "reveal" | "placement" | "tryon";
 
 // One customer-facing page per design family: a large airy stage on about two thirds of the screen,
 // and very little beside it. The chosen piercing form lives in the shared Studio provider, so the
@@ -37,6 +38,8 @@ export function FamilyExperience({
   const views: { id: ViewId; label: string }[] = [
     // The whole piercing comes first: the product animation where one exists, otherwise assembled from the parts.
     { id: "piece", label: "The piece" },
+    // A filmed form also has its 360° turn and its exploded drawing, like a configurator's views of one object.
+    ...(film ? [{ id: "orbit" as const, label: "360°" }, { id: "exploded" as const, label: "Exploded" }] : []),
     // The concept-reveal prototype is superseded on a form with a real film; development fixtures can still open it.
     ...(product.reveal.mode !== "none" && (!film || fixtureSrc || concept) ? [{ id: "reveal" as const, label: "Concept reveal" }] : []),
     { id: "placement", label: "Placement preview" },
@@ -69,6 +72,10 @@ export function FamilyExperience({
           {view === "piece" && film ? (
             // Keyed by form, so changing form always starts from the poster and never carries a playing film across.
             <ProductFilm key={`${product.id}:${form.id}`} product={product} film={film} formId={form.id} />
+          ) : view === "orbit" && film ? (
+            <OrbitViewer dir="/media/hero-orbit/desert-eye-love" count={72} title={product.title} />
+          ) : view === "exploded" ? (
+            <PieceAssembly key={`${product.id}:exploded`} product={product} formId={form.id} sand={motionOf(product, form.id) === "sand"} exploded />
           ) : view === "piece" ? (
             // DESERT EYE alone stands on a little sand, drawn inside the stage. Every other family stands on plain paper.
             <PieceAssembly key={product.id} product={product} formId={form.id} sand={motionOf(product, form.id) === "sand"} />
@@ -111,7 +118,7 @@ export function FamilyExperience({
         <h1 className="mt-5 font-display text-[clamp(2.5rem,3.6vw,3.75rem)] font-light leading-[1.02] tracking-[0.03em]">{displayTitle(product.title)}</h1>
 
         <fieldset className="mt-9">
-          <legend className="sr-only">Piercing form</legend>
+          <legend className="label-xs mb-2 text-ash">Form</legend>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
             {product.forms.map((f, n) => {
               const pending = f.status !== "available";

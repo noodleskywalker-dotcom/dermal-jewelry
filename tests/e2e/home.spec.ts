@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("landing page", () => {
-  test("is a calm page on paper with two ways in, and scrolls like a normal page", async ({ page }) => {
+  test("opens on the piece alone, then the headline and two ways in, and scrolls like a normal page", async ({ page }) => {
     const errors: string[] = [];
     page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
     page.on("pageerror", (e) => errors.push(e.message));
@@ -13,18 +13,27 @@ test.describe("landing page", () => {
     expect(paper).toBe("rgb(251, 250, 247)");
     await expect(page.locator("header[data-tone]")).toHaveAttribute("data-tone", "light");
 
-    // The two main actions, both inside the first screen.
+    // The first screen is the piece and its name; the two actions come as the turn goes on.
     const viewport = page.viewportSize()!;
+    const hero = page.getByTestId("scrub-hero");
+    const canvas = (await page.getByTestId("scrub-canvas").boundingBox())!;
+    expect(canvas.height).toBeGreaterThanOrEqual(viewport.height * 0.7);
+    await expect(hero.getByText("01 / DESERT EYE")).toBeVisible();
+    await expect(page.getByTestId("cta-face")).toBeHidden();
+    const box = (await hero.boundingBox())!;
+    await page.evaluate(([y]) => window.scrollTo(0, y), [box.y + (box.height - viewport.height) * 0.6]);
     for (const id of ["cta-face", "cta-selection"]) {
-      const box = (await page.getByTestId(id).boundingBox())!;
-      expect(box.y + box.height).toBeLessThanOrEqual(viewport.height);
-      expect(box.height).toBeGreaterThanOrEqual(44);
+      await expect(page.getByTestId(id)).toBeInViewport();
+      const b = (await page.getByTestId(id).boundingBox())!;
+      expect(b.height).toBeGreaterThanOrEqual(44);
     }
     await expect(page.getByTestId("cta-face")).toHaveAttribute("href", "/face-studio");
     await expect(page.getByTestId("cta-selection")).toHaveAttribute("href", "/collections");
+    // No button rectangles: the ways in are text links.
+    expect(await page.getByTestId("cta-face").evaluate((el) => getComputedStyle(el).backgroundColor)).toMatch(/rgba\(0, 0, 0, 0\)|transparent/);
 
-    // One pinned stage only, the owner's scrub moment (22 September 2026); the landing itself is not pinned,
-    // and the wheel moves the page one-to-one.
+    // One pinned stage only, the opening (the owner's flow of 22 September 2026), and the wheel moves the page one-to-one.
+    await page.evaluate(() => window.scrollTo(0, 0));
     const pinned = await page.evaluate(
       () =>
         [...document.querySelectorAll("main *")].filter((el) => {
@@ -32,7 +41,7 @@ test.describe("landing page", () => {
           return (s.position === "sticky" || s.position === "fixed") && el.getBoundingClientRect().height >= window.innerHeight * 0.85;
         }).map((el) => el.className),
     );
-    expect(pinned).toEqual(["scrub-stage"]);
+    expect(pinned).toEqual(["launch-stage"]);
     await page.mouse.move(200, 300);
     await page.mouse.wheel(0, 400);
     await expect.poll(() => page.evaluate(() => Math.round(window.scrollY))).toBe(400);
@@ -40,23 +49,27 @@ test.describe("landing page", () => {
   });
 
   test("the two actions lead to Face Studio and to the selection", async ({ page }) => {
-    await page.goto("/");
+    // The actions arrive part-way through the opening turn.
+    const reveal = async () => {
+      await page.goto("/");
+      const box = (await page.getByTestId("scrub-hero").boundingBox())!;
+      await page.evaluate(([y]) => window.scrollTo(0, y), [box.y + (box.height - page.viewportSize()!.height) * 0.6]);
+    };
+    await reveal();
     await page.getByTestId("cta-face").click();
     await expect(page).toHaveURL(/\/face-studio$/);
-    await page.goto("/");
+    await reveal();
     await page.getByTestId("cta-selection").click();
     await expect(page).toHaveURL(/\/collections$/);
     await expect(page.getByTestId("selection-slide")).toHaveCount(4);
   });
 
-  test("the teaser shows original and anime-inspired pieces together and opens the selection on that family", async ({ page }) => {
+  test("the collection browser on the homepage holds every family, originals beside the anime-inspired one", async ({ page }) => {
     await page.goto("/");
-    const teaser = page.getByTestId("teaser-piece");
-    await expect(teaser).toHaveCount(4);
-    await expect(teaser.filter({ hasText: "Original" })).toHaveCount(3);
-    await teaser.filter({ hasText: "VOID STUD" }).getByRole("link").click();
-    await expect(page).toHaveURL(/\/collections\?family=void-stud$/);
-    await expect(page.locator('[data-testid="selection-slide"][data-current="true"]')).toHaveAttribute("data-product", "void-stud");
+    const section = page.getByTestId("collection-section");
+    await expect(section.getByTestId("selection-slide")).toHaveCount(4);
+    await expect(section.getByTestId("selection-concept")).toHaveCount(1);
+    await expect(section.getByTestId("product-card")).toHaveCount(0);
   });
 });
 

@@ -23,7 +23,7 @@ import {
   updateTweak,
 } from "@/lib/studio/look";
 import type { LookItem, Side } from "@/lib/studio/types";
-import { PlacementPreview } from "@/components/catalog/PlacementPreview";
+import { ANCHORS, PlacementPreview } from "@/components/catalog/PlacementPreview";
 import { ProductArtwork } from "@/components/catalog/ProductArtwork";
 import { LookRenderer, type LookInteraction } from "./LookRenderer";
 import { PhotoPicker } from "./PhotoPicker";
@@ -234,11 +234,22 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
                 />
               </div>
             ) : (
-              // No photo yet: a smooth sculpted head wears the chosen piece at its approved placement.
+              // No photo yet: the sculpted head, cropped close around the chosen placement, so the piece
+              // and not the mannequin is the object of the stage. The head is the approved featureless
+              // device, never a person.
               <div data-testid="studio-head" className="flex h-full flex-col items-center">
-                <div className="flex min-h-0 w-full flex-1 items-end justify-center">
-                  <PlacementPreview product={currentProduct} formId={formOf(currentProduct, studio.forms[currentProduct.id]).id} bare />
-                </div>
+                {(() => {
+                  const form = formOf(currentProduct, studio.forms[currentProduct.id]);
+                  const anchor = ANCHORS[form.placement] ?? { x: 0.5, y: 0.5 };
+                  return (
+                    <div className="studio-crop" style={{ "--ox": `${anchor.x * 100}%`, "--oy": `${anchor.y * 100}%` } as React.CSSProperties}>
+                      <div className="studio-crop-head">
+                        <PlacementPreview product={currentProduct} formId={form.id} bare />
+                      </div>
+                      <p className="label-xs absolute bottom-3 left-3 text-ash">Sculpted form, not a person · approximate</p>
+                    </div>
+                  );
+                })()}
                 <div className="flex w-full max-w-md flex-col items-center pb-1 pt-3 text-center">
                   <PhotoPicker className="w-full max-w-[16rem]" label="Use my photo" compact />
                   <p className="label-xs -mt-2 text-ash">Your photo stays on this device</p>
