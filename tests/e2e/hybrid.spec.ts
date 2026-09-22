@@ -185,7 +185,7 @@ test.describe("Face Studio with a photo", () => {
     expect(bar.x).toBeGreaterThanOrEqual(0);
     expect(bar.x + bar.width).toBeLessThanOrEqual(width + 1);
     expect(bar.y).toBeGreaterThanOrEqual(stage.y + stage.height - 1);
-    for (const name of ["Undo", "Redo", "Reset", "Show before", "Clear photo"]) await expect(toolbar.getByRole("button", { name })).toBeInViewport();
+    for (const name of ["Show before", "Clear photo"]) await expect(toolbar.getByRole("button", { name })).toBeInViewport();
     // No pill: the toolbar paints nothing behind the words.
     expect(await toolbar.evaluate((el) => getComputedStyle(el).backgroundColor)).toMatch(/rgba\(0, 0, 0, 0\)|transparent/);
 

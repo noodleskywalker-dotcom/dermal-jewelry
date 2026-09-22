@@ -21,21 +21,23 @@ test.describe("the opening", () => {
       return Number(await section.getAttribute("data-frame"));
     };
     await expect.poll(() => section.getAttribute("data-ready"), { timeout: 15000 }).toBe("true");
-    const early = await at(0.05);
-    const mid = await at(0.5);
-    const late = await at(0.95);
-    expect(early).toBeLessThan(mid);
-    expect(mid).toBeLessThan(late);
+    // The first fifth holds the beauty frame with the hero words; the turn takes the rest, one true 360.
+    const start = await at(0.05);
+    expect(start).toBe(0);
+    const mid = await at(0.55);
+    const late = await at(0.98);
+    expect(mid).toBeGreaterThan(20);
     expect(late).toBeGreaterThanOrEqual(66);
-    expect(await at(0.5)).toBeLessThan(late);
-    // Words: the name early, the headline only as the turn goes on.
-    await at(0.1);
-    const copy = section.locator(".launch-copy");
-    expect(await copy.evaluate((el) => Number(getComputedStyle(el).opacity))).toBeLessThan(0.1);
-    await expect(page.getByTestId("cta-face")).toBeHidden();
-    await at(0.7);
-    expect(await copy.evaluate((el) => Number(getComputedStyle(el).opacity))).toBeGreaterThan(0.9);
+    expect(await at(0.55)).toBeLessThan(late);
+    // Words: the hero words at the start, "Engineered for the face." mid-turn, the number at the end. Never all at once.
+    await at(0.05);
     await expect(page.getByTestId("cta-face")).toBeVisible();
+    await expect(section.getByText("Engineered")).toBeHidden();
+    await at(0.5);
+    await expect(section.getByText("Engineered")).toBeVisible();
+    await expect(page.getByTestId("cta-face")).toBeHidden();
+    await at(0.9);
+    await expect(section.getByText("01 / 04")).toBeVisible();
     // Past the opening the page goes on to the sand.
     await page.evaluate(([y]) => window.scrollTo(0, y), [box.y + box.height + 50]);
     await expect(page.getByTestId("story-section")).toBeInViewport();
@@ -65,7 +67,7 @@ test.describe("the opening", () => {
     await expect(section.locator("canvas")).toHaveCount(0);
     await expect(section.getByRole("heading", { level: 1 })).toHaveText("Jewelry for the face you chose.");
     await expect(page.getByTestId("cta-face")).toBeVisible();
-    const pinned = await page.evaluate(() => [...document.querySelectorAll("main *")].filter((el) => getComputedStyle(el).position === "sticky").length);
+    const pinned = await page.evaluate(() => [...document.querySelectorAll("main *")].filter((el) => getComputedStyle(el).position === "sticky" && el.getBoundingClientRect().height > window.innerHeight * 0.85).length);
     expect(pinned).toBe(0);
   });
 
@@ -74,9 +76,11 @@ test.describe("the opening", () => {
     await page.goto("/");
     const section = hero(page);
     const start = Number(await section.getAttribute("data-frame"));
-    await page.getByTestId("scrub-canvas").click({ position: { x: 10, y: 10 } });
-    await page.keyboard.press("PageDown");
-    await page.keyboard.press("PageDown");
+    // Focus the page on an empty part of the stage: its right edge, mid-height, clear of the bar and the words.
+    const c = (await page.getByTestId("scrub-canvas").boundingBox())!;
+    await page.mouse.click(c.x + c.width - 12, c.y + c.height * 0.6);
+    // The first fifth of the section holds the beauty frame; a few pages down, the turn has begun.
+    for (let i = 0; i < 5; i++) await page.keyboard.press("PageDown");
     await expect.poll(() => section.getAttribute("data-frame").then(Number), { timeout: 5000 }).toBeGreaterThan(start);
   });
 });
@@ -97,25 +101,26 @@ test.describe("the sections", () => {
     }
   });
 
-  test("material detail: three close crops with the smallest labels and no claims", async ({ page }) => {
+  test("macro detail: full-width close views with four tiny callouts and no claims", async ({ page }) => {
     await page.goto("/");
     const detail = page.getByTestId("detail-section");
-    await expect(detail.getByTestId("detail-crop")).toHaveCount(3);
-    await expect(detail).toContainText("Prototype render");
-    await expect(detail).toContainText("Material not yet confirmed");
-    await expect(detail).toContainText("Titanium — Proposed");
+    await expect(detail.getByTestId("detail-crop")).toHaveCount(4);
+    for (const word of ["Facet", "Openwork", "Polished edge", "Surface form"]) await expect(detail).toContainText(word);
+    await expect(detail).toContainText("prototype render");
+    const wide = (await detail.locator('[data-detail="facet"]').boundingBox())!;
+    expect(wide.width).toBeGreaterThan(page.viewportSize()!.width * 0.9);
     const words = (await detail.innerText()).toLowerCase().split(/\s+/);
-    for (const banned of ["ruby", "implant", "certified", "mm"]) expect(words).not.toContain(banned);
+    for (const banned of ["ruby", "implant", "certified", "mm", "titanium"]) expect(words).not.toContain(banned);
   });
 
-  test("assembled with intent: the film idle with the three material lines", async ({ page }) => {
+  test("assembly: the film as a campaign film, the whole width, idle until a press", async ({ page }) => {
     await page.goto("/");
     const assembly = page.getByTestId("assembly-section");
     await expect(assembly.getByTestId("product-film")).toHaveAttribute("data-state", "idle");
-    await expect(assembly).toContainText("Titanium");
-    await expect(assembly).toContainText("Material not yet confirmed");
-    await expect(assembly).toContainText("Polished finish");
-    await expect(assembly).toContainText("Concept hardware");
+    await expect(assembly).toContainText("Assembled with intent");
+    const frame = (await assembly.locator(".product-film-frame").boundingBox())!;
+    expect(frame.width).toBeGreaterThan(page.viewportSize()!.width * 0.9);
+    await expect(assembly.getByTestId("film-captions").locator("div")).toHaveCount(0);
   });
 
   test("the forms: one stage, the form changes in place and carries to the product page", async ({ page }) => {
@@ -151,6 +156,6 @@ test.describe("the sections", () => {
     const final = page.getByTestId("final-section");
     await expect(final.getByRole("heading")).toContainText("Your face.");
     await expect(final.getByTestId("final-studio")).toHaveAttribute("href", "/face-studio");
-    await expect(final.getByTestId("final-shop")).toHaveAttribute("href", "/product/desert-eye-love");
+    await expect(final.getByTestId("final-shop")).toHaveAttribute("href", "/collections");
   });
 });

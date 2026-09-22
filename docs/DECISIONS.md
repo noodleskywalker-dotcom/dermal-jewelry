@@ -2,6 +2,44 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-22 — Full visual redesign: keep the engine, rebuild the body
+
+The owner rejected the visible site and ordered a full visual redesign to the class of a luxury-watch
+launch site, keeping the engineering. Rollback tag: `pre-redesign-d6fef76`. No credits were spent;
+MEDIA 02 is not made.
+
+- **Kept:** Face Studio photo handling and privacy, placement geometry and `LookRenderer`, the
+  Studio provider's product and form state, `formOf`/`filmFor`, the exact symbol and gemstone
+  assets, the approved product film and orbit media, the bag, the catalog provider interface, the
+  reveal infrastructure, and the tests for all of them.
+- **Homepage:** 01–02 one pinned stage: the orbit fills the screen; on a wide screen the piece starts
+  pushed in to the right of the hero words and glides to the centre as the turn begins; the first
+  fifth of the scroll holds the beauty frame, then one true 360 (front, side, rear, other side,
+  front, never ping-pong); "Engineered for the face." mid-turn and "DESERT EYE 01 / 04" at the end,
+  in the corners. 03 Crafted in sand: the vortex still takes the viewport in a slow push (a second,
+  short pinned moment), words on a veil that dissolves at every edge, the mascot here only. 04 Macro:
+  four full-width and half-width close views with FACET, OPENWORK, POLISHED EDGE, SURFACE FORM.
+  05 Assembly: the film across the whole width. 06 Forms. 07 See it on you: the customer's own
+  photo through `LookRenderer` when one is in memory, otherwise the sculpted head in an extreme crop.
+  08 Collections rail. 09 A dark final frame.
+- **One crop for the sculpted head** (`.crop-head`): a centred 4:5 head box enlarged by `--s` and
+  moved so the placement lands where asked. Used by Face Studio, the product page's Placement mode
+  and "See it on you", so a crop is always around the real anchor.
+- **Collections:** gallery labels, not cards: `01 / 04`, the name, Story-driven or Original,
+  Explore ↗ and Try on ↗. No price, no form switch, no bag on the rail.
+- **Product page as a configurator:** 68/32 split, a sticky stage with modes Piece (the orbit's beauty
+  frame, never a schematic first), 360°, Assembly (the film), Placement (tight crop), Try on; a quiet
+  right column with Form, price, Try on your face ↗, Add to demo bag, Details + / Materials + / Care +,
+  and one line "Prototype specification · final production details pending · unverified". The old
+  specification table and disclaimer wall under the page were removed.
+- **Face Studio:** the tools are one word each (Move, Scale 12.0 %, Rotate 0°, Reset, Undo, Redo) and
+  only the selected tool's controls are on the page; the picture tool row keeps Show before and Clear photo.
+- **About** is an editorial page: the piece large, two lines, the photo facts.
+- **The preview note** fades once the homepage scrolls, so it never sits over later controls.
+- **Tests** were rewritten for the new behaviour (mode names, tool gating, the gallery rail, the
+  Assembly mode, the hero timing, the macro and assembly sections, two pinned moments) and none of
+  the privacy, geometry, form, bag, media-control, reduced-motion or mobile tests were dropped.
+
 ## 2026-09-22 — The launch film: homepage as a cinematic product site
 
 The owner's "critical UI override" makes a luxury-watch cinematic site the primary reference: the

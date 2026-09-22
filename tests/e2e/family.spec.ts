@@ -6,7 +6,7 @@ const FAMILY = "/product/desert-eye-love";
 // The visually hidden radio is operated through its label, the way a customer does it.
 const chooseForm = (page: Page, formId: string) => page.locator("label", { has: page.getByTestId(`form-${formId}`) }).click();
 const tab = (page: Page, name: string) => page.getByRole("tab", { name });
-// The family page opens on "The piece". The concept reveal is one tab along.
+// The family page opens on "Piece". The concept reveal is one tab along.
 const gotoReveal = async (page: Page, url: string) => {
   await page.goto(url);
   await tab(page, "Concept reveal").click();
@@ -20,7 +20,7 @@ test.describe("design family: piercing forms", () => {
     await expect(page.getByTestId("family-price")).toContainText("QAR 390");
     await expect(page.getByTestId("family-package")).toContainText("two decorative tops");
 
-    await tab(page, "Placement preview").click();
+    await tab(page, "Placement").click();
     const preview = page.getByTestId("placement-preview");
     await expect(preview).toHaveAttribute("data-placement", "anti-eyebrow");
     await expect(preview.getByTestId("placement-piece")).toHaveCount(2);
@@ -65,9 +65,9 @@ test.describe("design family: piercing forms", () => {
     await chooseForm(page, "micro-dermal");
 
     await expect(page.getByTestId("reveal-player")).toHaveAttribute("data-form", "micro-dermal");
-    await tab(page, "Placement preview").click();
+    await tab(page, "Placement").click();
     await expect(page.getByTestId("placement-preview")).toHaveAttribute("data-form", "micro-dermal");
-    await tab(page, "Try on your face").click();
+    await tab(page, "Try on").click();
     await expect(page.getByTestId("tryon-preview")).toHaveAttribute("data-form", "micro-dermal");
     await tab(page, "Concept reveal").click();
     await expect(page.getByTestId("family")).toHaveAttribute("data-form", "micro-dermal");
@@ -92,7 +92,7 @@ test.describe("design family: piercing forms", () => {
     await page.goto("/product/crimson-orbit");
     await expect(page.getByText("Original design")).toBeVisible();
     await expect(page.getByTestId("form-anti-eyebrow")).toBeDisabled();
-    await tab(page, "Placement preview").click();
+    await tab(page, "Placement").click();
     const preview = page.getByTestId("placement-preview");
     const cheek = await preview.getByTestId("placement-piece").boundingBox();
     await chooseForm(page, "nose");
@@ -249,7 +249,7 @@ test.describe("concept reveal playback (test pattern)", () => {
     await page.getByTestId("reveal-replay").click();
     await expect(player).toHaveAttribute("data-state", "playing");
     // Leaving the view stops it: the player is gone and nothing keeps playing.
-    await tab(page, "Placement preview").click();
+    await tab(page, "Placement").click();
     await expect(page.getByTestId("reveal-video")).toHaveCount(0);
     await tab(page, "Concept reveal").click();
     await expect(page.getByTestId("reveal-player")).toHaveAttribute("data-state", "idle");

@@ -49,6 +49,8 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
   const [pendingAdd, setPendingAdd] = useState<{ product: Product; side: Side; conflictUid: string } | null>(null);
   const [addProductId, setAddProductId] = useState(products[0].id);
   const [addSide, setAddSide] = useState<Side>("right");
+  // Which tool's controls are on the page. Move is the default; a slider appears only for its tool.
+  const [tool, setTool] = useState<"move" | "scale" | "rotate">("move");
 
   // A selection only counts while it names a piece of the active product.
   const pieceId =
@@ -242,8 +244,8 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
                   const form = formOf(currentProduct, studio.forms[currentProduct.id]);
                   const anchor = ANCHORS[form.placement] ?? { x: 0.5, y: 0.5 };
                   return (
-                    <div className="studio-crop" style={{ "--ox": `${anchor.x * 100}%`, "--oy": `${anchor.y * 100}%` } as React.CSSProperties}>
-                      <div className="studio-crop-head">
+                    <div className="studio-crop">
+                      <div className="crop-head" style={{ "--px": anchor.x, "--py": anchor.y, "--s": 1.9, "--tx": 0.55, "--ty": 0.46 } as React.CSSProperties}>
                         <PlacementPreview product={currentProduct} formId={form.id} bare />
                       </div>
                       <p className="label-xs absolute bottom-3 left-3 text-ash">Sculpted form, not a person · approximate</p>
@@ -261,25 +263,6 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
           {photo && (
             // Plain words on paper under the photo, a hairline above them: no pill, nothing over the picture.
             <div className="mt-3 flex flex-wrap items-center justify-center gap-x-1 border-t border-line pt-1" role="toolbar" aria-label="Studio actions">
-              <button type="button" className={toolButton} onClick={studio.undo} disabled={!studio.canUndo} data-testid="undo">
-                Undo
-              </button>
-              <button type="button" className={toolButton} onClick={studio.redo} disabled={!studio.canRedo} data-testid="redo">
-                Redo
-              </button>
-              <button
-                type="button"
-                className={toolButton}
-                disabled={!active || !activeProduct}
-                data-testid="reset"
-                onClick={() => {
-                  if (!active || !activeProduct) return;
-                  setSelectedComponent(null);
-                  change((l) => resetItem(l, active.uid, activeProduct));
-                }}
-              >
-                Reset
-              </button>
               <button
                 type="button"
                 className={toolButton}
@@ -315,47 +298,13 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
         <div className="order-3 min-w-0 space-y-12 max-lg:[&_button]:scroll-mt-[62dvh] max-lg:[&_input]:scroll-mt-[62dvh] max-lg:[&_select]:scroll-mt-[62dvh] lg:col-start-2 lg:row-span-2 lg:row-start-1">
           <section aria-labelledby="adjust-heading">
             <h2 id="adjust-heading" className="label-xs text-ash">
-              {photo ? "Adjust" : "Piercing form"}
+              {photo ? "Adjust" : "Form"}
             </h2>
 
-            {/* Secondary controls wait until there is a photo to use them on. */}
-            {photo && (
-            <fieldset className="mt-3">
-              <legend className="text-sm">Side of the face</legend>
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                {(["left", "right"] as const).map((side) => {
-                  const selected = (active?.side ?? studio.side) === side;
-                  return (
-                    <label
-                      key={side}
-                      className={`label-xs flex min-h-11 cursor-pointer items-center border-b has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-garnet-text ${
-                        selected ? "border-garnet text-ink" : "border-line text-ash hover:text-ink"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="wearer-side"
-                        value={side}
-                        checked={selected}
-                        onChange={() => changeSide(side)}
-                        className="sr-only"
-                        data-testid={`side-${side}`}
-                      />
-                      Wearer&rsquo;s {side}
-                    </label>
-                  );
-                })}
-              </div>
-              <p className="mt-2 text-xs leading-relaxed text-ash">
-                The wearer&rsquo;s left appears on the right of an unmirrored photo.
-              </p>
-            </fieldset>
-            )}
-
             {currentProduct.forms.length > 1 && (
-              <fieldset className="mt-5">
-                <legend className={photo ? "text-sm" : "sr-only"}>Piercing form</legend>
-                <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
+              <fieldset className="mt-3">
+                <legend className="sr-only">Piercing form</legend>
+                <div className="flex flex-wrap gap-x-5 gap-y-1">
                   {currentProduct.forms.map((form) => {
                     const pending = form.status !== "available";
                     const selectedForm = (active?.productId === currentProduct.id ? active.formId : formOf(currentProduct, studio.forms[currentProduct.id]).id) === form.id;
@@ -376,69 +325,132 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
               </fieldset>
             )}
 
-            {active && activeProduct ? (
+            {/* The tools, like a configurator's: one word each, the current value beside it, and only the
+                selected tool's controls below. Nothing else is on the page until it is asked for. */}
+            {photo && active && activeProduct ? (
               <>
+                <div className="mt-8 flex flex-wrap gap-x-5 gap-y-1" role="tablist" aria-label="Tools">
+                  {(["move", "scale", "rotate"] as const).map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      role="tab"
+                      aria-selected={tool === t}
+                      onClick={() => setTool(t)}
+                      data-testid={`tool-${t}`}
+                      className={`label-xs inline-flex min-h-11 items-center gap-2 border-b transition-colors duration-500 ${tool === t ? "border-garnet text-ink" : "border-transparent text-ash hover:text-ink"}`}
+                    >
+                      {t}
+                      {t === "scale" && (
+                        <output className="font-mono normal-case tracking-normal text-ash" data-testid="scale-value">
+                          {`${((tweak ? tweak.scale : active.group.scale) * 100).toFixed(pieceId ? 0 : 1)}%`}
+                        </output>
+                      )}
+                      {t === "rotate" && (
+                        <output className="font-mono normal-case tracking-normal text-ash" data-testid="rotation-value">
+                          {`${Math.round(tweak ? tweak.rotation : active.group.rotation)}°`}
+                        </output>
+                      )}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    className={toolButton}
+                    data-testid="reset"
+                    onClick={() => {
+                      setSelectedComponent(null);
+                      change((l) => resetItem(l, active.uid, activeProduct));
+                    }}
+                  >
+                    Reset
+                  </button>
+                  <button type="button" className={toolButton} onClick={studio.undo} disabled={!studio.canUndo} data-testid="undo">
+                    Undo
+                  </button>
+                  <button type="button" className={toolButton} onClick={studio.redo} disabled={!studio.canRedo} data-testid="redo">
+                    Redo
+                  </button>
+                </div>
+
                 {formOf(activeProduct, active.formId).components.length > 1 && (
                   <fieldset className="mt-5">
-                    <legend className="text-sm">Move</legend>
-                    <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
+                    <legend className="label-xs text-ash">Part</legend>
+                    <div className="mt-1 flex flex-wrap gap-x-5 gap-y-1">
                       <TargetButton selected={pieceId === null} onClick={() => setSelectedComponent(null)} testId="target-group">
                         Pair
                       </TargetButton>
                       {formOf(activeProduct, active.formId).components.map((c) => (
-                        <TargetButton
-                          key={c.id}
-                          selected={pieceId === c.id}
-                          onClick={() => setSelectedComponent(c.id)}
-                          testId={`target-${c.id}`}
-                        >
+                        <TargetButton key={c.id} selected={pieceId === c.id} onClick={() => setSelectedComponent(c.id)} testId={`target-${c.id}`}>
                           {/* "Symbol (upper, outer)" reads as "Symbol" here; the full label stays on the drag handle. */}
                           {c.label.split(" (")[0]}
                         </TargetButton>
                       ))}
                     </div>
-                    {pieceId && (
-                      <p className="mt-2 text-xs leading-relaxed text-ash">
-                        Moving one piece is a visual preview only. It does not describe a real spacing or fit.
-                      </p>
-                    )}
+                    {pieceId && <p className="mt-2 text-xs leading-relaxed text-ash">Moving one piece is a visual preview only. It does not describe a real spacing or fit.</p>}
                   </fieldset>
                 )}
 
-                <div className="mt-5 space-y-4">
-                  <Slider
-                    label={pieceId ? "Piece size" : "Size"}
-                    testId="scale"
-                    min={pieceId ? TWEAK_SCALE_MIN * 100 : SCALE_MIN * 100}
-                    max={pieceId ? TWEAK_SCALE_MAX * 100 : SCALE_MAX * 100}
-                    step={pieceId ? 1 : 0.2}
-                    value={(tweak ? tweak.scale : active.group.scale) * 100}
-                    display={(v) => `${v.toFixed(pieceId ? 0 : 1)}%`}
-                    onChange={(v) => setScale(v / 100)}
-                  />
-                  <Slider
-                    label={pieceId ? "Piece rotation" : "Rotation"}
-                    testId="rotation"
-                    min={-180}
-                    max={180}
-                    step={1}
-                    value={tweak ? tweak.rotation : active.group.rotation}
-                    display={(v) => `${Math.round(v)}°`}
-                    onChange={setRotation}
-                  />
-                </div>
-
-                <div className="mt-6 flex items-center justify-between gap-4">
-                  <p className="text-sm">Nudge</p>
-                  {/* One quiet row of arrows, not a keypad. */}
-                  <div className="-mr-3 flex" role="group" aria-label="Nudge position">
-                    <NudgeButton label="Nudge left" onClick={() => nudge(-NUDGE, 0)} testId="nudge-left">←</NudgeButton>
-                    <NudgeButton label="Nudge up" onClick={() => nudge(0, -NUDGE)} testId="nudge-up">↑</NudgeButton>
-                    <NudgeButton label="Nudge down" onClick={() => nudge(0, NUDGE)} testId="nudge-down">↓</NudgeButton>
-                    <NudgeButton label="Nudge right" onClick={() => nudge(NUDGE, 0)} testId="nudge-right">→</NudgeButton>
+                {tool === "move" && (
+                  <div className="mt-5" data-testid="tool-panel-move">
+                    <fieldset>
+                      <legend className="label-xs text-ash">Side of the face</legend>
+                      <div className="mt-1 flex gap-x-5">
+                        {(["left", "right"] as const).map((side) => {
+                          const selected = (active?.side ?? studio.side) === side;
+                          return (
+                            <label
+                              key={side}
+                              className={`label-xs flex min-h-11 cursor-pointer items-center border-b has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-garnet-text ${
+                                selected ? "border-garnet text-ink" : "border-transparent text-ash hover:text-ink"
+                              }`}
+                            >
+                              <input type="radio" name="wearer-side" value={side} checked={selected} onChange={() => changeSide(side)} className="sr-only" data-testid={`side-${side}`} />
+                              Wearer&rsquo;s {side}
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </fieldset>
+                    <div className="mt-4 flex items-center justify-between gap-4">
+                      <p className="label-xs text-ash">Nudge</p>
+                      <div className="-mr-3 flex" role="group" aria-label="Nudge position">
+                        <NudgeButton label="Nudge left" onClick={() => nudge(-NUDGE, 0)} testId="nudge-left">←</NudgeButton>
+                        <NudgeButton label="Nudge up" onClick={() => nudge(0, -NUDGE)} testId="nudge-up">↑</NudgeButton>
+                        <NudgeButton label="Nudge down" onClick={() => nudge(0, NUDGE)} testId="nudge-down">↓</NudgeButton>
+                        <NudgeButton label="Nudge right" onClick={() => nudge(NUDGE, 0)} testId="nudge-right">→</NudgeButton>
+                      </div>
+                    </div>
+                    <p className="mt-1 text-xs leading-relaxed text-ash">Drag the jewelry, or focus it and use the arrow keys. The wearer&rsquo;s left is on the right of an unmirrored photo.</p>
                   </div>
-                </div>
-                <p className="mt-1 text-xs leading-relaxed text-ash">You can also drag the jewelry, or focus it and use the arrow keys.</p>
+                )}
+                {tool === "scale" && (
+                  <div className="mt-5" data-testid="tool-panel-scale">
+                    <Slider
+                      label={pieceId ? "Piece size" : "Size"}
+                      testId="scale"
+                      min={pieceId ? TWEAK_SCALE_MIN * 100 : SCALE_MIN * 100}
+                      max={pieceId ? TWEAK_SCALE_MAX * 100 : SCALE_MAX * 100}
+                      step={pieceId ? 1 : 0.2}
+                      value={(tweak ? tweak.scale : active.group.scale) * 100}
+                      display={(v) => `${v.toFixed(pieceId ? 0 : 1)}%`}
+                      onChange={(v) => setScale(v / 100)}
+                    />
+                  </div>
+                )}
+                {tool === "rotate" && (
+                  <div className="mt-5" data-testid="tool-panel-rotate">
+                    <Slider
+                      label={pieceId ? "Piece rotation" : "Rotation"}
+                      testId="rotation"
+                      min={-180}
+                      max={180}
+                      step={1}
+                      value={tweak ? tweak.rotation : active.group.rotation}
+                      display={(v) => `${Math.round(v)}°`}
+                      onChange={setRotation}
+                    />
+                  </div>
+                )}
               </>
             ) : null}
           </section>
@@ -632,7 +644,7 @@ function Slider({
         <label htmlFor={id} className="text-sm">
           {label}
         </label>
-        <output htmlFor={id} className="font-mono text-xs text-ash" data-testid={`${testId}-value`}>
+        <output htmlFor={id} className="font-mono text-xs text-ash">
           {display(value)}
         </output>
       </div>

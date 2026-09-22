@@ -7,6 +7,11 @@ import { FIXTURE } from "./helpers";
 
 const FAMILY = "/product/desert-eye-love";
 const film = (page: Page) => page.getByTestId("product-film");
+// The page opens on the beauty frame; the film is the Assembly mode of the same stage.
+const openAssembly = async (page: Page, url = FAMILY) => {
+  await page.goto(url);
+  await page.getByRole("tab", { name: "Assembly" }).click();
+};
 const state = (page: Page) => film(page).getAttribute("data-state");
 const chooseForm = (page: Page, formId: string) => page.locator("label", { has: page.getByTestId(`form-${formId}`) }).click();
 const mediaRequests = (page: Page) => {
@@ -21,6 +26,10 @@ test.describe("first load", () => {
   test("shows the poster, loads no media, and never takes the stage from shopping", async ({ page }) => {
     const media = mediaRequests(page);
     await page.goto(FAMILY);
+    // The default mode is the finished piece, large; never a schematic and never the film's creature poster.
+    await expect(page.getByTestId("pdp-beauty")).toBeVisible();
+    await expect(page.getByTestId("piece-assembly")).toHaveCount(0);
+    await page.getByRole("tab", { name: "Assembly" }).click();
     await expect(film(page)).toHaveAttribute("data-state", "idle");
     await expect(film(page)).toHaveAttribute("data-form", "anti-eyebrow");
     await expect(page.getByTestId("film-poster")).toBeVisible();
@@ -30,7 +39,7 @@ test.describe("first load", () => {
     // The drawn assembly is not on this form's page, and the superseded concept-reveal tab is gone.
     await expect(page.getByTestId("piece-assembly")).toHaveCount(0);
     await expect(page.getByRole("tab", { name: "Concept reveal" })).toHaveCount(0);
-    await expect(page.getByRole("tab", { name: "The piece" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("tab", { name: "Assembly" })).toHaveAttribute("aria-selected", "true");
     await expect(page.getByTestId("add-to-bag")).toBeEnabled();
     await expect(page.getByTestId("try-it-on")).toBeVisible();
     await page.waitForLoadState("networkidle");
@@ -41,7 +50,7 @@ test.describe("first load", () => {
   });
 
   test("the film covers the anti-eyebrow form only; other forms and other designs keep the drawn assembly", async ({ page }) => {
-    await page.goto(FAMILY);
+    await openAssembly(page);
     await chooseForm(page, "nose");
     await expect(film(page)).toHaveCount(0);
     await expect(page.getByTestId("piece-assembly")).toHaveAttribute("data-hardware", "stud");
@@ -70,7 +79,7 @@ test.describe("playback", () => {
 
   test("plays once on a press, muted, with words at the right moments, then holds the completed piece", async ({ page }) => {
     const media = mediaRequests(page);
-    await page.goto(FAMILY);
+    await openAssembly(page);
     await page.getByTestId("film-play").click();
     await expect(film(page)).toHaveAttribute("data-state", "playing", { timeout: 15000 });
     expect(media.length).toBeGreaterThan(0);
@@ -108,7 +117,7 @@ test.describe("playback", () => {
   });
 
   test("Skip goes straight to the completed piece, and Replay starts again from the beginning", async ({ page }) => {
-    await page.goto(FAMILY);
+    await openAssembly(page);
     await page.getByTestId("film-play").click();
     await expect(film(page)).toHaveAttribute("data-state", "playing", { timeout: 15000 });
     await page.getByTestId("film-skip").click();
@@ -125,7 +134,7 @@ test.describe("playback", () => {
   });
 
   test("the keyboard reaches Play, Skip and Replay", async ({ page }) => {
-    await page.goto(FAMILY);
+    await openAssembly(page);
     await page.getByTestId("film-play").focus();
     await page.keyboard.press("Enter");
     await expect(film(page)).toHaveAttribute("data-state", "playing", { timeout: 15000 });
@@ -142,7 +151,7 @@ test.describe("playback", () => {
       await new Promise((r) => setTimeout(r, 1500));
       await route.continue();
     });
-    await page.goto(FAMILY);
+    await openAssembly(page);
     await page.getByTestId("film-play").click();
     await expect(page.getByTestId("film-status")).toContainText("Loading");
     await expect(film(page)).toHaveAttribute("data-state", "playing", { timeout: 20000 });
@@ -150,7 +159,7 @@ test.describe("playback", () => {
 
   test("a film that cannot load falls back to the completed piece with a clear note", async ({ page }) => {
     await page.route(/\/media\/product-animation\/.*\.(webm|mp4)/, (route) => route.abort());
-    await page.goto(FAMILY);
+    await openAssembly(page);
     await page.getByTestId("film-play").click();
     await expect(film(page)).toHaveAttribute("data-state", "failed", { timeout: 15000 });
     await expect(page.getByTestId("film-status")).toContainText("couldn't play");
@@ -161,7 +170,7 @@ test.describe("playback", () => {
   });
 
   test("switching form while playing stops the film, and coming back starts from the poster", async ({ page }) => {
-    await page.goto(FAMILY);
+    await openAssembly(page);
     await page.getByTestId("film-play").click();
     await expect(film(page)).toHaveAttribute("data-state", "playing", { timeout: 15000 });
     await chooseForm(page, "micro-dermal");
@@ -172,13 +181,15 @@ test.describe("playback", () => {
   });
 
   test("returning from Try On finds the product page as it was left: poster, ready to play", async ({ page }) => {
-    await page.goto(FAMILY);
+    await openAssembly(page);
     await page.getByTestId("film-play").click();
     await expect(film(page)).toHaveAttribute("data-state", "playing", { timeout: 15000 });
     await page.getByTestId("try-it-on").click();
     await expect(page).toHaveURL(/\/face-studio\?product=desert-eye-love&form=anti-eyebrow/);
     await expect(page.locator("video")).toHaveCount(0);
     await page.goBack();
+    await expect(page.getByTestId("pdp-beauty")).toBeVisible();
+    await page.getByRole("tab", { name: "Assembly" }).click();
     await expect(film(page)).toHaveAttribute("data-state", "idle");
     await expect(page.getByTestId("film-play")).toBeVisible();
     await expect(page.getByTestId("add-to-bag")).toBeEnabled();
@@ -189,7 +200,7 @@ test.describe("reduced motion", () => {
   test("shows the completed piece with all its words, and offers no playback", async ({ page }) => {
     const media = mediaRequests(page);
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto(FAMILY);
+    await openAssembly(page);
     await expect(film(page)).toHaveAttribute("data-state", "ended");
     await expect(page.getByTestId("film-final")).toBeVisible();
     await expect(page.getByTestId("film-video")).toHaveCount(0);
@@ -204,7 +215,7 @@ test.describe("reduced motion", () => {
 
 test.describe("on a phone", () => {
   test("the whole frame fits the screen, the controls are reachable, and the words sit under the picture", async ({ page }) => {
-    await page.goto(FAMILY);
+    await openAssembly(page);
     const width = page.viewportSize()!.width;
     const frame = (await film(page).locator(".product-film-frame").boundingBox())!;
     expect(frame.x).toBeGreaterThanOrEqual(0);
@@ -214,7 +225,7 @@ test.describe("on a phone", () => {
     const play = (await page.getByTestId("film-play").boundingBox())!;
     expect(play.height).toBeGreaterThanOrEqual(44);
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.reload();
+    await openAssembly(page);
     await expect(page.getByTestId("film-captions").locator("div")).toHaveCount(3);
     if (width < 640) {
       const captions = (await page.getByTestId("film-captions").boundingBox())!;

@@ -40,45 +40,17 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
 
   return (
     <div className="story-light">
-    <div className="mx-auto max-w-[90rem] px-5 py-10 sm:px-8">
-      <nav aria-label="Breadcrumb" className="label-xs text-ash">
-        <Link href="/collections" className="hover:text-ink">Selection</Link>
+    <div className="pdp-page">
+      <nav aria-label="Breadcrumb" className="label-xs pdp-crumb text-ash">
+        <Link href="/collections" className="hover:text-ink">Collections</Link>
         <span aria-hidden="true"> / </span>
         <span aria-current="page">{product.title}</span>
       </nav>
 
-      <div className="mt-8">
+      <div>
         <FamilyExperience product={product} initialFormId={first(query.form)} fixtureSrc={fixtureFor(first(query.revealFixture))} concept={conceptFor(first(query.revealFixture), slug)} />
       </div>
 
-      {/* One status for the whole specification, said once and quietly. The rows carry no warning tags:
-          a field that is not confirmed simply says so in words, in the same grey as everything secondary. */}
-      <section aria-labelledby="specs-heading" className="mt-16 max-w-2xl border-t border-line pt-6">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1">
-          <h2 id="specs-heading" className="label-xs">Material status</h2>
-          <p className="label-xs text-ash" data-testid="spec-status">
-            {product.specs.some((s) => s.status === "unverified") ? "Prototype specification · unverified" : "Confirmed specification"}
-          </p>
-        </div>
-        <dl className="mt-4 divide-y divide-line text-sm">
-          {product.specs.map((spec) => (
-            <div key={spec.label} className="grid grid-cols-[9rem_1fr] gap-4 py-3">
-              <dt>{spec.label}</dt>
-              <dd className="text-ash">{spec.value}</dd>
-            </div>
-          ))}
-        </dl>
-        <p className="mt-3 text-xs leading-relaxed text-ash">
-          Specifications are published only after a supplier confirms them. Ask a professional piercer about
-          compatibility with your existing jewelry.
-        </p>
-      </section>
-
-      <p className="mt-16 border-t border-line pt-6">
-        <Link href="/collections" className="text-link">
-          <span aria-hidden="true">←</span> Back to the selection
-        </Link>
-      </p>
     </div>
     </div>
   );

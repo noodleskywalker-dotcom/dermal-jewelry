@@ -1,30 +1,39 @@
+"use client";
+
 import Link from "next/link";
 import type { Product } from "@/lib/catalog/types";
-import { PlacementPreview } from "@/components/catalog/PlacementPreview";
+import { activeItem } from "@/lib/studio/look";
+import { ANCHORS, PlacementPreview } from "@/components/catalog/PlacementPreview";
+import { LookRenderer } from "@/components/studio/LookRenderer";
+import { useStudio } from "@/components/studio/StudioProvider";
 
-// 07: SEE IT ON YOU. A close crop of the sculpted head around the placement, the piece large on it,
-// and one way in. The head is the approved featureless device, not a person, and the crop keeps
-// the piece, not the mannequin, as the object of the frame.
+// 07: SEE IT ON YOU. An extreme close crop around the placement (outer eye and temple), the piece
+// prominent. With a photo already in this browser's memory, it is the customer's own face through
+// the shared renderer; otherwise the sculptural surface. The photo never leaves the browser.
 export function SeeItOnYou({ product }: { product: Product }) {
+  const { photo, look } = useStudio();
+  const active = activeItem(look);
+  const anchor = ANCHORS["anti-eyebrow"] ?? { x: 0.66, y: 0.45 };
   return (
-    <section aria-labelledby="onyou-heading" data-testid="onyou-section" className="mx-auto max-w-[120rem] px-6 py-20 sm:px-10 lg:px-16 lg:py-32">
-      <div className="grid gap-x-16 gap-y-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
-        <div className="lg:order-2">
-          <p className="label-xs">06 / ON YOU</p>
-          <h2 id="onyou-heading" className="mt-3 font-display text-[clamp(2rem,3vw,3rem)] font-light uppercase leading-[1.05] tracking-[0.04em]">
-            See it on you
-          </h2>
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-ash">Your photo stays on your device. A still, approximate preview: not a size, not a fitting.</p>
-          <Link href={`/face-studio?product=${product.slug}`} className="text-link mt-8" data-testid="onyou-try">
-            Try on your face <span aria-hidden="true">↗</span>
-          </Link>
-        </div>
-        <div className="onyou-crop lg:order-1" data-testid="onyou-crop">
-          <div className="onyou-head">
+    <section aria-labelledby="onyou-heading" data-testid="onyou-section" className="onyou">
+      <div className="onyou-crop" data-testid="onyou-crop" data-source={photo ? "photo" : "sculpture"}>
+        {photo && active ? (
+          <LookRenderer photo={photo} items={look.items} zoom={{ x: active.group.x, y: active.group.y, factor: 2.4 }} label="Your photo, close, with the selected piece" className="h-full w-full" />
+        ) : (
+          <div className="crop-head" style={{ "--px": anchor.x, "--py": anchor.y, "--s": 2.6, "--tx": 0.56, "--ty": 0.46 } as React.CSSProperties}>
             <PlacementPreview product={product} formId="anti-eyebrow" bare />
           </div>
-          <p className="label-xs absolute bottom-3 left-3 text-ash">Sculpted form, not a person · approximate</p>
-        </div>
+        )}
+        <p className="label-xs absolute bottom-4 left-4 text-ash">{photo ? "Your photo · stays on this device" : "Sculpted form, not a person"} · approximate</p>
+      </div>
+      <div className="onyou-copy">
+        <p className="label-xs">06 / ON YOU</p>
+        <h2 id="onyou-heading" className="mt-4 font-display text-[clamp(2.25rem,4.4vw,4.5rem)] font-light uppercase leading-[0.98] tracking-[0.04em]">
+          See it on you.
+        </h2>
+        <Link href={`/face-studio?product=${product.slug}`} className="text-link mt-8" data-testid="onyou-try">
+          Try on your face <span aria-hidden="true">↗</span>
+        </Link>
       </div>
     </section>
   );

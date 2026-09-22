@@ -66,23 +66,16 @@ test.describe("the selection: sideways browsing", () => {
     }
   });
 
-  test("the featured family switches piercing type in place, and the choice carries on", async ({ page }) => {
+  test("each family is a gallery label, not a card: number, name, kind, and two ways in", async ({ page }) => {
     await page.goto("/collections");
     const slide = current(page);
-    await expect(slide.getByTestId("selection-price")).toContainText("QAR 390");
-    for (const id of ["anti-eyebrow", "micro-dermal", "nose"]) await expect(slide.getByTestId(`selection-form-${id}`)).toBeEnabled();
-    await slide.locator("label", { has: page.getByTestId("selection-form-nose") }).click();
-    await expect(slide).toHaveAttribute("data-form", "nose");
-    await expect(slide.getByTestId("selection-price")).toContainText("QAR 190");
-    await expect(slide.getByTestId("piece-asset")).toHaveCount(1);
-
-    await page.getByTestId("add-to-bag").click();
-    await expect(page.locator('[data-testid="bag-line"][data-form="nose"]')).toHaveCount(1);
-    await page.keyboard.press("Escape");
-
+    await expect(slide).toContainText("01 / 04");
+    await expect(slide).toContainText("Story-driven");
+    await expect(slide.getByTestId("add-to-bag")).toHaveCount(0);
+    await expect(slide).not.toContainText("QAR");
     await slide.getByTestId("selection-view").click();
-    await expect(page).toHaveURL(/\/product\/desert-eye-love\?form=nose$/);
-    await expect(page.getByTestId("family")).toHaveAttribute("data-form", "nose");
+    await expect(page).toHaveURL(/\/product\/desert-eye-love\?form=anti-eyebrow$/);
+    await expect(page.getByTestId("family")).toHaveAttribute("data-form", "anti-eyebrow");
   });
 });
 
@@ -90,7 +83,7 @@ test.describe("product page: the whole piece", () => {
   test("opens on the full piercing, assembled, with honest material notes", async ({ page }) => {
     // The anti-eyebrow form opens on its film; the nose form opens on the drawn piece with every note.
     await page.goto("/product/desert-eye-love?form=nose");
-    await expect(page.getByRole("tab", { name: "The piece" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("tab", { name: "Piece" })).toHaveAttribute("aria-selected", "true");
     const assembly = page.getByTestId("piece-assembly");
     await expect(assembly).toHaveAttribute("data-hardware", "stud");
     // Top, post and base are all there.
@@ -132,7 +125,7 @@ test.describe("product page: the whole piece", () => {
 
   test("the sculpted head is built from soft shading only, with no drawn lines", async ({ page }) => {
     await page.goto("/product/desert-eye-love");
-    await page.getByRole("tab", { name: "Placement preview" }).click();
+    await page.getByRole("tab", { name: "Placement" }).click();
     const head = page.getByTestId("placement-preview");
     await expect(head).toContainText("not a person");
     const strokes = await head.locator("svg").first().evaluate((svg) => [...svg.querySelectorAll("*")].filter((el) => el.getAttribute("stroke") && el.getAttribute("stroke") !== "none").length);

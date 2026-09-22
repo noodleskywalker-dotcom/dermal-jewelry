@@ -1,5 +1,26 @@
 # Test report
 
+## Full visual redesign — 22 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors |
+| `npm run typecheck` | pass |
+| `npm test` | 77 of 77 pass |
+| `npm run test:e2e -- --workers=2` | 304 pass, 46 skipped, 1 fail (a WebKit story-timing test under load, passes alone); after the last hero CSS change the layout specs (home, home-cinema, hybrid, viewports) rerun: 106 pass |
+| `npm run build` | pass |
+
+Updated for the new UX (not deleted): mode names Piece / 360° / Assembly / Placement / Try on, the film
+reached through Assembly, the beauty frame as default, Face Studio tool gating (Move / Scale / Rotate),
+the collections rail as gallery labels, the hero timing (beauty hold, one true turn, words at chosen
+points), four macro views, the full-width assembly film, two pinned moments. Privacy, geometry, form
+state, bag, media controls, reduced motion and mobile tests all still run.
+
+Review package (local only): `references/review/2026-09-22-redesign/` — 1440×900, 1920×1080, Pixel 7,
+360×800 and 844×390 for every homepage section, product (default, 360°, placement, try-on), Face Studio
+(sculpture and photo), shop, bag, collections page and about; `walkthrough.webm`.
+
+
 ## The launch film — 22 September 2026
 
 | Command | Result |

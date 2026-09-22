@@ -11,6 +11,17 @@ Milestone 1, the first vertical slice, is implemented and tested locally. The HY
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
 
+## Full visual redesign (22 September 2026, no credits)
+
+The visible site was rebuilt to a luxury-watch-launch standard; the engine was kept (see
+`docs/DECISIONS.md`). Rollback tag `pre-redesign-d6fef76`. Built, tested, pushed; **awaiting the
+owner's visual approval**. Review package: `references/review/2026-09-22-redesign/` (1440×900,
+1920×1080, Pixel 7, 360×800, 844×390, and `walkthrough.webm`).
+
+Known placeholders: sections 03 and 04 use stills from the approved film and orbit until MEDIA 02;
+the macro views are enlarged crops of a 1080p render and are soft at full width; the orbit's rear is
+conceptual; the film's first frame is the creature.
+
 ## The launch film (22 September 2026, no credits)
 
 The homepage is now a cinematic product site in the owner's nine-section flow (see `docs/DECISIONS.md`).

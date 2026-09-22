@@ -2,13 +2,11 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { availableForms, displayTitle, formatPrice, formOf } from "@/lib/catalog";
+import { displayTitle, formOf } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { useReducedMotion } from "@/lib/motion/useScrollProgress";
-import { AddToBagButton } from "@/components/cart/AddToBagButton";
 import { SandLayer } from "@/components/story/SandLayer";
 import { useStudio } from "@/components/studio/StudioProvider";
-import { useChooseForm } from "@/components/studio/useFormChoice";
 import { FloatingObject, motionOf } from "./FloatingObject";
 
 export type Concept = { name: string; kind: string; status: string; note: string };
@@ -33,7 +31,6 @@ export function SelectionRail({
   const rail = useRef<HTMLUListElement>(null);
   const reduced = useReducedMotion();
   const { forms } = useStudio();
-  const chooseForm = useChooseForm();
   const total = products.length + concepts.length;
   const start = Math.max(0, products.findIndex((p) => p.slug === initialSlug));
   const [index, setIndex] = useState(start);
@@ -166,7 +163,6 @@ export function SelectionRail({
       >
         {products.map((product, i) => {
           const form = formOf(product, forms[product.id]);
-          const options = availableForms(product);
           const current = i === index;
           const sand = motionOf(product) === "sand";
           return (
@@ -199,39 +195,19 @@ export function SelectionRail({
                 )}
               </Link>
 
+              {/* A gallery label, not a product card: number, name, kind, one way in, one way onto the face. */}
               <div className="selection-info relative mx-auto mt-2 w-full max-w-xl text-center">
-                <h2 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-light leading-none tracking-[0.04em]">{displayTitle(product.title)}</h2>
-                {options.length > 1 ? (
-                  <fieldset className="mt-4" disabled={!current}>
-                    <legend className="sr-only">Piercing type</legend>
-                    <div className="flex flex-wrap items-center justify-center gap-x-5">
-                      {options.map((f, n) => (
-                        <span key={f.id} className="flex items-center gap-x-5">
-                          {n > 0 && <span aria-hidden="true" className="text-ash">·</span>}
-                          <label className={`label-xs flex min-h-11 cursor-pointer items-center border-b has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-garnet ${f.id === form.id ? "border-ink text-ink" : "border-transparent text-ash hover:text-ink"}`}>
-                            <input type="radio" name={`selection-form-${product.id}`} value={f.id} checked={f.id === form.id} onChange={() => chooseForm(product, f.id)} data-testid={`selection-form-${f.id}`} className="sr-only" />
-                            {f.label}
-                          </label>
-                        </span>
-                      ))}
-                    </div>
-                  </fieldset>
-                ) : (
-                  <p className="label-xs mt-4 flex min-h-11 items-center justify-center text-ash">{form.label}</p>
-                )}
-                <p className="label-xs mt-1" data-testid="selection-price">
-                  <span className="text-ash">Demo price · </span>
-                  {formatPrice(form.demoPrice, product.currency)}
-                </p>
-                <div className="mt-3 flex flex-wrap items-center justify-center gap-x-8">
+                <p className="label-xs text-ash">{String(i + 1).padStart(2, "0")} / {String(products.length).padStart(2, "0")}</p>
+                <h2 className="mt-2 font-display text-[clamp(2rem,4vw,3.5rem)] font-light leading-none tracking-[0.06em]">{displayTitle(product.title)}</h2>
+                <p className="label-xs mt-4 flex min-h-11 items-center justify-center text-ash">{product.origin === "anime-inspired" ? "Story-driven" : "Original"}</p>
+                <div className="mt-2 flex flex-wrap items-center justify-center gap-x-8">
                   <Link href={`/product/${product.slug}?form=${form.id}`} draggable={false} data-testid="selection-view" tabIndex={current ? 0 : -1} className="text-link">
-                    View the piece <span aria-hidden="true">→</span>
+                    Explore <span aria-hidden="true">↗</span>
                   </Link>
                   <Link href={`/face-studio?product=${product.slug}&form=${form.id}`} draggable={false} tabIndex={current ? 0 : -1} className="text-link">
                     Try on <span aria-hidden="true">↗</span>
                   </Link>
                 </div>
-                {current && <AddToBagButton product={product} formId={form.id} className="mx-auto mt-3 max-w-[16rem]" />}
               </div>
             </li>
           );

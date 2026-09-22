@@ -3,7 +3,7 @@ import { CraftedInSand } from "@/components/home/CraftedInSand";
 import { FinalCta } from "@/components/home/FinalCta";
 import { FormsStage } from "@/components/home/FormsStage";
 import { LaunchHero } from "@/components/home/LaunchHero";
-import { MaterialDetail } from "@/components/home/MaterialDetail";
+import { MacroDetail } from "@/components/home/MacroDetail";
 import { SeeItOnYou } from "@/components/home/SeeItOnYou";
 import { SelectionRail } from "@/components/catalog/SelectionRail";
 import { catalog } from "@/lib/catalog";
@@ -23,22 +23,20 @@ export default function HomePage() {
   const mascot = internalMascotMedia(isInternalReview());
   return (
     <>
-      <LaunchHero frames={{ dir: ORBIT, count: 72, poster: `${ORBIT}/poster.jpg`, source: "Prototype product orbit · concept hardware · scroll to turn" }} />
+      <LaunchHero frames={{ dir: ORBIT, count: 72, poster: `${ORBIT}/poster.jpg` }} />
       <CraftedInSand still={`${FILM}/story-sand.jpg`} href="/collections/desert-eye" mascot={mascot} />
-      <MaterialDetail frame={`${ORBIT}/f-001.jpg`} />
+      <MacroDetail dir={ORBIT} />
       <AssemblySection product={featured} />
       <FormsStage product={featured} still={`${ORBIT}/f-001.jpg`} />
       <SeeItOnYou product={featured} />
       <section aria-labelledby="collection-heading" data-testid="collection-section" className="collection-section">
         <div className="mx-auto max-w-[120rem] px-6 sm:px-10 lg:px-16">
-          <p className="label-xs">07 / COLLECTION</p>
-          <h2 id="collection-heading" className="mt-3 font-display text-[clamp(2rem,3vw,3rem)] font-light uppercase leading-[1.05] tracking-[0.04em]">
-            View the collection
-          </h2>
+          <p className="label-xs">07 / COLLECTIONS</p>
+          <h2 id="collection-heading" className="sr-only">The collections</h2>
         </div>
         <SelectionRail products={products} concepts={site.concepts} />
       </section>
-      <FinalCta still={`${ORBIT}/f-060.jpg`} shopHref={`/product/${featured.slug}`} />
+      <FinalCta still={`${ORBIT}/f-060.jpg`} shopHref="/collections" />
     </>
   );
 }

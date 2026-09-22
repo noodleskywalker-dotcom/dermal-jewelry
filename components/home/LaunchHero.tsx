@@ -4,20 +4,17 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion, useScrollProgress } from "@/lib/motion/useScrollProgress";
 
-// The opening of the launch film: the piece, alone, filling the screen, turned by the page's own
-// scroll (sections 01 and 02 of the owner's flow, 22 September 2026). First only a name; as the
-// turn goes on, the headline and the two ways in. Frames are stills of the approved hero orbit,
-// so nothing plays by itself; the rear of the piece in them is conceptual, never a manufacturing
-// reference. With reduced motion the opening is a plain still with the same words. Nothing is
-// locked: the section is a few screens tall and scrolls past at once.
+// 01–02: the cinematic product hero and the 360° scroll experience, one pinned stage.
+// The piece, huge, fills the screen from the first frame; scrolling turns it through front, side,
+// rear, other side and front again (the approved orbit, 72 stills, one true turn, never ping-pong).
+// The words live in the corners at chosen points and never cover the piece. The rear the video
+// model imagined is concept imagery only. With reduced motion: one beauty frame and the words.
 
 export type ScrubFrames = {
   /** Folder of `f-001.jpg` … `f-NNN.jpg`. Data only, so a server component can pass it. */
   dir: string;
   count: number;
   poster: string;
-  /** Where the frames come from, for the small label on the stage. */
-  source: string;
 };
 
 const frameSrc = (frames: ScrubFrames, index: number) => `${frames.dir}/f-${String(index + 1).padStart(3, "0")}.jpg`;
@@ -27,22 +24,15 @@ export function LaunchHero({ frames }: { frames: ScrubFrames }) {
   return reduced ? <StillOpening frames={frames} /> : <ScrubOpening frames={frames} />;
 }
 
-function Name() {
+function HeroCopy() {
   return (
     <>
-      <p className="label-xs">01 / DESERT EYE</p>
-      <p className="mt-2 font-display text-[clamp(1.5rem,2.4vw,2.25rem)] font-light tracking-[0.06em]">DESERT EYE&nbsp;—&nbsp;LOVE</p>
-    </>
-  );
-}
-
-function Headline() {
-  return (
-    <>
-      <h1 id="landing-heading" className="font-display text-[clamp(2.75rem,6.4vw,6.25rem)] font-light uppercase leading-[0.96] tracking-[0.02em]">
+      <p className="label-xs">DERMAL</p>
+      <p className="mt-3 font-display text-[clamp(1.25rem,1.8vw,1.75rem)] font-light tracking-[0.08em]">DESERT EYE&nbsp;—&nbsp;LOVE</p>
+      <h1 id="landing-heading" className="mt-5 font-display text-[clamp(2rem,3.4vw,3.5rem)] font-light leading-[1.05] tracking-[0.02em]">
         Jewelry for the face you chose.
       </h1>
-      <div className="mt-8 flex flex-wrap gap-x-10 gap-y-2">
+      <div className="mt-6 flex flex-wrap gap-x-8 gap-y-1">
         <Link href="/face-studio" data-testid="cta-face" className="text-link">
           View on your face <span aria-hidden="true">↗</span>
         </Link>
@@ -56,11 +46,12 @@ function Headline() {
 
 function StillOpening({ frames }: { frames: ScrubFrames }) {
   return (
-    <section aria-labelledby="landing-heading" data-testid="scrub-hero" data-mode="still" className="launch-still mx-auto max-w-[120rem] px-6 pb-16 pt-6 sm:px-10 lg:px-16">
-      <Name />
+    <section aria-labelledby="landing-heading" data-testid="scrub-hero" data-mode="still" className="launch-still">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={frameSrc(frames, 0)} alt="DESERT EYE — LOVE, the completed piece" decoding="async" className="my-8 aspect-video w-full object-contain" />
-      <Headline />
+      <img src={frameSrc(frames, 0)} alt="DESERT EYE — LOVE, the completed piece" decoding="async" className="launch-still-media" />
+      <div className="launch-still-copy">
+        <HeroCopy />
+      </div>
     </section>
   );
 }
@@ -95,6 +86,7 @@ function ScrubOpening({ frames }: { frames: ScrubFrames }) {
   }, [frames]);
 
   // The scroll progress lives in --p on the section; the frame is read from it each animation frame.
+  // The first fifth of the travel holds the beauty frame with the words; the turn takes the rest.
   useEffect(() => {
     const el = section.current;
     if (!el) return;
@@ -115,7 +107,8 @@ function ScrubOpening({ frames }: { frames: ScrubFrames }) {
     const tick = () => {
       raf = 0;
       const p = Number(getComputedStyle(el).getPropertyValue("--p")) || 0;
-      const index = Math.min(frames.count - 1, Math.max(0, Math.round(p * (frames.count - 1))));
+      const turn = Math.min(1, Math.max(0, (p - 0.18) / 0.82));
+      const index = Math.min(frames.count - 1, Math.max(0, Math.round(turn * (frames.count - 1))));
       if (index !== last) {
         last = index;
         setFrame(index);
@@ -140,20 +133,25 @@ function ScrubOpening({ frames }: { frames: ScrubFrames }) {
   return (
     <section ref={section} aria-labelledby="landing-heading" data-testid="scrub-hero" data-mode="scrub" data-frame={frame} data-ready={complete} className="launch">
       <div className="launch-stage">
-        {/* The piece fills the stage. The first frame stands in until the sequence has arrived. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={frames.poster} alt="" aria-hidden="true" className={`launch-media transition-opacity duration-500 ${complete ? "opacity-0" : "opacity-100"}`} />
-        <canvas ref={canvas} data-testid="scrub-canvas" aria-label="DESERT EYE — LOVE, turned by scrolling" role="img" className={`launch-media transition-opacity duration-500 ${complete ? "opacity-100" : "opacity-0"}`} />
+        <img src={frames.poster} alt="" aria-hidden="true" className={`launch-media transition-opacity duration-700 ${complete ? "opacity-0" : "opacity-100"}`} />
+        <canvas ref={canvas} data-testid="scrub-canvas" aria-label="DESERT EYE — LOVE, turned by scrolling" role="img" className={`launch-media transition-opacity duration-700 ${complete ? "opacity-100" : "opacity-0"}`} />
 
-        {/* 01: the name alone. */}
-        <div className="launch-name" data-from="0" data-to="0.42">
-          <Name />
+        {/* 01: the hero words, at the start, in the lower left. */}
+        <div className="launch-copy launch-copy-hero" data-from="0" data-to="0.3">
+          <HeroCopy />
         </div>
-        {/* 02: the headline and the two ways in, as the turn goes on. */}
-        <div className="launch-copy" data-from="0.36" data-to="1">
-          <Headline />
-        </div>
-        <p className="launch-note label-xs text-ash">{frames.source}</p>
+        {/* 02: two words at chosen points of the turn, in the corners. */}
+        <p className="launch-copy launch-copy-mid font-display text-[clamp(1.75rem,3.2vw,3.25rem)] font-light uppercase leading-[1.05] tracking-[0.06em]" data-from="0.36" data-to="0.62">
+          Engineered
+          <br />
+          for the face.
+        </p>
+        <p className="launch-copy launch-copy-end" data-from="0.7" data-to="1">
+          <span className="font-display text-[clamp(1.5rem,2.4vw,2.25rem)] font-light tracking-[0.1em]">DESERT EYE</span>
+          <span className="label-xs mt-2 block">01 / 04</span>
+        </p>
+        <p className="launch-note label-xs text-ash">Prototype orbit · concept hardware · rear side conceptual · scroll to turn</p>
       </div>
     </section>
   );

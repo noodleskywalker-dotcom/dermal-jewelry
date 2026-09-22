@@ -76,6 +76,7 @@ test("nothing about the photo leaves the browser", async ({ page, baseURL }) => 
   const mark = requests.length;
 
   await mouseDrag(page, page.getByTestId("placed-item"), -40, 30);
+  await page.getByTestId("tool-scale").click();
   await page.getByTestId("scale").fill("20");
   await page.locator('[data-testid="studio-product"][data-product="sand-vortex"]').click();
   await page.getByTestId("add-look-to-bag").click();

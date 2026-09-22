@@ -4,42 +4,46 @@ import { site } from "@/lib/config/site";
 
 export const metadata: Metadata = { title: "About" };
 
+const ORBIT = "/media/hero-orbit/desert-eye-love";
+
+// A brand editorial page: the piece large, a few lines, the privacy facts. No founder story.
 export default function AboutPage() {
   return (
-    <div className="mx-auto max-w-3xl px-5 py-14 sm:px-8">
-      <p className="eyebrow">About</p>
-      <h1 className="mt-3 font-display text-5xl leading-[0.95] sm:text-7xl">Small pieces, chosen placement.</h1>
-      <div className="mt-10 space-y-6 text-base leading-relaxed text-ash">
-        <p>
-          {site.brand} started with a simple problem: distinctive anti-eyebrow jewelry was hard to find, and there was no
-          way to see a piece on your own face before choosing it.
-        </p>
-        <p>
-          So the store is built around a preview. Add a photo, pick a piece, move it where you wear it. You can also
-          just browse. A photo and an account are never required.
-        </p>
-      </div>
-
-      <section id="privacy" aria-labelledby="privacy-heading" className="mt-16 border-t border-line pt-10">
-        <h2 id="privacy-heading" className="font-display text-4xl">How the preview handles your photo</h2>
-        <ul className="mt-6 space-y-4 text-sm leading-relaxed text-ash">
-          <li>Your photo is opened by your browser and kept in this tab&rsquo;s memory only.</li>
-          <li>It is not uploaded, saved to your device by us, added to analytics or placed in a link.</li>
-          <li>Clear photo removes it from the Studio and from every product preview. A page reload also removes it.</li>
-          <li>The preview is a flat, approximate image. It does not measure your face or show real jewelry size.</li>
-          <li>It cannot tell you where a piercing can safely go. Ask a professional piercer.</li>
-        </ul>
+    <div className="about">
+      <section className="about-hero">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={`${ORBIT}/f-036.jpg`} alt="" aria-hidden="true" decoding="async" className="about-media" />
+        <div className="about-copy">
+          <p className="label-xs">{site.brand}</p>
+          <h1 className="mt-4 font-display text-[clamp(2.5rem,5.6vw,6rem)] font-light uppercase leading-[0.96] tracking-[0.04em]">
+            Small pieces.
+            <br />
+            Chosen placement.
+          </h1>
+        </div>
       </section>
 
-      <section aria-labelledby="status-heading" className="mt-16 border-t border-line pt-10">
-        <h2 id="status-heading" className="font-display text-4xl">Where things stand</h2>
-        <p className="mt-6 text-sm leading-relaxed text-ash">
-          This is a preview build. The four pieces are concepts with demo prices. Materials, dimensions and
-          compatibility are not verified, and checkout is disabled.
+      <section className="about-lines">
+        <p className="font-display text-[clamp(1.5rem,2.4vw,2.25rem)] font-light leading-[1.3]">
+          Facial jewelry, seen on your own face before you choose it.
+          <br />
+          Original designs beside anime-inspired ones. Never an official collaboration.
         </p>
-        <Link href="/face-studio" className="btn-solid mt-8">
-          Open Face Studio
+        <Link href="/face-studio" className="text-link mt-10">
+          Enter Face Studio <span aria-hidden="true">↗</span>
         </Link>
+      </section>
+
+      <section id="privacy" aria-labelledby="privacy-heading" className="about-facts">
+        <h2 id="privacy-heading" className="label-xs">Your photo</h2>
+        <ul className="mt-6 space-y-3 text-sm leading-relaxed text-ash">
+          <li>Opened by your browser and kept in this tab&rsquo;s memory only.</li>
+          <li>Never uploaded, saved by us, sent to analytics or put in a link.</li>
+          <li>Clear photo removes it everywhere. A reload removes it too.</li>
+          <li>The preview is flat and approximate: not a size, not a fitting, not piercing advice.</li>
+        </ul>
+        <h2 className="label-xs mt-12">Where things stand</h2>
+        <p className="mt-4 text-sm leading-relaxed text-ash">A preview. Demo prices. Prototype specifications; final production details pending. Nothing can be ordered yet.</p>
       </section>
     </div>
   );

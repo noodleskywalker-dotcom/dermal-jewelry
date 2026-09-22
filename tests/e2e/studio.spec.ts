@@ -58,11 +58,13 @@ test.describe("adjusting the jewelry", () => {
     expect(dragged.x).toBeLessThan(start.x - 0.05);
     expect(dragged.y).toBeGreaterThan(start.y + 0.03);
 
+    await page.getByTestId("tool-scale").click();
     await page.getByTestId("scale").fill("24");
     await expect(page.getByTestId("scale-value")).toHaveText("24.0%");
     const scaled = await relativeCentre(page, item);
     expect(scaled.widthRatio).toBeCloseTo(0.24, 2);
 
+    await page.getByTestId("tool-rotate").click();
     await page.getByTestId("rotation").fill("35");
     await expect(page.getByTestId("rotation-value")).toHaveText("35°");
     await expect(item).toHaveAttribute("style", /rotate\(35deg\)/);
@@ -132,7 +134,9 @@ test.describe("adjusting the jewelry", () => {
     const afterPair = await where();
     expect(afterPair.symbol.x - afterPair.gemstone.x).toBeCloseTo(afterSymbol.symbol.x - afterSymbol.gemstone.x, 3);
     expect(afterPair.symbol.x).toBeLessThan(afterSymbol.symbol.x - 0.03);
+    await page.getByTestId("tool-scale").click();
     await page.getByTestId("scale").fill("20");
+    await page.getByTestId("tool-rotate").click();
     await page.getByTestId("rotation").fill("15");
     await expect(page.getByTestId("placed-item")).toHaveAttribute("style", /rotate\(15deg\)/);
 

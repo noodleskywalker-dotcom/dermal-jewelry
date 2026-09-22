@@ -13,15 +13,12 @@ test.describe("landing page", () => {
     expect(paper).toBe("rgb(251, 250, 247)");
     await expect(page.locator("header[data-tone]")).toHaveAttribute("data-tone", "light");
 
-    // The first screen is the piece and its name; the two actions come as the turn goes on.
+    // The first screen is the piece, huge, with the name, the headline and the two ways in over its corner.
     const viewport = page.viewportSize()!;
     const hero = page.getByTestId("scrub-hero");
     const canvas = (await page.getByTestId("scrub-canvas").boundingBox())!;
-    expect(canvas.height).toBeGreaterThanOrEqual(viewport.height * 0.7);
-    await expect(hero.getByText("01 / DESERT EYE")).toBeVisible();
-    await expect(page.getByTestId("cta-face")).toBeHidden();
-    const box = (await hero.boundingBox())!;
-    await page.evaluate(([y]) => window.scrollTo(0, y), [box.y + (box.height - viewport.height) * 0.6]);
+    expect(canvas.height).toBeGreaterThanOrEqual(viewport.height * 0.9);
+    await expect(hero.getByText("DESERT EYE — LOVE")).toBeVisible();
     for (const id of ["cta-face", "cta-selection"]) {
       await expect(page.getByTestId(id)).toBeInViewport();
       const b = (await page.getByTestId(id).boundingBox())!;
@@ -41,7 +38,8 @@ test.describe("landing page", () => {
           return (s.position === "sticky" || s.position === "fixed") && el.getBoundingClientRect().height >= window.innerHeight * 0.85;
         }).map((el) => el.className),
     );
-    expect(pinned).toEqual(["launch-stage"]);
+    // Two subtle pinned moments only: the opening turn and the sand's slow push.
+    expect(pinned).toEqual(["launch-stage", "sand-frame"]);
     await page.mouse.move(200, 300);
     await page.mouse.wheel(0, 400);
     await expect.poll(() => page.evaluate(() => Math.round(window.scrollY))).toBe(400);
@@ -49,16 +47,10 @@ test.describe("landing page", () => {
   });
 
   test("the two actions lead to Face Studio and to the selection", async ({ page }) => {
-    // The actions arrive part-way through the opening turn.
-    const reveal = async () => {
-      await page.goto("/");
-      const box = (await page.getByTestId("scrub-hero").boundingBox())!;
-      await page.evaluate(([y]) => window.scrollTo(0, y), [box.y + (box.height - page.viewportSize()!.height) * 0.6]);
-    };
-    await reveal();
+    await page.goto("/");
     await page.getByTestId("cta-face").click();
     await expect(page).toHaveURL(/\/face-studio$/);
-    await reveal();
+    await page.goto("/");
     await page.getByTestId("cta-selection").click();
     await expect(page).toHaveURL(/\/collections$/);
     await expect(page.getByTestId("selection-slide")).toHaveCount(4);

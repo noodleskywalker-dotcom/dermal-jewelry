@@ -14,7 +14,7 @@ export default async function SelectionPage({ searchParams }: PageProps<"/collec
   const query = await searchParams;
   const internal = isInternalReview();
   return (
-    <div>
+    <div className="gallery">
       <h1 className="sr-only">The selection</h1>
       <SelectionRail products={catalog.listProducts()} concepts={site.concepts} initialSlug={first(query.family)} accentSrc={internalMascotMedia(internal)?.idle} />
       <nav aria-label="Collections" className="mx-auto flex max-w-[120rem] flex-wrap gap-x-8 border-t border-line px-6 py-5 sm:px-10 lg:px-16">

@@ -60,8 +60,8 @@ test.describe("prototype product art", () => {
     // The anti-eyebrow form opens on its product animation; the film is presentation, so the exact art
     // is checked on the placement head, and the assembly is checked on a form without a film.
     await page.goto("/product/desert-eye-love");
-    await expect(page.getByTestId("product-film")).toBeVisible();
-    await page.getByRole("tab", { name: "Placement preview" }).click();
+    await expect(page.getByTestId("pdp-beauty")).toBeVisible();
+    await page.getByRole("tab", { name: "Placement" }).click();
     await waitForArt(page);
     const placed = await inspect(page.getByTestId("placement-preview"));
     expect(placed.map((p) => p.component)).toEqual(["symbol", "gemstone"]);
