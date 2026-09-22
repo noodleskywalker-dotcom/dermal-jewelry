@@ -5,10 +5,8 @@ import { FormsStage } from "@/components/home/FormsStage";
 import { LaunchHero } from "@/components/home/LaunchHero";
 import { MacroDetail } from "@/components/home/MacroDetail";
 import { SeeItOnYou } from "@/components/home/SeeItOnYou";
-import { SelectionRail } from "@/components/catalog/SelectionRail";
+import { BrowseRail } from "@/components/catalog/BrowseRail";
 import { catalog } from "@/lib/catalog";
-import { site } from "@/lib/config/site";
-import { internalMascotMedia, isInternalReview } from "@/lib/story/registry";
 
 const ORBIT = "/media/hero-orbit/desert-eye-love";
 const FILM = "/media/product-animation/desert-eye-love";
@@ -20,11 +18,10 @@ const FILM = "/media/product-animation/desert-eye-love";
 export default function HomePage() {
   const products = catalog.listProducts();
   const featured = products[0];
-  const mascot = internalMascotMedia(isInternalReview());
   return (
     <>
       <LaunchHero frames={{ dir: ORBIT, count: 72, poster: `${ORBIT}/poster.jpg` }} />
-      <CraftedInSand still={`${FILM}/story-sand.jpg`} href="/collections/desert-eye" mascot={mascot} />
+      <CraftedInSand still={`${FILM}/story-sand.jpg`} href="/collections/desert-eye" />
       <MacroDetail dir={ORBIT} />
       <AssemblySection product={featured} />
       <FormsStage product={featured} still={`${ORBIT}/f-001.jpg`} />
@@ -34,7 +31,7 @@ export default function HomePage() {
           <p className="label-xs">07 / COLLECTIONS</p>
           <h2 id="collection-heading" className="sr-only">The collections</h2>
         </div>
-        <SelectionRail products={products} concepts={site.concepts} />
+        <BrowseRail products={products} />
       </section>
       <FinalCta still={`${ORBIT}/f-060.jpg`} shopHref="/collections" />
     </>

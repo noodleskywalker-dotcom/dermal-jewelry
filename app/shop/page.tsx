@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
-import { catalog, placements } from "@/lib/catalog";
+import { type BrowseFilter, catalog, matchesBrowse, placements } from "@/lib/catalog";
 import type { PlacementId } from "@/lib/catalog/types";
 
 export const metadata: Metadata = { title: "Shop" };
@@ -14,16 +14,20 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
   const params = await searchParams;
   const placementParam = first(params.placement);
   const placement = placements.find((p) => p.id === placementParam)?.id as PlacementId | undefined;
+  const browseParam = first(params.browse);
+  const browse = BROWSE.find((b) => b.id === browseParam)?.id;
   const query = (first(params.q) ?? "").trim().slice(0, 60);
 
   let products = placement ? catalog.listByPlacement(placement) : catalog.listProducts();
+  if (browse) products = products.filter((p) => matchesBrowse(p, browse));
   if (query) {
     const q = query.toLowerCase();
     products = products.filter((p) => `${p.title} ${p.summary}`.toLowerCase().includes(q));
   }
 
-  const hrefFor = (id?: PlacementId) => {
+  const hrefFor = (id?: PlacementId, by?: BrowseFilter) => {
     const sp = new URLSearchParams();
+    if (by) sp.set("browse", by);
     if (id) sp.set("placement", id);
     if (query) sp.set("q", query);
     const qs = sp.toString();
@@ -39,11 +43,21 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
         <nav aria-label="Filter by placement">
           <ul className="flex flex-wrap gap-x-6">
             <li>
-              <FilterLink href={hrefFor()} current={!placement}>All</FilterLink>
+              <FilterLink href={hrefFor()} current={!placement && !browse}>All</FilterLink>
             </li>
+            {BROWSE.filter((b) => b.id === "men" || b.id === "women").map((b) => (
+              <li key={b.id}>
+                <FilterLink href={hrefFor(undefined, b.id)} current={browse === b.id}>{b.label}</FilterLink>
+              </li>
+            ))}
             {placements.map((p) => (
               <li key={p.id}>
                 <FilterLink href={hrefFor(p.id)} current={placement === p.id}>{p.label}</FilterLink>
+              </li>
+            ))}
+            {BROWSE.filter((b) => b.id === "inspired" || b.id === "limited").map((b) => (
+              <li key={b.id}>
+                <FilterLink href={hrefFor(undefined, b.id)} current={browse === b.id}>{b.label}</FilterLink>
               </li>
             ))}
           </ul>
@@ -51,6 +65,7 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
 
         <form action="/shop" method="get" role="search" className="flex items-end gap-3">
           {placement && <input type="hidden" name="placement" value={placement} />}
+          {browse && <input type="hidden" name="browse" value={browse} />}
           <label htmlFor="shop-search" className="sr-only">Search pieces</label>
           <input
             id="shop-search"
@@ -75,7 +90,11 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
         <div className="py-24 text-center" data-testid="shop-empty">
           <p className="font-display text-3xl">No pieces here yet.</p>
           <p className="mt-3 text-sm text-ash">
-            {query ? `Nothing matches “${query}”.` : "This placement doesn’t have pieces in the preview."}
+            {query
+              ? `Nothing matches “${query}”.`
+              : browse === "limited"
+                ? "No limited edition has been announced."
+                : "This placement doesn’t have pieces in the preview."}
           </p>
           <Link href="/shop" className="btn-line mt-8">
             Show all pieces
@@ -85,6 +104,15 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
     </div>
   );
 }
+
+// Audience and line filters. Men and women both include pieces for everyone.
+const BROWSE: { id: BrowseFilter; label: string }[] = [
+  { id: "men", label: "Men" },
+  { id: "women", label: "Women" },
+  { id: "inspired", label: "Inspired" },
+  { id: "original", label: "Original" },
+  { id: "limited", label: "Limited edition" },
+];
 
 function FilterLink({ href, current, children }: { href: string; current: boolean; children: React.ReactNode }) {
   return (

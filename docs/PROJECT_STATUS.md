@@ -11,6 +11,23 @@ Milestone 1, the first vertical slice, is implemented and tested locally. The HY
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
 
+## Final master redesign (22 September 2026, no credits)
+
+Built, tested, pushed; **awaiting the owner's visual review**. Rollback tag `pre-redesign-2-c0aff80`.
+Review package: `references/review/2026-09-22-master/` (27 numbered captures and `walkthrough.webm`).
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Material hotspots (gemstone, bar, symbol) | tested | Owner's wording, "pending" for every unknown; keyboard and phone sheet. |
+| Film poster is the jewelry | tested | Creature only after Play. |
+| 360° rear note only at the rear | tested | |
+| Ways-in rail (7 worlds) | tested | Homepage and /collections. |
+| Audience and line taxonomy | tested | Data model and shop filters. All pieces unisex; no limited edition. |
+| Companion on every page | tested on the dev server | Lower right, same size everywhere; glance on hover; direct link off the homepage. |
+
+Placeholders: sections 03 and 04 still use stills until MEDIA 02; the orbit's rear is conceptual;
+men / women / limited are empty categories until the owner assigns pieces.
+
 ## Full visual redesign (22 September 2026, no credits)
 
 The visible site was rebuilt to a luxury-watch-launch standard; the engine was kept (see

@@ -6,7 +6,7 @@ const FAMILY = "/product/desert-eye-love";
 // The visually hidden radio is operated through its label, the way a customer does it.
 const chooseForm = (page: Page, formId: string) => page.locator("label", { has: page.getByTestId(`form-${formId}`) }).click();
 const tab = (page: Page, name: string) => page.getByRole("tab", { name });
-// The family page opens on "Piece". The concept reveal is one tab along.
+// The family page opens on "The piece". The concept reveal is one tab along.
 const gotoReveal = async (page: Page, url: string) => {
   await page.goto(url);
   await tab(page, "Concept reveal").click();

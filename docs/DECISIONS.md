@@ -2,6 +2,37 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-22 — Final master redesign: hotspots, worlds, taxonomy, a companion on every page
+
+The owner's final master prompt. Rollback tag: `pre-redesign-2-c0aff80`. No credits spent.
+
+- **Material hotspots on the piece** (`MaterialHotspots`). Three points on the beauty frame (gemstone,
+  bar, symbol) open an annotation with a fine leader line. Wording is the owner's; every unknown says
+  "pending" or "not yet confirmed": no purity, no grade number, no dimensions. Keyboard: each hotspot is
+  a button (Enter, Space); Escape or a click outside closes it; one open at a time. On a phone the note
+  is a sheet at the foot of the screen. The frame box reproduces the picture's cover crop without a
+  transform (a transformed ancestor would trap the fixed phone sheet), so the points stay on the parts.
+- **The film opens on the jewelry.** The Assembly poster is the finished piece; the creature appears
+  only once the customer presses Play. The sound control reads Unmute / Mute.
+- **360°** shows "Rear geometry conceptual" only while the rear faces the viewer.
+- **The ways in** (`BrowseRail`): seven gallery entries, each its own world — DESERT EYE (sand),
+  KIRI (ivory and chrome with a blade of light), LIMITED EDITION (dark, "None announced"), FULL
+  COLLECTION, MEN, WOMEN (both "Unisex pieces included"), TRY ON YOUR FACE. On the homepage and at the
+  top of /collections; the pieces rail follows it on /collections.
+- **Taxonomy in the data model.** `Product.audience` (men, women, unisex) and `Product.lines` (full,
+  inspired, original, signature, limited) with `matchesBrowse()`. Every demo piece is unisex and in the
+  full collection plus inspired or original by its origin. Nothing is assigned to men or women, and
+  nothing is a limited edition: those are the owner's calls. The shop filters (All, Men, Women, the
+  placements, Inspired, Limited edition) use them; a limited filter says "No limited edition has been
+  announced." No Shopify records were created.
+- **The companion on every page** (`GlobalMascot`): fixed in the lower right, small, the same size on
+  every page; idle beats as before; a hover is a one-second glance; on the homepage and /collections a
+  press runs the sand into DESERT EYE, elsewhere it simply opens it. The multiply blend is set on the
+  fixed box itself. Internal concept art: a build shows nothing there. He left the sand section and
+  the collection rail so there is only ever one.
+- **Macro views** are enlarged less (1.3–1.7×) so the 1080p source stays sharp.
+- **Mode name** "The piece" and a View piece ↗ link on each shop piece.
+
 ## 2026-09-22 — Full visual redesign: keep the engine, rebuild the body
 
 The owner rejected the visible site and ordered a full visual redesign to the class of a luxury-watch

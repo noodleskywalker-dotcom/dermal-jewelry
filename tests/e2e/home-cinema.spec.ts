@@ -86,7 +86,7 @@ test.describe("the opening", () => {
 });
 
 test.describe("the sections", () => {
-  test("crafted in sand: three words over the sand, and the companion lives there only", async ({ page }) => {
+  test("crafted in sand: three words over the sand, and the companion stays in his corner", async ({ page }) => {
     await page.goto("/");
     const story = page.getByTestId("story-section");
     await expect(story.getByRole("heading")).toHaveText("Crafted in sand");
@@ -94,11 +94,9 @@ test.describe("the sections", () => {
     await expect(story.getByTestId("sand-layer")).toHaveCount(1);
     const words = (await story.innerText()).toLowerCase();
     for (const banned of ["luxury", "timeless", "exquisite", "elevate", "ruby"]) expect(words).not.toContain(banned);
-    const mascots = page.getByTestId("mascot");
-    if ((await mascots.count()) > 0) {
-      await expect(mascots).toHaveCount(1);
-      await expect(story.getByTestId("mascot")).toHaveCount(1);
-    }
+    // The companion is global now, in his corner, never inside this section.
+    await expect(story.getByTestId("mascot")).toHaveCount(0);
+    expect(await page.getByTestId("mascot").count()).toBeLessThanOrEqual(1);
   });
 
   test("macro detail: full-width close views with four tiny callouts and no claims", async ({ page }) => {

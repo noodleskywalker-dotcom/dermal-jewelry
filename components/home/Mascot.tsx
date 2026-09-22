@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 import { pointOnContained } from "@/lib/story";
@@ -16,8 +17,10 @@ const ASPECT = 2528 / 1696;
 // video, and the page only ever swaps between them: a slow blink, a page turned, a rare tiny yawn, and a
 // gentle breathing movement. Pressing him makes him look up and raise a hand, then sand leaves his
 // gourd and becomes the transition into the selection. Internal concept art: a build never gets it.
-export function Mascot({ media, href, label }: { media: MascotMedia; href: string; label: string }) {
+export function Mascot({ media, href, label, transition = true }: { media: MascotMedia; href: string; label: string; /** false: a press simply opens the page, no sand. */ transition?: boolean }) {
   const reduced = useReducedMotion();
+  const router = useRouter();
+  const glance = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { play, busy } = useSandTransition();
   const [pose, setPose] = useState<Pose>("idle");
   const [called, setCalled] = useState(false);
@@ -58,8 +61,23 @@ export function Mascot({ media, href, label }: { media: MascotMedia; href: strin
     return () => clearTimeout(timer);
   }, [busy]);
 
+  // Hover: he pauses, glances up at the viewer for a moment, and goes back to his book. Never the transition.
+  const onHover = () => {
+    if (called || reduced) return;
+    setPose("look");
+    if (glance.current) clearTimeout(glance.current);
+    glance.current = setTimeout(() => setPose((p) => (p === "look" ? "idle" : p)), 1100);
+  };
+  useEffect(() => () => {
+    if (glance.current) clearTimeout(glance.current);
+  }, []);
+
   const press = () => {
     if (called) return;
+    if (!transition) {
+      router.push(href);
+      return;
+    }
     setCalled(true);
     setPose("look");
     // He looks up and raises his hand first; the sand answers a moment later.
@@ -76,7 +94,7 @@ export function Mascot({ media, href, label }: { media: MascotMedia; href: strin
   };
 
   return (
-    <button type="button" data-testid="mascot" data-pose={pose} aria-label={label} onClick={press} className="mascot group relative block w-full cursor-pointer appearance-none border-0 bg-transparent p-0">
+    <button type="button" data-testid="mascot" data-pose={pose} aria-label={label} onClick={press} onMouseEnter={onHover} onFocus={onHover} className="mascot group relative block w-full cursor-pointer appearance-none border-0 bg-transparent p-0">
       <span className="mascot-body relative block" style={{ aspectRatio: String(ASPECT) }}>
         {(Object.keys(media) as Pose[]).map((name) => (
           // Internal stills from the development server. They are never optimised, cached or deployed.

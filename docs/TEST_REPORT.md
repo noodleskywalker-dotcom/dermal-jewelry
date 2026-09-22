@@ -1,5 +1,27 @@
 # Test report
 
+## Final master redesign — 22 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors |
+| `npm run typecheck` | pass |
+| `npm test` | 77 of 77 pass |
+| `npm run test:e2e -- --workers=2` | 327 pass, 48 skipped, 0 fail |
+| `npm run build` | pass |
+
+New `tests/e2e/redesign.spec.ts`: hotspot annotations with the owner's wording and no invented grade,
+purity or size; one open at a time; Escape closes; keyboard Enter and Space; the film poster is the
+jewelry; the 360° rear note appears only at the rear; seven worlds in the browse rail with sand only on
+DESERT EYE, arrows and keys, neighbours in frame, no cards; shop filters for men, women, inspired and
+limited (empty with an honest note); the companion in the same corner and size on seven routes, a
+hover glance that never navigates, a direct link off the homepage. Rail and sand tests now scope to the
+pieces rail, since /collections opens on the ways in.
+
+Review package (local only): `references/review/2026-09-22-master/` — the owner's 27 numbered
+captures (desktop 01–21, mobile 22–27) and `walkthrough.webm`.
+
+
 ## Full visual redesign — 22 September 2026
 
 | Command | Result |

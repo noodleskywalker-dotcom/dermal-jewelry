@@ -11,6 +11,8 @@ export function OrbitViewer({ dir, count, title }: { dir: string; count: number;
   const drag = useRef<{ x: number; start: number } | null>(null);
   const src = (i: number) => `${dir}/f-${String(i + 1).padStart(3, "0")}.jpg`;
   const wrap = (i: number) => ((i % count) + count) % count;
+  // The rear faces the viewer through roughly the middle third of the turn.
+  const rear = index > count * 0.32 && index < count * 0.68;
 
   // The rest of the turn arrives in the background once the view is open.
   useEffect(() => {
@@ -64,9 +66,15 @@ export function OrbitViewer({ dir, count, title }: { dir: string; count: number;
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={src(index)} alt="" draggable={false} decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+        {/* The far side is what the video model imagined: say so while it faces the viewer, and only then. */}
+        {rear && (
+          <p className="label-xs absolute right-4 top-4 bg-paper/85 px-3 py-1.5" data-testid="orbit-rear-note">
+            Rear geometry conceptual
+          </p>
+        )}
       </div>
       <figcaption className="label-xs mt-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-1 text-ash">
-        <span>360° · prototype orbit · concept hardware · rear side conceptual</span>
+        <span>360° · prototype orbit · concept hardware · drag, arrow keys or slider</span>
         <label className="flex items-center gap-3">
           <span>Turn</span>
           <input type="range" min={0} max={count - 1} value={index} onChange={(e) => setIndex(Number(e.target.value))} data-testid="orbit-turn" className="studio-range w-36" aria-valuetext={`${Math.round((index / count) * 360)} degrees`} />

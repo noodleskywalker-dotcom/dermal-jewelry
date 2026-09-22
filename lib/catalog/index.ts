@@ -45,6 +45,14 @@ export function formOf(product: Product, formId?: string | null): ProductForm {
   return match ?? product.forms.find((f) => f.id === product.defaultFormId)!;
 }
 
+/** Browse filters beyond placement: audience and line. */
+export type BrowseFilter = "men" | "women" | "inspired" | "original" | "limited";
+
+export function matchesBrowse(product: Product, filter: BrowseFilter): boolean {
+  if (filter === "men" || filter === "women") return product.audience === filter || product.audience === "unisex";
+  return product.lines.includes(filter);
+}
+
 export function availableForms(product: Product): ProductForm[] {
   return product.forms.filter((f) => f.status === "available");
 }

@@ -119,6 +119,9 @@ export function ProductGrid({ products, className }: { products: Product[]; clas
               >
                 Try on<span className="sr-only"> {product.title}</span> <span aria-hidden="true">↗</span>
               </button>
+              <Link href={`/product/${product.slug}`} className="text-link ml-6 mt-1" data-testid="view-piece">
+                View piece<span className="sr-only"> {product.title}</span> <span aria-hidden="true">↗</span>
+              </Link>
 
               {open && hover && (
                 <div

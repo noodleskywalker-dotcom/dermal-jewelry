@@ -2,10 +2,10 @@
 // media (the approved orbit's stills), with four tiny callouts and nothing more. Enlarged crops of a
 // prototype render, not photographs; the macro fly-through (MEDIA 02) replaces them when it exists.
 const VIEWS = [
-  { id: "facet", label: "Facet", frame: 1, x: "20%", y: "58%", size: 190, span: "wide" },
-  { id: "openwork", label: "Openwork", frame: 1, x: "68%", y: "40%", size: 210, span: "half" },
-  { id: "edge", label: "Polished edge", frame: 22, x: "52%", y: "54%", size: 220, span: "half" },
-  { id: "surface", label: "Surface form", frame: 60, x: "48%", y: "62%", size: 160, span: "wide" },
+  { id: "facet", label: "Facet", frame: 1, x: "20%", y: "58%", size: 150, span: "wide" },
+  { id: "openwork", label: "Openwork", frame: 1, x: "68%", y: "40%", size: 170, span: "half" },
+  { id: "edge", label: "Polished edge", frame: 22, x: "52%", y: "54%", size: 170, span: "half" },
+  { id: "surface", label: "Surface form", frame: 60, x: "48%", y: "62%", size: 130, span: "wide" },
 ] as const;
 
 export function MacroDetail({ dir }: { dir: string }) {

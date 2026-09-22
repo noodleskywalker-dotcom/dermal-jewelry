@@ -75,11 +75,11 @@ function Stage({ product, film, formId, reduced }: Props & { reduced: boolean })
     <figure data-testid="product-film" data-state={state} data-form={formId} className="product-film w-full">
       <div className="product-film-stage relative w-full">
       <div className="product-film-frame relative w-full overflow-hidden bg-paper">
-        {/* The poster until the film is asked for; the completed piece once it is over. */}
+        {/* The finished jewelry before and after the film; the film itself begins only on a press. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={complete ? film.final : film.poster}
-          alt={complete ? `${product.title}, the completed piece` : `${product.title} product animation, first frame`}
+          alt={`${product.title}, the completed piece`}
           data-testid={complete ? "film-final" : "film-poster"}
           loading="lazy"
           decoding="async"
@@ -95,7 +95,6 @@ function Stage({ product, film, formId, reduced }: Props & { reduced: boolean })
             muted={muted}
             playsInline
             preload="auto"
-            poster={film.poster}
             onCanPlay={(e) => {
               if (state !== "loading") return;
               void e.currentTarget.play().then(
@@ -156,7 +155,7 @@ function Stage({ product, film, formId, reduced }: Props & { reduced: boolean })
           )}
           {state === "playing" && (
             <button type="button" data-testid="film-sound" aria-pressed={!muted} onClick={() => setMuted((m) => !m)} className="label-xs inline-flex min-h-11 items-center text-ink underline-offset-4 hover:underline">
-              {muted ? "Sound off" : "Sound on"}
+              {muted ? "Unmute" : "Mute"}
             </button>
           )}
           <span role="status" data-testid="film-status" className="text-ash">

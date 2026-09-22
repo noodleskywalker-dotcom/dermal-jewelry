@@ -16,7 +16,7 @@ export function PreviewNote() {
   }, []);
   if (pathname !== "/") return null;
   return (
-    <p aria-hidden={!top} className={`label-xs pointer-events-none fixed bottom-4 right-4 z-30 text-ash transition-opacity duration-700 lg:right-16 ${top ? "opacity-100" : "opacity-0"}`}>
+    <p aria-hidden={!top} className={`label-xs pointer-events-none fixed bottom-4 left-20 z-30 text-ash transition-opacity duration-700 lg:left-24 ${top ? "opacity-100" : "opacity-0"}`}>
       Preview · demo prices · no checkout
     </p>
   );

@@ -116,6 +116,14 @@ export type ProductFilm = {
   approvedForPublication: boolean;
 };
 
+/** Who a piece is presented to when browsing. A piece for everyone is "unisex" and shows under men and women. */
+export type Audience = "men" | "women" | "unisex";
+/**
+ * The lines a piece belongs to. "full" is the full collection; "inspired" and "original" follow the
+ * design's origin; "limited" is a limited edition and is only ever set when the owner announces one.
+ */
+export type Line = "full" | "inspired" | "original" | "signature" | "limited";
+
 export type Product = {
   /** Demo identifiers are prefixed "demo-" and must never be sent to Shopify. */
   id: string;
@@ -130,6 +138,10 @@ export type Product = {
   story: string;
   forms: ProductForm[];
   defaultFormId: FormId;
+  /** Browsing only. Defaults to unisex until the owner assigns a piece. */
+  audience: Audience;
+  /** Browsing only. Every piece is in the full collection; inspired or original follows its origin. */
+  lines: Line[];
   reveal: RevealConfig;
   /** An approved product animation for some forms. Without one, the drawn assembly is the product view. */
   film?: ProductFilm;

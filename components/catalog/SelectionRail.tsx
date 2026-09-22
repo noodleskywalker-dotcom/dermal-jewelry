@@ -234,7 +234,7 @@ export function SelectionRail({
         })}
       </ul>
 
-      <div className="pointer-events-none absolute inset-x-6 bottom-4 flex items-center justify-between sm:inset-x-10 lg:inset-x-16 lg:bottom-8" data-testid="selection-steps">
+      <div className="pointer-events-none absolute inset-x-6 bottom-4 z-10 flex items-center justify-between sm:inset-x-10 lg:inset-x-16 lg:bottom-8" data-testid="selection-steps">
         <button type="button" data-testid="selection-prev" onClick={() => step(-1)} disabled={index === 0} aria-label="Previous design" className="label-xs pointer-events-auto inline-flex min-h-11 items-center gap-2 disabled:opacity-25">
           <span aria-hidden="true">←</span> Prev
         </button>
@@ -250,7 +250,7 @@ export function SelectionRail({
 // chrome concept form stands instead: a slim tapered blade, drawn from vectors, with a single restrained
 // line of light along its edge. It is deliberately a sculpture of the idea, not a placeholder for a photo,
 // and never a product: no price, no forms, nothing to add to a bag.
-function ConceptBlade() {
+export function ConceptBlade() {
   return (
     <svg viewBox="0 0 200 200" className="selection-blade" aria-hidden="true" focusable="false">
       <defs>

@@ -42,18 +42,19 @@ test.describe("one light system on every page", () => {
 test.describe("sand belongs to DESERT EYE alone", () => {
   test("the sand layer sits on the DESERT EYE slide and nowhere else", async ({ page }) => {
     await page.goto("/collections");
-    await expect(page.getByTestId("sand-layer")).toHaveCount(1);
+    const pieces = page.getByTestId("selection-rail");
+    await expect(pieces.getByTestId("sand-layer")).toHaveCount(1);
     const host = page.locator('[data-testid="selection-slide"]', { has: page.getByTestId("sand-layer") });
     await expect(host).toHaveAttribute("data-product", "desert-eye-love");
     await expect
-      .poll(() => page.getByTestId("sand-layer").evaluate((el) => Number(getComputedStyle(el).opacity)))
+      .poll(() => pieces.getByTestId("sand-layer").evaluate((el) => Number(getComputedStyle(el).opacity)))
       .toBeGreaterThan(0.9);
 
     // The next family is centred: the sand has gone with its slide.
     await page.getByTestId("selection-next").click();
     await expect(current(page)).toHaveAttribute("data-product", "crimson-orbit");
     await expect
-      .poll(() => page.getByTestId("sand-layer").evaluate((el) => Number(getComputedStyle(el).opacity)))
+      .poll(() => pieces.getByTestId("sand-layer").evaluate((el) => Number(getComputedStyle(el).opacity)))
       .toBeLessThan(0.05);
 
     // Its own drawn assembly stands on the same sand; an original's product page does not.
@@ -92,7 +93,7 @@ test.describe("sand belongs to DESERT EYE alone", () => {
     expect(width - box.x).toBeGreaterThan(width * 0.08);
     expect(await next.evaluate((el) => Number(getComputedStyle(el).opacity))).toBeGreaterThan(0.3);
 
-    const sand = (await page.getByTestId("sand-layer").boundingBox())!;
+    const sand = (await page.getByTestId("selection-rail").getByTestId("sand-layer").boundingBox())!;
     const title = (await current(page).getByRole("heading").boundingBox())!;
     expect(sand.y + sand.height).toBeLessThanOrEqual(title.y + 1);
   });
@@ -103,6 +104,7 @@ test.describe("the selection is dragged with a mouse", () => {
     test.skip(isMobile, "Touch swipes the rail natively.");
     await page.goto("/collections");
     const rail = page.getByTestId("selection-rail");
+    await rail.scrollIntoViewIfNeeded();
     const box = (await rail.boundingBox())!;
     const y = box.y + box.height * 0.3;
     await page.mouse.move(box.x + box.width * 0.62, y);

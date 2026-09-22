@@ -59,8 +59,10 @@ test.describe("landing page", () => {
   test("the collection browser on the homepage holds every family, originals beside the anime-inspired one", async ({ page }) => {
     await page.goto("/");
     const section = page.getByTestId("collection-section");
-    await expect(section.getByTestId("selection-slide")).toHaveCount(4);
-    await expect(section.getByTestId("selection-concept")).toHaveCount(1);
+    // The ways in: the worlds (inspired, original, limited) beside the audiences and the full collection.
+    await expect(section.getByTestId("browse-entry")).toHaveCount(7);
+    await expect(section.locator('[data-entry="kiri"]')).toContainText("Original");
+    await expect(section.locator('[data-entry="desert-eye"]')).toContainText("Inspired");
     await expect(section.getByTestId("product-card")).toHaveCount(0);
   });
 });

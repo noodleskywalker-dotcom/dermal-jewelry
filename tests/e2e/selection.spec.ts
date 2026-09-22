@@ -83,7 +83,7 @@ test.describe("product page: the whole piece", () => {
   test("opens on the full piercing, assembled, with honest material notes", async ({ page }) => {
     // The anti-eyebrow form opens on its film; the nose form opens on the drawn piece with every note.
     await page.goto("/product/desert-eye-love?form=nose");
-    await expect(page.getByRole("tab", { name: "Piece" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("tab", { name: "The piece" })).toHaveAttribute("aria-selected", "true");
     const assembly = page.getByTestId("piece-assembly");
     await expect(assembly).toHaveAttribute("data-hardware", "stud");
     // Top, post and base are all there.

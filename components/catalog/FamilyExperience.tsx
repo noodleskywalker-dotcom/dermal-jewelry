@@ -8,6 +8,7 @@ import { AddToBagButton } from "@/components/cart/AddToBagButton";
 import { RevealPlayer, type ConceptStills } from "@/components/reveal/RevealPlayer";
 import { useFormChoice } from "@/components/studio/useFormChoice";
 import { motionOf } from "./FloatingObject";
+import { DESERT_EYE_HOTSPOTS, MaterialHotspots } from "./MaterialHotspots";
 import { OrbitViewer } from "./OrbitViewer";
 import { PieceAssembly } from "./PieceAssembly";
 import { ANCHORS, PlacementPreview } from "./PlacementPreview";
@@ -38,7 +39,7 @@ export function FamilyExperience({
   const anchor = ANCHORS[form.placement] ?? { x: 0.5, y: 0.5 };
 
   const views: { id: ViewId; label: string }[] = [
-    { id: "piece", label: "Piece" },
+    { id: "piece", label: "The piece" },
     ...(film ? [{ id: "orbit" as const, label: "360°" }, { id: "assembly" as const, label: "Assembly" }] : []),
     // The concept-reveal prototype is superseded on a filmed form; development fixtures can still open it.
     ...(product.reveal.mode !== "none" && (!film || fixtureSrc || concept) ? [{ id: "reveal" as const, label: "Concept reveal" }] : []),
@@ -72,9 +73,13 @@ export function FamilyExperience({
       <div className="pdp-stage-column">
         <div role="tabpanel" id={`panel-${current}`} aria-labelledby={`tab-${current}`} data-testid="pdp-stage" data-view={current} className="pdp-stage">
           {current === "piece" && film && (
-            // The beauty frame of the approved orbit: the finished piece, large. Never a schematic first.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={`${ORBIT}/f-001.jpg`} alt={`${product.title}, ${form.label} form, the completed piece`} data-testid="pdp-beauty" className="pdp-media" />
+            // The beauty frame of the approved orbit: the finished piece, large, never a schematic first.
+            // The frame box matches the picture's cover crop, so the hotspots stay on the parts.
+            <div className="pdp-cover">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`${ORBIT}/f-001.jpg`} alt={`${product.title}, ${form.label} form, the completed piece`} data-testid="pdp-beauty" className="h-full w-full" />
+              <MaterialHotspots spots={DESERT_EYE_HOTSPOTS} />
+            </div>
           )}
           {current === "piece" && !film && <PieceAssembly key={product.id} product={product} formId={form.id} sand={motionOf(product, form.id) === "sand"} />}
           {current === "orbit" && film && <OrbitViewer dir={ORBIT} count={72} title={product.title} />}

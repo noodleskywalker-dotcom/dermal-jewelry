@@ -3,10 +3,11 @@ import { Cormorant_Garamond, Geist, Geist_Mono } from "next/font/google";
 import { BagDrawer } from "@/components/cart/BagDrawer";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { GlobalMascot } from "@/components/layout/GlobalMascot";
 import { PreviewNote } from "@/components/layout/PreviewNote";
 import { StudioProvider } from "@/components/studio/StudioProvider";
 import { SandTransitionProvider } from "@/components/transition/SandTransition";
-import { internalSandSource, isInternalReview } from "@/lib/story/registry";
+import { internalMascotMedia, internalSandSource, isInternalReview } from "@/lib/story/registry";
 import { site } from "@/lib/config/site";
 import "./globals.css";
 
@@ -41,7 +42,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-full flex-col" data-mascot={isInternalReview() ? "true" : undefined}>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-ivory focus:px-4 focus:py-2 focus:text-ink"
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Footer />
             <BagDrawer />
             <PreviewNote />
+            <GlobalMascot media={internalMascotMedia(isInternalReview())} />
           </SandTransitionProvider>
         </StudioProvider>
       </body>

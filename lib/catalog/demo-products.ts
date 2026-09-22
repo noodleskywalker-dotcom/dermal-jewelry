@@ -44,12 +44,16 @@ function pendingForm(id: ProductForm["id"], label: string, placement: ProductFor
   };
 }
 
-type FamilyInput = Omit<Product, "isDemo" | "currency" | "placements" | "demoPrice" | "packageContents" | "components" | "defaultScale" | "defaultRotation">;
+type FamilyInput = Omit<Product, "isDemo" | "currency" | "placements" | "demoPrice" | "packageContents" | "components" | "defaultScale" | "defaultRotation" | "audience" | "lines"> &
+  Partial<Pick<Product, "audience" | "lines">>;
 
 function family(input: FamilyInput): Product {
   const base = input.forms.find((f) => f.id === input.defaultFormId)!;
   return {
     ...input,
+    // Nothing has been assigned to men or women, and nothing is a limited edition: those are the owner's calls.
+    audience: input.audience ?? "unisex",
+    lines: input.lines ?? ["full", input.origin === "anime-inspired" ? "inspired" : "original"],
     isDemo: true,
     currency: "QAR",
     placements: input.forms.filter((f) => f.status === "available").map((f) => f.placement),
@@ -166,7 +170,8 @@ export const demoProducts: Product[] = [
         { src: "/media/product-animation/desert-eye-love/film.webm", type: "video/webm" },
         { src: "/media/product-animation/desert-eye-love/film.mp4", type: "video/mp4" },
       ],
-      poster: "/media/product-animation/desert-eye-love/poster.jpg",
+      // The jewelry, not the creature: the film's first frame appears only once it plays.
+      poster: "/media/product-animation/desert-eye-love/final.jpg",
       final: "/media/product-animation/desert-eye-love/final.jpg",
       durationSeconds: 8.05,
       captions: [
