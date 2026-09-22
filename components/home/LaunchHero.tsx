@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion, useScrollProgress } from "@/lib/motion/useScrollProgress";
 
@@ -24,33 +23,13 @@ export function LaunchHero({ frames }: { frames: ScrubFrames }) {
   return reduced ? <StillOpening frames={frames} /> : <ScrubOpening frames={frames} />;
 }
 
-function HeroCopy() {
-  return (
-    <>
-      <p className="label-xs">DERMAL</p>
-      <p className="mt-3 font-display text-[clamp(1.25rem,1.8vw,1.75rem)] font-light tracking-[0.08em]">DESERT EYE&nbsp;—&nbsp;LOVE</p>
-      <h1 id="landing-heading" className="mt-5 font-display text-[clamp(2rem,3.4vw,3.5rem)] font-light leading-[1.05] tracking-[0.02em]">
-        Jewelry for the face you chose.
-      </h1>
-      <div className="mt-6 flex flex-wrap gap-x-8 gap-y-1">
-        <Link href="/face-studio" data-testid="cta-face" className="text-link">
-          View on your face <span aria-hidden="true">↗</span>
-        </Link>
-        <Link href="/collections" data-testid="cta-selection" className="text-link">
-          View selection <span aria-hidden="true">↗</span>
-        </Link>
-      </div>
-    </>
-  );
-}
-
 function StillOpening({ frames }: { frames: ScrubFrames }) {
   return (
-    <section aria-labelledby="landing-heading" data-testid="scrub-hero" data-mode="still" className="launch-still">
+    <section aria-label="The piece, turned" data-testid="scrub-hero" data-mode="still" className="launch-still">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={frameSrc(frames, 0)} alt="DESERT EYE — LOVE, the completed piece" decoding="async" className="launch-still-media" />
       <div className="launch-still-copy">
-        <HeroCopy />
+        <p className="label-xs">01 / The piece</p>
       </div>
     </section>
   );
@@ -131,7 +110,7 @@ function ScrubOpening({ frames }: { frames: ScrubFrames }) {
   const complete = ready >= frames.count;
 
   return (
-    <section ref={section} aria-labelledby="landing-heading" data-testid="scrub-hero" data-mode="scrub" data-frame={frame} data-ready={complete} className="launch">
+    <section ref={section} aria-label="The piece, turned by scrolling" data-testid="scrub-hero" data-mode="scrub" data-frame={frame} data-ready={complete} className="launch">
       <div className="launch-stage">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={frames.poster} alt="" aria-hidden="true" className={`launch-media transition-opacity duration-700 ${complete ? "opacity-0" : "opacity-100"}`} />
@@ -139,7 +118,8 @@ function ScrubOpening({ frames }: { frames: ScrubFrames }) {
 
         {/* 01: the hero words, at the start, in the lower left. */}
         <div className="launch-copy launch-copy-hero" data-from="0" data-to="0.3">
-          <HeroCopy />
+          <p className="label-xs">01 / The piece</p>
+          <p className="mt-4 font-display text-[clamp(1.75rem,3vw,3rem)] font-light leading-[1.05]">Turn it in the light.</p>
         </div>
         {/* 02: two words at chosen points of the turn, in the corners. */}
         <p className="launch-copy launch-copy-mid font-display text-[clamp(1.75rem,3.2vw,3.25rem)] font-light uppercase leading-[1.05] tracking-[0.06em]" data-from="0.36" data-to="0.62">

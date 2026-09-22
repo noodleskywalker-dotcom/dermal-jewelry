@@ -1,5 +1,27 @@
 # Test report
 
+## Cinematic remake — 22 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors |
+| `npm run typecheck` | pass |
+| `npm test` | 77 of 77 pass |
+| `npx playwright test --workers=2` | 341 pass, 49 skipped, 3 fail on the first run; all 3 pass on rerun after one fix (below) |
+| `npm run build` | pass |
+
+The first full run found a real bug: in development React runs effects twice, a second `load()`
+aborted the first `play()`, and the opening shot showed "Play" as if autoplay had been refused. Only a
+`NotAllowedError` now counts as paused. The third failure (WebKit story beats timing) passed alone and
+is load-related. `home-cinema.spec.ts` was rewritten for the new sections: the opening shot (muted loop,
+pause control, reduced-motion still), the turn, the world, the companion (honest line, link, corner
+companion steps aside), the macro push-in (callouts in order, frames walk backwards), the close views
+and the piece story (safe wording, banned claims). The homepage load hang in WebKit was fixed by
+attaching video sources after hydration. The test WebKit build has no video decoder, so its opening-shot
+playback test is skipped.
+
+Review package (local only): `references/review/2026-09-22-cinematic-remake/`.
+
 ## Final master redesign — 22 September 2026
 
 | Command | Result |

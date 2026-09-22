@@ -11,6 +11,27 @@ Milestone 1, the first vertical slice, is implemented and tested locally. The HY
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
 
+## Cinematic remake (22 September 2026, about 313 credits)
+
+Built and tested; **awaiting the owner's visual review**. Rollback: commit `4305f8b` (the final master
+redesign). Review package: `references/review/2026-09-22-cinematic-remake/` (desktop and mobile
+captures of every new section, `video/walkthrough-desktop.webm`, `video/walkthrough-mobile.webm`).
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Opening shot (muted ambient loop, pause control, poster first) | tested | Generated from the exact approved frame; still with reduced motion. |
+| The turn (72 frames from the 4k orbit) | tested | Now "01 / The piece"; the headline moved to the opening shot. |
+| The world (golden-hour dunes loop, three words) | tested | No character in the video. |
+| The companion (the small reader on a dune) | tested | Full-bleed on wide screens, picture then words on a phone; corner companion steps aside while he is on screen. |
+| Macro scrub (pinned push into the stone, four callouts) | tested | 1080p frames; the 4k macro upscale hung and was stopped. |
+| Close views (four crops of the 4k frame) | tested | Sharp at full size. |
+| The piece (meaning and safe material wording) | tested | Symbol, stone and metal notes use the owner's wording. |
+
+Limits: the hero clip frames the piece small, so CSS enlarges it; the orbit's rear stays conceptual;
+character video remains blocked by the platform and was not attempted; the Gaara art is internal
+concept material pending a rights review. The test WebKit build has no video decoder, so WebKit tests
+see the poster.
+
 ## Final master redesign (22 September 2026, no credits)
 
 Built, tested, pushed; **awaiting the owner's visual review**. Rollback tag `pre-redesign-2-c0aff80`.

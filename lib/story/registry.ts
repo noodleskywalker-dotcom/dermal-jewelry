@@ -52,6 +52,11 @@ export function internalMascotMedia(internal: boolean): MascotMedia | null {
   return { idle: at("idle"), blink: at("blink"), yawn: at("yawn"), page: at("page"), look: at("look") };
 }
 
+/** The companion still for the homepage world. Development server only; a build leaves the section out. */
+export function internalCompanionStill(internal: boolean): string | undefined {
+  return internal ? "/api/dev-concept/companion-dune" : undefined;
+}
+
 /** The sand clip for page transitions. Development server only, like the rest of the internal media. */
 export function internalSandSource(internal: boolean): string | undefined {
   return internal ? "/api/dev-concept/sandfx" : undefined;

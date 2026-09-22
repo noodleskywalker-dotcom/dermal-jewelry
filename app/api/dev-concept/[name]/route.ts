@@ -18,6 +18,8 @@ const FILES: Record<string, string[]> = {
   "chibi-yawn": ["generated", "chibi", "03-yawn.png"],
   "chibi-page": ["generated", "chibi", "04-page.png"],
   "chibi-look": ["generated", "chibi", "05-look.png"],
+  // The small reader on a dune, for the homepage companion section (22 September 2026).
+  "companion-dune": ["generated", "cinema", "gaara-dune.jpg"],
   // Generic sand effect on blue. It contains no character.
   sandfx: ["generated", "stage2", "07-sand-only-a.mp4"],
 };

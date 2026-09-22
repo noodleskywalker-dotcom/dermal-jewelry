@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import type { MascotMedia } from "@/lib/story/registry";
 import { Mascot } from "@/components/home/Mascot";
 
@@ -11,10 +12,30 @@ import { Mascot } from "@/components/home/Mascot";
 // server has him, and a build shows nothing here.
 export function GlobalMascot({ media }: { media: MascotMedia | null }) {
   const pathname = usePathname();
+  // He steps aside over the dark opening and while his large self is on screen in the companion section.
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    const read = () => {
+      const covered = ["cinema-hero", "companion-section"].some((id) => {
+        const el = document.querySelector(`[data-testid="${id}"]`);
+        if (!el) return false;
+        const r = el.getBoundingClientRect();
+        return r.top < window.innerHeight * 0.6 && r.bottom > window.innerHeight * 0.4;
+      });
+      setHidden(covered);
+    };
+    read();
+    window.addEventListener("scroll", read, { passive: true });
+    window.addEventListener("resize", read);
+    return () => {
+      window.removeEventListener("scroll", read);
+      window.removeEventListener("resize", read);
+    };
+  }, [pathname]);
   if (!media) return null;
   const sand = pathname === "/" || pathname === "/collections";
   return (
-    <div className="global-mascot" data-testid="global-mascot">
+    <div className="global-mascot" data-testid="global-mascot" data-hidden={hidden} aria-hidden={hidden || undefined}>
       <Mascot media={media} href="/collections?family=desert-eye-love" label="Wake him and open DESERT EYE" transition={sand} />
     </div>
   );

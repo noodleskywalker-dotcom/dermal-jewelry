@@ -13,11 +13,11 @@ test.describe("landing page", () => {
     expect(paper).toBe("rgb(251, 250, 247)");
     await expect(page.locator("header[data-tone]")).toHaveAttribute("data-tone", "light");
 
-    // The first screen is the piece, huge, with the name, the headline and the two ways in over its corner.
+    // The first screen is the piece in low light, full-bleed, with the name, the headline and the two ways in.
     const viewport = page.viewportSize()!;
-    const hero = page.getByTestId("scrub-hero");
-    const canvas = (await page.getByTestId("scrub-canvas").boundingBox())!;
-    expect(canvas.height).toBeGreaterThanOrEqual(viewport.height * 0.9);
+    const hero = page.getByTestId("cinema-hero");
+    const shot = (await hero.boundingBox())!;
+    expect(shot.height).toBeGreaterThanOrEqual(viewport.height * 0.95);
     await expect(hero.getByText("DESERT EYE — LOVE")).toBeVisible();
     for (const id of ["cta-face", "cta-selection"]) {
       await expect(page.getByTestId(id)).toBeInViewport();
@@ -29,17 +29,18 @@ test.describe("landing page", () => {
     // No button rectangles: the ways in are text links.
     expect(await page.getByTestId("cta-face").evaluate((el) => getComputedStyle(el).backgroundColor)).toMatch(/rgba\(0, 0, 0, 0\)|transparent/);
 
-    // One pinned stage only, the opening (the owner's flow of 22 September 2026), and the wheel moves the page one-to-one.
+    // The pinned moments of the cinematic remake (22 September 2026): the turn, the dunes, the companion on
+    // a wide screen, and the push into the stone. Each is a sticky stage in normal scroll; nothing hijacks the wheel.
     await page.evaluate(() => window.scrollTo(0, 0));
     const pinned = await page.evaluate(
       () =>
         [...document.querySelectorAll("main *")].filter((el) => {
           const s = getComputedStyle(el);
           return (s.position === "sticky" || s.position === "fixed") && el.getBoundingClientRect().height >= window.innerHeight * 0.85;
-        }).map((el) => el.className),
+        }).map((el) => el.className.split(" ")[0]),
     );
-    // Two subtle pinned moments only: the opening turn and the sand's slow push.
-    expect(pinned).toEqual(["launch-stage", "sand-frame"]);
+    const wide = viewport.width >= 768;
+    expect(pinned).toEqual(wide ? ["launch-stage", "world-frame", "companion-frame", "macro-stage"] : ["launch-stage", "world-frame", "macro-stage"]);
     await page.mouse.move(200, 300);
     await page.mouse.wheel(0, 400);
     await expect.poll(() => page.evaluate(() => Math.round(window.scrollY))).toBe(400);
@@ -73,6 +74,9 @@ test.describe("homepage mascot (internal concept art, development server only)",
     test.skip((await page.getByTestId("mascot").count()) === 0, "internal mascot art is not on this machine");
     // Wait until the page is interactive: his pictures are in, and his first idle beat has been scheduled.
     await page.waitForFunction(() => [...document.querySelectorAll<HTMLImageElement>('[data-testid="mascot"] img')].every((i) => i.complete && i.naturalWidth > 0));
+    // He steps aside over the dark opening shot, so the page is taken past it first.
+    await page.getByTestId("forms-section").evaluate((el) => el.scrollIntoView());
+    await expect(page.getByTestId("global-mascot")).toHaveAttribute("data-hidden", "false");
     await page.waitForTimeout(400);
   });
 
@@ -152,6 +156,7 @@ test.describe("homepage mascot (internal concept art, development server only)",
   test("with reduced motion he holds still and the press is simply a link", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
+    await page.getByTestId("forms-section").evaluate((el) => el.scrollIntoView());
     const mascot = page.getByTestId("mascot");
     await page.waitForTimeout(2500);
     await expect(mascot).toHaveAttribute("data-pose", "idle");

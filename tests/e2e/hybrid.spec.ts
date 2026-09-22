@@ -14,10 +14,24 @@ test.describe("one light system on every page", () => {
       const header = page.locator("header[data-tone]").first();
       await expect(header).toHaveAttribute("data-tone", "light");
       // Near-black words on the bar, never ivory on a dark bar.
-      const colour = await header.getByRole("link", { name: "DERMAL home" }).evaluate((el) => getComputedStyle(el).color);
-      expect(colour).toBe("rgb(12, 12, 13)");
+      // The homepage opens on the dark cinema hero with ivory words; past it, the bar is the paper bar.
+      if (route === "/") {
+        await page.evaluate(() => window.scrollTo(0, window.innerHeight * 1.5));
+        await expect(header).toHaveAttribute("data-scrolled", "true");
+      }
+      // The colour eases over a short transition, so it is polled rather than read once.
+      const home = header.getByRole("link", { name: "DERMAL home" });
+      await expect.poll(() => home.evaluate((el) => getComputedStyle(el).color)).toBe("rgb(12, 12, 13)");
     });
   }
+
+  test("the homepage opens dark, with ivory words on the bar over the hero", async ({ page }) => {
+    await page.goto("/");
+    const header = page.locator("header[data-tone]").first();
+    await expect(header).toHaveAttribute("data-scrolled", "false");
+    const colour = await header.getByRole("link", { name: "DERMAL home" }).evaluate((el) => getComputedStyle(el).color);
+    expect(colour).toBe("rgb(251, 250, 247)");
+  });
 
   test("the shop stands its pieces on the paper: no tinted tiles and no boxed filters", async ({ page }) => {
     await page.goto("/shop");

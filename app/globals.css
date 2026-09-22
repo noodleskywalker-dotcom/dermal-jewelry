@@ -2463,3 +2463,398 @@ body[data-mascot] :is([data-testid="selection-steps"], [data-testid="browse-step
     display: none;
   }
 }
+
+/* ───────── Cinema: the homepage as a short film ─────────
+   Dark where the media asks for it, ivory in between. Slow, controlled motion only. */
+
+/* 01 · the opening shot */
+.cinema-hero {
+  position: relative;
+  height: 100svh;
+  margin-top: -4rem;
+  overflow: clip;
+  background: #0d0b09;
+  color: var(--color-ivory);
+}
+.cinema-hero-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 54%;
+  /* The piece sits small in the source frame: bring it forward, and to the right of the words. */
+  transform: translateX(9%) scale(1.42);
+  transform-origin: 50% 56%;
+  animation: cinema-breathe 18s ease-in-out infinite alternate;
+}
+@keyframes cinema-breathe {
+  from {
+    transform: translateX(9%) scale(1.42);
+  }
+  to {
+    transform: translateX(9%) scale(1.49);
+  }
+}
+.cinema-hero-veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgb(13 11 9 / 0.85) 0%, rgb(13 11 9 / 0.2) 42%, transparent 60%),
+    linear-gradient(to right, rgb(13 11 9 / 0.55) 0%, transparent 45%);
+}
+.cinema-hero-copy {
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 9svh;
+  max-width: 34rem;
+  animation: cinema-rise 1.4s 0.3s var(--ease-editorial) both;
+}
+.cinema-hero .text-link {
+  color: var(--color-ivory);
+}
+.cinema-hero-pause {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 2rem;
+  min-height: 44px;
+  padding: 0 0.5rem;
+  color: rgb(251 250 247 / 0.7);
+}
+.cinema-hero-pause:hover {
+  color: var(--color-ivory);
+}
+.cinema-hero-scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  color: rgb(251 250 247 / 0.55);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+.cinema-hero-scroll::after {
+  content: "";
+  width: 1px;
+  height: 2.25rem;
+  background: currentColor;
+  transform-origin: 50% 0;
+  animation: story-cue 2.4s var(--ease-editorial) infinite;
+}
+@keyframes cinema-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (min-width: 1024px) {
+  .cinema-hero-copy {
+    left: 4rem;
+    bottom: 12svh;
+  }
+  .cinema-hero-pause {
+    right: 10rem;
+  }
+}
+/* A phone: the pause control rises above the preview notice, and the scroll cue steps aside. */
+@media (max-width: 1023px) {
+  .cinema-hero-scroll {
+    display: none;
+  }
+  .cinema-hero-pause {
+    top: 5rem;
+    bottom: auto;
+  }
+}
+/* A tall screen: the whole frame, contained in the upper half and enlarged so the piece spans the width. */
+@media (max-aspect-ratio: 4/5) {
+  .cinema-hero-media {
+    object-fit: contain;
+    object-position: 50% 30%;
+    transform: scale(1.75);
+    transform-origin: 50% 30%;
+    animation: none;
+  }
+}
+/* The bar floats over the dark opening in ivory until the page moves. */
+body:has(.cinema-hero) header[data-scrolled="false"] {
+  color: var(--color-ivory);
+}
+body:has(.cinema-hero) header[data-scrolled="false"] a[aria-label$="home"] {
+  color: var(--color-ivory);
+}
+
+/* 03 · the world */
+.world {
+  position: relative;
+  height: 150svh;
+  --p: 0;
+}
+.world-frame {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+  background: #b89a6e;
+  color: var(--color-ivory);
+}
+.world-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(calc(1.04 + var(--p) * 0.14));
+}
+.world-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgb(20 14 8 / 0.15) 0%, rgb(20 14 8 / 0.05) 40%, rgb(20 14 8 / 0.55) 100%);
+}
+.world-copy {
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 12svh;
+  opacity: clamp(0, var(--p) * 4, 1);
+  transform: translateY(calc((1 - clamp(0, var(--p) * 4, 1)) * 30px));
+}
+.world-words span {
+  display: block;
+  opacity: clamp(0, (var(--p) - 0.2) * 5, 1);
+}
+.world-words span:nth-child(2) {
+  opacity: clamp(0, (var(--p) - 0.32) * 5, 1);
+}
+.world-words span:nth-child(3) {
+  opacity: clamp(0, (var(--p) - 0.44) * 5, 1);
+}
+@media (min-width: 1024px) {
+  .world-copy {
+    left: 4rem;
+  }
+}
+.companion {
+  position: relative;
+  height: 140svh;
+  --p: 0;
+}
+.companion-frame {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+  background: #e9dccb;
+}
+.companion-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% 60%;
+  transform: scale(calc(1.18 - var(--p) * 0.14));
+  transform-origin: 70% 70%;
+}
+.companion-copy {
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  top: 16svh;
+  max-width: 30rem;
+  color: #2a2017;
+  opacity: clamp(0, (var(--p) - 0.05) * 4, 1);
+}
+@media (min-width: 1024px) {
+  .companion-copy {
+    left: 4rem;
+    top: 20svh;
+  }
+}
+/* On a phone the picture comes first, close on him, and the words follow on the page. */
+@media (max-width: 767px) {
+  .companion {
+    height: auto;
+  }
+  .companion-frame {
+    position: relative;
+    height: auto;
+    background: var(--color-paper);
+  }
+  .companion-media {
+    position: relative;
+    display: block;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-position: 74% 72%;
+    transform: none;
+  }
+  .companion-copy {
+    position: static;
+    padding: 2.5rem 1.5rem 4rem;
+    max-width: none;
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .world,
+  .companion {
+    height: auto;
+  }
+  .world-frame,
+  .companion-frame {
+    position: relative;
+  }
+  .world-copy,
+  .world-words span,
+  .companion-copy {
+    opacity: 1;
+    transform: none;
+  }
+  .world-media,
+  .companion-media,
+  .cinema-hero-media {
+    transform: none;
+    animation: none;
+  }
+}
+
+/* 04 · into the stone */
+.macro-scrub {
+  position: relative;
+  height: 300svh;
+  --p: 0;
+}
+.macro-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+  background: #cfcac2;
+}
+.macro-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.macro-title {
+  position: absolute;
+  left: 1.5rem;
+  top: 5.5rem;
+}
+.macro-stage .macro-note {
+  position: absolute;
+  left: 1.5rem;
+  top: 8.5rem;
+  color: rgb(12 12 13 / 0.6);
+}
+.macro-callout-live {
+  position: absolute;
+  font-size: clamp(1.75rem, 3.6vw, 3.5rem);
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.9s var(--ease-editorial), transform 0.9s var(--ease-editorial);
+  pointer-events: none;
+}
+.macro-callout-live[data-on="true"] {
+  opacity: 1;
+  transform: none;
+}
+@media (min-width: 1024px) {
+  .macro-title {
+    left: 4rem;
+    top: 6.5rem;
+  }
+  .macro-stage .macro-note {
+    left: auto;
+    right: 4rem;
+    top: 6.5rem;
+  }
+}
+.macro-still {
+  height: 80svh;
+  overflow: hidden;
+}
+.macro-view-half {
+  aspect-ratio: 4 / 3;
+}
+
+/* The piece, and what it means */
+.piece-story {
+  display: grid;
+  gap: 2.5rem;
+  padding: 6rem 1.5rem;
+}
+.piece-story-media {
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #d9d5cf;
+}
+.piece-story-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 55%;
+  transform: scale(1.35);
+}
+.piece-story-notes {
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--color-line);
+}
+.piece-story-notes > div {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--color-line);
+  font-size: 0.9rem;
+}
+@media (min-width: 1024px) {
+  .piece-story {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: 5rem;
+    padding: 9rem 4rem;
+    align-items: center;
+  }
+}
+
+/* The assembly film, in the dark */
+.assembly-section {
+  background: #0d0b09;
+  color: var(--color-ivory);
+}
+.assembly-section .label-xs.text-ash,
+.assembly-section .text-ash {
+  color: rgb(251 250 247 / 0.6);
+}
+.assembly-section .product-film-frame {
+  background: #0d0b09;
+}
+.assembly-section .text-link,
+.assembly-section button {
+  color: var(--color-ivory);
+}
+
+/* The corner companion steps aside while the big one is on screen, and over the dark opening. */
+.global-mascot {
+  transition: opacity 0.7s var(--ease-editorial);
+}
+.global-mascot[data-hidden="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+.global-mascot[data-hidden="true"] .mascot {
+  pointer-events: none;
+}

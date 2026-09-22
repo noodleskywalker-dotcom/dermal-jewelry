@@ -1,24 +1,23 @@
-// 04: MACRO DETAIL. Full-width close views of the piece, composed from the strongest existing
-// media (the approved orbit's stills), with four tiny callouts and nothing more. Enlarged crops of a
-// prototype render, not photographs; the macro fly-through (MEDIA 02) replaces them when it exists.
+// The close views, from the 4k piece (an upscale of the exact approved frame). Each crop stays at or
+// under the source's own resolution, so the metal and the facets stay sharp. Four tiny callouts only.
 const VIEWS = [
-  { id: "facet", label: "Facet", frame: 1, x: "20%", y: "58%", size: 150, span: "wide" },
-  { id: "openwork", label: "Openwork", frame: 1, x: "68%", y: "40%", size: 170, span: "half" },
-  { id: "edge", label: "Polished edge", frame: 22, x: "52%", y: "54%", size: 170, span: "half" },
-  { id: "surface", label: "Surface form", frame: 60, x: "48%", y: "62%", size: 130, span: "wide" },
+  { id: "facet", label: "Facet", x: "20%", y: "54%", size: 250, span: "half" },
+  { id: "openwork", label: "Openwork", x: "68%", y: "38%", size: 230, span: "half" },
+  { id: "edge", label: "Polished edge", x: "42%", y: "86%", size: 260, span: "half" },
+  { id: "surface", label: "Surface form", x: "74%", y: "60%", size: 230, span: "half" },
 ] as const;
 
-export function MacroDetail({ dir }: { dir: string }) {
+export function MacroDetail({ src }: { src: string }) {
   return (
-    <section aria-labelledby="macro-heading" data-testid="detail-section" className="macro">
-      <h2 id="macro-heading" className="sr-only">Macro detail</h2>
-      <p className="macro-note label-xs text-ash">03 / DETAIL · prototype render, enlarged · not a size</p>
+    <section aria-labelledby="macro-detail-heading" data-testid="detail-section" className="macro">
+      <h2 id="macro-detail-heading" className="sr-only">Close views</h2>
       {VIEWS.map((v) => (
         <figure key={v.id} data-testid="detail-crop" data-detail={v.id} className={`macro-view macro-view-${v.span}`}>
-          <div role="img" aria-label={`${v.label}, close`} className="macro-media" style={{ backgroundImage: `url(${dir}/f-${String(v.frame).padStart(3, "0")}.jpg)`, backgroundSize: `${v.size}%`, backgroundPosition: `${v.x} ${v.y}` }} />
+          <div role="img" aria-label={`${v.label}, close`} className="macro-media" style={{ backgroundImage: `url(${src})`, backgroundSize: `${v.size}%`, backgroundPosition: `${v.x} ${v.y}` }} />
           <figcaption className="macro-callout label-xs">{v.label}</figcaption>
         </figure>
       ))}
+      <p className="macro-note label-xs text-ash">Prototype render, enlarged · not a size</p>
     </section>
   );
 }

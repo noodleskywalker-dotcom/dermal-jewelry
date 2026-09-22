@@ -2,6 +2,32 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-22 — Cinematic remake: the opening shot, the world, the companion, the push into the stone
+
+- **The owner rejected the previous result as not cinematic enough** and authorised Higgsfield without
+  a credit limit. About 313 credits were spent (359 to 45.71). Every product clip starts from the exact
+  approved frame; nothing redraws the jewelry. Details in `references/generated/cinema/RECORD.md`.
+- **A new opening shot.** The homepage opens on a muted, looping low-key push-in of the piece, with a
+  pause control (it moves for longer than five seconds) and the headline. It is ambient atmosphere, not
+  a concept reveal, so the reveal rules (no autoplay) do not apply to it; the product film still waits
+  for a press. With reduced motion it is the still.
+- **Video sources attach after hydration** (`lib/motion/useAmbientVideo.ts`). A server-rendered source
+  held WebKit's load event indefinitely, and the poster is the better first paint anyway.
+- **The turn keeps its place** as "01 / The piece", now from the 4k orbit upscale.
+- **The world and the companion.** A golden-hour dunes loop with three words, then the small reader of
+  DESERT EYE on a dune (a new still from the approved chibi). He fills the screen there, so the corner
+  companion hides while that section or the dark opening shot covers the middle of the screen.
+  The copy says "Inspired design · not an official collaboration".
+- **The macro stage** plays the macro clip backwards against the scroll so the page pushes into the
+  stone. It is one of four pinned stages now (turn, dunes, companion on wide screens, macro), each in
+  normal scroll. Nothing hijacks the wheel.
+- **The piece story** gives the meaning of the symbol, the stone and the bar in a few sentences, with
+  material notes in the owner's safe wording only ("material not yet confirmed", "proposed").
+- **The companion still stays internal.** Like every character picture it is served only by the
+  development server from `references/` (`/api/dev-concept/companion-dune`); a build leaves the
+  companion section out. The product, dunes and macro media in `public/media/cinema/` contain no character.
+- **`CraftedInSand.tsx` was removed**; `DesertWorld.tsx` replaces it.
+
 ## 2026-09-22 — Final master redesign: hotspots, worlds, taxonomy, a companion on every page
 
 The owner's final master prompt. Rollback tag: `pre-redesign-2-c0aff80`. No credits spent.

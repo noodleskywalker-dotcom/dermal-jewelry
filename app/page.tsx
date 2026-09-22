@@ -1,39 +1,58 @@
 import { AssemblySection } from "@/components/home/AssemblySection";
-import { CraftedInSand } from "@/components/home/CraftedInSand";
+import { CinemaHero } from "@/components/home/CinemaHero";
+import { DesertWorld } from "@/components/home/DesertWorld";
 import { FinalCta } from "@/components/home/FinalCta";
 import { FormsStage } from "@/components/home/FormsStage";
 import { LaunchHero } from "@/components/home/LaunchHero";
 import { MacroDetail } from "@/components/home/MacroDetail";
+import { MacroScrub } from "@/components/home/MacroScrub";
+import { PieceStory } from "@/components/home/PieceStory";
 import { SeeItOnYou } from "@/components/home/SeeItOnYou";
 import { BrowseRail } from "@/components/catalog/BrowseRail";
 import { catalog } from "@/lib/catalog";
+import { internalCompanionStill, isInternalReview } from "@/lib/story/registry";
 
-const ORBIT = "/media/hero-orbit/desert-eye-love";
-const FILM = "/media/product-animation/desert-eye-love";
+const CINEMA = "/media/cinema";
 
-// The homepage unfolds like a launch film (the owner's flow of 22 September 2026): the piece turned
-// by scroll with the headline, crafted in sand, material detail, the assembly, the forms, on you,
-// the collection, and a last frame. Normal scrolling between the moments. The mascot is internal
-// concept art, so only a development server has it.
+// The homepage as a short film you walk into (the owner's cinematic direction, 22 September 2026):
+// the piece in low light; the piece turned; the dunes; the small reader of the dunes; closer and
+// closer into the stone; what the piece means; the assembly; the forms; on you; the ways in; the
+// last frame. Media is generated from the exact approved product frame; nothing redraws the jewelry.
 export default function HomePage() {
   const products = catalog.listProducts();
   const featured = products[0];
   return (
     <>
-      <LaunchHero frames={{ dir: ORBIT, count: 72, poster: `${ORBIT}/poster.jpg` }} />
-      <CraftedInSand still={`${FILM}/story-sand.jpg`} href="/collections/desert-eye" />
-      <MacroDetail dir={ORBIT} />
+      <CinemaHero
+        poster={`${CINEMA}/hero-poster.jpg`}
+        sources={[
+          { src: `${CINEMA}/hero.webm`, type: "video/webm" },
+          { src: `${CINEMA}/hero.mp4`, type: "video/mp4" },
+        ]}
+      />
+      <LaunchHero frames={{ dir: `${CINEMA}/orbit`, count: 72, poster: `${CINEMA}/orbit/poster.jpg` }} />
+      <DesertWorld
+        poster={`${CINEMA}/sand-poster.jpg`}
+        companion={internalCompanionStill(isInternalReview())}
+        sand={[
+          { src: `${CINEMA}/sand.webm`, type: "video/webm" },
+          { src: `${CINEMA}/sand.mp4`, type: "video/mp4" },
+        ]}
+      />
+      <MacroScrub dir={`${CINEMA}/macro`} count={64} />
+      <MacroDetail src={`${CINEMA}/piece-4k.jpg`} />
+      <PieceStory still={`${CINEMA}/piece-4k.jpg`} />
       <AssemblySection product={featured} />
-      <FormsStage product={featured} still={`${ORBIT}/f-001.jpg`} />
+      <FormsStage product={featured} still={`${CINEMA}/piece-4k.jpg`} />
       <SeeItOnYou product={featured} />
       <section aria-labelledby="collection-heading" data-testid="collection-section" className="collection-section">
         <div className="mx-auto max-w-[120rem] px-6 sm:px-10 lg:px-16">
-          <p className="label-xs">07 / COLLECTIONS</p>
+          <p className="label-xs">07 / Collections</p>
           <h2 id="collection-heading" className="sr-only">The collections</h2>
         </div>
         <BrowseRail products={products} />
       </section>
-      <FinalCta still={`${ORBIT}/f-060.jpg`} shopHref="/collections" />
+      <FinalCta still={`${CINEMA}/hero-final.jpg`} shopHref="/collections" />
     </>
   );
 }
