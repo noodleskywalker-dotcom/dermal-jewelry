@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { openStudioWithPhoto } from "./helpers";
 
 // The HYBRID visual system: Atelier Paper everywhere, sand and chrome for DESERT EYE alone.
 
@@ -65,15 +66,35 @@ test.describe("sand belongs to DESERT EYE alone", () => {
     }
   });
 
-  test("KIRI is words and one chrome hairline: no artwork, no price, no sand", async ({ page }) => {
+  test("KIRI is one drawn chrome concept form and words: no product image, no price, no sand, no number", async ({ page }) => {
     await page.goto("/collections");
     const kiri = page.getByTestId("selection-concept");
     await expect(kiri).toHaveCount(1);
     await expect(kiri.getByRole("heading")).toHaveText("KIRI");
-    await expect(kiri.locator("img, svg")).toHaveCount(0);
+    await expect(kiri.locator("img")).toHaveCount(0);
+    await expect(kiri.locator("svg.selection-blade")).toHaveCount(1);
     await expect(kiri.getByTestId("sand-layer")).toHaveCount(0);
     await expect(kiri).not.toContainText("QAR");
-    await expect(page.getByTestId("selection-index")).toHaveText(/Index 01 \/ 05/);
+    await expect(kiri).toContainText("Concept");
+    // Four families are browsable; the concept is named, never counted.
+    await expect(page.getByTestId("selection-index")).toHaveText(/Index 01 \/ 04/);
+    await page.goto("/collections?family=void-stud");
+    await page.getByTestId("selection-next").click();
+    await expect(page.getByTestId("selection-index")).toHaveText(/Concept · KIRI/);
+  });
+
+  test("the neighbouring family shows at the edge, softer, and the sand never lies behind words", async ({ page }) => {
+    await page.goto("/collections");
+    const width = page.viewportSize()!.width;
+    const next = page.locator('[data-testid="selection-slide"][data-side="after"]').first().locator(".selection-object");
+    const box = (await next.boundingBox())!;
+    // At least 8% of the window shows the next piece's box, and it is visibly there.
+    expect(width - box.x).toBeGreaterThan(width * 0.08);
+    expect(await next.evaluate((el) => Number(getComputedStyle(el).opacity))).toBeGreaterThan(0.3);
+
+    const sand = (await page.getByTestId("sand-layer").boundingBox())!;
+    const title = (await current(page).getByRole("heading").boundingBox())!;
+    expect(sand.y + sand.height).toBeLessThanOrEqual(title.y + 1);
   });
 });
 
@@ -107,7 +128,14 @@ test.describe("the piece: assembly, exploded view, replay", () => {
     await expect(notes).toContainText("Deep-red faceted gemstone");
     await expect(notes).toContainText("Material not yet confirmed");
     await expect(notes).toContainText("Polished finish");
-    await expect(piece).toContainText("Hardware shown conceptually");
+    await expect(piece).toContainText("Concept hardware");
+    // The hardware is drawn slim: no riser stands taller than a fifth of the stage.
+    const stage = (await piece.locator(".assembly").boundingBox())!;
+    for (const post of await piece.locator('[data-part="posts"] [data-post] rect').all()) {
+      const h = Number(await post.getAttribute("height"));
+      if (Number.isFinite(h)) expect(h).toBeLessThan(20);
+    }
+    expect(stage.width).toBeGreaterThan(0);
     const words = (await page.locator("main").innerText()).toLowerCase();
     for (const banned of ["ruby", "implant-grade", "implant grade", "certified"]) expect(words).not.toContain(banned);
 
@@ -129,6 +157,49 @@ test.describe("the piece: assembly, exploded view, replay", () => {
     await page.goto("/product/desert-eye-love");
     await expect(page.getByTestId("piece-assembly")).toHaveAttribute("data-phase", "assembled", { timeout: 8000 });
     expect(media).toEqual([]);
+  });
+});
+
+test.describe("homepage: one hero piece", () => {
+  test("DESERT EYE is the one large piece with a reflection; the others are small and the mascot is a corner detail", async ({ page }) => {
+    await page.goto("/");
+    const pieces = page.getByTestId("teaser-piece");
+    await expect(pieces).toHaveCount(4);
+    const hero = page.locator('[data-testid="teaser-piece"][data-hero]');
+    await expect(hero).toHaveCount(1);
+    await expect(hero.getByRole("link")).toHaveAttribute("href", "/collections?family=desert-eye-love");
+    await expect(hero.locator(".fo-reflection")).toHaveCount(1);
+    const heroBox = (await hero.boundingBox())!;
+    for (const other of await page.locator('[data-testid="teaser-piece"]:not([data-hero])').all()) {
+      const box = (await other.boundingBox())!;
+      expect(box.width).toBeLessThan(heroBox.width * 0.4);
+      await expect(other.locator(".fo-reflection")).toHaveCount(0);
+    }
+    const mascot = page.getByTestId("mascot");
+    if ((await mascot.count()) > 0) {
+      const box = (await mascot.boundingBox())!;
+      expect(box.width).toBeLessThan(heroBox.width);
+    }
+  });
+});
+
+test.describe("Face Studio with a photo", () => {
+  test("the tools are words on paper under the picture, inside the page, and every piece name is whole", async ({ page }) => {
+    await openStudioWithPhoto(page, "?product=desert-eye-love");
+    const width = page.viewportSize()!.width;
+    const toolbar = page.getByRole("toolbar", { name: "Studio actions" });
+    const bar = (await toolbar.boundingBox())!;
+    const stage = (await page.getByTestId("studio-stage").boundingBox())!;
+    expect(bar.x).toBeGreaterThanOrEqual(0);
+    expect(bar.x + bar.width).toBeLessThanOrEqual(width + 1);
+    expect(bar.y).toBeGreaterThanOrEqual(stage.y + stage.height - 1);
+    for (const name of ["Undo", "Redo", "Reset", "Show before", "Clear photo"]) await expect(toolbar.getByRole("button", { name })).toBeInViewport();
+    // No pill: the toolbar paints nothing behind the words.
+    expect(await toolbar.evaluate((el) => getComputedStyle(el).backgroundColor)).toMatch(/rgba\(0, 0, 0, 0\)|transparent/);
+
+    for (const title of await page.locator('[data-testid="studio-product"] .font-display').all()) {
+      expect(await title.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
+    }
   });
 });
 

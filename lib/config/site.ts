@@ -17,7 +17,7 @@ export const site = {
    * Original designs that exist only as a direction. A working name and a sentence, nothing else:
    * no artwork, no price, nothing to buy. See docs/production/PRODUCTION_PLAN.md, section 6.
    */
-  concepts: [{ name: "KIRI", kind: "Original", status: "Concept", note: "Reduced blade geometry. In design, no artwork yet." }],
+  concepts: [{ name: "KIRI", kind: "Original", status: "Concept", note: "Reduced blade geometry. A concept form, not a product: in design, nothing to order." }],
   currency: "QAR",
   nav: [
     { href: "/shop", label: "Shop" },

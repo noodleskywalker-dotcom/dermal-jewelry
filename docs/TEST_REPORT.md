@@ -1,5 +1,33 @@
 # Test report
 
+## Visual refinement pass — 22 September 2026
+
+Browser results are **browser emulation on a Windows desktop** against a development server.
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 problems |
+| `npm run typecheck` | pass, 0 errors |
+| `npm test` | 77 of 77 pass |
+| `npm run test:e2e` (`--workers=2`) | 247 pass, 38 skipped, 0 fail (285 across desktop Chromium, mobile Chromium, desktop WebKit) |
+| `npm run build` | pass |
+
+At the default worker count this machine overloads and 12–13 unrelated tests time out at 30 s (a
+different set each run: viewports, mascot, story stage, hover panel). Every one of them passes alone
+and at two workers, so the two-worker run is the evidence. The hover-panel measurement now tolerates a
+re-mount under load.
+
+New browser checks: four families in the index and `Concept · KIRI` on the concept slide; KIRI is one
+SVG blade and no image; at least 8 % of the next family's box shows at the edge at more than 30 %
+opacity; the sand box ends above the title; the Face Studio tool bar sits under the stage inside the
+page with no painted background and every action in view; no piece name is clipped; the hero is the
+only piece with a reflection and every other piece is under 40 % of its width; no riser in the concept
+hardware is taller than a fifth of the stage; one specification status and no per-row "Unverified" tag.
+
+Review package (local only): `references/review/2026-09-22-refinement/` — desktop and Pixel 7 for the
+eight owner-listed screens, the five extra sizes (320×568, 360×800, 390×844, 412×915, 844×390) for
+home, selection, product and Face Studio with a photo, and `product-assembly.webm`.
+
 ## HYBRID visual system — 21 September 2026
 
 Browser results are **browser emulation on a Windows desktop** against a development server.

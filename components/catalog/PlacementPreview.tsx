@@ -78,13 +78,14 @@ export function PlacementPreview({ product, formId, bare = false }: { product: P
       {anchor && (
         <div
           className="absolute aspect-square -translate-x-1/2 -translate-y-1/2"
-          style={{ left: `${anchor.x * 100}%`, top: `${anchor.y * 100}%`, width: `${form.defaultScale * 100 * 1.15}%` }}
+          // Larger than life on the bare Studio head, so the piece can be read at a glance. Still labelled approximate, never a size.
+          style={{ left: `${anchor.x * 100}%`, top: `${anchor.y * 100}%`, width: `${form.defaultScale * 100 * (bare ? 1.55 : 1.15)}%` }}
         >
           <FormVisual product={product} formId={form.id} pieceTestId={() => "placement-piece"} />
         </div>
       )}
 
-      <figcaption className={bare ? "sr-only" : "label-xs absolute inset-x-3 bottom-3 flex justify-between gap-4 text-ink/60"}>
+      <figcaption className={bare ? "sr-only" : "label-xs absolute inset-x-3 bottom-3 flex justify-between gap-4 text-ash"}>
         <span>{form.label} · wearer&rsquo;s left</span>
         <span>Sculpted form, not a person. Approximate.</span>
       </figcaption>

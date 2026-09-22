@@ -8,7 +8,7 @@ export function PreviewNote() {
   const pathname = usePathname();
   if (pathname !== "/") return null;
   return (
-    <p className="label-xs pointer-events-none fixed bottom-3 right-4 z-30 text-white mix-blend-difference">
+    <p className="label-xs pointer-events-none fixed bottom-3 right-4 z-30 text-ash">
       Preview · demo prices · no checkout
     </p>
   );

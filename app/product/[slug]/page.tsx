@@ -51,16 +51,20 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
         <FamilyExperience product={product} initialFormId={first(query.form)} fixtureSrc={fixtureFor(first(query.revealFixture))} concept={conceptFor(first(query.revealFixture), slug)} />
       </div>
 
-      <section aria-labelledby="specs-heading" className="mt-16 max-w-2xl border-t border-ink/15 pt-6">
-        <h2 id="specs-heading" className="label-xs text-ash">Specifications</h2>
-        <dl className="mt-3 divide-y divide-ink/10 text-sm">
+      {/* One status for the whole specification, said once and quietly. The rows carry no warning tags:
+          a field that is not confirmed simply says so in words, in the same grey as everything secondary. */}
+      <section aria-labelledby="specs-heading" className="mt-16 max-w-2xl border-t border-line pt-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1">
+          <h2 id="specs-heading" className="label-xs">Material status</h2>
+          <p className="label-xs text-ash" data-testid="spec-status">
+            {product.specs.some((s) => s.status === "unverified") ? "Prototype specification · unverified" : "Confirmed specification"}
+          </p>
+        </div>
+        <dl className="mt-4 divide-y divide-line text-sm">
           {product.specs.map((spec) => (
             <div key={spec.label} className="grid grid-cols-[9rem_1fr] gap-4 py-3">
-              <dt className="text-ash">{spec.label}</dt>
-              <dd>
-                {spec.value}
-                {spec.status === "unverified" && <span className="label-xs ml-2 whitespace-nowrap text-garnet">Unverified</span>}
-              </dd>
+              <dt>{spec.label}</dt>
+              <dd className="text-ash">{spec.value}</dd>
             </div>
           ))}
         </dl>
@@ -70,7 +74,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
         </p>
       </section>
 
-      <p className="mt-16 border-t border-ink/15 pt-6">
+      <p className="mt-16 border-t border-line pt-6">
         <Link href="/collections" className="text-link">
           <span aria-hidden="true">←</span> Back to the selection
         </Link>

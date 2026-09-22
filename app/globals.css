@@ -8,7 +8,8 @@
   --color-ink: #0c0c0d;
   /* Text on ink surfaces: solid buttons only. */
   --color-ivory: #fbfaf7;
-  /* Secondary text. 5.9:1 on paper. */
+  /* Secondary text: a solid warm grey, 5.9:1 on paper. Never an alpha tint of ink: at 1x, thin
+     translucent type picks up subpixel colour fringing and reads blue, like a link. */
   --color-ash: #66615a;
   /* Hairline rules. */
   --color-line: #dedad1;
@@ -153,6 +154,7 @@ input[type="range"].studio-range::-moz-range-track {
   height: 1px;
   background: var(--color-line);
 }
+/* An ivory disc with a hairline ring: visible on paper, and still a quiet control. */
 input[type="range"].studio-range::-webkit-slider-thumb {
   appearance: none;
   width: 18px;
@@ -160,14 +162,16 @@ input[type="range"].studio-range::-webkit-slider-thumb {
   margin-top: -9px;
   border-radius: 50%;
   background: var(--color-ivory);
-  border: 0;
+  border: 1px solid var(--color-ink);
+  box-sizing: border-box;
 }
 input[type="range"].studio-range::-moz-range-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
   background: var(--color-ivory);
-  border: 0;
+  border: 1px solid var(--color-ink);
+  box-sizing: border-box;
 }
 
 /* Scroll-driven chapters. --p is the chapter's scroll progress, 0 to 1, set by useScrollProgress. */
@@ -201,10 +205,12 @@ input[type="range"].studio-range::-moz-range-thumb {
   background-size: 0% 1px;
   background-position: 100% calc(100% - 12px);
 }
+/* Small tracked label. It inherits ink; `text-ash` makes it secondary. Garnet is for a selected or
+   accent state only, never for information, and no label is an alpha tint of ink. */
 .label-xs {
   font-family: var(--font-mono);
-  font-size: 0.625rem;
-  letter-spacing: 0.22em;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 /* Product-led reveal for original pieces: one blade of light crosses the still. */
@@ -370,9 +376,9 @@ input[type="range"].studio-range::-moz-range-thumb {
   color: var(--color-ink);
   color-scheme: light;
 }
-/* Shared controls are styled for ink surfaces. On paper, secondary text and focus need more contrast. */
+/* Secondary text keeps the site's solid warm grey here too. (An alpha tint of ink fringed blue at 1x.) */
 .story-light .text-ash {
-  color: rgb(12 12 13 / 0.64);
+  color: var(--color-ash);
 }
 .story-light :focus-visible {
   outline-color: var(--color-garnet);
@@ -1043,6 +1049,20 @@ input[type="range"].studio-range::-moz-range-thumb {
   filter: drop-shadow(calc(var(--mx, 0) * -6px) calc(14px + var(--my, 0) * -4px) 12px rgb(40 30 20 / 0.2)) drop-shadow(0 2px 2px rgb(40 30 20 / 0.28));
   transition: filter 0.8s var(--ease-settle);
 }
+/* The reflection: the same pieces mirrored below, fading fast, on the same polished surface. */
+.fo-reflection {
+  position: absolute;
+  inset: 0;
+  display: block;
+  /* Mirrored across the line --mirror (a fraction of the box, where the lowest piece rests). */
+  top: calc(2 * var(--mirror, 100%) - 100%);
+  transform: scaleY(-1);
+  opacity: 0.18;
+  filter: blur(1.2px);
+  /* In the box's own coordinates the surface is at --mirror; the reflection fades away from it. */
+  mask-image: linear-gradient(to bottom, transparent calc(var(--mirror, 100%) - 34%), #000 var(--mirror, 100%), #000 100%);
+  pointer-events: none;
+}
 .fo-glint {
   position: absolute;
   width: 22%;
@@ -1139,16 +1159,21 @@ input[type="range"].studio-range::-moz-range-thumb {
   }
 }
 
+/* Inside the assembly stage, under the piece, never under the notes. */
 .product-sand {
-  left: 4%;
-  right: 4%;
-  bottom: 2%;
-  height: 34%;
+  left: 10%;
+  right: 10%;
+  top: 50%;
+  bottom: 4%;
 }
 
 /* ── Landing ── */
+/* On a phone: the hero takes over half the row, the three small pieces share the rest. */
 .landing-object {
-  width: 21%;
+  width: 13%;
+}
+.landing-object[data-hero] {
+  width: 52%;
 }
 .landing-object-label {
   display: block;
@@ -1159,6 +1184,9 @@ input[type="range"].studio-range::-moz-range-thumb {
   font-size: 0.8125rem;
   letter-spacing: 0.04em;
 }
+.landing-object[data-hero] .landing-object-label .font-display {
+  font-size: 1.125rem;
+}
 .landing-sand {
   inset: 34% -18% -12% -22%;
 }
@@ -1167,8 +1195,11 @@ input[type="range"].studio-range::-moz-range-thumb {
     position: absolute;
     left: var(--x);
     top: var(--y);
-    width: max(var(--size), 4.5rem);
+    width: max(var(--size), 4rem);
     transform: translate(-50%, -50%);
+  }
+  .landing-object[data-hero] {
+    width: min(var(--size), 30rem);
   }
   .landing-object-label {
     position: absolute;
@@ -1241,12 +1272,14 @@ input[type="range"].studio-range::-moz-range-thumb {
 }
 
 /* ── Selection: one family centred, neighbours faint at the edges ── */
+/* The padding is what shows of each neighbour: the slide is narrower than the window so the next
+   family's piece stands part-way into view at either edge, softer and smaller, an obvious next thing. */
 .selection-rail {
   scrollbar-width: none;
   scroll-snap-type: x mandatory;
-  padding-inline: 9vw;
-  scroll-padding-inline: 9vw;
-  gap: 2vw;
+  padding-inline: 15vw;
+  scroll-padding-inline: 15vw;
+  gap: 0;
   cursor: grab;
 }
 .selection-rail::-webkit-scrollbar {
@@ -1264,7 +1297,7 @@ input[type="range"].studio-range::-moz-range-thumb {
 .selection-slide {
   position: relative;
   flex: none;
-  width: 82vw;
+  width: 70vw;
   scroll-snap-align: center;
   padding-block: 3.5rem 5.5rem;
   min-height: calc(100svh - 9.5rem);
@@ -1272,16 +1305,35 @@ input[type="range"].studio-range::-moz-range-thumb {
   flex-direction: column;
   justify-content: center;
 }
+/* A neighbour: smaller, softer, and leaning in toward the centre so more of it shows. */
 .selection-object {
-  width: min(62vw, 40svh);
-  opacity: 0.22;
-  transform: scale(0.8);
+  width: min(68vw, 40svh);
+  opacity: 0.5;
+  transform: scale(0.9);
   transition: transform 0.9s var(--ease-settle), opacity 0.7s ease-out;
 }
+.selection-slide[data-side="before"] .selection-object {
+  transform: translateX(12%) scale(0.9);
+}
+.selection-slide[data-side="after"] .selection-object {
+  transform: translateX(-12%) scale(0.9);
+}
+/* On a phone the words need more room than the narrow slide: they overhang it, and a neighbour's
+   invisible words never take a tap. */
 .selection-info {
+  width: 92vw;
+  max-width: none;
+  margin-inline: -11vw;
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 0.6s ease-out, transform 0.8s var(--ease-editorial);
+}
+.selection-slide:not([data-current="true"]) .selection-info {
+  pointer-events: none;
+}
+/* The centred slide lies over its neighbours, so its overhanging words are on top and take the tap. */
+.selection-slide[data-current="true"] {
+  z-index: 1;
 }
 .selection-slide[data-current="true"] .selection-object {
   opacity: 1;
@@ -1291,21 +1343,18 @@ input[type="range"].studio-range::-moz-range-thumb {
   opacity: 1;
   transform: none;
 }
-/* Sand is DESERT EYE's alone. It belongs to that slide and fades as the slide leaves the centre. */
+/* Sand is DESERT EYE's alone. It lies under the jewelry, inside its box, and fades as the slide leaves the centre. */
 .selection-sand {
-  left: 50%;
-  top: 30%;
-  width: min(70vw, 46rem);
-  height: 34%;
-  transform: translateX(-50%);
+  inset: 38% -14% 2% -14%;
   opacity: 0;
   transition: opacity 0.9s ease-out;
 }
+/* The companion rests on that sand at the foot of the piece, so he belongs to it. */
 .selection-accent {
   position: absolute;
-  left: 0;
-  bottom: 3.5rem;
-  width: min(30vw, 11rem);
+  right: -14%;
+  bottom: -6%;
+  width: 34%;
   mix-blend-mode: multiply;
   filter: brightness(1.05) contrast(1.05);
   opacity: 0;
@@ -1330,31 +1379,41 @@ input[type="range"].studio-range::-moz-range-thumb {
   background: var(--color-ink);
   left: calc(var(--progress, 0) * 72%);
 }
-/* KIRI has no artwork yet. A single hairline that takes the light stands where the piece will be. */
+/* KIRI has no product yet. One chrome concept form stands where its piece will be. */
 .selection-blade {
-  width: 1px;
-  height: 46%;
-  background: linear-gradient(to bottom, transparent, var(--color-ink) 22%, var(--color-ink) 78%, transparent);
-  opacity: 0.55;
+  display: block;
+  width: 92%;
+  height: 92%;
+  filter: drop-shadow(0 10px 10px rgb(40 30 20 / 0.12));
 }
 @media (min-width: 1024px) {
   .selection-rail {
-    padding-inline: 21vw;
-    scroll-padding-inline: 21vw;
-    gap: 0;
+    padding-inline: 25vw;
+    scroll-padding-inline: 25vw;
   }
   .selection-slide {
-    width: 58vw;
+    width: 50vw;
     min-height: calc(100svh - 8.5rem);
     padding-block: 3rem 5rem;
   }
   .selection-object {
-    width: min(30vw, 46svh);
+    width: min(34vw, 48svh);
+  }
+  .selection-slide[data-side="before"] .selection-object {
+    transform: translateX(8%) scale(0.9);
+  }
+  .selection-slide[data-side="after"] .selection-object {
+    transform: translateX(-8%) scale(0.9);
+  }
+  .selection-info {
+    width: 100%;
+    max-width: 36rem;
+    margin-inline: auto;
   }
   .selection-accent {
-    left: -12vw;
-    bottom: 4.5rem;
-    width: min(15vw, 13rem);
+    right: -18%;
+    bottom: -4%;
+    width: 32%;
   }
 }
 
@@ -1372,17 +1431,21 @@ input[type="range"].studio-range::-moz-range-thumb {
 }
 .assembly-top {
   translate: -50% -50%;
-  filter: drop-shadow(0 1.6cqh 1.4cqh rgb(40 30 20 / 0.2));
+  filter: drop-shadow(0 1.2cqh 1.2cqh rgb(40 30 20 / 0.22));
+}
+/* The metal casts its own soft shadow, so it sits in the same light as the tops. */
+.assembly-metal {
+  filter: drop-shadow(0 0.8cqh 0.9cqh rgb(40 30 20 / 0.18));
 }
 /* How far each part stands off when the piece is open. */
 .assembly-base {
-  --off: 7cqh;
+  --off: 6cqh;
 }
 .assembly-posts {
   --off: 1.5cqh;
 }
 .assembly-top {
-  --off: -13cqh;
+  --off: -10cqh;
 }
 .assembly-guides {
   opacity: 0;
@@ -1460,10 +1523,11 @@ input[type="range"].studio-range::-moz-range-thumb {
 }
 .assembly-sweep {
   position: absolute;
-  inset: 12% 24% 20% 22%;
+  inset: 14% 18% 22% 18%;
   pointer-events: none;
   opacity: 0;
-  background: linear-gradient(102deg, transparent 42%, rgb(255 255 255 / 0.95) 50%, transparent 58%);
+  /* A narrow blade with a soft halo, so metal flashes and the stone catches a little light. */
+  background: linear-gradient(104deg, transparent 40%, rgb(255 255 255 / 0.5) 47%, rgb(255 255 255 / 0.98) 50%, rgb(255 255 255 / 0.5) 53%, transparent 60%);
   mix-blend-mode: soft-light;
 }
 [data-phase="assembling"] .assembly-sweep {

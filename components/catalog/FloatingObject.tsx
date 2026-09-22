@@ -28,15 +28,38 @@ const GRAINS = [
 // A borderless piece of jewelry standing in space: the exact product artwork, a soft contact shadow
 // that belongs to the jewelry alone, and the family's hover motion. It reacts when it, or any
 // ancestor marked `data-object-host`, is hovered or focused. Nothing moves constantly except a slow drift.
-export function FloatingObject({ product, formId, depth = 1, drift = true, delay = 0 }: { product: Product; formId?: string; /** 0 far, 2 near: used by cursor depth. */ depth?: number; drift?: boolean; delay?: number }) {
+export function FloatingObject({
+  product,
+  formId,
+  depth = 1,
+  drift = true,
+  delay = 0,
+  reflection = false,
+}: {
+  product: Product;
+  formId?: string;
+  /** 0 far, 2 near: used by cursor depth. */
+  depth?: number;
+  drift?: boolean;
+  delay?: number;
+  /** A faint mirrored copy under the piece, as on a polished surface. For a hero shot only. */
+  reflection?: boolean;
+}) {
   const form = formOf(product, formId);
   const motion = motionOf(product, form.id);
   const parts = resolveComponents(product, { side: "left", tweaks: {}, formId: form.id });
   const stone = parts.find((c) => STONES.has(c.art)) ?? parts[0];
+  // The polished surface lies just under the lowest piece, so the mirror line is there, not at the box edge.
+  const mirror = Math.max(...parts.map((c) => c.topPct + c.widthPct * 0.42));
   return (
     <span className="fo" data-motion={motion} data-depth={depth} style={{ "--depth": depth, "--fo-delay": `${delay}s` } as React.CSSProperties}>
       <span className={`fo-drift ${drift ? "fo-drifting" : ""}`}>
         <span className="fo-art">
+          {reflection && (
+            <span aria-hidden="true" className="fo-reflection" style={{ "--mirror": `${mirror}%` } as React.CSSProperties}>
+              <FormVisual product={product} formId={form.id} />
+            </span>
+          )}
           <span className="fo-shadow">
             <FormVisual key={form.id} product={product} formId={form.id} />
           </span>

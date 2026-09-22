@@ -93,7 +93,7 @@ export function Mascot({ media, href, label }: { media: MascotMedia; href: strin
           />
         ))}
       </span>
-      <span className="label-xs absolute bottom-[8%] right-[4%] inline-flex items-center gap-2 border-b border-current pb-1 text-ink/60 transition-colors duration-300 group-hover:text-ink">
+      <span className="label-xs mt-1 flex items-center justify-end gap-2 text-ash transition-colors duration-300 group-hover:text-ink">
         Wake him <span aria-hidden="true">↗</span>
       </span>
     </button>

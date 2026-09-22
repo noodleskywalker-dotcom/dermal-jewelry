@@ -38,7 +38,7 @@ test.describe("the selection: sideways browsing", () => {
     // The last family is followed by one design that exists only as a direction, and the rail ends there.
     await page.getByTestId("selection-next").click();
     await expect(page.locator('[data-testid="selection-concept"][data-current="true"]')).toHaveCount(1);
-    await expect(page.getByTestId("selection-index")).toHaveText(/05 \/ 05/);
+    await expect(page.getByTestId("selection-index")).toHaveText(/Concept · KIRI/);
     await expect(page.getByTestId("selection-next")).toBeDisabled();
     expect(errors).toEqual([]);
   });
@@ -105,7 +105,7 @@ test.describe("product page: the whole piece", () => {
     await expect(notes).toContainText("Material not yet confirmed");
     // The stone is never named, and nothing is called verified.
     await expect(assembly).not.toContainText(/ruby|sapphire|garnet|verified|certified/i);
-    await expect(assembly).toContainText(/shown conceptually/i);
+    await expect(assembly).toContainText(/concept hardware/i);
 
     // Replay runs it again, and shopping is never blocked by it.
     await page.getByTestId("assembly-replay").click();

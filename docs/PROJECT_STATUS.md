@@ -1,14 +1,34 @@
 # DERMAL — project status
 
-Last updated: 21 September 2026. Branch: `feat/dermal-first-slice`.
+Last updated: 22 September 2026. Branch: `feat/dermal-first-slice`.
 
 Statuses used here: planned, implemented, tested, owner-approved, blocked, deferred.
 "Tested" means an automated or recorded check actually ran. See `docs/TEST_REPORT.md`.
 
 ## Current milestone
 
-Milestone 1, the first vertical slice, is implemented and tested locally. It is waiting for owner review.
-Nothing is owner-approved yet. Nothing was merged to `main` or deployed to production.
+Milestone 1, the first vertical slice, is implemented and tested locally. The HYBRID **structure** is
+owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
+Nothing was merged to `main` or deployed to production.
+
+## Visual refinement pass (22 September 2026)
+
+Built from the owner's brief after the 22 September visual review, in the owner's priority order.
+Tested locally, **not owner-approved**. No credits spent, no generated media, Shopify untouched.
+Decisions are in `docs/DECISIONS.md`; the review packages are local only under `references/review/`.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Product-page concept hardware | tested | Slim surface bar with two short risers and collars; low footplate anchor; nostril screw with curved tail. Polished-titanium gradient, own contact shadow. Caption "Concept hardware · type, size and thread not confirmed". No measurements. |
+| Assembly (4.0 s) | tested for states, visually reviewed by the builder | Tighter shadows, narrower light blade with a halo, shorter exploded offsets. |
+| Homepage hero | tested | One 30 vw DESERT EYE piece with a faint reflection, three small originals, mascot 13 vw in the corner. Headline and the two actions unchanged. |
+| Face Studio | tested | Hairline tool row under the photo (no pill, no overflow), garnet only for selected states, piece 1.55× on the bare head, names wrap, visible slider thumb, nudge as one row. |
+| Selection | tested | 8–15 % of the next family visible at either edge at 50 % opacity, leaning in by side. Sand inside the jewelry's box, mascot at the foot of the piece. Index `01 / 04`; KIRI reads `Concept · KIRI`. |
+| KIRI | tested | One vector chrome blade with an edge light. Original / Concept, no price, no product. |
+| Material status | tested | One "Prototype specification · unverified" line; rows in words, no garnet tags. |
+| Type and colour | tested | Labels solid ink or solid warm ash; no alpha tints (they fringed blue at 1×). 11 px labels. |
+| Mobile defects | tested at 320×568, 360×800, 390×844, 412×915, 844×390 | Tool bar clipping, sand behind text, orphaned dash and truncated names fixed. The "heading under the sticky bar" was the recording script scrolling, not the app. |
+| Shop, bag, cart | tested | Only the label colour cleanup. Not redesigned. |
 
 ## HYBRID visual system (21 September 2026)
 

@@ -92,7 +92,7 @@ export function ProductGrid({ products, className }: { products: Product[]; clas
                 <span role="img" aria-label={`${product.title}: ${artworkLabel(product).toLowerCase()}. ${product.summary}`} className="relative mx-auto block aspect-square w-[min(78%,26rem)]">
                   <FloatingObject product={product} depth={1} delay={i * -1.1} />
                 </span>
-                <span className="label-xs mt-2 block text-ink/45">
+                <span className="label-xs mt-2 block text-ash">
                   {String(i + 1).padStart(2, "0")} · {artworkLabel(product)}
                 </span>
                 <span className="mt-3 flex items-baseline justify-between gap-4">

@@ -298,7 +298,12 @@ test.describe("desktop preview", () => {
       await expect(panel).toBeVisible();
       await expect(panel.getByTestId("photo-frame")).toBeVisible();
       await expect(page.getByTestId("hover-panel")).toHaveCount(1);
-      const box = await panel.boundingBox();
+      // Under load the panel can re-mount between the visibility check and the measurement.
+      let box = await panel.boundingBox();
+      for (let i = 0; !box && i < 20; i++) {
+        await page.waitForTimeout(100);
+        box = await panel.boundingBox();
+      }
       const viewport = page.viewportSize()!;
       expect(box!.x).toBeGreaterThanOrEqual(0);
       expect(box!.x + box!.width).toBeLessThanOrEqual(viewport.width);

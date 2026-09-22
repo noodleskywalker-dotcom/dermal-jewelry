@@ -2,6 +2,55 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-22 — Visual refinement pass (HYBRID structure approved, no redesign)
+
+The owner approved the HYBRID structure as built and ordered a refinement pass from the 22 September
+visual review (`references/review/2026-09-22-hybrid-review/REVIEW.md`), in a fixed priority order:
+hardware, homepage hero, Face Studio, selection, mobile defects, KIRI, status copy, type and colour.
+No credits were spent, no concept image or generated hardware was used, and the product artwork is unchanged.
+
+- **Concept hardware is drawn to jewelry proportions, and says so.** The surface bar is one slim base
+  with two short equal risers and a small collar under each top; the dermal anchor is a short post on a
+  low 14-unit footplate; the nose form is a nostril screw, a short post with a curved tail that belongs
+  to the post layer so the exploded view never splits a one-piece screw. The metal gradient is a
+  polished-titanium ramp with a bright edge and a dark turning band, and the hardware casts its own
+  soft shadow. Real jewelry was the reference for proportion and finish only. The caption reads
+  "Concept hardware · type, size and thread not confirmed", and nothing carries a measurement.
+- **One hero on the homepage.** `Landing` puts the featured family first at 30 vw with a faint mirrored
+  reflection (`FloatingObject reflection`), mirrored across the lowest piece rather than the box edge so
+  it reads as a surface under the jewelry. The three originals are 6–7 vw and secondary. The mascot is
+  13 vw in the corner with its label under the picture, a detail rather than the identity. Only the
+  approved headline and two actions remain.
+- **Labels are solid ink or solid warm ash, never an alpha tint.** The "blue-grey" seen in the review
+  was `rgba(12,12,13,0.64)` at 1× device scale: thin translucent 10 px mono type picks up subpixel
+  colour fringing on Windows and reads like a link. `.story-light .text-ash` now resolves to the solid
+  `--color-ash`, `.label-xs` is 11 px, and the in-scope `text-ink/NN` labels became `text-ash`.
+  Garnet marks a selected or pressed state only (Face Studio side, form, target, product; the tool
+  bar's pressed state).
+- **Face Studio tools are words on paper.** The grey pill over the photo is gone; the tool bar is a
+  hairline row under the stage that wraps and can never overflow a phone. The nudge keypad is one
+  row of four arrows. The range thumb, which was ivory on ivory, has a hairline ring. On the bare
+  sculpted head the piece is drawn at 1.55× the placement scale so it can be read at a glance; the
+  preview is still labelled approximate and is never a size. Piece names wrap instead of truncating.
+- **Selection neighbours are meant to be seen.** Slides are 50 vw on desktop and 70 vw on a phone
+  inside 25 vw / 15 vw padding; neighbours sit at 50 % opacity, scale 0.9, and lean 8 % / 12 % toward
+  the centre by `data-side`, so 8–15 % of the next piece shows at the edge. A neighbour's words are
+  invisible and take no tap. The sand and the mascot moved inside the jewelry's box, so the sand can
+  never lie behind a title and the mascot rests at the foot of the piece. The index counts browsable
+  families (`01 / 04`); the KIRI slide reads `Concept · KIRI`.
+- **KIRI has a concept form.** One vector chrome blade (`ConceptBlade`) with a single edge light stands
+  where its piece will be. It is labelled Original / Concept, has no price, forms or bag action, and
+  is a sculpture of the direction, not a product drawing.
+- **One material status.** The specification section is headed "Material status" with one line,
+  "Prototype specification · unverified", instead of a garnet tag on every row. DESERT EYE's rows say
+  "Titanium — proposed", "Polished — proposed" and "Deep-red faceted gemstone — material not yet
+  confirmed", the same words as the callouts on the piece. Nothing is confirmed by this wording.
+- **The dash stays with its words.** `displayTitle()` ties " — " to the words around it with
+  non-breaking spaces for display only, so "DESERT EYE — LOVE" breaks as "DESERT / EYE — LOVE".
+- **Not a defect.** The review listed the Face Studio heading sliding under the sticky bar. The app
+  does not scroll when a photo lands (`scrollY` stays 0 on desktop and Pixel 7); the recording script
+  had scrolled. Nothing was changed for it.
+
 ## 2026-09-21 — HYBRID visual system (owner-approved direction)
 
 The owner approved the HYBRID direction from the concept contact sheet: **Atelier Paper** everywhere,

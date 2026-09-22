@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { catalog, formatPrice, formOf, placementLabel } from "@/lib/catalog";
+import { catalog, displayTitle, formatPrice, formOf, placementLabel } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { bagActions } from "@/lib/cart/store";
 import { SCALE_MAX, SCALE_MIN, TWEAK_SCALE_MAX, TWEAK_SCALE_MIN, ZERO_TWEAK } from "@/lib/studio/geometry";
@@ -33,7 +33,7 @@ const NUDGE = 0.004;
 
 // Quiet text controls. The Studio should read as a styling tool, not a dashboard of boxes.
 const toolButton =
-  "label-xs inline-flex min-h-11 shrink-0 items-center px-3 text-ink/75 transition-colors duration-200 hover:text-ink disabled:cursor-not-allowed disabled:text-ink/25 aria-pressed:text-ink aria-pressed:underline aria-pressed:underline-offset-8";
+  "label-xs inline-flex min-h-11 shrink-0 items-center px-3 text-ash transition-colors duration-200 hover:text-ink disabled:cursor-not-allowed disabled:text-line aria-pressed:text-garnet aria-pressed:underline aria-pressed:underline-offset-8";
 
 export function FaceStudio({ initialProductSlug, initialFormId }: { initialProductSlug?: string; initialFormId?: string }) {
   const studio = useStudio();
@@ -176,13 +176,13 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
         </p>
       </header>
 
-      <div className="grid gap-x-14 gap-y-5 lg:grid-cols-[minmax(0,1fr)_17rem]">
+      <div className="grid gap-x-12 gap-y-6 lg:grid-cols-[minmax(0,1fr)_19rem] xl:gap-x-20">
         {/* Piece rail */}
         <section aria-labelledby="pieces-heading" className="order-2 min-w-0 lg:col-start-1 lg:row-start-2">
           <h2 id="pieces-heading" className="label-xs text-ash">
             Pieces
           </h2>
-          <ul className="mt-3 flex gap-8 overflow-x-auto pb-2 lg:justify-center">
+          <ul className="mt-3 flex gap-6 overflow-x-auto pb-2 lg:justify-center lg:gap-10">
             {products.map((product) => {
               const selected = currentProduct.id === product.id;
               return (
@@ -193,13 +193,14 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
                     data-product={product.slug}
                     aria-pressed={selected}
                     onClick={() => chooseProduct(product)}
-                    className={`flex w-40 items-center gap-3 border-b pb-2 text-left transition-colors duration-500 ${
-                      selected ? "border-ink" : "border-transparent text-ink/70 hover:text-ink"
+                    className={`flex w-44 items-start gap-3 border-b pb-3 text-left transition-colors duration-500 ${
+                      selected ? "border-garnet text-ink" : "border-transparent text-ash hover:text-ink"
                     }`}
                   >
                     <ProductArtwork product={product} className="h-14 w-12 shrink-0" showLabel={false} />
                     <span className="min-w-0">
-                      <span className="block truncate font-display text-base font-light leading-tight">{product.title}</span>
+                      {/* The whole name, on two lines if it needs them. Never cut short. */}
+                      <span className="block font-display text-base font-light leading-tight">{displayTitle(product.title)}</span>
                       <span className="label-xs mt-1 block text-ash">
                         {placementLabel(product.placements[0])}
                       </span>
@@ -247,7 +248,8 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
           </div>
 
           {photo && (
-            <div className="relative z-10 mx-auto -mt-12 flex w-max max-w-full items-center overflow-x-auto bg-paper/85 px-1 backdrop-blur-sm" role="toolbar" aria-label="Studio actions">
+            // Plain words on paper under the photo, a hairline above them: no pill, nothing over the picture.
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-x-1 border-t border-line pt-1" role="toolbar" aria-label="Studio actions">
               <button type="button" className={toolButton} onClick={studio.undo} disabled={!studio.canUndo} data-testid="undo">
                 Undo
               </button>
@@ -278,7 +280,7 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
               </button>
               <button
                 type="button"
-                className={`${toolButton} border-l border-line`}
+                className={toolButton}
                 data-testid="clear-photo"
                 onClick={() => {
                   studio.clearPhoto();
@@ -299,7 +301,7 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
 
         {/* Controls and look */}
         {/* On small screens the stage is pinned above this panel, so focused controls keep clear of it. */}
-        <div className="order-3 min-w-0 space-y-10 max-lg:[&_button]:scroll-mt-[62dvh] max-lg:[&_input]:scroll-mt-[62dvh] max-lg:[&_select]:scroll-mt-[62dvh] lg:col-start-2 lg:row-span-2 lg:row-start-1">
+        <div className="order-3 min-w-0 space-y-12 max-lg:[&_button]:scroll-mt-[62dvh] max-lg:[&_input]:scroll-mt-[62dvh] max-lg:[&_select]:scroll-mt-[62dvh] lg:col-start-2 lg:row-span-2 lg:row-start-1">
           <section aria-labelledby="adjust-heading">
             <h2 id="adjust-heading" className="label-xs text-ash">
               {photo ? "Adjust" : "Piercing form"}
@@ -316,7 +318,7 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
                     <label
                       key={side}
                       className={`label-xs flex min-h-11 cursor-pointer items-center border-b has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-garnet-text ${
-                        selected ? "border-ink" : "border-line text-ash"
+                        selected ? "border-garnet text-ink" : "border-line text-ash hover:text-ink"
                       }`}
                     >
                       <input
@@ -415,23 +417,17 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
                   />
                 </div>
 
-                <div className="mt-5">
-                  <p className="text-sm">Nudge position</p>
-                  <div className="mt-2 grid w-36 grid-cols-3 gap-1" role="group" aria-label="Nudge position">
-                    <span />
-                    <NudgeButton label="Nudge up" onClick={() => nudge(0, -NUDGE)} testId="nudge-up">↑</NudgeButton>
-                    <span />
+                <div className="mt-6 flex items-center justify-between gap-4">
+                  <p className="text-sm">Nudge</p>
+                  {/* One quiet row of arrows, not a keypad. */}
+                  <div className="-mr-3 flex" role="group" aria-label="Nudge position">
                     <NudgeButton label="Nudge left" onClick={() => nudge(-NUDGE, 0)} testId="nudge-left">←</NudgeButton>
-                    <span />
-                    <NudgeButton label="Nudge right" onClick={() => nudge(NUDGE, 0)} testId="nudge-right">→</NudgeButton>
-                    <span />
+                    <NudgeButton label="Nudge up" onClick={() => nudge(0, -NUDGE)} testId="nudge-up">↑</NudgeButton>
                     <NudgeButton label="Nudge down" onClick={() => nudge(0, NUDGE)} testId="nudge-down">↓</NudgeButton>
-                    <span />
+                    <NudgeButton label="Nudge right" onClick={() => nudge(NUDGE, 0)} testId="nudge-right">→</NudgeButton>
                   </div>
-                  <p className="mt-2 text-xs leading-relaxed text-ash">
-                    You can also drag the jewelry, or focus it and use the arrow keys.
-                  </p>
                 </div>
+                <p className="mt-1 text-xs leading-relaxed text-ash">You can also drag the jewelry, or focus it and use the arrow keys.</p>
               </>
             ) : null}
           </section>
@@ -573,7 +569,7 @@ function TargetButton({
       onClick={onClick}
       data-testid={testId}
       className={`min-h-11 border-b px-1 text-xs transition-colors duration-200 ${
-        selected ? "border-ink" : "border-transparent text-ash hover:text-ink"
+        selected ? "border-garnet text-ink" : "border-transparent text-ash hover:text-ink"
       }`}
     >
       {children}
@@ -593,7 +589,7 @@ function NudgeButton({
   children: React.ReactNode;
 }) {
   return (
-    <button type="button" aria-label={label} onClick={onClick} data-testid={testId} className="h-11 w-11 text-ink/70 hover:text-ink">
+    <button type="button" aria-label={label} onClick={onClick} data-testid={testId} className="h-11 w-11 text-ash hover:text-ink">
       <span aria-hidden="true">{children}</span>
     </button>
   );

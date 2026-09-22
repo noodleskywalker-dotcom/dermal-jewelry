@@ -19,7 +19,9 @@ test.describe("storefront navigation", () => {
     await expect(page).toHaveURL(/\/product\/desert-eye-love\?form=anti-eyebrow$/);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("DESERT EYE — LOVE");
     await expect(page.getByText("Demo price").first()).toBeVisible();
-    await expect(page.getByText("Unverified").first()).toBeVisible();
+    // One quiet status for the specification; no row carries a warning tag of its own.
+    await expect(page.getByTestId("spec-status")).toContainText(/unverified/i);
+    await expect(page.getByText("Unverified", { exact: true })).toHaveCount(0);
 
     expect(errors).toEqual([]);
   });

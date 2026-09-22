@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { availableForms, formatPrice, formOf } from "@/lib/catalog";
+import { availableForms, displayTitle, formatPrice, formOf } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 import { AddToBagButton } from "@/components/cart/AddToBagButton";
@@ -126,8 +126,9 @@ export function SelectionRail({
   return (
     <div data-testid="selection" data-index={index} className="selection relative">
       <div className="pointer-events-none absolute inset-x-6 top-2 z-10 flex items-center justify-between sm:inset-x-10 lg:inset-x-16 lg:top-4">
+        {/* The index counts the families that can be browsed. A concept at the end is named, not numbered. */}
         <p data-testid="selection-index" className="label-xs" aria-live="polite">
-          Index {pad(index + 1)} / {pad(total)}
+          {index < products.length ? `Index ${pad(index + 1)} / ${pad(products.length)}` : `Concept · ${concepts[index - products.length]?.name ?? ""}`}
         </p>
         <p className="label-xs flex items-center gap-4 text-ash">
           <span className="hidden lg:inline">Drag</span>
@@ -175,18 +176,11 @@ export function SelectionRail({
               data-product={product.slug}
               data-form={form.id}
               data-current={current}
+              data-side={i < index ? "before" : i > index ? "after" : undefined}
               data-object-host
               aria-current={current ? "true" : undefined}
               className="selection-slide"
             >
-              {/* DESERT EYE's own layer. It belongs to this slide, so it leaves with it. */}
-              {sand && <SandLayer className="selection-sand" />}
-              {sand && accentSrc && (
-                // Internal still from the development server. It is never optimised, cached or deployed.
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={accentSrc} alt="" draggable={false} data-testid="selection-accent" className="selection-accent" />
-              )}
-
               <Link
                 href={`/product/${product.slug}?form=${form.id}`}
                 draggable={false}
@@ -194,11 +188,19 @@ export function SelectionRail({
                 tabIndex={current ? 0 : -1}
                 className="selection-object relative mx-auto block aspect-square"
               >
+                {/* DESERT EYE's own layer, under its jewelry and nowhere near the words. It leaves with the slide. */}
+                {sand && <SandLayer className="selection-sand" />}
                 <FloatingObject product={product} formId={form.id} depth={1} delay={i * -1.3} />
+                {sand && accentSrc && (
+                  // Internal still from the development server, resting on the sand at the foot of the piece.
+                  // It is never optimised, cached or deployed.
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={accentSrc} alt="" draggable={false} data-testid="selection-accent" className="selection-accent" />
+                )}
               </Link>
 
               <div className="selection-info relative mx-auto mt-2 w-full max-w-xl text-center">
-                <h2 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-light leading-none tracking-[0.04em]">{product.title}</h2>
+                <h2 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-light leading-none tracking-[0.04em]">{displayTitle(product.title)}</h2>
                 {options.length > 1 ? (
                   <fieldset className="mt-4" disabled={!current}>
                     <legend className="sr-only">Piercing type</legend>
@@ -238,9 +240,9 @@ export function SelectionRail({
         {concepts.map((concept, n) => {
           const current = products.length + n === index;
           return (
-            <li key={concept.name} data-testid="selection-concept" data-current={current} aria-current={current ? "true" : undefined} className="selection-slide">
+            <li key={concept.name} data-testid="selection-concept" data-current={current} data-side={current ? undefined : "after"} aria-current={current ? "true" : undefined} className="selection-slide">
               <div className="selection-object relative mx-auto flex aspect-square items-center justify-center">
-                <span aria-hidden="true" className="selection-blade" />
+                <ConceptBlade />
               </div>
               <div className="selection-info relative mx-auto mt-2 w-full max-w-xl text-center">
                 <h2 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-light leading-none tracking-[0.2em]">{concept.name}</h2>
@@ -254,7 +256,7 @@ export function SelectionRail({
         })}
       </ul>
 
-      <div className="pointer-events-none absolute inset-x-6 bottom-4 flex items-center justify-between sm:inset-x-10 lg:inset-x-16 lg:bottom-8">
+      <div className="pointer-events-none absolute inset-x-6 bottom-4 flex items-center justify-between sm:inset-x-10 lg:inset-x-16 lg:bottom-8" data-testid="selection-steps">
         <button type="button" data-testid="selection-prev" onClick={() => step(-1)} disabled={index === 0} aria-label="Previous design" className="label-xs pointer-events-auto inline-flex min-h-11 items-center gap-2 disabled:opacity-25">
           <span aria-hidden="true">←</span> Prev
         </button>
@@ -263,5 +265,44 @@ export function SelectionRail({
         </button>
       </div>
     </div>
+  );
+}
+
+// KIRI exists only as a direction: reduced blade geometry, no product. Where its piece will stand, one
+// chrome concept form stands instead: a slim tapered blade, drawn from vectors, with a single restrained
+// line of light along its edge. It is deliberately a sculpture of the idea, not a placeholder for a photo,
+// and never a product: no price, no forms, nothing to add to a bag.
+function ConceptBlade() {
+  return (
+    <svg viewBox="0 0 200 200" className="selection-blade" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="kiri-chrome" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#f6f7f9" />
+          <stop offset="0.32" stopColor="#b9bec6" />
+          <stop offset="0.5" stopColor="#eef0f3" />
+          <stop offset="0.7" stopColor="#7d838c" />
+          <stop offset="1" stopColor="#575c64" />
+        </linearGradient>
+        <linearGradient id="kiri-edge" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="0.35" stopColor="#ffffff" stopOpacity="0.95" />
+          <stop offset="0.7" stopColor="#ffffff" stopOpacity="0.5" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+        <filter id="kiri-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="3" />
+        </filter>
+      </defs>
+      {/* Contact shadow, close under the point, where the form meets the paper. */}
+      <ellipse cx="122" cy="176" rx="24" ry="3.5" fill="rgba(40,30,20,0.16)" filter="url(#kiri-shadow)" />
+      <g transform="rotate(-22 100 100)">
+        {/* The blade: one long tapered lozenge, a little wider at the shoulder than at the point. */}
+        <path d="M100 14 C112 58 117 110 110 168 C107 180 93 180 90 168 C83 110 88 58 100 14 Z" fill="url(#kiri-chrome)" />
+        {/* The spine: the turning edge where the two faces meet. */}
+        <path d="M100 22 C103 70 103 120 100 170" stroke="rgba(40,44,50,0.35)" strokeWidth="0.8" fill="none" />
+        {/* One line of light along the leading edge. */}
+        <path d="M94.5 40 C90.5 80 90.5 120 93.5 160" stroke="url(#kiri-edge)" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+      </g>
+    </svg>
   );
 }

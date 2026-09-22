@@ -143,9 +143,12 @@ export const demoProducts: Product[] = [
       maxSeconds: 8,
       readiness: { playerImplemented: true, storyboardPrepared: true, sourceVideo: "missing", approvedForPublication: false },
     },
+    // The same proposal as the material notes on the piece, in words; nothing here is confirmed.
     specs: [
-      { label: "Stone", value: "Deep-red faceted gemstone. Identity not yet verified.", status: "unverified" },
-      ...unverifiedSpecs(),
+      { label: "Stone", value: "Deep-red faceted gemstone — material not yet confirmed", status: "unverified" },
+      { label: "Base metal", value: "Titanium — proposed", status: "unverified" },
+      { label: "Finish", value: "Polished — proposed", status: "unverified" },
+      ...unverifiedSpecs().filter((s) => !["Base metal", "Finish"].includes(s.label)),
     ],
     // The owner's wording, 21 September 2026. No maker has confirmed any of it, and the stone is not named.
     materials: [

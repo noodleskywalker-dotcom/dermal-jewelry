@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { formatPrice } from "@/lib/catalog";
+import { displayTitle, formatPrice } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { AddToBagButton } from "@/components/cart/AddToBagButton";
 import { RevealPlayer, type ConceptStills } from "@/components/reveal/RevealPlayer";
-import { SandLayer } from "@/components/story/SandLayer";
 import { useFormChoice } from "@/components/studio/useFormChoice";
 import { motionOf } from "./FloatingObject";
 import { PieceAssembly } from "./PieceAssembly";
@@ -63,10 +62,9 @@ export function FamilyExperience({
     <div className="grid gap-x-16 gap-y-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]" data-testid="family" data-form={form.id}>
       <div className="min-w-0 lg:sticky lg:top-20 lg:self-start">
         <div role="tabpanel" id={`panel-${view}`} aria-labelledby={`tab-${view}`} className="relative flex w-full items-center justify-center lg:min-h-[min(74svh,46rem)]">
-          {/* DESERT EYE alone stands on a little sand. Every other family stands on plain paper. */}
-          {view === "piece" && motionOf(product, form.id) === "sand" && <SandLayer className="product-sand" />}
           {view === "piece" ? (
-            <PieceAssembly key={product.id} product={product} formId={form.id} />
+            // DESERT EYE alone stands on a little sand, drawn inside the stage. Every other family stands on plain paper.
+            <PieceAssembly key={product.id} product={product} formId={form.id} sand={motionOf(product, form.id) === "sand"} />
           ) : (
             // The other views keep their 4:5 frame, sized to fit the window.
             <div className="w-full max-w-[max(16rem,56svh)]">
@@ -103,7 +101,7 @@ export function FamilyExperience({
 
       <div className="lg:pt-[12svh]">
         <p className="label-xs text-ash">{product.origin === "anime-inspired" ? "Anime-inspired design · not an official collaboration" : "Original design"} · Demo product</p>
-        <h1 className="mt-5 font-display text-[clamp(2.5rem,3.6vw,3.75rem)] font-light leading-[1.02] tracking-[0.03em]">{product.title}</h1>
+        <h1 className="mt-5 font-display text-[clamp(2.5rem,3.6vw,3.75rem)] font-light leading-[1.02] tracking-[0.03em]">{displayTitle(product.title)}</h1>
 
         <fieldset className="mt-9">
           <legend className="sr-only">Piercing form</legend>
@@ -116,7 +114,7 @@ export function FamilyExperience({
                   {n > 0 && <span aria-hidden="true" className="text-ash">·</span>}
                   <label
                     className={`label-xs flex min-h-11 items-center border-b has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-garnet ${
-                      selected ? "border-ink text-ink" : pending ? "cursor-not-allowed border-transparent text-ink/35" : "cursor-pointer border-transparent text-ash hover:text-ink"
+                      selected ? "border-ink text-ink" : pending ? "cursor-not-allowed border-transparent text-ash" : "cursor-pointer border-transparent text-ash hover:text-ink"
                     }`}
                   >
                     <input type="radio" name={`form-${product.id}`} value={f.id} checked={selected} disabled={pending} onChange={() => chooseForm(f.id)} data-testid={`form-${f.id}`} className="sr-only" />

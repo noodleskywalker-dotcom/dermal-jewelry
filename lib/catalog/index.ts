@@ -20,6 +20,14 @@ export function formatPrice(amount: number, currency: string): string {
   return `${currency} ${amount.toLocaleString("en-US")}`;
 }
 
+/**
+ * A title for display: the dash in "DESERT EYE — LOVE" is tied to the words around it, so a narrow
+ * column breaks as "DESERT / EYE — LOVE" and never leaves a dash on its own. The stored title is unchanged.
+ */
+export function displayTitle(title: string): string {
+  return title.replace(/ — /g, " — ");
+}
+
 export function placementLabel(id: PlacementId): string {
   return placements.find((p) => p.id === id)?.label ?? id;
 }
