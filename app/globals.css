@@ -1417,6 +1417,49 @@ input[type="range"].studio-range::-moz-range-thumb {
   }
 }
 
+/* ── The product animation: a contained 16:9 frame, words laid over its quiet lower-left corner ── */
+.product-film-frame {
+  aspect-ratio: 16 / 9;
+}
+.product-film-captions {
+  position: absolute;
+  left: 4%;
+  bottom: 6%;
+  display: grid;
+  gap: 0.35rem;
+  pointer-events: none;
+}
+.product-film-caption dt,
+.product-film-caption dd {
+  display: inline;
+}
+.product-film-caption dd::before {
+  content: " — ";
+}
+/* On a phone the frame is small, so the words sit under it instead. */
+@media (max-width: 639px) {
+  .product-film-captions {
+    position: static;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-line);
+    gap: 0.5rem;
+  }
+  .product-film-caption {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .product-film-caption dd::before {
+    content: none;
+  }
+  .product-film-caption dd {
+    flex-shrink: 0;
+    max-width: 45%;
+    text-align: right;
+  }
+}
+
 /* ── The piece: separated, aligned, approached, settled, one sweep of light ── */
 .assembly {
   aspect-ratio: 1;

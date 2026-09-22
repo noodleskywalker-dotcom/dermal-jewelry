@@ -146,7 +146,8 @@ test.describe("concept reveal", () => {
   test("without approved media it is a deliberate still, never a broken player", async ({ page }) => {
     const media: string[] = [];
     page.on("request", (r) => /\.(webm|mp4|mov)(\?|$)/.test(r.url()) && media.push(r.url()));
-    await gotoReveal(page, FAMILY);
+    // The anti-eyebrow form now has a real product animation; the concept reveal remains for the other forms.
+    await gotoReveal(page, `${FAMILY}?form=micro-dermal`);
     const player = page.getByTestId("reveal-player");
     await expect(player).toBeVisible();
     await expect(page.getByTestId("reveal-status")).toContainText("Reveal in preparation");

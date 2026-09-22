@@ -1,7 +1,7 @@
 import { demoProducts, placements } from "./demo-products";
-import type { CatalogProvider, FormId, PlacementId, Product, ProductForm } from "./types";
+import type { CatalogProvider, FormId, PlacementId, Product, ProductFilm, ProductForm } from "./types";
 
-export type { Product, Placement, PlacementId, ProductComponent, ArtId, FormId, ProductForm, RevealConfig } from "./types";
+export type { Product, Placement, PlacementId, ProductComponent, ArtId, FormId, ProductFilm, ProductForm, RevealConfig } from "./types";
 export { placements };
 
 // Milestone 1 uses the demo provider only. A Shopify provider will implement the same interface.
@@ -47,4 +47,14 @@ export function formOf(product: Product, formId?: string | null): ProductForm {
 
 export function availableForms(product: Product): ProductForm[] {
   return product.forms.filter((f) => f.status === "available");
+}
+
+/**
+ * The approved product animation for a form, when one exists and may be shown. A form the film does
+ * not cover, or a film not approved for publication, gets nothing: the drawn assembly stands instead.
+ */
+export function filmFor(product: Product, formId?: string | null): ProductFilm | undefined {
+  const form = formOf(product, formId);
+  const film = product.film;
+  return film && film.approvedForPublication && film.forms.includes(form.id) ? film : undefined;
 }

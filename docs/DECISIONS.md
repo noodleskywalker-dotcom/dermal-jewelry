@@ -2,6 +2,50 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-22 — The approved DESERT EYE product animation
+
+The owner supplied a Higgsfield video (`hf_20260922_061502_5a468b8b-…mp4`, 8.05 s, 1920×1080) and
+approved its sequence as the DESERT EYE — LOVE product animation: a sand creature appears, is
+surrounded by sand, dissolves into it, the gemstone, bar and symbol appear separately and assemble,
+and the completed piercing holds. It was to be used as supplied, not recreated in CSS and not
+replaced. No credits were spent and nothing was generated.
+
+- **The master stays out of the repository.** It is HEVC Main 10 with an AAC track, which most
+  browsers cannot play. It lives in `references/generated/product-animation/` (gitignored) with the
+  frames used to time the captions. Web versions were made with ffmpeg from the source, once:
+  `film.mp4` (H.264 High 4.1, CRF 22, faststart, AAC 96 k, 2.6 MB) and `film.webm` (VP9 CRF 33,
+  Opus 80 k, 1.2 MB), plus `poster.jpg` (first frame) and `final.jpg` (last frame), all in
+  `public/media/product-animation/desert-eye-love/`. WebM is listed first, MP4 is the fallback.
+- **A `film` on the product, resolved by form.** `ProductFilm` on the product type names the forms it
+  shows (`anti-eyebrow` only: that is the piece in the footage), its sources, poster, final frame,
+  duration, timed captions and an `approvedForPublication` flag; `filmFor(product, formId)` returns
+  it only for a covered, approved form. Micro dermal and nose keep the drawn assembly, and every
+  other design keeps it as its product view, so the architecture stays the fallback.
+- **Same rules as a reveal.** `components/catalog/ProductFilm.tsx` never autoplays and never starts
+  on hover; the page holds only the poster (94 KB, lazy) until a press, then mounts the video and
+  loads it; sound is off unless the customer turns it on; Skip is available at once; after the
+  film the last frame holds and Replay is offered; a load that fails or stalls for 8 s, and reduced
+  motion, show the final frame instead. Changing form or leaving the page unmounts the film. The
+  owner's brief said "play once when appropriate"; the project rule that reveals never autoplay
+  was kept, so the first play is always a press.
+- **Words are HTML, timed to the seating moments** read from the frames: the gemstone at 6.0 s,
+  the bar at 6.4 s, the symbol at 7.1 s; all three once the piece is complete. Only "Deep-red faceted
+  gemstone — Material not yet confirmed", "Titanium — Proposed" and "Polished finish — Proposed".
+  They sit over the quiet lower-left of the picture on a wide screen and under the frame on a phone.
+  The caption line under the stage says "Prototype product animation · concept hardware · not a size".
+- **A contained 16:9 frame everywhere.** Nothing is cropped on a phone; the whole assembly stays in
+  view and the controls sit under the frame.
+- **Face Studio never uses it.** The film is presentation. Face Studio and every preview still draw
+  the exact product assets on the customer's photo or the sculpted head.
+- **The superseded concept-reveal tab** is hidden on a form that has a film; development fixtures
+  (`?revealFixture=…`) can still open it, so the reveal player's own tests keep running.
+- **Rights.** The creature is generated concept art the owner approved for this page. It is not a
+  photograph of a franchise character, but it is close in spirit to one, and the standing rights review
+  before public use applies to it as much as to the symbol. The branch is not deployed to production.
+- **Test formats.** Playwright's bundled Chromium has no H.264 decoder and its WebKit decodes neither
+  delivery format, so playback is verified in Chromium through the WebM; poster, fallback, reduced
+  motion and layout are verified in every project.
+
 ## 2026-09-22 — Visual refinement pass (HYBRID structure approved, no redesign)
 
 The owner approved the HYBRID structure as built and ordered a refinement pass from the 22 September

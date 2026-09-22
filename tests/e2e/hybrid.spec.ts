@@ -56,8 +56,8 @@ test.describe("sand belongs to DESERT EYE alone", () => {
       .poll(() => page.getByTestId("sand-layer").evaluate((el) => Number(getComputedStyle(el).opacity)))
       .toBeLessThan(0.05);
 
-    // Its own product page stands on the same sand; an original's product page does not.
-    await page.goto("/product/desert-eye-love");
+    // Its own drawn assembly stands on the same sand; an original's product page does not.
+    await page.goto("/product/desert-eye-love?form=micro-dermal");
     await expect(page.getByTestId("sand-layer")).toHaveCount(1);
 
     for (const route of ["/shop", "/product/crimson-orbit", "/face-studio", "/cart"]) {
@@ -117,7 +117,8 @@ test.describe("the selection is dragged with a mouse", () => {
 
 test.describe("the piece: assembly, exploded view, replay", () => {
   test("it assembles once, opens out, closes and replays, with the owner's material wording", async ({ page }) => {
-    await page.goto("/product/desert-eye-love");
+    // The anti-eyebrow form has a film; the nose form still shows the drawn assembly with all three notes.
+    await page.goto("/product/desert-eye-love?form=nose");
     const piece = page.getByTestId("piece-assembly");
     await expect(piece).toHaveAttribute("data-phase", "assembling");
     await expect(piece).toHaveAttribute("data-phase", "assembled", { timeout: 8000 });
@@ -154,7 +155,7 @@ test.describe("the piece: assembly, exploded view, replay", () => {
   test("a themed opening is recorded as not produced and nothing is loaded for it", async ({ page }) => {
     const media: string[] = [];
     page.on("request", (r) => /\.(mp4|webm|mov)(\?|$)/.test(r.url()) && media.push(r.url()));
-    await page.goto("/product/desert-eye-love");
+    await page.goto("/product/desert-eye-love?form=micro-dermal");
     await expect(page.getByTestId("piece-assembly")).toHaveAttribute("data-phase", "assembled", { timeout: 8000 });
     expect(media).toEqual([]);
   });

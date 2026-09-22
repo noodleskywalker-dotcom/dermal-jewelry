@@ -1,5 +1,39 @@
 # Test report
 
+## DESERT EYE product animation — 22 September 2026
+
+Browser results are **browser emulation on a Windows desktop** against a development server.
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 problems |
+| `npm run typecheck` | pass, 0 errors |
+| `npm test` | 77 of 77 pass |
+| `npm run test:e2e` (`--workers=2`) | 272 pass, 45 skipped, 0 fail after rerun (321 across desktop Chromium, mobile Chromium, desktop WebKit) |
+| `npm run build` | pass |
+
+Four WebKit tests unrelated to the film (landing teaser, selection form switch, storefront navigation,
+story hover) timed out under load in the full run and passed alone; see the note under the refinement
+pass. The seven skips added by `film.spec.ts` are WebKit playback tests: Playwright's bundled WebKit
+decodes neither VP9 nor H.264, and its Chromium has no H.264, so playback is verified in Chromium on
+the WebM and everything else in every project.
+
+`tests/e2e/film.spec.ts` covers: first load (poster only, no media request, no assembly, no reveal
+tab, shopping enabled, safe wording); the film covers the anti-eyebrow form only and other designs
+keep the drawn assembly; Face Studio has no film or video with or without a photo; press to play,
+muted, not looping, one media request, captions at 6.2 s and all three at the end, last frame held,
+Replay after a full play rewinds and restarts; Skip then Replay; keyboard Play, Skip and Replay; a
+1.5 s delay shows "Loading…" then plays; an aborted load falls back to the completed piece with a
+note and Replay; switching form while playing unmounts the film and coming back starts from the
+poster; leaving for Try On and coming back finds the poster; reduced motion shows the completed
+piece with all words and requests nothing; on a phone the 16:9 frame fits the screen uncropped with
+a 44 px Play and the words under the frame. A replay bug found by the recording (Replay after a full
+play stalled in "loading") was fixed and is covered.
+
+Review package (local only): `references/review/2026-09-22-product-animation/` — desktop and Pixel 7
+at poster, playing, captions and ended, full pages, and `product-page-with-film.webm` (poster → Play
+→ full play → Replay → Skip → nose form → back to anti-eyebrow).
+
 ## Visual refinement pass — 22 September 2026
 
 Browser results are **browser emulation on a Windows desktop** against a development server.

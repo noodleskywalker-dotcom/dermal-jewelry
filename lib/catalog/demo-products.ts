@@ -156,6 +156,27 @@ export const demoProducts: Product[] = [
       { id: "stone", label: "Deep-red faceted gemstone", status: "Material not yet confirmed" },
       { id: "finish", label: "Polished finish", status: "Proposed" },
     ],
+    // The owner's approved product animation (22 September 2026): a sand creature dissolves into sand,
+    // the three parts of the anti-eyebrow pair appear separately and assemble, and the completed piece
+    // holds. Web versions of the supplied master; the master itself is in `references/`, not here.
+    // The words are laid over it when each part seats, never baked in, and nothing is called verified.
+    film: {
+      forms: ["anti-eyebrow"],
+      sources: [
+        { src: "/media/product-animation/desert-eye-love/film.webm", type: "video/webm" },
+        { src: "/media/product-animation/desert-eye-love/film.mp4", type: "video/mp4" },
+      ],
+      poster: "/media/product-animation/desert-eye-love/poster.jpg",
+      final: "/media/product-animation/desert-eye-love/final.jpg",
+      durationSeconds: 8.05,
+      captions: [
+        { at: 6.0, label: "Deep-red faceted gemstone", status: "Material not yet confirmed" },
+        { at: 6.4, label: "Titanium", status: "Proposed" },
+        { at: 7.1, label: "Polished finish", status: "Proposed" },
+      ],
+      classification: "prototype-product-animation",
+      approvedForPublication: true,
+    },
     // Architecture only. No clip exists, and none may be generated without the owner's approval.
     assembly: { themed: { id: "sand-spirit", description: "A small sand spirit is drawn toward the piece, dissolves into grains, and the grains flow into the jewelry.", status: "not-produced" } },
   }),

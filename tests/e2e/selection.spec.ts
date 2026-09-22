@@ -88,16 +88,17 @@ test.describe("the selection: sideways browsing", () => {
 
 test.describe("product page: the whole piece", () => {
   test("opens on the full piercing, assembled, with honest material notes", async ({ page }) => {
-    await page.goto("/product/desert-eye-love");
+    // The anti-eyebrow form opens on its film; the nose form opens on the drawn piece with every note.
+    await page.goto("/product/desert-eye-love?form=nose");
     await expect(page.getByRole("tab", { name: "The piece" })).toHaveAttribute("aria-selected", "true");
     const assembly = page.getByTestId("piece-assembly");
-    await expect(assembly).toHaveAttribute("data-hardware", "bar");
-    // Tops, posts and base are all there.
-    for (const part of ["base", "posts", "symbol", "gemstone"]) await expect(assembly.locator(`[data-part="${part}"]`)).toHaveCount(1);
-    await expect(assembly.locator('[data-part="posts"] [data-post]')).toHaveCount(2);
+    await expect(assembly).toHaveAttribute("data-hardware", "stud");
+    // Top, post and base are all there.
+    for (const part of ["base", "posts", "gemstone"]) await expect(assembly.locator(`[data-part="${part}"]`)).toHaveCount(1);
+    await expect(assembly.locator('[data-part="posts"] [data-post]')).toHaveCount(1);
 
     // It comes together by itself and ends fully visible.
-    await expect.poll(async () => assembly.locator('[data-part="symbol"]').evaluate((el) => getComputedStyle(el).opacity), { timeout: 6000 }).toBe("1");
+    await expect.poll(async () => assembly.locator('[data-part="gemstone"]').evaluate((el) => getComputedStyle(el).opacity), { timeout: 6000 }).toBe("1");
     const notes = page.getByTestId("assembly-notes");
     await expect(notes).toContainText("Titanium");
     await expect(notes).toContainText("Proposed");
@@ -111,17 +112,20 @@ test.describe("product page: the whole piece", () => {
     await page.getByTestId("assembly-replay").click();
     await expect(page.getByTestId("add-to-bag")).toBeEnabled();
 
-    // Each form shows its own hardware.
+    // Each form shows its own hardware. The bar, a pair on one base, is checked on a design without a film.
     await page.locator("label", { has: page.getByTestId("form-micro-dermal") }).click();
     await expect(assembly).toHaveAttribute("data-hardware", "anchor");
     await expect(assembly.locator('[data-part="posts"] [data-post]')).toHaveCount(1);
-    await page.locator("label", { has: page.getByTestId("form-nose") }).click();
-    await expect(assembly).toHaveAttribute("data-hardware", "stud");
+    await page.goto("/product/sand-vortex");
+    const bar = page.getByTestId("piece-assembly");
+    await expect(bar).toHaveAttribute("data-hardware", "bar");
+    for (const part of ["base", "posts"]) await expect(bar.locator(`[data-part="${part}"]`)).toHaveCount(1);
+    await expect(bar.locator('[data-part="posts"] [data-post]')).toHaveCount(2);
   });
 
   test("with reduced motion the piece is simply assembled", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto("/product/desert-eye-love");
+    await page.goto("/product/desert-eye-love?form=micro-dermal");
     const symbol = page.getByTestId("piece-assembly").locator('[data-part="symbol"]');
     await expect.poll(async () => symbol.evaluate((el) => getComputedStyle(el).opacity), { timeout: 1500 }).toBe("1");
   });

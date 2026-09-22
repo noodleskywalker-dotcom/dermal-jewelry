@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { displayTitle, formatPrice } from "@/lib/catalog";
+import { displayTitle, filmFor, formatPrice } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { AddToBagButton } from "@/components/cart/AddToBagButton";
 import { RevealPlayer, type ConceptStills } from "@/components/reveal/RevealPlayer";
 import { useFormChoice } from "@/components/studio/useFormChoice";
 import { motionOf } from "./FloatingObject";
 import { PieceAssembly } from "./PieceAssembly";
+import { ProductFilm } from "./ProductFilm";
 import { PlacementPreview } from "./PlacementPreview";
 import { TryOnPreview } from "./TryOnPreview";
 
@@ -30,11 +31,14 @@ export function FamilyExperience({
   concept?: ConceptStills;
 }) {
   const { form, choose } = useFormChoice(product, initialFormId);
+  // An approved product animation for this form takes the stage; without one, the drawn assembly does.
+  const film = filmFor(product, form.id);
 
   const views: { id: ViewId; label: string }[] = [
-    // The whole piercing, assembled, comes first.
+    // The whole piercing comes first: the product animation where one exists, otherwise assembled from the parts.
     { id: "piece", label: "The piece" },
-    ...(product.reveal.mode !== "none" ? [{ id: "reveal" as const, label: "Concept reveal" }] : []),
+    // The concept-reveal prototype is superseded on a form with a real film; development fixtures can still open it.
+    ...(product.reveal.mode !== "none" && (!film || fixtureSrc || concept) ? [{ id: "reveal" as const, label: "Concept reveal" }] : []),
     { id: "placement", label: "Placement preview" },
     { id: "tryon", label: "Try on your face" },
   ];
@@ -62,7 +66,10 @@ export function FamilyExperience({
     <div className="grid gap-x-16 gap-y-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]" data-testid="family" data-form={form.id}>
       <div className="min-w-0 lg:sticky lg:top-20 lg:self-start">
         <div role="tabpanel" id={`panel-${view}`} aria-labelledby={`tab-${view}`} className="relative flex w-full items-center justify-center lg:min-h-[min(74svh,46rem)]">
-          {view === "piece" ? (
+          {view === "piece" && film ? (
+            // Keyed by form, so changing form always starts from the poster and never carries a playing film across.
+            <ProductFilm key={`${product.id}:${form.id}`} product={product} film={film} formId={form.id} />
+          ) : view === "piece" ? (
             // DESERT EYE alone stands on a little sand, drawn inside the stage. Every other family stands on plain paper.
             <PieceAssembly key={product.id} product={product} formId={form.id} sand={motionOf(product, form.id) === "sand"} />
           ) : (

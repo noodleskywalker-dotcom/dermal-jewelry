@@ -11,6 +11,31 @@ Milestone 1, the first vertical slice, is implemented and tested locally. The HY
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
 
+## DESERT EYE product animation (22 September 2026)
+
+The owner's approved Higgsfield sequence is the product animation for DESERT EYE — LOVE, anti-eyebrow
+form, on the product page's stage. Built and tested locally, pushed to `feat/dermal-first-slice`,
+**not owner-reviewed as built**, not merged, not deployed to production. No credits, nothing generated.
+Details in `docs/DECISIONS.md`.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Web delivery from the supplied master | done | `film.webm` 1.2 MB, `film.mp4` 2.6 MB, poster and final frame, in `public/media/product-animation/desert-eye-love/`. The HEVC master stays in `references/`. |
+| Product stage: poster, Play, Skip, Replay, sound off by default, hold on the last frame | tested | Nothing loads before a press; never autoplays; one media request per play. |
+| Material words as timed HTML overlays | tested | Gemstone 6.0 s, bar 6.4 s, symbol 7.1 s; all after the end. Safe wording only. |
+| Failure and slow-network fallback | tested | Aborted media → completed-piece still with a note; a 1.5 s delay → "Loading…" then playback; 8 s stall → fallback. |
+| Reduced motion | tested | Completed piece and all words, no playback offered, no media requested. |
+| Keyboard | tested | Play, Skip and Replay by Enter and Space. |
+| Form switching and returning from Try On | tested | Other forms use the drawn assembly; coming back finds the poster. |
+| Phone | tested (Pixel 7) | Contained 16:9 frame, nothing cropped, controls under the frame, words under the frame. |
+| Face Studio | tested | No film, no video element, with or without a photo. |
+| Concept-reveal tab | hidden on the filmed form | Still reachable with the development fixture for its own tests. |
+
+Limits: the poster is the film's first frame (the creature), as the owner asked, so the first thing
+on the product page is the creature rather than the jewelry; there is no 3D view, so "view the
+completed piece" is the held last frame plus the placement preview and try-on tabs; the creature is
+generated concept art and the rights review before public use applies to it.
+
 ## Visual refinement pass (22 September 2026)
 
 Built from the owner's brief after the 22 September visual review, in the owner's priority order.

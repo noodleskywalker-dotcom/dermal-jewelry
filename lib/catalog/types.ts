@@ -95,6 +95,27 @@ export type RevealConfig = {
   readiness: RevealReadiness;
 };
 
+/**
+ * An approved product animation: prepared media that presents one or more forms of a design. It is
+ * storytelling and presentation only. Face Studio never uses it, the jewelry geometry never comes
+ * from it, and material words are HTML laid over it at the right moments, never baked into the film.
+ */
+export type ProductFilm = {
+  /** Which forms the film shows. Other forms of the design fall back to the drawn assembly. */
+  forms: FormId[];
+  /** Web delivery files, listed in order of preference. The original master stays out of the repo. */
+  sources: { src: string; type: string }[];
+  /** First frame, shown before anything loads. */
+  poster: string;
+  /** The completed piece, held after the film, and shown instead of it with reduced motion or on failure. */
+  final: string;
+  durationSeconds: number;
+  /** Material words shown over the film from a given second. Only safe, unverified wording. */
+  captions: { at: number; label: string; status: string }[];
+  classification: "prototype-product-animation";
+  approvedForPublication: boolean;
+};
+
 export type Product = {
   /** Demo identifiers are prefixed "demo-" and must never be sent to Shopify. */
   id: string;
@@ -110,6 +131,8 @@ export type Product = {
   forms: ProductForm[];
   defaultFormId: FormId;
   reveal: RevealConfig;
+  /** An approved product animation for some forms. Without one, the drawn assembly is the product view. */
+  film?: ProductFilm;
   specs: { label: string; value: string; status: SpecStatus }[];
   /**
    * What each part is made of, as far as anyone has said. "Proposed" is the owner's intention, not a

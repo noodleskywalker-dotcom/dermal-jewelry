@@ -57,15 +57,20 @@ test.describe("prototype product art", () => {
     await expect(page.locator('[data-testid="story-piece"][data-product="sand-vortex"]').getByTestId("piece-asset")).toHaveCount(0);
 
     // Product page: still, placement head, and the honest label.
+    // The anti-eyebrow form opens on its product animation; the film is presentation, so the exact art
+    // is checked on the placement head, and the assembly is checked on a form without a film.
     await page.goto("/product/desert-eye-love");
-    await waitForArt(page);
-    // The page opens on the whole piece, assembled from the same product images.
-    const assembled = await inspect(page.getByTestId("piece-assembly"));
-    expect(assembled.map((p) => p.component).sort()).toEqual(["gemstone", "symbol"]);
-    expect(assembled.every((p) => p.loaded && !p.flipped)).toBe(true);
+    await expect(page.getByTestId("product-film")).toBeVisible();
     await page.getByRole("tab", { name: "Placement preview" }).click();
+    await waitForArt(page);
     const placed = await inspect(page.getByTestId("placement-preview"));
     expect(placed.map((p) => p.component)).toEqual(["symbol", "gemstone"]);
+    expect(placed.every((p) => p.loaded && !p.flipped)).toBe(true);
+    await page.goto("/product/desert-eye-love?form=micro-dermal");
+    await waitForArt(page);
+    const assembled = await inspect(page.getByTestId("piece-assembly"));
+    expect(assembled.map((p) => p.component)).toEqual(["symbol"]);
+    expect(assembled.every((p) => p.loaded && !p.flipped)).toBe(true);
 
     // Shop grid and bag thumbnail.
     await page.goto("/shop");
