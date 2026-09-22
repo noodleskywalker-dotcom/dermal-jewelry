@@ -2,6 +2,38 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-22 — Cinematic homepage: one scrubbed moment, story, assembly (no credits)
+
+The owner's cinematic brief of 22 September asks for a scroll-scrubbed hero orbit, a minimal story
+section and an assembly section on the homepage, with Higgsfield media for the orbit (MEDIA 01) and
+a macro fly-through (MEDIA 02). Generation waits for the owner's approval of the exact prompts,
+models and credits (proposed: `nano_banana_pro` hero image, 2 credits; two `seedance_2_5` clips,
+8 s, 1080p, no audio, 96 credits each). Until then the sections are built with placeholders taken
+from the approved product animation, and nothing was generated or spent.
+
+- **One pinned section, by the owner's instruction.** `CLAUDE.md` forbids pinned stages and
+  scroll-driven camera moves from the earlier chapter homepage; the owner's brief now allows
+  "cinematic pinned / scrubbed media sections where they improve the experience" and asks for one.
+  `ScrubHero` is that one: a 230 svh section whose stage stays in view while 48 still frames are
+  scrubbed by the page's own scroll (`useScrollProgress` writes `--p`; a canvas draws the frame).
+  Nothing else is pinned, nothing hijacks the wheel, and the section can be scrolled past at once.
+  With reduced motion it is a plain still with the same words. The home test now allows exactly
+  this one sticky stage.
+- **Placeholder frames.** The frames are the assembly beats of the approved product animation
+  (4.6–8.05 s at 14 fps, 1440 px JPEG, 1.3 MB total), so scrolling assembles the piece. The label
+  under the stage says "Prototype product animation". They are replaced by the hero orbit's frames
+  once MEDIA 01 is approved and made; the component is media-agnostic (`frames.dir`, `count`).
+- **Story section** is three words, one still (the sand vortex frame of the film) with the
+  collection's drifting grains, and a link. It stands in for MEDIA 02.
+- **Assembly section** reuses `ProductFilm` unchanged, with the owner's three material lines.
+- **Micro-interactions.** The cursor's light brightens chrome slightly (`--mx`/`--my` in
+  `.fo-shadow`); KIRI's concept blade takes one thin blade of light on hover or focus.
+- **Copy** is only the approved lines plus "Crafted for the face." (the owner's), "Sand. Solitude.
+  Identity." (the owner's) and "Assembled from three parts." No taglines, no paragraphs.
+- **Not done.** Lenis or any smooth-scroll library (native scrolling is enough and safer for
+  accessibility); a new mascot animation (the IP filter blocks character video; the existing stills,
+  idle code and sand clip stand); any credit spend.
+
 ## 2026-09-22 — The approved DESERT EYE product animation
 
 The owner supplied a Higgsfield video (`hf_20260922_061502_5a468b8b-…mp4`, 8.05 s, 1920×1080) and

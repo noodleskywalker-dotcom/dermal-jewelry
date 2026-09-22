@@ -1,5 +1,30 @@
 # Test report
 
+## Cinematic homepage — 22 September 2026
+
+Browser results are **browser emulation on a Windows desktop** against a development server.
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 problems |
+| `npm run typecheck` | pass, 0 errors |
+| `npm test` | 77 of 77 pass |
+| `npm run test:e2e` (`--workers=2`) | 289 pass, 46 skipped, 0 fail after rerun (one WebKit reduced-motion mascot timeout passed alone) |
+| `npm run build` | pass |
+
+`tests/e2e/home-cinema.spec.ts`: frames follow the scroll up and back, the name arrives early and
+the second line past the middle, the page goes on to the story; the 48 frames are fetched once and
+scrubbing fetches nothing more, no `<video>` on the homepage; reduced motion gives a plain still and
+no sticky element; PageDown scrubs it; the story has its three words, its sand and none of the
+banned marketing words; the assembly section carries the film idle with the three material lines.
+`home.spec.ts` now allows exactly one sticky stage, `.scrub-stage`.
+
+Review package (local only): `references/review/2026-09-22-cinematic/` — desktop and Pixel 7 for
+hero, scrub early / mid / end, story, assembly, selection, KIRI hover, product, Face Studio, and
+`walkthrough.webm` (hero cursor, full scroll through the scrub, film play, sideways selection to KIRI,
+Face Studio with the fixture photo).
+
+
 ## DESERT EYE product animation — 22 September 2026
 
 Browser results are **browser emulation on a Windows desktop** against a development server.

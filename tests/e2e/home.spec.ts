@@ -23,15 +23,16 @@ test.describe("landing page", () => {
     await expect(page.getByTestId("cta-face")).toHaveAttribute("href", "/face-studio");
     await expect(page.getByTestId("cta-selection")).toHaveAttribute("href", "/collections");
 
-    // Nothing is pinned, and the wheel moves the page one-to-one.
+    // One pinned stage only, the owner's scrub moment (22 September 2026); the landing itself is not pinned,
+    // and the wheel moves the page one-to-one.
     const pinned = await page.evaluate(
       () =>
         [...document.querySelectorAll("main *")].filter((el) => {
           const s = getComputedStyle(el);
-          return (s.position === "sticky" || s.position === "fixed") && el.getBoundingClientRect().height >= window.innerHeight * 0.9;
-        }).length,
+          return (s.position === "sticky" || s.position === "fixed") && el.getBoundingClientRect().height >= window.innerHeight * 0.85;
+        }).map((el) => el.className),
     );
-    expect(pinned).toBe(0);
+    expect(pinned).toEqual(["scrub-stage"]);
     await page.mouse.move(200, 300);
     await page.mouse.wheel(0, 400);
     await expect.poll(() => page.evaluate(() => Math.round(window.scrollY))).toBe(400);

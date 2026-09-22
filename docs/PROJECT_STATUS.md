@@ -11,6 +11,22 @@ Milestone 1, the first vertical slice, is implemented and tested locally. The HY
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
 
+## Cinematic homepage (22 September 2026, no credits)
+
+From the owner's cinematic brief. Built and tested locally; the two new media clips wait for the
+owner's credit approval, so their sections run on placeholders from the approved product animation.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Scroll-scrub hero (`ScrubHero`) | tested | One pinned stage, 48 stills scrubbed by scroll, words in order, keyboard scroll, reduced-motion still, frames fetched once. **Placeholder frames** (assembly beats) until MEDIA 01 hero orbit exists. |
+| Story section | tested | "DESERT EYE / Sand. Solitude. Identity." with the vortex still and drifting grains. **Placeholder** for MEDIA 02 macro fly-through. |
+| Assembly section | tested | The approved film with the three material lines. Real media. |
+| Cursor light on chrome, KIRI blade sweep | implemented | CSS only. |
+| MEDIA 01 hero orbit, MEDIA 02 macro, hero product image | **awaiting approval** | Exact prompts, models and estimates in the 22 September report: 2 + 96 + 96 credits. Balance 462. Nothing spent. |
+| MEDIA 03 assembly | done | Existing approved film, not regenerated. |
+| MEDIA 04 mascot | done as far as the platform allows | Stills, idle code, sand clip. Character video is blocked by the IP filter; not retried. |
+| Lenis / smooth scroll | not used | Native scroll. |
+
 ## DESERT EYE product animation (22 September 2026)
 
 The owner's approved Higgsfield sequence is the product animation for DESERT EYE — LOVE, anti-eyebrow

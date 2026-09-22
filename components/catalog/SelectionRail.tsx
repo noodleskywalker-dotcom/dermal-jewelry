@@ -241,8 +241,10 @@ export function SelectionRail({
           const current = products.length + n === index;
           return (
             <li key={concept.name} data-testid="selection-concept" data-current={current} data-side={current ? undefined : "after"} aria-current={current ? "true" : undefined} className="selection-slide">
-              <div className="selection-object relative mx-auto flex aspect-square items-center justify-center">
+              <div className="selection-object relative mx-auto flex aspect-square items-center justify-center" data-object-host>
                 <ConceptBlade />
+                {/* KIRI's own motion: one thin blade of light on hover or focus, chrome and nothing else. */}
+                <span aria-hidden="true" className="fo-blade" />
               </div>
               <div className="selection-info relative mx-auto mt-2 w-full max-w-xl text-center">
                 <h2 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-light leading-none tracking-[0.2em]">{concept.name}</h2>
