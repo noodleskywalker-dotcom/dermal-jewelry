@@ -11,6 +11,22 @@ Milestone 1, the first vertical slice, is implemented and tested locally. The HY
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
 
+## BLADE TRACE (23 September 2026, no credits)
+
+Built and tested; **awaiting the owner's review**. Review package:
+`references/review/2026-09-23-blade-trace/` (desktop and mobile).
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| BLADE TRACE in the catalogue | tested | Inspired · Weapon form, unisex, micro dermal; third in the rail, in the full collection, the shop, men and women. |
+| Concept artwork and diagonal placement | tested | Drawn from the worn reference; blade, ribbed grip and ring, rotated 18°. |
+| Product page | tested | The piece · Placement · Try on. No 360° and no assembly film are shown, because no media exists. |
+| Own motion, local code only | tested | One thin light along the edge, a small step forward, then rest. |
+| Face Studio | tested | Selectable with move, scale and rotate; the rail no longer hides its first pieces. |
+| HORUS TRACE | frozen | In motion · Front · Angle · Detail · Placement · Try on, unchanged. |
+
+Higgsfield is unavailable (0.68 credits) and nothing was generated.
+
 ## HORUS TRACE as the second hero (23 September 2026, 41 credits)
 
 Built and tested; **awaiting the owner's review**. Review package:

@@ -1,24 +1,26 @@
 import { expect, test } from "@playwright/test";
 import { openStudioWithPhoto } from "./helpers";
 
-// CROSSLINE, ANKH TRACE and HORUS TRACE (the owner's brief of 23 September 2026). They are concept
+// BLADE TRACE, CROSSLINE, ANKH TRACE and HORUS TRACE (the owner's briefs of 23 September 2026). They are concept
 // products: drawn from a written description, with no price, no confirmed material and no hardware.
 // These tests hold that honesty in place, and check that each one is browsable, has a product page,
 // a placement preview and a place in Face Studio.
 
 const FAMILIES = [
+  { slug: "blade-trace", title: "BLADE TRACE", lines: "Inspired · Weapon form", form: "micro-dermal", motion: "edge" },
   { slug: "crossline", title: "CROSSLINE", lines: "Original · Signature", form: "micro-dermal", motion: "sweep" },
   { slug: "ankh-trace", title: "ANKH TRACE", lines: "Original · Symbolic", form: "micro-dermal", motion: "pendulum" },
   { slug: "horus-trace", title: "HORUS TRACE", lines: "Symbolic · Ancient · Featured", form: "anti-eyebrow", motion: "eye" },
 ];
 
 // Words that must never appear on these pages: the supplied poster's claims and the standing bans.
-const BANNED = ["implant-grade", "implant grade", "genuine gemstone", "sterling", "ruby", "official collaboration", "grade 5", "certified"];
+// "not an official collaboration" is the honest line on an inspired piece, so only a claim of one is banned.
+const BANNED = ["implant-grade", "implant grade", "genuine gemstone", "sterling", "ruby", "is an official collaboration", "grade 5", "certified"];
 
-test.describe("the three concept families", () => {
-  test("all three are in the full collection, the selection and the shop, in the owner's order", async ({ page }) => {
+test.describe("the concept families", () => {
+  test("every concept family is in the full collection, the selection and the shop, in the owner's order", async ({ page }) => {
     await page.goto("/shop");
-    await expect(page.getByTestId("product-card")).toHaveCount(7);
+    await expect(page.getByTestId("product-card")).toHaveCount(8);
     for (const f of FAMILIES) {
       await expect(page.locator(`[data-testid="product-card"][data-product="${f.slug}"]`)).toHaveCount(1);
     }
@@ -29,13 +31,17 @@ test.describe("the three concept families", () => {
         await expect(page.locator(`[data-testid="product-card"][data-product="${f.slug}"]`)).toHaveCount(1);
       }
     }
-    // The owner's taxonomy: the two simple pieces are Original; HORUS TRACE is Symbolic and Ancient.
+    // The owner's taxonomy: CROSSLINE and ANKH TRACE are Original; HORUS TRACE is Symbolic and
+    // Ancient; BLADE TRACE is Inspired, beside DESERT EYE.
     await page.goto("/shop?browse=original");
     await expect(page.locator('[data-testid="product-card"][data-product="crossline"]')).toHaveCount(1);
     await expect(page.locator('[data-testid="product-card"][data-product="ankh-trace"]')).toHaveCount(1);
     await expect(page.locator('[data-testid="product-card"][data-product="horus-trace"]')).toHaveCount(0);
+    await expect(page.locator('[data-testid="product-card"][data-product="blade-trace"]')).toHaveCount(0);
     await page.goto("/shop?browse=inspired");
-    for (const f of FAMILIES) {
+    await expect(page.locator('[data-testid="product-card"][data-product="blade-trace"]')).toHaveCount(1);
+    await page.goto("/shop?browse=inspired");
+    for (const f of FAMILIES.filter((x) => x.slug !== "blade-trace")) {
       await expect(page.locator(`[data-testid="product-card"][data-product="${f.slug}"]`)).toHaveCount(0);
     }
     // The owner's order: DESERT EYE first, HORUS TRACE second, then the two simpler concepts.
@@ -43,8 +49,9 @@ test.describe("the three concept families", () => {
     const slides = page.getByTestId("selection-slide");
     await expect(slides.nth(0)).toHaveAttribute("data-product", "desert-eye-love");
     await expect(slides.nth(1)).toHaveAttribute("data-product", "horus-trace");
-    await expect(slides.nth(2)).toHaveAttribute("data-product", "crossline");
-    await expect(slides.nth(3)).toHaveAttribute("data-product", "ankh-trace");
+    await expect(slides.nth(2)).toHaveAttribute("data-product", "blade-trace");
+    await expect(slides.nth(3)).toHaveAttribute("data-product", "crossline");
+    await expect(slides.nth(4)).toHaveAttribute("data-product", "ankh-trace");
     await page.goto("/collections");
     for (const f of FAMILIES) {
       await expect(page.locator(`[data-testid="selection-slide"][data-product="${f.slug}"]`)).toHaveCount(1);
@@ -132,11 +139,14 @@ test.describe("the three concept families", () => {
     }
   });
 
-  test("all three are in the Face Studio rail and keep the manual tools", async ({ page }) => {
+  test("every concept family is in the Face Studio rail and keep the manual tools", async ({ page }) => {
     await openStudioWithPhoto(page);
     for (const f of FAMILIES) {
       const choice = page.locator(`[data-testid="studio-product"][data-product="${f.slug}"]`);
       await expect(choice).toHaveCount(1);
+      // The rail scrolls sideways, so the piece is brought into the middle of it before the press.
+      await choice.evaluate((el) => el.scrollIntoView({ inline: "center", block: "center" }));
+      await page.waitForTimeout(250);
       await choice.click();
       await expect(choice).toHaveAttribute("aria-pressed", "true");
       await expect(page.getByTestId("placed-item")).toHaveCount(1);

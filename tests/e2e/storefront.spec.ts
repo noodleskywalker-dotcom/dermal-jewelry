@@ -34,8 +34,8 @@ test.describe("storefront navigation", () => {
 
   test("placement filters show real pieces or an honest empty state", async ({ page }) => {
     await page.goto("/shop?placement=dermal");
-    // The three earlier dermal pieces, plus CROSSLINE and ANKH TRACE.
-    await expect(page.getByTestId("product-card")).toHaveCount(5);
+    // The three earlier dermal pieces, plus BLADE TRACE, CROSSLINE and ANKH TRACE.
+    await expect(page.getByTestId("product-card")).toHaveCount(6);
     await page.goto("/shop?placement=nostril");
     await expect(page.getByTestId("product-card")).toHaveCount(2);
     await page.goto("/shop?placement=septum");

@@ -1,5 +1,21 @@
 # Test report
 
+## BLADE TRACE — 23 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors |
+| `npm run typecheck` | pass |
+| `npm test` | 77 of 77 pass |
+| `npx playwright test --workers=2` | 376 pass, 49 skipped, 1 timing failure on the rail's last step, which passes on rerun after the step was made to wait for the control |
+| `npm run build` | pass |
+
+`concept-families.spec.ts` now covers four families. It found a real bug while doing so: with eight
+pieces the Face Studio rail centred its row, so the first pieces sat past the left edge where no
+scrolling could reach them. The row now centres through auto margins. Counts across the suite moved
+from seven families to eight, the shop's Inspired filter now holds DESERT EYE and BLADE TRACE, and the
+dermal placement holds six pieces.
+
 ## HORUS TRACE as the second hero — 23 September 2026
 
 | Command | Result |

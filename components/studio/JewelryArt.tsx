@@ -298,6 +298,44 @@ function HorusEye({ id }: { id: string }) {
   );
 }
 
+/**
+ * BLADE TRACE, drawn from the owner's worn reference of 22 September 2026: a long tapered blade with
+ * a centre ridge, a short ribbed grip and an open ring at the end, worn on a diagonal. Proportions
+ * follow that photograph. It is jewelry shaped by blade geometry, kept small and plain.
+ */
+function BladeTrace({ id }: { id: string }) {
+  const metal = `url(#${id}-metal)`;
+  const UPPER = "M70 470 L 610 396 L 636 486 Z";
+  const LOWER = "M70 470 L 636 486 L 606 580 Z";
+  const ribs = Array.from({ length: 5 }, (_, i) => 690 + i * 34);
+  return (
+    <>
+      {/* Contact shadow: the piece lies on a surface, it does not float. */}
+      <g transform="translate(14 22)" opacity="0.3">
+        <path d={UPPER} fill="#000" />
+        <path d={LOWER} fill="#000" />
+        <rect x="640" y="452" width="230" height="76" rx="30" fill="#000" />
+        <circle cx="905" cy="492" r="66" fill="none" stroke="#000" strokeWidth="30" />
+      </g>
+      {/* The blade: two facets either side of the centre ridge. */}
+      <path d={UPPER} fill={metal} />
+      <path d={LOWER} fill={metal} opacity="0.82" />
+      <path d="M70 470 L 636 486" fill="none" stroke="rgba(255,255,255,0.75)" strokeWidth="6" strokeLinecap="round" />
+      <path d="M150 462 L 596 408" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="9" strokeLinecap="round" />
+      {/* The shoulder, then the short ribbed grip. */}
+      <path d="M606 580 L 636 486 L 610 396 L 664 412 L 686 486 L 664 566 Z" fill={metal} stroke="rgba(0,0,0,0.28)" strokeWidth="5" />
+      <rect x="664" y="452" width="206" height="72" rx="30" fill={metal} stroke="rgba(0,0,0,0.25)" strokeWidth="5" />
+      {ribs.map((x) => (
+        <rect key={x} x={x} y="456" width="12" height="64" rx="6" fill="rgba(0,0,0,0.32)" />
+      ))}
+      <rect x="678" y="466" width="176" height="10" rx="5" fill="rgba(255,255,255,0.45)" />
+      {/* The open ring at the end. */}
+      <circle cx="905" cy="492" r="66" fill="none" stroke={metal} strokeWidth="30" />
+      <path d="M862 452 A 60 60 0 0 1 916 432" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="8" strokeLinecap="round" />
+    </>
+  );
+}
+
 /** A dark faceted stone, of unconfirmed material, in four prongs. */
 function DarkGem({ id }: { id: string }) {
   const prongs = [45, 135, 225, 315].map((deg) => {
@@ -335,6 +373,7 @@ const ART: Record<ArtId, (props: { id: string }) => React.ReactNode> = {
   "horus-piece": HorusPiece,
   "horus-eye": HorusEye,
   "dark-gem": DarkGem,
+  blade: BladeTrace,
 };
 
 export function JewelryArt({ art, className }: { art: ArtId; className?: string }) {

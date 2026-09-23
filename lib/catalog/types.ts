@@ -18,7 +18,8 @@ export type ArtId =
   | "ankh"
   | "horus-piece"
   | "horus-eye"
-  | "dark-gem";
+  | "dark-gem"
+  | "blade";
 
 /** One visual piece of a product, laid out in the product's local unit box. */
 export type ProductComponent = {
@@ -153,7 +154,7 @@ export type Audience = "men" | "women" | "unisex";
  * The lines a piece belongs to. "full" is the full collection; "inspired" and "original" follow the
  * design's origin; "limited" is a limited edition and is only ever set when the owner announces one.
  */
-export type Line = "full" | "inspired" | "original" | "signature" | "symbolic" | "ancient" | "featured" | "limited";
+export type Line = "full" | "inspired" | "original" | "signature" | "symbolic" | "ancient" | "weapon" | "featured" | "limited";
 
 export type Product = {
   /** Demo identifiers are prefixed "demo-" and must never be sent to Shopify. */

@@ -251,6 +251,47 @@ export const demoProducts: Product[] = [
       note: "Prototype render · lighting and motion only · not photography of a made piece",
     },
   }),
+  // BLADE TRACE, approved by the owner on 23 September 2026 from the fourth reference image. Drawn
+  // from that worn photograph: a tapered blade, a short ribbed grip and an open ring, on a diagonal.
+  family({
+    id: "demo-blade-trace",
+    slug: "blade-trace",
+    title: "BLADE TRACE",
+    collection: "originals",
+    origin: "anime-inspired",
+    lines: ["full", "inspired", "weapon"],
+    summary: "A small polished blade worn on a diagonal below the outer eye.",
+    story:
+      "Jewelry shaped by blade geometry, and nothing more: a long tapered point, a short ribbed grip and an open ring at the end. It is worn low and outside the eye, on a slight diagonal, the way a line is drawn rather than the way a weapon is carried.",
+    defaultFormId: "micro-dermal",
+    forms: [
+      {
+        id: "micro-dermal",
+        label: "Micro dermal",
+        status: "available",
+        placement: "dermal",
+        components: [{ id: "blade", label: "Blade, grip and ring", art: "blade", x: 0, y: 0, size: 1, rotation: -18 }],
+        hardware: "integrated",
+        composition: {
+          approved: false,
+          artClass: "concept-fallback",
+          note: "Concept artwork drawn from the owner's worn reference of 22 September 2026. It follows the proportions in that photograph and is not the product's geometry.",
+        },
+        defaultScale: 0.14,
+        demoPrice: 0,
+        packageContents: "Not confirmed. The reference shows one piece worn on the cheek.",
+        note: "Concept product. Price, metal, finish, dimensions and hardware are all undecided.",
+      },
+      pendingForm("anti-eyebrow", "Anti-eyebrow", "anti-eyebrow"),
+      pendingForm("nose", "Nose", "nostril"),
+    ],
+    reveal: NO_REVEAL,
+    specs: unverifiedSpecs(),
+    materials: [
+      { id: "metal", label: "Metal", status: "Not yet confirmed" },
+      { id: "finish", label: "Polished finish", status: "Proposed" },
+    ],
+  }),
   family({
     id: "demo-crossline",
     slug: "crossline",

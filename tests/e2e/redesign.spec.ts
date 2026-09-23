@@ -108,10 +108,11 @@ test.describe("shop filters", () => {
     await nav.getByRole("link", { name: "Men", exact: true }).click();
     await expect(page).toHaveURL(/browse=men/);
     // Every piece is unisex, so men and women both show the whole collection.
-    await expect(page.getByTestId("product-card")).toHaveCount(7);
+    await expect(page.getByTestId("product-card")).toHaveCount(8);
     await page.goto("/shop?browse=inspired");
-    await expect(page.getByTestId("product-card")).toHaveCount(1);
-    await expect(page.getByTestId("product-card")).toHaveAttribute("data-product", "desert-eye-love");
+    // DESERT EYE and BLADE TRACE are the inspired pieces; the rest are originals or symbolic.
+    await expect(page.getByTestId("product-card")).toHaveCount(2);
+    await expect(page.getByTestId("product-card").first()).toHaveAttribute("data-product", "desert-eye-love");
     await page.goto("/shop?browse=limited");
     await expect(page.getByTestId("product-card")).toHaveCount(0);
     await expect(page.getByTestId("shop-empty")).toContainText("No limited edition has been announced.");

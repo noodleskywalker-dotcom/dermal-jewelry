@@ -36,7 +36,7 @@ test.describe("one light system on every page", () => {
   test("the shop stands its pieces on the paper: no tinted tiles and no boxed filters", async ({ page }) => {
     await page.goto("/shop");
     const cards = page.getByTestId("product-card");
-    await expect(cards).toHaveCount(7);
+    await expect(cards).toHaveCount(8);
     for (const card of await cards.all()) {
       const painted = await card.evaluate((li) =>
         [li, ...li.querySelectorAll("*")].filter((el) => {
@@ -91,13 +91,16 @@ test.describe("sand belongs to DESERT EYE alone", () => {
     await expect(kiri.getByTestId("sand-layer")).toHaveCount(0);
     await expect(kiri).not.toContainText("QAR");
     await expect(kiri).toContainText("Concept");
-    // Seven families are browsable; the concept is named, never counted.
-    await expect(page.getByTestId("selection-index")).toHaveText(/Index 01 \/ 07/);
+    // Eight families are browsable; the concept is named, never counted.
+    await expect(page.getByTestId("selection-index")).toHaveText(/Index 01 \/ 08/);
     await page.goto("/collections?family=void-stud");
     // The rail slides to the last family first; only then does Next reach the concept.
-    await expect(page.getByTestId("selection-index")).toHaveText(/Index 07 \/ 07/);
-    await page.getByTestId("selection-next").click();
-    await expect(page.getByTestId("selection-index")).toHaveText(/Concept · KIRI/);
+    await expect(page.getByTestId("selection-index")).toHaveText(/Index 08 \/ 08/);
+    // The rail is still easing into place, so the step waits until Next is ready to take the press.
+    const next = page.getByTestId("selection-next");
+    await expect(next).toBeEnabled();
+    await next.click();
+    await expect(page.getByTestId("selection-index")).toHaveText(/Concept · KIRI/, { timeout: 10_000 });
   });
 
   test("the neighbouring family shows at the edge, softer, and the sand never lies behind words", async ({ page }) => {

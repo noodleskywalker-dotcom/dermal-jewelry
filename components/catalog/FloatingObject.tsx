@@ -3,13 +3,14 @@ import type { Product } from "@/lib/catalog/types";
 import { resolveComponents } from "@/lib/studio/geometry";
 import { FormVisual } from "./FormVisual";
 
-export type ObjectMotion = "sand" | "gem" | "blade" | "sweep" | "pendulum" | "eye";
+export type ObjectMotion = "sand" | "gem" | "blade" | "sweep" | "pendulum" | "eye" | "edge";
 
 /** A family whose motion is its own, set by the owner with the design (23 September 2026). */
 const OWN_MOTION: Record<string, ObjectMotion> = {
   crossline: "sweep",
   "ankh-trace": "pendulum",
   "horus-trace": "eye",
+  "blade-trace": "edge",
 };
 
 const STONES = new Set(["garnet-gem", "orbit"]);
@@ -18,7 +19,8 @@ const STONES = new Set(["garnet-gem", "orbit"]);
  * Each family has its own small motion language on hover. It is derived from what the piece is:
  * the DESERT EYE design stirs sand and glints; a piece with a stone turns a little and sparkles;
  * plain metal takes one blade of light. CROSSLINE takes a light sweep and a step forward, ANKH TRACE
- * swings a little like a pendant, and HORUS TRACE lights its stone and traces its own line once.
+ * swings a little like a pendant, HORUS TRACE lights its stone and traces its own line once, and
+ * BLADE TRACE takes one thin light along its edge and steps forward.
  * Original designs never get sand.
  */
 export function motionOf(product: Product, formId?: string): ObjectMotion {
@@ -74,9 +76,9 @@ export function FloatingObject({
           <span className="fo-shadow">
             <FormVisual key={form.id} product={product} formId={form.id} />
           </span>
-          {(motion === "blade" || motion === "sweep" || motion === "pendulum") && <span aria-hidden="true" className="fo-blade" />}
+          {(motion === "blade" || motion === "sweep" || motion === "pendulum" || motion === "edge") && <span aria-hidden="true" className="fo-blade" />}
           {motion === "eye" && <span aria-hidden="true" className="fo-trace" />}
-          {stone && motion !== "blade" && motion !== "sweep" && motion !== "pendulum" && <span aria-hidden="true" className="fo-glint" style={{ left: `${stone.leftPct - stone.widthPct * 0.14}%`, top: `${stone.topPct - stone.widthPct * 0.16}%` }} />}
+          {stone && motion !== "blade" && motion !== "sweep" && motion !== "pendulum" && motion !== "edge" && <span aria-hidden="true" className="fo-glint" style={{ left: `${stone.leftPct - stone.widthPct * 0.14}%`, top: `${stone.topPct - stone.widthPct * 0.16}%` }} />}
           {motion === "sand" &&
             GRAINS.map((g, i) => <span key={i} aria-hidden="true" className="fo-grain" style={{ "--gx": g.gx, "--gdx": g.gdx, "--gdy": g.gdy, "--gdelay": g.gdelay } as React.CSSProperties} />)}
         </span>

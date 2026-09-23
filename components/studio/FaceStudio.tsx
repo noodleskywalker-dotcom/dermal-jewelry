@@ -184,7 +184,9 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
           <h2 id="pieces-heading" className="label-xs text-ash">
             Pieces
           </h2>
-          <ul className="mt-3 flex gap-6 overflow-x-auto pb-2 lg:justify-center lg:gap-10">
+          {/* Centred while the row fits, scrollable once it does not. `justify-center` alone would push
+              the first pieces past the left edge, where no scrolling can reach them. */}
+          <ul className="mt-3 flex gap-6 overflow-x-auto pb-2 lg:gap-10 [&>li:first-child]:ms-auto [&>li:last-child]:me-auto">
             {products.map((product) => {
               const selected = currentProduct.id === product.id;
               return (

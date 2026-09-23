@@ -1200,6 +1200,14 @@ input[type="range"].studio-range::-moz-range-thumb {
     rotate: 0deg;
   }
 }
+/* BLADE TRACE: one thin light runs along the edge, the piece steps forward, and it comes back to rest. */
+:is([data-object-host]:hover, [data-object-host]:focus-within) .fo[data-motion="edge"] .fo-art {
+  transform: translate(3px, -5px) scale(1.05);
+}
+:is([data-object-host]:hover, [data-object-host]:focus-within) .fo[data-motion="edge"] .fo-blade {
+  animation-duration: 1.1s;
+  background: linear-gradient(104deg, transparent 47%, rgb(255 255 255 / 1) 50%, transparent 53%);
+}
 /* HORUS TRACE: the stone lights, then one line traces the eye and fades. */
 .fo-trace {
   position: absolute;

@@ -2,6 +2,27 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-23 — BLADE TRACE approved as a catalogue product
+
+- **The fourth reference became a product.** The owner approved it as BLADE TRACE, Inspired / Weapon
+  form, unisex, micro dermal on the cheek. The reference moved to `references/products/blade-trace/`
+  and stays internal; `unassigned/` is gone.
+- **Drawn from the worn photograph**: a long tapered blade with a centre ridge, a short ribbed grip and
+  an open ring, worn on a diagonal (the form carries an 18° rotation and `hardware: "integrated"`, so
+  no separate post is drawn under it). It is kept small and plain: no themed graphics, no tactical
+  styling. The page carries the standing line, "Anime-inspired design · not an official collaboration".
+- **Its motion is local code only** (`motionOf` returns "edge"): one thin light runs along the blade,
+  the piece steps forward, and it returns to rest. No sand, no slash, no smoke, and no generation.
+- **Catalogue order** is the owner's: DESERT EYE, HORUS TRACE, BLADE TRACE, CROSSLINE, ANKH TRACE,
+  then the older concepts. KIRI stays a concept at the end of the rail, not a product.
+- **A real bug the new piece exposed**: the Face Studio rail centred its row with `justify-center`,
+  which pushes the first pieces past the left edge where no scrolling can reach them. With eight
+  pieces, DESERT EYE and HORUS TRACE became unreachable on a desktop. The row now centres through
+  auto margins, so it centres while it fits and scrolls once it does not.
+- **HORUS TRACE media is frozen** at its current state: In motion, Front, Angle, Detail, Placement and
+  Try on, nothing labelled 360°, and the locally sharpened 1080p assets kept. Higgsfield generation is
+  treated as unavailable at 0.68 credits.
+
 ## 2026-09-23 — The last of the balance, and the HORUS TRACE multi-view stage
 
 - **The 4k video upscale failed and still cost 4 credits.** No job was ever created in the account and

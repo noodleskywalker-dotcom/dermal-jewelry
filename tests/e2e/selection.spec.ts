@@ -11,7 +11,7 @@ test.describe("the selection: sideways browsing", () => {
     await page.goto("/collections");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("The selection");
     const slides = page.getByTestId("selection-slide");
-    await expect(slides).toHaveCount(7);
+    await expect(slides).toHaveCount(8);
     await expect(current(page)).toHaveAttribute("data-product", "desert-eye-love");
 
     // Side by side: every slide shares a row and each starts to the right of the one before.
@@ -29,7 +29,7 @@ test.describe("the selection: sideways browsing", () => {
     await expect(current(page)).toHaveAttribute("data-product", "horus-trace");
     await page.getByTestId("selection-rail").focus();
     await page.keyboard.press("ArrowRight");
-    await expect(current(page)).toHaveAttribute("data-product", "crossline");
+    await expect(current(page)).toHaveAttribute("data-product", "blade-trace");
     await page.keyboard.press("ArrowLeft");
     await expect(current(page)).toHaveAttribute("data-product", "horus-trace");
 
@@ -70,7 +70,7 @@ test.describe("the selection: sideways browsing", () => {
   test("each family is a gallery label, not a card: number, name, kind, and two ways in", async ({ page }) => {
     await page.goto("/collections");
     const slide = current(page);
-    await expect(slide).toContainText("01 / 07");
+    await expect(slide).toContainText("01 / 08");
     // The kind line now names the lines the piece is browsed under.
     await expect(slide).toContainText("Inspired · Featured");
     await expect(slide.getByTestId("add-to-bag")).toHaveCount(0);
