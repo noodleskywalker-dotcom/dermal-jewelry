@@ -22,7 +22,7 @@ import { PieceArt } from "./FormVisual";
 // produced for it yet, and the standard assembly never depends on it.
 
 type Top = { componentId: string; art: Product["components"][number]["art"]; x: number; y: number; width: number; seat: number; foot: number };
-type Hardware = "bar" | "anchor" | "stud";
+type Hardware = "bar" | "anchor" | "stud" | "integrated";
 type Phase = "intro" | "assembling" | "assembled" | "exploded";
 
 const SECONDS = 4;
@@ -34,7 +34,13 @@ const STONES = new Set(["garnet-gem", "orbit"]);
  * titanium callout points: a spot on the base or the post.
  */
 function layout(placement: PlacementId, product: Product, formId: string): { tops: Top[]; hardware: Hardware; metal: [number, number] } {
-  const parts = formOf(product, formId).components;
+  const form = formOf(product, formId);
+  const parts = form.components;
+  if (form.hardware === "integrated") {
+    // The artwork is the whole piece. It stands on its own, large, with nothing drawn under it.
+    const [whole] = parts;
+    return { hardware: "integrated", tops: [{ componentId: whole.id, art: whole.art, x: 50, y: 46, width: 66, seat: 99, foot: 99 }], metal: [64, 40] };
+  }
   if (parts.length > 1) {
     // A surface bar: one slim base with two short risers, on the approved diagonal. The larger piece
     // is upper and outer. Both risers are the same short length; the tops sit right on them.
@@ -145,7 +151,7 @@ function Stage({ product, formId, sand, renderIntro, exploded, reduced, onReplay
           {hardware === "bar" && bar && (
             <ellipse cx={(bar[0][0] + bar[1][0]) / 2} cy={(bar[0][1] + bar[1][1]) / 2 + 4.5} rx="15" ry="2" fill="rgba(40,30,20,0.16)" filter="url(#assembly-contact)" />
           )}
-          {hardware !== "bar" && <ellipse cx="50" cy={tops[0].foot + 4} rx="7" ry="1.4" fill="rgba(40,30,20,0.16)" filter="url(#assembly-contact)" />}
+          {hardware !== "bar" && hardware !== "integrated" && <ellipse cx="50" cy={tops[0].foot + 4} rx="7" ry="1.4" fill="rgba(40,30,20,0.16)" filter="url(#assembly-contact)" />}
 
           {hardware === "bar" && bar && (
             <g>
@@ -174,7 +180,7 @@ function Stage({ product, formId, sand, renderIntro, exploded, reduced, onReplay
               <path d={`M49.7 ${tops[0].foot - 3} C49.7 ${tops[0].foot + 2} 52 ${tops[0].foot + 3.6} 55.4 ${tops[0].foot + 3.6}`} stroke="rgba(255,255,255,0.7)" strokeWidth="0.28" strokeLinecap="round" fill="none" />
             </g>
           )}
-          {tops.map((top) => (
+          {hardware !== "integrated" && tops.map((top) => (
             <g key={top.componentId} data-post={top.componentId}>
               <rect x={top.x - 0.7} y={top.seat} width="1.4" height={top.foot - top.seat} rx="0.7" fill="url(#assembly-metal)" />
               <rect x={top.x - 0.42} y={top.seat + 0.6} width="0.28" height={top.foot - top.seat - 1.4} rx="0.14" fill="rgba(255,255,255,0.8)" />
@@ -187,7 +193,7 @@ function Stage({ product, formId, sand, renderIntro, exploded, reduced, onReplay
 
         {/* Fine guides, seen only while the piece is open. */}
         <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" className="assembly-guides absolute inset-0 h-full w-full" aria-hidden="true" focusable="false">
-          {tops.map((top) => (
+          {hardware !== "integrated" && tops.map((top) => (
             <line key={top.componentId} x1={top.x} y1={top.y - 12} x2={top.x} y2={top.seat + 1} stroke="#0c0c0d" strokeOpacity="0.35" strokeWidth="0.2" strokeDasharray="0.6 1" />
           ))}
         </svg>
@@ -231,7 +237,7 @@ function Stage({ product, formId, sand, renderIntro, exploded, reduced, onReplay
       </div>
 
       <figcaption className="label-xs mt-3 flex flex-wrap items-center justify-between gap-x-6 text-ash">
-        <span>Concept hardware · type, size and thread not confirmed</span>
+        <span>{hardware === "integrated" ? "Prototype specification · final production details pending" : "Concept hardware · type, size and thread not confirmed"}</span>
         <span className="flex gap-x-6">
           <button
             type="button"

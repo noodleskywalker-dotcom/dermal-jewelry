@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { displayTitle, formOf } from "@/lib/catalog";
+import { displayTitle, formOf, lineLabels } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 import { SandLayer } from "@/components/story/SandLayer";
@@ -199,7 +199,7 @@ export function SelectionRail({
               <div className="selection-info relative mx-auto mt-2 w-full max-w-xl text-center">
                 <p className="label-xs text-ash">{String(i + 1).padStart(2, "0")} / {String(products.length).padStart(2, "0")}</p>
                 <h2 className="mt-2 font-display text-[clamp(2rem,4vw,3.5rem)] font-light leading-none tracking-[0.06em]">{displayTitle(product.title)}</h2>
-                <p className="label-xs mt-4 flex min-h-11 items-center justify-center text-ash">{product.origin === "anime-inspired" ? "Story-driven" : "Original"}</p>
+                <p className="label-xs mt-4 flex min-h-11 items-center justify-center text-ash">{lineLabels(product).join(" · ")}</p>
                 <div className="mt-2 flex flex-wrap items-center justify-center gap-x-8">
                   <Link href={`/product/${product.slug}?form=${form.id}`} draggable={false} data-testid="selection-view" tabIndex={current ? 0 : -1} className="text-link">
                     Explore <span aria-hidden="true">↗</span>

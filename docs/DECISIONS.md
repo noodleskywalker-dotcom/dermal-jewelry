@@ -2,6 +2,35 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-23 — The references arrive, and HORUS TRACE becomes the second hero
+
+- **All four reference images were found** on the machine (three named products and one unnamed) and
+  copied into `references/products/`, which is gitignored. The raw screenshots never enter `public/`.
+- **The fourth image is not one of the three.** It is a worn photograph of a polished blade-shaped
+  cheek piece: a tapered point, a wrapped grip and a small ring at the end. It is filed under
+  `references/products/unassigned/` and flagged POSSIBLE NEW PRODUCT — OWNER REVIEW REQUIRED. No
+  fourth product was created.
+- **The artwork was redrawn from the references.** HORUS TRACE is now one whole piece: a curved
+  surface bar with a ball at each end, the eye in polished linework, one round dark stone, the spiral
+  curl and the pointed drop, matching the reference's proportions. A form may now declare
+  `hardware: "integrated"`, which tells the assembly view not to draw a second post under a piece that
+  already carries its own. CROSSLINE follows its worn photograph (a long thin line with the small
+  crossing mark at the outer end) and ANKH TRACE was slimmed to match its reference.
+- **Order and taxonomy follow the owner's priority**: DESERT EYE, HORUS TRACE, CROSSLINE, ANKH TRACE,
+  then the older concepts. DESERT EYE is Inspired and Featured; HORUS TRACE is Symbolic, Ancient and
+  Featured; CROSSLINE is Original and Signature; ANKH TRACE is Original and Symbolic. All are unisex.
+- **A concept piece can be bagged again.** The longer notice went; the page keeps one status line,
+  "Prototype specification · final production details pending · unverified", as the owner asked, and
+  the price reads "Price pending".
+- **HORUS TRACE has prepared media** (`ProductMedia` on a product, drawn by `ProductStage`): a hero
+  clip that loops muted with a pause control, plus an angle and a macro still. Its product page opens
+  on that stage, and the drawn hardware moved to its own "Hardware" view with the exploded view intact.
+  No 360° is shown, because none exists. Every frame is labelled "Prototype render · lighting and
+  motion only · not photography of a made piece".
+- **Credits**: 45.71 before, 4.71 after (41 spent: 2 + 2 + 2 for the stills, 35 for the clip; one
+  failed job cost nothing). The 360° orbit needs about 96 credits and was not attempted. Records with
+  prompts, jobs and verdicts are in `references/generated/horus/RECORD.md`.
+
 ## 2026-09-23 — Three concept families: CROSSLINE, ANKH TRACE, HORUS TRACE
 
 - **The owner's three reference screenshots never reached this machine.** No attachment arrived and no

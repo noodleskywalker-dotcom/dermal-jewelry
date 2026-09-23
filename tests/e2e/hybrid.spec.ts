@@ -66,7 +66,7 @@ test.describe("sand belongs to DESERT EYE alone", () => {
 
     // The next family is centred: the sand has gone with its slide.
     await page.getByTestId("selection-next").click();
-    await expect(current(page)).toHaveAttribute("data-product", "crimson-orbit");
+    await expect(current(page)).toHaveAttribute("data-product", "horus-trace");
     await expect
       .poll(() => pieces.getByTestId("sand-layer").evaluate((el) => Number(getComputedStyle(el).opacity)))
       .toBeLessThan(0.05);
@@ -93,7 +93,7 @@ test.describe("sand belongs to DESERT EYE alone", () => {
     await expect(kiri).toContainText("Concept");
     // Seven families are browsable; the concept is named, never counted.
     await expect(page.getByTestId("selection-index")).toHaveText(/Index 01 \/ 07/);
-    await page.goto("/collections?family=horus-trace");
+    await page.goto("/collections?family=void-stud");
     // The rail slides to the last family first; only then does Next reach the concept.
     await expect(page.getByTestId("selection-index")).toHaveText(/Index 07 \/ 07/);
     await page.getByTestId("selection-next").click();
@@ -128,7 +128,7 @@ test.describe("the selection is dragged with a mouse", () => {
     await page.mouse.move(box.x + box.width * 0.4, y, { steps: 6 });
     await page.mouse.move(box.x + box.width * 0.12, y, { steps: 6 });
     await page.mouse.up();
-    await expect(current(page)).toHaveAttribute("data-product", "crimson-orbit");
+    await expect(current(page)).toHaveAttribute("data-product", "horus-trace");
     await expect(page).toHaveURL(/\/collections$/);
   });
 });

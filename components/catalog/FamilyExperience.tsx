@@ -11,11 +11,12 @@ import { motionOf } from "./FloatingObject";
 import { DESERT_EYE_HOTSPOTS, MaterialHotspots } from "./MaterialHotspots";
 import { OrbitViewer } from "./OrbitViewer";
 import { PieceAssembly } from "./PieceAssembly";
+import { ProductStage } from "./ProductStage";
 import { ANCHORS, PlacementPreview } from "./PlacementPreview";
 import { ProductFilm } from "./ProductFilm";
 import { TryOnPreview } from "./TryOnPreview";
 
-type ViewId = "piece" | "orbit" | "assembly" | "reveal" | "placement" | "tryon";
+type ViewId = "piece" | "orbit" | "assembly" | "hardware" | "reveal" | "placement" | "tryon";
 
 const ORBIT = "/media/hero-orbit/desert-eye-love";
 
@@ -42,6 +43,8 @@ export function FamilyExperience({
 
   const views: { id: ViewId; label: string }[] = [
     { id: "piece", label: "The piece" },
+    // A piece with prepared media shows the drawn hardware on its own; without media, "The piece" is it.
+    ...(product.media ? [{ id: "hardware" as const, label: "Hardware" }] : []),
     ...(film ? [{ id: "orbit" as const, label: "360°" }, { id: "assembly" as const, label: "Assembly" }] : []),
     // The concept-reveal prototype is superseded on a filmed form; development fixtures can still open it.
     ...(product.reveal.mode !== "none" && (!film || fixtureSrc || concept) ? [{ id: "reveal" as const, label: "Concept reveal" }] : []),
@@ -83,7 +86,9 @@ export function FamilyExperience({
               <MaterialHotspots spots={DESERT_EYE_HOTSPOTS} />
             </div>
           )}
-          {current === "piece" && !film && <PieceAssembly key={product.id} product={product} formId={form.id} sand={motionOf(product, form.id) === "sand"} />}
+          {current === "piece" && product.media && <ProductStage media={product.media} title={product.title} />}
+          {current === "piece" && !film && !product.media && <PieceAssembly key={product.id} product={product} formId={form.id} sand={motionOf(product, form.id) === "sand"} />}
+          {current === "hardware" && <PieceAssembly key={`hw:${product.id}`} product={product} formId={form.id} sand={false} />}
           {current === "orbit" && film && <OrbitViewer dir={ORBIT} count={72} title={product.title} />}
           {current === "assembly" && film && <ProductFilm key={`${product.id}:${form.id}`} product={product} film={film} formId={form.id} />}
           {current === "reveal" && (
@@ -161,7 +166,7 @@ export function FamilyExperience({
         </fieldset>
 
         <p className="mt-8" data-testid="family-price">
-          <span className="label-xs block text-ash">{isConcept ? "Price" : "Demo price"}</span>
+          <span className="label-xs block text-ash">{isConcept ? "Price" : "Demo price"}</span>{/* a concept piece has no demo price to show */}
           <span className="mt-1 block font-display text-3xl font-light tracking-[0.06em]">{formatPrice(form.demoPrice, product.currency)}</span>
         </p>
 
@@ -169,17 +174,8 @@ export function FamilyExperience({
           Try on your face <span aria-hidden="true">↗</span>
         </Link>
 
-        {isConcept ? (
-          <p className="label-xs mt-6 border border-line p-4 text-ash" data-testid="concept-notice">
-            Concept product. It has no price, no confirmed materials and no hardware specification yet, so it cannot be
-            put in the demo bag.
-          </p>
-        ) : (
-          <>
-            <AddToBagButton product={product} formId={form.id} className="mt-5" />
-            <p className="label-xs mt-3 text-ash">Demo · nothing can be ordered yet</p>
-          </>
-        )}
+        <AddToBagButton product={product} formId={form.id} className="mt-5" />
+        <p className="label-xs mt-3 text-ash">Demo · nothing can be ordered yet</p>
 
         <div className="mt-10 divide-y divide-line border-y border-line">
           <details className="group">

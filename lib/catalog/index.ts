@@ -56,6 +56,7 @@ const LINE_LABELS: Record<Exclude<Line, "full">, string> = {
   signature: "Signature",
   symbolic: "Symbolic",
   ancient: "Ancient",
+  featured: "Featured",
   limited: "Limited edition",
 };
 

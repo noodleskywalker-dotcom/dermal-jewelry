@@ -11,6 +11,23 @@ Milestone 1, the first vertical slice, is implemented and tested locally. The HY
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
 
+## HORUS TRACE as the second hero (23 September 2026, 41 credits)
+
+Built and tested; **awaiting the owner's review**. Review package:
+`references/review/2026-09-23-horus-hero/`.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Four references located and stored internally | done | `references/products/`, gitignored; the fourth is unassigned and flagged for the owner. |
+| Artwork redrawn from the references | tested | HORUS TRACE is one whole piece with its own hardware; CROSSLINE and ANKH TRACE follow their worn references. |
+| HORUS TRACE prepared media | tested | Hero clip, angle and macro stills, generated from the reference and labelled as a prototype render. |
+| Product page: The piece · Hardware · Placement · Try on | tested | No 360° is shown, because none exists. |
+| Order and taxonomy | tested | DESERT EYE, HORUS TRACE, CROSSLINE, ANKH TRACE; featured, signature, symbolic and ancient lines. |
+| Face Studio and placement previews | tested | All three selectable, manual tools only. |
+
+Gaps: no exact per-piece art, CAD, photography, 360° or assembly media for any of the three. The
+orbit needs about 96 credits and the balance is 4.71.
+
 ## Three concept families (23 September 2026, no credits)
 
 Built and tested; **awaiting the owner's review**. Review package:

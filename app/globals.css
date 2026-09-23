@@ -1126,6 +1126,52 @@ input[type="range"].studio-range::-moz-range-thumb {
 }
 
 
+
+/* ── The product stage: a piece that has prepared media (HORUS TRACE, 23 September 2026). ── */
+.product-stage {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+}
+.product-stage-frame {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #0d0b09;
+  aspect-ratio: 16 / 9;
+}
+.product-stage-media {
+  display: block;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.product-stage-controls,
+.product-stage figcaption {
+  padding-inline: 1rem;
+}
+@media (min-width: 768px) {
+  .product-stage-controls,
+  .product-stage figcaption {
+    padding-inline: 0;
+  }
+}
+.product-stage-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  padding-top: 0.75rem;
+}
+@media (max-width: 767px) {
+  .product-stage-frame {
+    aspect-ratio: 4 / 3;
+  }
+}
+
 /* ── The three concept families, 23 September 2026. Each motion is small and happens once. ── */
 /* CROSSLINE: a slow light sweep along the line and one step forward. */
 :is([data-object-host]:hover, [data-object-host]:focus-within) .fo[data-motion="sweep"] .fo-art {

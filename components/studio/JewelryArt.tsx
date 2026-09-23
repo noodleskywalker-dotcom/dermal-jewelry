@@ -190,8 +190,10 @@ function CrossMark({ id }: { id: string }) {
   );
 }
 
+// ANKH TRACE, from the owner's worn reference of 22 September 2026: a slim ankh with an open loop,
+// a narrow crossbar and a tapered stem. Proportions follow that photograph, not a drawing standard.
 const ANKH_PATH =
-  "M500 90 C 360 90 300 200 300 290 C 300 372 360 430 430 470 L 240 470 L 240 600 L 430 600 L 430 930 L 570 930 L 570 600 L 760 600 L 760 470 L 570 470 C 640 430 700 372 700 290 C 700 200 640 90 500 90 Z M500 200 C 560 200 590 245 590 295 C 590 345 560 390 500 390 C 440 390 410 345 410 295 C 410 245 440 200 500 200 Z";
+  "M500 80 C 392 80 322 168 322 262 C 322 338 372 392 438 418 L 300 418 L 300 508 L 438 508 L 438 920 L 562 920 L 562 508 L 700 508 L 700 418 L 562 418 C 628 392 678 338 678 262 C 678 168 608 80 500 80 Z M500 176 C 556 176 596 214 596 264 C 596 314 556 352 500 352 C 444 352 404 314 404 264 C 404 214 444 176 500 176 Z";
 
 /** ANKH TRACE: the symbol as polished metalwork, with the loop left open. */
 function Ankh({ id }: { id: string }) {
@@ -205,41 +207,93 @@ function Ankh({ id }: { id: string }) {
   );
 }
 
-const HORUS_BROW = "M170 430 C 300 300 640 280 820 400";
-const HORUS_EYE = "M210 520 C 330 400 650 390 800 500 C 660 620 340 640 210 520 Z";
-const HORUS_TAIL = "M800 500 C 860 520 900 560 910 610";
-const HORUS_CURL = "M470 640 C 430 760 470 860 600 880 C 520 830 500 760 540 660";
-
-/** HORUS TRACE: an eye-of-horus-inspired openwork frame around a dark stone. */
-function HorusEye({ id }: { id: string }) {
-  const line = (d: string, stroke: string, width: number, dx = 0, dy = 0) => (
-    <path d={d} transform={dx || dy ? `translate(${dx} ${dy})` : undefined} fill="none" stroke={stroke} strokeWidth={width} strokeLinecap="round" />
+/**
+ * HORUS TRACE, drawn from the owner's reference of 22 September 2026 (an internal render, not CAD):
+ * one curved surface bar with a ball at each end, the eye of Horus in polished linework beneath it,
+ * a dark faceted stone at its centre, the spiral curl falling from the inner corner and the pointed
+ * drop below. It is the whole piece, hardware included, because that is how the piece is worn.
+ * Proportions are read off the reference; no dimension here is a measurement.
+ */
+function HorusPiece({ id }: { id: string }) {
+  const metal = `url(#${id}-metal)`;
+  const BAR = "M120 372 C 330 214, 660 196, 878 318";
+  const LID_TOP = "M370 470 C 520 372, 700 366, 862 330";
+  const LID_LOW = "M370 470 C 470 556, 610 580, 742 534";
+  const CURL = "M372 474 C 292 556, 250 646, 292 680 C 336 712, 392 668, 368 620 C 350 584, 302 588, 296 626";
+  const DROP = "M676 492 L 752 500 L 724 736 Z";
+  const stroke = (d: string, w: number, color: string, dx = 0, dy = 0) => (
+    <path d={d} transform={dx || dy ? `translate(${dx} ${dy})` : undefined} fill="none" stroke={color} strokeWidth={w} strokeLinecap="round" strokeLinejoin="round" />
   );
   return (
     <>
-      {line(HORUS_BROW, "rgba(0,0,0,0.3)", 74, 12, 20)}
-      {line(HORUS_TAIL, "rgba(0,0,0,0.3)", 74, 12, 20)}
-      {line(HORUS_CURL, "rgba(0,0,0,0.3)", 74, 12, 20)}
-      <path d={HORUS_EYE} transform="translate(12 20)" fill="rgba(0,0,0,0.3)" />
-      <path d={HORUS_EYE} fill={`url(#${id}-darkstone)`} stroke={`url(#${id}-metal)`} strokeWidth="56" strokeLinejoin="round" paintOrder="stroke" />
-      {line(HORUS_BROW, `url(#${id}-metal)`, 66)}
-      {line(HORUS_TAIL, `url(#${id}-metal)`, 66)}
-      {line(HORUS_CURL, `url(#${id}-metal)`, 66)}
-      <circle cx="500" cy="510" r="120" fill={`url(#${id}-darkstone)`} stroke={`url(#${id}-metal)`} strokeWidth="26" />
-      <ellipse cx="455" cy="470" rx="42" ry="24" fill="rgba(255,255,255,0.5)" transform="rotate(-30 455 470)" />
-      {line(HORUS_BROW, "rgba(255,255,255,0.35)", 8)}
+      {/* The piece's own soft contact shadow, so it sits on a surface rather than floating. */}
+      <g transform="translate(16 26)" opacity="0.32">
+        {stroke(BAR, 52, "#000")}
+        {stroke(LID_TOP, 44, "#000")}
+        {stroke(LID_LOW, 40, "#000")}
+        {stroke(CURL, 36, "#000")}
+        <path d={DROP} fill="#000" />
+        <circle cx="120" cy="372" r="86" fill="#000" />
+        <circle cx="886" cy="316" r="78" fill="#000" />
+      </g>
+      {stroke(BAR, 48, metal)}
+      {stroke(LID_TOP, 40, metal)}
+      {stroke(LID_LOW, 36, metal)}
+      {stroke(CURL, 32, metal)}
+      {/* The pointed drop: polished metal with a dark face, as in the reference. */}
+      <path d={DROP} fill={metal} stroke="rgba(0,0,0,0.3)" strokeWidth="6" />
+      <path d="M688 502 L 736 507 L 718 686 Z" fill={`url(#${id}-darkstone)`} />
+      {/* The stone, in its rim, at the centre of the eye. */}
+      <circle cx="612" cy="452" r="92" fill={metal} />
+      <circle cx="612" cy="452" r="74" fill={`url(#${id}-darkstone)`} />
+      {Array.from({ length: 8 }, (_, i) => {
+        const a0 = (i * Math.PI) / 4;
+        const a1 = ((i + 1) * Math.PI) / 4;
+        const pt = (a: number, r: number) => `${(612 + Math.cos(a) * r).toFixed(1)},${(452 + Math.sin(a) * r).toFixed(1)}`;
+        return <polygon key={i} points={`${pt(a0, 74)} ${pt(a1, 74)} ${pt((a0 + a1) / 2, 32)}`} fill={i % 2 === 0 ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.3)"} />;
+      })}
+      <ellipse cx="584" cy="424" rx="22" ry="13" fill="rgba(255,255,255,0.5)" transform="rotate(-30 584 424)" />
+      {/* The two balls of the surface bar. */}
+      {[
+        { x: 120, y: 372, r: 84 },
+        { x: 886, y: 316, r: 76 },
+      ].map((b) => (
+        <g key={b.x}>
+          <circle cx={b.x} cy={b.y} r={b.r} fill={metal} />
+          <ellipse cx={b.x - b.r * 0.32} cy={b.y - b.r * 0.36} rx={b.r * 0.3} ry={b.r * 0.19} fill="rgba(255,255,255,0.65)" transform={`rotate(-35 ${b.x - b.r * 0.32} ${b.y - b.r * 0.36})`} />
+        </g>
+      ))}
+      {/* One thin highlight along the bar, the way polished metal takes a light. */}
+      {stroke(BAR, 7, "rgba(255,255,255,0.55)", 0, -12)}
+      {stroke(LID_TOP, 5, "rgba(255,255,255,0.45)", 0, -9)}
     </>
   );
 }
 
-/** The lower pointed element of HORUS TRACE, on its own. */
-function HorusDrop({ id }: { id: string }) {
-  const drop = "M500 120 C 640 380 760 560 760 680 C 760 820 640 900 500 900 C 360 900 240 820 240 680 C 240 560 360 380 500 120 Z";
+/** The eye alone, without the bar: for the small views where the hardware would be lost. */
+function HorusEye({ id }: { id: string }) {
+  const metal = `url(#${id}-metal)`;
+  const LID_TOP = "M180 470 C 380 300, 700 290, 900 400";
+  const LID_LOW = "M180 470 C 330 610, 640 640, 842 470";
+  const CURL = "M184 476 C 110 570, 82 660, 118 690 C 152 718, 196 684, 178 642";
+  const stroke = (d: string, w: number, color: string, dx = 0, dy = 0) => (
+    <path d={d} transform={dx || dy ? `translate(${dx} ${dy})` : undefined} fill="none" stroke={color} strokeWidth={w} strokeLinecap="round" strokeLinejoin="round" />
+  );
   return (
     <>
-      <path d={drop} transform="translate(14 22)" fill="rgba(0,0,0,0.3)" />
-      <path d={drop} fill={`url(#${id}-metal)`} stroke="rgba(0,0,0,0.25)" strokeWidth="8" />
-      <path d="M430 300 C 350 450 320 580 340 680" fill="none" stroke="rgba(255,255,255,0.45)" strokeWidth="18" strokeLinecap="round" />
+      <g transform="translate(16 26)" opacity="0.3">
+        {stroke(LID_TOP, 54, "#000")}
+        {stroke(LID_LOW, 48, "#000")}
+        {stroke(CURL, 44, "#000")}
+      </g>
+      {stroke(LID_TOP, 50, metal)}
+      {stroke(LID_LOW, 44, metal)}
+      {stroke(CURL, 40, metal)}
+      <path d="M630 500 L 726 506 L 680 800 Z" fill={metal} stroke="rgba(0,0,0,0.3)" strokeWidth="6" />
+      <circle cx="512" cy="470" r="124" fill={metal} />
+      <circle cx="512" cy="470" r="100" fill={`url(#${id}-darkstone)`} />
+      <ellipse cx="474" cy="432" rx="30" ry="17" fill="rgba(255,255,255,0.5)" transform="rotate(-30 474 432)" />
+      {stroke(LID_TOP, 7, "rgba(255,255,255,0.5)", 0, -14)}
     </>
   );
 }
@@ -278,8 +332,8 @@ const ART: Record<ArtId, (props: { id: string }) => React.ReactNode> = {
   "cross-line": CrossLine,
   "cross-mark": CrossMark,
   ankh: Ankh,
+  "horus-piece": HorusPiece,
   "horus-eye": HorusEye,
-  "horus-drop": HorusDrop,
   "dark-gem": DarkGem,
 };
 

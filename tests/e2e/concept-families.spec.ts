@@ -9,30 +9,42 @@ import { openStudioWithPhoto } from "./helpers";
 const FAMILIES = [
   { slug: "crossline", title: "CROSSLINE", lines: "Original · Signature", form: "micro-dermal", motion: "sweep" },
   { slug: "ankh-trace", title: "ANKH TRACE", lines: "Original · Symbolic", form: "micro-dermal", motion: "pendulum" },
-  { slug: "horus-trace", title: "HORUS TRACE", lines: "Original · Symbolic · Ancient", form: "anti-eyebrow", motion: "eye" },
+  { slug: "horus-trace", title: "HORUS TRACE", lines: "Symbolic · Ancient · Featured", form: "anti-eyebrow", motion: "eye" },
 ];
 
 // Words that must never appear on these pages: the supplied poster's claims and the standing bans.
 const BANNED = ["implant-grade", "implant grade", "genuine gemstone", "sterling", "ruby", "official collaboration", "grade 5", "certified"];
 
 test.describe("the three concept families", () => {
-  test("all three are in the full collection, the selection and the shop", async ({ page }) => {
+  test("all three are in the full collection, the selection and the shop, in the owner's order", async ({ page }) => {
     await page.goto("/shop");
     await expect(page.getByTestId("product-card")).toHaveCount(7);
     for (const f of FAMILIES) {
       await expect(page.locator(`[data-testid="product-card"][data-product="${f.slug}"]`)).toHaveCount(1);
     }
     // Every piece is unisex, so each one shows under men and under women.
-    for (const browse of ["men", "women", "original"]) {
+    for (const browse of ["men", "women"]) {
       await page.goto(`/shop?browse=${browse}`);
       for (const f of FAMILIES) {
         await expect(page.locator(`[data-testid="product-card"][data-product="${f.slug}"]`)).toHaveCount(1);
       }
     }
+    // The owner's taxonomy: the two simple pieces are Original; HORUS TRACE is Symbolic and Ancient.
+    await page.goto("/shop?browse=original");
+    await expect(page.locator('[data-testid="product-card"][data-product="crossline"]')).toHaveCount(1);
+    await expect(page.locator('[data-testid="product-card"][data-product="ankh-trace"]')).toHaveCount(1);
+    await expect(page.locator('[data-testid="product-card"][data-product="horus-trace"]')).toHaveCount(0);
     await page.goto("/shop?browse=inspired");
     for (const f of FAMILIES) {
       await expect(page.locator(`[data-testid="product-card"][data-product="${f.slug}"]`)).toHaveCount(0);
     }
+    // The owner's order: DESERT EYE first, HORUS TRACE second, then the two simpler concepts.
+    await page.goto("/collections");
+    const slides = page.getByTestId("selection-slide");
+    await expect(slides.nth(0)).toHaveAttribute("data-product", "desert-eye-love");
+    await expect(slides.nth(1)).toHaveAttribute("data-product", "horus-trace");
+    await expect(slides.nth(2)).toHaveAttribute("data-product", "crossline");
+    await expect(slides.nth(3)).toHaveAttribute("data-product", "ankh-trace");
     await page.goto("/collections");
     for (const f of FAMILIES) {
       await expect(page.locator(`[data-testid="selection-slide"][data-product="${f.slug}"]`)).toHaveCount(1);
@@ -46,13 +58,13 @@ test.describe("the three concept families", () => {
       await expect(family).toHaveAttribute("data-form", f.form);
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(f.title);
       await expect(page.getByTestId("family-lines")).toHaveText(f.lines);
-      // No price, and nothing can be put in the bag.
+      // No price yet; the piece is still a demo line, and one status line says where it stands.
       await expect(page.getByTestId("family-price")).toContainText("Price pending");
-      await expect(page.getByTestId("concept-notice")).toBeVisible();
-      await expect(page.getByTestId("add-to-bag")).toHaveCount(0);
+      await expect(page.getByTestId("add-to-bag")).toBeVisible();
+      await expect(page.getByTestId("spec-status")).toContainText("Prototype specification · final production details pending");
       // The piece, the placement and try-on exist; nothing pretends to be a film or a 360.
       const modes = page.getByRole("tab");
-      await expect(modes).toHaveText(["The piece", "Placement", "Try on"]);
+      await expect(modes).toHaveText(f.slug === "horus-trace" ? ["The piece", "Hardware", "Placement", "Try on"] : ["The piece", "Placement", "Try on"]);
       const text = (await page.locator("main").innerText()).toLowerCase();
       for (const word of BANNED) expect(text).not.toContain(word);
     });
@@ -69,10 +81,34 @@ test.describe("the three concept families", () => {
       "Dark faceted gemstone — material not yet confirmed",
       "Not yet confirmed",
       "Polished — proposed",
-      "Surface-bar concept — final specification pending",
+      "Anti-eyebrow surface-bar concept — final specification pending",
     ]) {
       expect(text).toContain(line);
     }
+  });
+
+  test("HORUS TRACE opens on its own prepared media, honestly labelled", async ({ page }) => {
+    await page.goto("/product/horus-trace");
+    const stage = page.getByTestId("product-stage");
+    await expect(stage).toBeVisible();
+    await expect(stage.getByTestId("product-stage-film")).toBeVisible();
+    await expect(stage).toContainText("Prototype render · lighting and motion only · not photography of a made piece");
+    // The still views are there, and the clip can be stopped.
+    await stage.getByTestId("stage-view-macro").click();
+    await expect(stage).toHaveAttribute("data-view", "macro");
+    await stage.getByTestId("stage-view-film").click();
+    await stage.getByTestId("stage-pause").click();
+    expect(await stage.getByTestId("product-stage-film").evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
+  });
+
+  test("HORUS TRACE is one whole piece: bar, balls and decoration, with no second post drawn under it", async ({ page }) => {
+    await page.goto("/product/horus-trace");
+    await page.getByRole("tab", { name: "Hardware" }).click();
+    const assembly = page.getByTestId("piece-assembly");
+    await expect(assembly).toHaveAttribute("data-hardware", "integrated");
+    await expect(assembly.locator("[data-post]")).toHaveCount(0);
+    await expect(assembly.locator('[data-part="piece"]')).toHaveCount(1);
+    await expect(assembly).toContainText("Prototype specification · final production details pending");
   });
 
   test("the placement preview puts each piece where the owner asked", async ({ page }) => {

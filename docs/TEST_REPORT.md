@@ -1,5 +1,22 @@
 # Test report
 
+## HORUS TRACE as the second hero — 23 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors |
+| `npm run typecheck` | pass |
+| `npm test` | 77 of 77 pass |
+| `npx playwright test --workers=2` | 374 pass, 49 skipped, 0 fail |
+| `npm run build` | pass |
+
+`tests/e2e/concept-families.spec.ts` grew to ten tests: the owner's order in the selection rail
+(DESERT EYE, HORUS TRACE, CROSSLINE, ANKH TRACE), the HORUS TRACE stage (its clip plays, the angle and
+detail stills switch, the clip can be paused, and the frame is labelled a prototype render), the whole
+piece with no second post drawn under it, the placement profiles, the per-family motion and the Face
+Studio rail. The order-dependent assertions in `selection.spec.ts` and `hybrid.spec.ts` were updated for
+the new second family, and the selection's kind line now names a piece's lines.
+
 ## Three concept families — 23 September 2026
 
 | Command | Result |

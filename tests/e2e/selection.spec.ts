@@ -26,16 +26,16 @@ test.describe("the selection: sideways browsing", () => {
 
     await expect(page.getByTestId("selection-prev")).toBeDisabled();
     await page.getByTestId("selection-next").click();
-    await expect(current(page)).toHaveAttribute("data-product", "crimson-orbit");
+    await expect(current(page)).toHaveAttribute("data-product", "horus-trace");
     await page.getByTestId("selection-rail").focus();
     await page.keyboard.press("ArrowRight");
-    await expect(current(page)).toHaveAttribute("data-product", "sand-vortex");
+    await expect(current(page)).toHaveAttribute("data-product", "crossline");
     await page.keyboard.press("ArrowLeft");
-    await expect(current(page)).toHaveAttribute("data-product", "crimson-orbit");
-
-    // HORUS TRACE is the last family in the rail (the three concept families were appended last).
-    await page.goto("/collections?family=horus-trace");
     await expect(current(page)).toHaveAttribute("data-product", "horus-trace");
+
+    // VOID STUD is the last family in the rail; the concept follows it and the rail ends there.
+    await page.goto("/collections?family=void-stud");
+    await expect(current(page)).toHaveAttribute("data-product", "void-stud");
     // The last family is followed by one design that exists only as a direction, and the rail ends there.
     await page.getByTestId("selection-next").click();
     await expect(page.locator('[data-testid="selection-concept"][data-current="true"]')).toHaveCount(1);
@@ -56,7 +56,7 @@ test.describe("the selection: sideways browsing", () => {
       const second = el.children[1] as HTMLElement;
       el.scrollTo({ left: second.offsetLeft - (el.clientWidth - second.clientWidth) / 2, behavior: "auto" });
     });
-    await expect(current(page)).toHaveAttribute("data-product", "crimson-orbit");
+    await expect(current(page)).toHaveAttribute("data-product", "horus-trace");
     // The wheel still moves the page, not the rail.
     if (!isMobile) {
       const before = await rail.evaluate((el) => el.scrollLeft);
@@ -71,7 +71,8 @@ test.describe("the selection: sideways browsing", () => {
     await page.goto("/collections");
     const slide = current(page);
     await expect(slide).toContainText("01 / 07");
-    await expect(slide).toContainText("Story-driven");
+    // The kind line now names the lines the piece is browsed under.
+    await expect(slide).toContainText("Inspired · Featured");
     await expect(slide.getByTestId("add-to-bag")).toHaveCount(0);
     await expect(slide).not.toContainText("QAR");
     await slide.getByTestId("selection-view").click();

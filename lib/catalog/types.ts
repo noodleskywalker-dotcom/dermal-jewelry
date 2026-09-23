@@ -16,8 +16,8 @@ export type ArtId =
   | "cross-line"
   | "cross-mark"
   | "ankh"
+  | "horus-piece"
   | "horus-eye"
-  | "horus-drop"
   | "dark-gem";
 
 /** One visual piece of a product, laid out in the product's local unit box. */
@@ -74,6 +74,11 @@ export type ProductForm = {
   /** Placement profile used for previews and Face Studio defaults. */
   placement: PlacementId;
   components: ProductComponent[];
+  /**
+   * "integrated" means the artwork is the whole piercing, hardware included, so no separate post or
+   * base is drawn for it. Omitted means the concept hardware is drawn under the decorative tops.
+   */
+  hardware?: "integrated";
   /** Approval and artwork status of this arrangement. Omitted means unapproved concept fallback. */
   composition?: Composition;
   /** Default group width as a fraction of the photo width. */
@@ -128,13 +133,27 @@ export type ProductFilm = {
   approvedForPublication: boolean;
 };
 
+/**
+ * Prepared media for one piece: a hero still, an optional short ambient clip, and close views.
+ * It is generated from the owner's approved reference and keeps the piece's shape; it is never
+ * photography of a made product, and `note` says what it is on the page.
+ */
+export type ProductMedia = {
+  hero: string;
+  poster?: string;
+  film?: { src: string; type: string }[];
+  angle?: string;
+  macro?: string;
+  note: string;
+};
+
 /** Who a piece is presented to when browsing. A piece for everyone is "unisex" and shows under men and women. */
 export type Audience = "men" | "women" | "unisex";
 /**
  * The lines a piece belongs to. "full" is the full collection; "inspired" and "original" follow the
  * design's origin; "limited" is a limited edition and is only ever set when the owner announces one.
  */
-export type Line = "full" | "inspired" | "original" | "signature" | "symbolic" | "ancient" | "limited";
+export type Line = "full" | "inspired" | "original" | "signature" | "symbolic" | "ancient" | "featured" | "limited";
 
 export type Product = {
   /** Demo identifiers are prefixed "demo-" and must never be sent to Shopify. */
@@ -163,6 +182,8 @@ export type Product = {
    * maker's confirmation. Nothing here is a verified fact until a supplier confirms it.
    */
   materials?: MaterialNote[];
+  /** Prepared media for the product stage. Without it, the drawn assembly is the product view. */
+  media?: ProductMedia;
   /** An optional themed opening for the assembly view. The standard assembly never depends on it. */
   assembly?: { themed?: { id: string; description: string; status: "not-produced" | "available" } };
 
