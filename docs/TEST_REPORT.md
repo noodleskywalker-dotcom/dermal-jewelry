@@ -7,7 +7,7 @@
 | `npm run lint` | pass, 0 errors |
 | `npm run typecheck` | pass |
 | `npm test` | 77 of 77 pass |
-| `npx playwright test --workers=2` | 374 pass, 49 skipped, 0 fail |
+| `npx playwright test --workers=2` | 374 pass, 49 skipped, 0 fail (rerun after the multi-view stage: see below) |
 | `npm run build` | pass |
 
 `tests/e2e/concept-families.spec.ts` grew to ten tests: the owner's order in the selection rail

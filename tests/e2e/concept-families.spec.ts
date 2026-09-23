@@ -93,6 +93,8 @@ test.describe("the three concept families", () => {
     await expect(stage).toBeVisible();
     await expect(stage.getByTestId("product-stage-film")).toBeVisible();
     await expect(stage).toContainText("Prototype render · lighting and motion only · not photography of a made piece");
+    // Four ways to look at it: the clip, then front, angle and detail.
+    for (const v of ["film", "front", "angle", "macro"]) await expect(stage.getByTestId(`stage-view-${v}`)).toBeVisible();
     // The still views are there, and the clip can be stopped.
     await stage.getByTestId("stage-view-macro").click();
     await expect(stage).toHaveAttribute("data-view", "macro");

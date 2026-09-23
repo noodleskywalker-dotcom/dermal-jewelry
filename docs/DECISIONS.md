@@ -2,6 +2,18 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-23 — The last of the balance, and the HORUS TRACE multi-view stage
+
+- **The 4k video upscale failed and still cost 4 credits.** No job was ever created in the account and
+  no file came back; the balance fell from 4.71 to 0.68 all the same. The same stall happened to a macro
+  upscale the day before, so that path is treated as broken and was not tried again. With 0.68 credits
+  nothing can be generated (the cheapest image is 2), so no further media was attempted.
+- **The clip and stills were improved locally instead**, at no cost: the hero film is re-encoded at
+  1920 x 1080 with a lanczos scale and a light unsharp pass (VP9 crf 28, H.264 crf 20, about 3 MB in
+  total), and the poster, the last frame and the hero still were re-exported larger.
+- **The product stage became the owner's multi-view system**: In motion, Front, Angle and Detail, with
+  Placement and Try on as their own modes. No 360° is claimed.
+
 ## 2026-09-23 — The references arrive, and HORUS TRACE becomes the second hero
 
 - **All four reference images were found** on the machine (three named products and one unnamed) and

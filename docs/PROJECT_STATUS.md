@@ -25,8 +25,13 @@ Built and tested; **awaiting the owner's review**. Review package:
 | Order and taxonomy | tested | DESERT EYE, HORUS TRACE, CROSSLINE, ANKH TRACE; featured, signature, symbolic and ancient lines. |
 | Face Studio and placement previews | tested | All three selectable, manual tools only. |
 
-Gaps: no exact per-piece art, CAD, photography, 360° or assembly media for any of the three. The
-orbit needs about 96 credits and the balance is 4.71.
+The product stage is the owner's multi-view system: In motion, Front, Angle, Detail, with Placement
+and Try on beside it. The clip ships at 1920 x 1080.
+
+Gaps: no exact per-piece art, CAD, photography, 360° or assembly media for any of the three. The orbit
+needs about 96 credits; the balance is 0.68, so no further generation is possible. A 4k upscale of the
+hero clip was attempted on the remaining balance, cost 4 credits and returned nothing (no job was
+created); see `references/generated/horus/RECORD.md`.
 
 ## Three concept families (23 September 2026, no credits)
 

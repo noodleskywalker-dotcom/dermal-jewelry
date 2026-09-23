@@ -8,9 +8,11 @@ import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 // The premium stage for a piece that has real media: the hero clip, held on its last frame, with the
 // still views beside it. It is presentation only. The media is generated from the owner's reference
 // and preserves the piece's shape; it is not photography of a made product, and it says so once.
+type StageView = "film" | "front" | "angle" | "macro";
+
 export function ProductStage({ media, title }: { media: ProductMedia; title: string }) {
   const reduced = useReducedMotion();
-  const [view, setView] = useState<"film" | "angle" | "macro">("film");
+  const [view, setView] = useState<StageView>("film");
   const [paused, setPaused] = useState(false);
   const live = !reduced && view === "film" && !!media.film;
   const video = useAmbientVideo(media.film ?? [], live);
@@ -22,10 +24,12 @@ export function ProductStage({ media, title }: { media: ProductMedia; title: str
     else void v.play().catch(() => undefined);
   }, [paused, live, video]);
 
-  const stills: { id: "angle" | "macro"; label: string; src: string | undefined }[] = [
+  const stills: { id: Exclude<StageView, "film">; label: string; src: string | undefined }[] = [
+    { id: "front", label: "Front", src: media.hero },
     { id: "angle", label: "Angle", src: media.angle },
     { id: "macro", label: "Detail", src: media.macro },
   ];
+  const stillSrc = view === "angle" ? (media.angle ?? media.hero) : view === "macro" ? (media.macro ?? media.hero) : media.hero;
 
   return (
     <figure data-testid="product-stage" data-view={view} className="product-stage">
@@ -46,8 +50,8 @@ export function ProductStage({ media, title }: { media: ProductMedia; title: str
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={view === "film" ? media.hero : view === "angle" ? (media.angle ?? media.hero) : (media.macro ?? media.hero)}
-            alt={`${title}, ${view === "macro" ? "close" : view === "angle" ? "at an angle" : "whole"}`}
+            src={stillSrc}
+            alt={`${title}, ${view === "macro" ? "close" : view === "angle" ? "at an angle" : "whole, from the front"}`}
             className="product-stage-media"
             decoding="async"
           />
@@ -57,7 +61,7 @@ export function ProductStage({ media, title }: { media: ProductMedia; title: str
       <div className="product-stage-controls">
         <div className="flex flex-wrap gap-x-6">
           <button type="button" data-testid="stage-view-film" aria-pressed={view === "film"} onClick={() => setView("film")} className={`label-xs min-h-11 ${view === "film" ? "text-ink" : "text-ash hover:text-ink"}`}>
-            The piece
+            In motion
           </button>
           {stills
             .filter((s) => s.src)
