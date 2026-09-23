@@ -11,6 +11,25 @@ Milestone 1, the first vertical slice, is implemented and tested locally. The HY
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
 
+## Three concept families (23 September 2026, no credits)
+
+Built and tested; **awaiting the owner's review**. Review package:
+`references/review/2026-09-23-three-families/` (desktop and mobile captures of the full collection, the
+selection, the three product pages, the HORUS TRACE placement and try-on, and all three in Face Studio).
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| CROSSLINE, ANKH TRACE, HORUS TRACE in the catalogue | tested | Unisex; lines Signature, Symbolic and Ancient; in the full collection, the selection, the shop and Face Studio. |
+| Concept presentation | tested | No price, no bag, an explicit "Concept product" notice, and no claim from the supplied poster. |
+| Concept placeholder artwork | tested | Drawn from the written description in `JewelryArt.tsx`. |
+| Placement previews | tested | CROSSLINE and ANKH TRACE on the upper cheek (dermal), HORUS TRACE at the anti-eyebrow. |
+| Face Studio | tested | All three selectable, with move, scale and rotate unchanged. |
+| Own motion per family | tested | Sweep, pendulum, eye. No sand. |
+
+Gaps: **the three reference images never arrived**, so no exact product art, CAD, photography, 360°
+media or assembly media exists for any of them (see `docs/ASSET_REGISTER.md`). The artwork is a stand-in
+and should be redrawn once the references are supplied.
+
 ## Cinematic remake (22 September 2026, about 313 credits)
 
 Built and tested; **awaiting the owner's visual review**. Rollback: commit `4305f8b` (the final master

@@ -54,7 +54,7 @@ test.describe("landing page", () => {
     await page.goto("/");
     await page.getByTestId("cta-selection").click();
     await expect(page).toHaveURL(/\/collections$/);
-    await expect(page.getByTestId("selection-slide")).toHaveCount(4);
+    await expect(page.getByTestId("selection-slide")).toHaveCount(7);
   });
 
   test("the collection browser on the homepage holds every family, originals beside the anime-inspired one", async ({ page }) => {

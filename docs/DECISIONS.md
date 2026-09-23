@@ -2,6 +2,30 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-23 — Three concept families: CROSSLINE, ANKH TRACE, HORUS TRACE
+
+- **The owner's three reference screenshots never reached this machine.** No attachment arrived and no
+  new image file was on disk, so nothing was traced from them. Each family is drawn from the written
+  description as an original concept placeholder, and every surface says "Concept product".
+- **A concept product carries no price.** `demoPrice: 0` now reads as "Price pending" everywhere
+  (`formatPrice`), the product page replaces the bag button with a plain explanation, and a look in Face
+  Studio that holds a concept piece cannot go into the demo bag. Nothing invents a number to look finished.
+- **No claim from the supplied poster was copied.** HORUS TRACE records "Prototype specification",
+  "Dark faceted gemstone — material not yet confirmed", "Not yet confirmed" for the metal, "Polished —
+  proposed" and "Surface-bar concept — final specification pending". The words implant-grade, genuine
+  gemstone, sterling and ruby appear nowhere, and a test fails if they ever do.
+- **Lines, not new collection pages.** The three sit in the `originals` collection and carry the new
+  lines `signature`, `symbolic` and `ancient`, which the product page prints as "Original · Symbolic ·
+  Ancient". All three are unisex, so they show under men and under women, as every other piece does.
+- **Each family has its own motion** (`motionOf`): CROSSLINE takes a slow light sweep and one step
+  forward, ANKH TRACE swings slightly like something hanging, and HORUS TRACE lights its stone and
+  traces its own line once. Sand stays with DESERT EYE alone, as ruled earlier.
+- **Only real modes are offered.** With no film and no orbit media, the product page shows The piece,
+  Placement and Try on. Nothing shows an empty 360° or a fake assembly clip.
+- **New artwork ids** (`cross-line`, `cross-mark`, `ankh`, `horus-eye`, `horus-drop`, `dark-gem`) are
+  drawn in `JewelryArt.tsx`. A thin element is drawn as a shape, never a stroked line: a gradient has no
+  height to fill on a flat line, and CROSSLINE first came out flat grey because of it.
+
 ## 2026-09-22 — Cinematic remake: the opening shot, the world, the companion, the push into the stone
 
 - **The owner rejected the previous result as not cinematic enough** and authorised Higgsfield without

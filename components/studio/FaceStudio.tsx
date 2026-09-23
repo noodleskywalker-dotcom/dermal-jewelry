@@ -160,6 +160,12 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
     setPendingAdd(null);
   };
 
+  // A concept piece has no price yet, so a look holding one is a styling preview only.
+  const hasConcept = look.items.some((i) => {
+    const product = catalog.getProductById(i.productId);
+    return product ? formOf(product, i.formId).demoPrice === 0 : false;
+  });
+
   const addLookToBag = () => {
     // A pair is one sellable product, so each distinct product is added once, not once per piece.
     // Two forms of the same design are different bag lines.
@@ -546,13 +552,19 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
 
                 <button
                   type="button"
-                  disabled={look.items.length === 0}
+                  disabled={look.items.length === 0 || hasConcept}
                   onClick={addLookToBag}
                   data-testid="add-look-to-bag"
                   className="min-h-12 w-full bg-garnet text-xs uppercase tracking-[0.22em] text-ivory transition-colors duration-200 hover:bg-[#a52a41] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Add look to demo bag
                 </button>
+                {hasConcept && (
+                  <p className="text-xs leading-relaxed text-ash" data-testid="look-concept-note">
+                    A concept piece in this look has no price yet, so the look cannot go into the demo bag. You can still
+                    place it, move it and see it on your photo.
+                  </p>
+                )}
                 <p className="text-xs leading-relaxed text-ash">
                   A virtual combination is a styling preview. It does not mean the pieces are physically compatible.
                 </p>
@@ -686,7 +698,9 @@ function LookRow({
           {product.title}
           {isActive && <span className="ml-2 align-middle text-[0.625rem] uppercase tracking-[0.16em] text-garnet-text">Editing</span>}
         </p>
-        <p className="shrink-0 text-xs text-ash">Demo {formatPrice(formOf(product, item.formId).demoPrice, product.currency)}</p>
+        <p className="shrink-0 text-xs text-ash">
+          {formOf(product, item.formId).demoPrice ? `Demo ${formatPrice(formOf(product, item.formId).demoPrice, product.currency)}` : "Concept · price pending"}
+        </p>
       </div>
       <p className="mt-1 text-xs text-ash">
         {formOf(product, item.formId).label} form · wearer&rsquo;s {item.side}

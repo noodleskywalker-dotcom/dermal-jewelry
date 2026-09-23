@@ -107,7 +107,8 @@ test.describe("shop filters", () => {
     }
     await nav.getByRole("link", { name: "Men", exact: true }).click();
     await expect(page).toHaveURL(/browse=men/);
-    await expect(page.getByTestId("product-card")).toHaveCount(4);
+    // Every piece is unisex, so men and women both show the whole collection.
+    await expect(page.getByTestId("product-card")).toHaveCount(7);
     await page.goto("/shop?browse=inspired");
     await expect(page.getByTestId("product-card")).toHaveCount(1);
     await expect(page.getByTestId("product-card")).toHaveAttribute("data-product", "desert-eye-love");

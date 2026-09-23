@@ -1,5 +1,5 @@
 import { demoProducts, placements } from "./demo-products";
-import type { CatalogProvider, FormId, PlacementId, Product, ProductFilm, ProductForm } from "./types";
+import type { CatalogProvider, FormId, Line, PlacementId, Product, ProductFilm, ProductForm } from "./types";
 
 export type { Product, Placement, PlacementId, ProductComponent, ArtId, FormId, ProductFilm, ProductForm, RevealConfig } from "./types";
 export { placements };
@@ -17,6 +17,8 @@ const demoProvider: CatalogProvider = {
 export const catalog: CatalogProvider = demoProvider;
 
 export function formatPrice(amount: number, currency: string): string {
+  // A concept product has no price yet. Zero is never a real demo price, so it reads as undecided.
+  if (!amount) return "Price pending";
   return `${currency} ${amount.toLocaleString("en-US")}`;
 }
 
@@ -47,6 +49,20 @@ export function formOf(product: Product, formId?: string | null): ProductForm {
 
 /** Browse filters beyond placement: audience and line. */
 export type BrowseFilter = "men" | "women" | "inspired" | "original" | "limited";
+
+const LINE_LABELS: Record<Exclude<Line, "full">, string> = {
+  inspired: "Inspired",
+  original: "Original",
+  signature: "Signature",
+  symbolic: "Symbolic",
+  ancient: "Ancient",
+  limited: "Limited edition",
+};
+
+/** The lines a piece is browsed under, without the full collection, which holds everything. */
+export function lineLabels(product: Product): string[] {
+  return product.lines.filter((l): l is Exclude<Line, "full"> => l !== "full").map((l) => LINE_LABELS[l]);
+}
 
 export function matchesBrowse(product: Product, filter: BrowseFilter): boolean {
   if (filter === "men" || filter === "women") return product.audience === filter || product.audience === "unisex";

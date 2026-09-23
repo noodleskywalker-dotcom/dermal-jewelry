@@ -11,7 +11,7 @@ test.describe("the selection: sideways browsing", () => {
     await page.goto("/collections");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("The selection");
     const slides = page.getByTestId("selection-slide");
-    await expect(slides).toHaveCount(4);
+    await expect(slides).toHaveCount(7);
     await expect(current(page)).toHaveAttribute("data-product", "desert-eye-love");
 
     // Side by side: every slide shares a row and each starts to the right of the one before.
@@ -33,8 +33,9 @@ test.describe("the selection: sideways browsing", () => {
     await page.keyboard.press("ArrowLeft");
     await expect(current(page)).toHaveAttribute("data-product", "crimson-orbit");
 
-    await page.goto("/collections?family=void-stud");
-    await expect(current(page)).toHaveAttribute("data-product", "void-stud");
+    // HORUS TRACE is the last family in the rail (the three concept families were appended last).
+    await page.goto("/collections?family=horus-trace");
+    await expect(current(page)).toHaveAttribute("data-product", "horus-trace");
     // The last family is followed by one design that exists only as a direction, and the rail ends there.
     await page.getByTestId("selection-next").click();
     await expect(page.locator('[data-testid="selection-concept"][data-current="true"]')).toHaveCount(1);
@@ -69,7 +70,7 @@ test.describe("the selection: sideways browsing", () => {
   test("each family is a gallery label, not a card: number, name, kind, and two ways in", async ({ page }) => {
     await page.goto("/collections");
     const slide = current(page);
-    await expect(slide).toContainText("01 / 04");
+    await expect(slide).toContainText("01 / 07");
     await expect(slide).toContainText("Story-driven");
     await expect(slide.getByTestId("add-to-bag")).toHaveCount(0);
     await expect(slide).not.toContainText("QAR");

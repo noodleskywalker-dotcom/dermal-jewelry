@@ -97,7 +97,7 @@ export function ProductGrid({ products, className }: { products: Product[]; clas
                 </span>
                 <span className="mt-3 flex items-baseline justify-between gap-4">
                   <span className="font-display text-3xl font-light leading-tight tracking-[0.03em] sm:text-4xl">{product.title}</span>
-                  <span className="shrink-0 text-sm text-ash">
+                  <span className="min-w-0 text-right text-sm text-ash">
                     <span className="sr-only">Demo price </span>
                     {formatPrice(product.demoPrice, product.currency)}
                   </span>

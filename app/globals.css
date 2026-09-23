@@ -1125,6 +1125,74 @@ input[type="range"].studio-range::-moz-range-thumb {
   }
 }
 
+
+/* ── The three concept families, 23 September 2026. Each motion is small and happens once. ── */
+/* CROSSLINE: a slow light sweep along the line and one step forward. */
+:is([data-object-host]:hover, [data-object-host]:focus-within) .fo[data-motion="sweep"] .fo-art {
+  transform: translateY(-4px) scale(1.04);
+}
+:is([data-object-host]:hover, [data-object-host]:focus-within) .fo[data-motion="sweep"] .fo-blade {
+  animation-duration: 1.4s;
+}
+/* ANKH TRACE: it swings a little, the way something hanging does, and its edge catches the light. */
+:is([data-object-host]:hover, [data-object-host]:focus-within) .fo[data-motion="pendulum"] .fo-art {
+  transform: translateY(-5px) scale(1.04);
+  animation: fo-pendulum 1.6s var(--ease-editorial) both;
+  transform-origin: 50% 12%;
+}
+@keyframes fo-pendulum {
+  0% {
+    rotate: 0deg;
+  }
+  35% {
+    rotate: 3.2deg;
+  }
+  70% {
+    rotate: -2deg;
+  }
+  100% {
+    rotate: 0deg;
+  }
+}
+/* HORUS TRACE: the stone lights, then one line traces the eye and fades. */
+.fo-trace {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 78%;
+  aspect-ratio: 2.2;
+  pointer-events: none;
+  opacity: 0;
+  translate: -50% -50%;
+  border: 1px solid rgb(255 255 255 / 0.85);
+  border-radius: 50% 50% 46% 46%;
+  mix-blend-mode: soft-light;
+}
+:is([data-object-host]:hover, [data-object-host]:focus-within) .fo[data-motion="eye"] .fo-trace {
+  animation: fo-trace 1.5s 0.15s var(--ease-editorial) both;
+}
+@keyframes fo-trace {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+  40% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    opacity: 0;
+    clip-path: inset(0 0 0 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is([data-object-host]:hover, [data-object-host]:focus-within) .fo[data-motion="pendulum"] .fo-art {
+    animation: none;
+  }
+  .fo-trace {
+    display: none;
+  }
+}
 /* ── DESERT EYE layer: a pale patch and a few grains. Never the whole brand. ── */
 .sand-layer {
   position: absolute;

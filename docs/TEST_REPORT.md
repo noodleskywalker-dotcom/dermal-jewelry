@@ -1,5 +1,23 @@
 # Test report
 
+## Three concept families — 23 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors |
+| `npm run typecheck` | pass |
+| `npm test` | 77 of 77 pass |
+| `npx playwright test --workers=2` | see the run below |
+| `npm run build` | pass |
+
+New `tests/e2e/concept-families.spec.ts`: all three appear in the shop, under men, women and original,
+never under inspired, and in the selection; each product page shows its lines, "Price pending", the
+concept notice, no bag button and only the modes that really exist; HORUS TRACE prints the prototype
+specification wording; the placement preview uses the right profile; each family carries its own motion
+and no sand; and all three are selectable in Face Studio with the manual tools. A banned-words list
+(implant-grade, genuine gemstone, sterling, ruby, official collaboration, grade 5, certified) fails the
+test if any of it ever reaches those pages. Existing counts were updated from four families to seven.
+
 ## Cinematic remake — 22 September 2026
 
 | Command | Result |

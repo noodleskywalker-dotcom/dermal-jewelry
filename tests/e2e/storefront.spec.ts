@@ -34,7 +34,8 @@ test.describe("storefront navigation", () => {
 
   test("placement filters show real pieces or an honest empty state", async ({ page }) => {
     await page.goto("/shop?placement=dermal");
-    await expect(page.getByTestId("product-card")).toHaveCount(3);
+    // The three earlier dermal pieces and the three concept families of 23 September 2026.
+    await expect(page.getByTestId("product-card")).toHaveCount(6);
     await page.goto("/shop?placement=nostril");
     await expect(page.getByTestId("product-card")).toHaveCount(2);
     await page.goto("/shop?placement=septum");

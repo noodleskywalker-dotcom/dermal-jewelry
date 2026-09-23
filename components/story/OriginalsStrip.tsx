@@ -47,7 +47,7 @@ export function OriginalsStrip({ id, products }: { id: string; products: Product
                 </div>
                 <span className="flex items-baseline justify-between gap-4">
                   <span className="font-display text-3xl font-light leading-tight">{product.title}</span>
-                  <span className="shrink-0 text-sm text-ash">
+                  <span className="min-w-0 text-right text-sm text-ash">
                     <span className="sr-only">Demo price </span>
                     {formatPrice(product.demoPrice, product.currency)} · Demo
                   </span>

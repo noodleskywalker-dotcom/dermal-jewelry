@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { displayTitle, filmFor, formatPrice } from "@/lib/catalog";
+import { displayTitle, filmFor, formatPrice, lineLabels } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { AddToBagButton } from "@/components/cart/AddToBagButton";
 import { RevealPlayer, type ConceptStills } from "@/components/reveal/RevealPlayer";
@@ -37,6 +37,8 @@ export function FamilyExperience({
   const { form, choose } = useFormChoice(product, initialFormId);
   const film = filmFor(product, form.id);
   const anchor = ANCHORS[form.placement] ?? { x: 0.5, y: 0.5 };
+  // A concept product has no decided price, so it is presented rather than sold.
+  const isConcept = form.demoPrice === 0;
 
   const views: { id: ViewId; label: string }[] = [
     { id: "piece", label: "The piece" },
@@ -132,6 +134,7 @@ export function FamilyExperience({
       {/* The information column. It stays while the stage changes. */}
       <aside className="pdp-info">
         <p className="label-xs text-ash">{product.origin === "anime-inspired" ? "Anime-inspired design · not an official collaboration" : "Original design"}</p>
+        <p className="label-xs mt-2 text-ash" data-testid="family-lines">{lineLabels(product).join(" · ")}</p>
         <h1 className="mt-4 font-display text-[clamp(2rem,2.6vw,2.75rem)] font-light leading-[1.05] tracking-[0.04em]">{displayTitle(product.title)}</h1>
 
         <fieldset className="mt-10">
@@ -158,7 +161,7 @@ export function FamilyExperience({
         </fieldset>
 
         <p className="mt-8" data-testid="family-price">
-          <span className="label-xs block text-ash">Demo price</span>
+          <span className="label-xs block text-ash">{isConcept ? "Price" : "Demo price"}</span>
           <span className="mt-1 block font-display text-3xl font-light tracking-[0.06em]">{formatPrice(form.demoPrice, product.currency)}</span>
         </p>
 
@@ -166,8 +169,17 @@ export function FamilyExperience({
           Try on your face <span aria-hidden="true">↗</span>
         </Link>
 
-        <AddToBagButton product={product} formId={form.id} className="mt-5" />
-        <p className="label-xs mt-3 text-ash">Demo · nothing can be ordered yet</p>
+        {isConcept ? (
+          <p className="label-xs mt-6 border border-line p-4 text-ash" data-testid="concept-notice">
+            Concept product. It has no price, no confirmed materials and no hardware specification yet, so it cannot be
+            put in the demo bag.
+          </p>
+        ) : (
+          <>
+            <AddToBagButton product={product} formId={form.id} className="mt-5" />
+            <p className="label-xs mt-3 text-ash">Demo · nothing can be ordered yet</p>
+          </>
+        )}
 
         <div className="mt-10 divide-y divide-line border-y border-line">
           <details className="group">

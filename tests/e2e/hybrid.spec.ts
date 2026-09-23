@@ -36,7 +36,7 @@ test.describe("one light system on every page", () => {
   test("the shop stands its pieces on the paper: no tinted tiles and no boxed filters", async ({ page }) => {
     await page.goto("/shop");
     const cards = page.getByTestId("product-card");
-    await expect(cards).toHaveCount(4);
+    await expect(cards).toHaveCount(7);
     for (const card of await cards.all()) {
       const painted = await card.evaluate((li) =>
         [li, ...li.querySelectorAll("*")].filter((el) => {
@@ -91,9 +91,11 @@ test.describe("sand belongs to DESERT EYE alone", () => {
     await expect(kiri.getByTestId("sand-layer")).toHaveCount(0);
     await expect(kiri).not.toContainText("QAR");
     await expect(kiri).toContainText("Concept");
-    // Four families are browsable; the concept is named, never counted.
-    await expect(page.getByTestId("selection-index")).toHaveText(/Index 01 \/ 04/);
-    await page.goto("/collections?family=void-stud");
+    // Seven families are browsable; the concept is named, never counted.
+    await expect(page.getByTestId("selection-index")).toHaveText(/Index 01 \/ 07/);
+    await page.goto("/collections?family=horus-trace");
+    // The rail slides to the last family first; only then does Next reach the concept.
+    await expect(page.getByTestId("selection-index")).toHaveText(/Index 07 \/ 07/);
     await page.getByTestId("selection-next").click();
     await expect(page.getByTestId("selection-index")).toHaveText(/Concept · KIRI/);
   });

@@ -6,7 +6,19 @@ export type PlacementId =
   | "septum"
   | "lip";
 
-export type ArtId = "love-symbol" | "garnet-gem" | "vortex" | "vortex-stud" | "orbit" | "void";
+export type ArtId =
+  | "love-symbol"
+  | "garnet-gem"
+  | "vortex"
+  | "vortex-stud"
+  | "orbit"
+  | "void"
+  | "cross-line"
+  | "cross-mark"
+  | "ankh"
+  | "horus-eye"
+  | "horus-drop"
+  | "dark-gem";
 
 /** One visual piece of a product, laid out in the product's local unit box. */
 export type ProductComponent = {
@@ -122,7 +134,7 @@ export type Audience = "men" | "women" | "unisex";
  * The lines a piece belongs to. "full" is the full collection; "inspired" and "original" follow the
  * design's origin; "limited" is a limited edition and is only ever set when the owner announces one.
  */
-export type Line = "full" | "inspired" | "original" | "signature" | "limited";
+export type Line = "full" | "inspired" | "original" | "signature" | "symbolic" | "ancient" | "limited";
 
 export type Product = {
   /** Demo identifiers are prefixed "demo-" and must never be sent to Shopify. */
