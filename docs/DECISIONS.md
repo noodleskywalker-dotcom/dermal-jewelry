@@ -754,3 +754,43 @@ How it is built:
   design still needs a rights review before public use.
 - **`@types/node` moved to 24** to match the Node 24 runtime and vitest's peer requirement.
 - **Robots.** The whole site is `noindex` while it shows demo products.
+
+## Catalogue rebalance (24 September 2026)
+
+- **DERMAL is the brand; DESERT EYE is one collection inside it.** The launch owns the homepage
+  opening and its own product page. Everywhere a visitor browses — the catalogue, the collection
+  rail, the selection — every design family gets a stage of roughly equal weight.
+- **The launch hero was not the problem and was not redesigned.** The cinematic opening, the dunes,
+  the companion and the macro push-in are untouched. The page turns afterwards, at `EXPLORE DERMAL`.
+- **Importance is never expressed as size.** The editorial catalogue varies composition in blocks of
+  four, but which stage is wide follows the position on the page, not the piece standing in it. The
+  widest stage is 1.22x the narrowest on desktop, and on a phone every stage is identical. A featured
+  piece is marked with one small garnet word instead.
+- **The wide slot is never the first position.** The rhythm is regular, wide / wide, regular, not
+  wide, regular / regular, wide. With the wide slot first, the piece that happens to head the list —
+  DESERT EYE — was handed a 446 px stage against HORUS TRACE's 367 px, which is exactly the ranking
+  the rebalance exists to remove. Measured after the change: DESERT EYE 367 px, HORUS TRACE 446 px.
+- **Verification is measured, not asserted.** `tests/e2e/verify-rebalance.mjs` navigates fourteen
+  routes at three sizes and prints the numbers behind each of the owner's confirmations, so a review
+  reads figures rather than assurances. It is read-only and spends nothing.
+- **DESERT EYE and HORUS TRACE are both `Featured`.** The second hero reads as the equal of the first.
+- **The catalogue is brand-neutral.** Warm paper, black type, one garnet marker. No sand, no world,
+  no campaign treatment, no tinted tile and no border: a piece stands directly on the paper.
+- **Two catalogue views.** `Editorial` is the art-directed rhythm and `Grid` is even browsing. The
+  view is carried in the address as `?view=` and survives a filter. Two views were enough; no third
+  was built.
+- **Discovery comes first.** Lines on the top row (All, Men, Women, Full collection, Inspired,
+  Original, Limited edition) and placements on a quieter row beneath. `All` is the default, and no
+  filter is preselected. Men and women are browsing views over the same unisex records: no gender
+  difference is invented in the jewelry.
+- **One collection browser, not two.** The homepage rail is the six families in the owner's order,
+  each on the same stage with its own small world. `/collections` keeps the selection rail alone; its
+  old rail of worlds was removed rather than left to duplicate it.
+- **Ways into the catalogue are text.** Full collection, Men, Women, Inspired, Original and Try on
+  your face sit under whatever is browsing above them, so no way in competes with a design family.
+  There is no limited-edition entry, because no limited edition has been announced.
+- **The stage is inset inside its column.** A form is laid out from its own composition and some
+  pieces reach past the square group box, so the inset is what keeps a wide form from running off the
+  side of a 320 px page.
+- **The companion stays an aside.** Same size, same corner, every page. His sand still belongs to the
+  homepage and the selection; on the catalogue a press simply opens DESERT EYE.

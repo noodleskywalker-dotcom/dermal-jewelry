@@ -57,14 +57,33 @@ test.describe("landing page", () => {
     await expect(page.getByTestId("selection-slide")).toHaveCount(8);
   });
 
-  test("the collection browser on the homepage holds every family, originals beside the anime-inspired one", async ({ page }) => {
+  test("after the launch the page turns into the brand and shows every family on one stage", async ({ page }) => {
     await page.goto("/");
     const section = page.getByTestId("collection-section");
-    // The ways in: the worlds (inspired, original, limited) beside the audiences and the full collection.
-    await expect(section.getByTestId("browse-entry")).toHaveCount(7);
+    // The turn: the campaign has ended and the collection begins, said in words before it is shown.
+    await expect(section.getByRole("heading", { name: "Explore DERMAL" })).toBeVisible();
+    await expect(section.getByTestId("explore-lede")).toContainText("DESERT EYE is the current launch");
+    await expect(section.getByTestId("explore-lede")).toContainText("one collection inside DERMAL");
+    await expect(section.getByTestId("explore-shop")).toHaveAttribute("href", "/shop");
+    // Six design families, none of them given a larger frame than the others.
+    await expect(section.getByTestId("browse-entry")).toHaveCount(6);
     await expect(section.locator('[data-entry="kiri"]')).toContainText("Original");
-    await expect(section.locator('[data-entry="desert-eye"]')).toContainText("Inspired");
+    await expect(section.locator('[data-entry="desert-eye-love"]')).toContainText("Inspired");
+    await expect(section.locator('[data-entry="horus-trace"]')).toContainText("Symbolic");
     await expect(section.getByTestId("product-card")).toHaveCount(0);
+  });
+
+  test("the turn comes after the launch story and before the last frame", async ({ page }) => {
+    await page.goto("/");
+    const top = async (id: string) => (await page.getByTestId(id).evaluate((el) => el.getBoundingClientRect().top + window.scrollY)) as number;
+    const [onyou, turn, final] = [await top("onyou-section"), await top("collection-section"), await top("final-section")];
+    expect(turn).toBeGreaterThan(onyou);
+    expect(final).toBeGreaterThan(turn);
+    // Below the turn, the only sand on the page is DESERT EYE's own slide on the rail.
+    const rail = page.getByTestId("browse");
+    await expect(rail.getByTestId("sand-layer")).toHaveCount(1);
+    const host = rail.locator('[data-testid="browse-entry"]', { has: page.getByTestId("sand-layer") });
+    await expect(host).toHaveAttribute("data-entry", "desert-eye-love");
   });
 });
 

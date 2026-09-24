@@ -47,8 +47,8 @@ export function formOf(product: Product, formId?: string | null): ProductForm {
   return match ?? product.forms.find((f) => f.id === product.defaultFormId)!;
 }
 
-/** Browse filters beyond placement: audience and line. */
-export type BrowseFilter = "men" | "women" | "inspired" | "original" | "limited";
+/** Browse filters beyond placement: audience and line. "full" is the whole collection. */
+export type BrowseFilter = "men" | "women" | "full" | "inspired" | "original" | "limited";
 
 const LINE_LABELS: Record<Exclude<Line, "full">, string> = {
   inspired: "Inspired",
@@ -64,6 +64,21 @@ const LINE_LABELS: Record<Exclude<Line, "full">, string> = {
 /** The lines a piece is browsed under, without the full collection, which holds everything. */
 export function lineLabels(product: Product): string[] {
   return product.lines.filter((l): l is Exclude<Line, "full"> => l !== "full").map((l) => LINE_LABELS[l]);
+}
+
+/**
+ * The kind of piece, for a catalogue label: its lines without the launch marker, which is shown
+ * separately so a featured piece is marked once and never twice.
+ */
+export function kindLabels(product: Product): string[] {
+  return product.lines
+    .filter((l): l is Exclude<Line, "full" | "featured"> => l !== "full" && l !== "featured")
+    .map((l) => LINE_LABELS[l]);
+}
+
+/** A featured piece carries one small marker in the catalogue. It never earns a larger stage. */
+export function isFeatured(product: Product): boolean {
+  return product.lines.includes("featured");
 }
 
 export function matchesBrowse(product: Product, filter: BrowseFilter): boolean {

@@ -2074,9 +2074,33 @@ input[type="range"].studio-range::-moz-range-thumb {
 .collection-section {
   padding-block: 4rem 0;
 }
+/* The turn out of the launch and into the brand. A rule across the page, then the statement: the
+   visitor should be in no doubt that the campaign has ended and the collection has begun. */
+.explore-head {
+  margin-inline: auto;
+  max-width: 120rem;
+  padding: 3rem 1.5rem 3.5rem;
+  border-top: 1px solid var(--color-line);
+}
+.explore-lede {
+  margin-top: 1.75rem;
+  max-width: 44rem;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--color-ash);
+}
+.explore-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 2.5rem;
+  margin-top: 2rem;
+}
 @media (min-width: 1024px) {
   .collection-section {
     padding-block: 6rem 0;
+  }
+  .explore-head {
+    padding: 4rem 4rem 4.5rem;
   }
 }
 
@@ -2391,12 +2415,19 @@ body[data-mascot] :is([data-testid="selection-steps"], [data-testid="browse-step
 .browse-entry[data-world="chrome"] .browse-visual {
   background: linear-gradient(135deg, #fbfaf7 0%, #eef0f2 60%, #dfe3e7 100%);
 }
-.browse-entry[data-world="dark"] .browse-visual {
-  background: #141312;
+/* Each family's own small world, inside a frame every family shares. Nothing here is louder than
+   its neighbour: one wash, one light, no campaign treatment. */
+.browse-entry[data-world="trace"] .browse-visual {
+  background: radial-gradient(120% 90% at 50% 40%, #2a2528 0%, #17151a 60%, #0f0e12 100%);
 }
-.browse-entry[data-world="signature"] .browse-visual,
-.browse-entry[data-world="face"] .browse-visual {
-  background: #f1eee7;
+.browse-entry[data-world="blade"] .browse-visual {
+  background: linear-gradient(115deg, #f4f4f3 0%, #e8eaec 48%, #f6f6f5 52%, #dcdfe3 100%);
+}
+.browse-entry[data-world="line"] .browse-visual {
+  background: linear-gradient(to right, #f5f3ee 0%, #fdfdfb 50%, #f1efe9 100%);
+}
+.browse-entry[data-world="symbol"] .browse-visual {
+  background: radial-gradient(90% 90% at 50% 45%, #fbfaf7 0%, #eceef0 60%, #dfe2e6 100%);
 }
 .browse-object {
   position: relative;
@@ -2416,29 +2447,12 @@ body[data-mascot] :is([data-testid="selection-steps"], [data-testid="browse-step
   width: 88%;
   height: 88%;
 }
-.browse-dark-media {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.6;
-  filter: contrast(1.15) brightness(0.8);
-}
-.browse-row {
+/* The ways into the catalogue: text under the rail, never a stage of their own. */
+.browse-ways {
   display: flex;
-  gap: 4%;
-  width: 86%;
-}
-.browse-row-item {
-  position: relative;
-  flex: 1;
-  aspect-ratio: 1;
-}
-.browse-face {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
+  flex-wrap: wrap;
+  gap: 0.25rem 2rem;
+  padding: 2rem 1.5rem 0;
 }
 .browse-label {
   padding: 1.25rem 0 0;
@@ -2477,6 +2491,10 @@ body[data-mascot] :is([data-testid="selection-steps"], [data-testid="browse-step
   }
   .browse-steps {
     padding: 1.5rem 4rem 0;
+  }
+  .browse-ways {
+    padding: 2.25rem 4rem 0;
+    gap: 0.25rem 2.75rem;
   }
 }
 
@@ -2979,4 +2997,180 @@ body:has(.cinema-hero) header[data-scrolled="false"] a[aria-label$="home"] {
 }
 .global-mascot[data-hidden="true"] .mascot {
   pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* The catalogue (24 September 2026). Brand-neutral: warm paper, black type, one garnet marker, no
+   sand and no world. Every family gets a stage of roughly equal weight; the editorial rhythm varies
+   composition by position on the page, never by which piece is standing there. */
+
+.catalogue-page {
+  margin-inline: auto;
+  max-width: 120rem;
+  padding: 3rem 1.5rem 8rem;
+}
+
+.catalogue-head {
+  max-width: 68rem;
+}
+
+.catalogue-filters {
+  margin-top: 3.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-line);
+}
+
+.catalogue-filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem 2.5rem;
+  margin-top: 0.25rem;
+}
+
+.catalogue-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem 2.5rem;
+}
+
+.catalogue-body {
+  margin-top: 4.5rem;
+}
+
+.catalogue {
+  display: grid;
+  list-style: none;
+}
+
+/* One column on a phone, with a little air and a slight alternating inset so it still reads as a
+   gallery rather than a list. Each stage is the same width. */
+.catalogue-editorial,
+.catalogue-even {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: clamp(4.5rem, 14vw, 8rem);
+}
+
+/* The stage and the words below it share one column, so a name and its price never drift apart
+   across an empty half of the grid. */
+.piece-inner {
+  width: 100%;
+  max-width: min(100%, 30rem);
+  margin-inline: auto;
+}
+
+.piece-stage {
+  display: block;
+}
+
+/* The stage is inset inside its column. A piece is laid out from its own composition and some
+   pieces reach past the square group box, so the inset is what keeps a wide form from running off
+   the side of the page on a narrow phone. */
+.piece-object {
+  display: block;
+  width: 82%;
+  margin-inline: auto;
+}
+
+.piece-flag {
+  color: var(--color-garnet-text);
+}
+
+@media (min-width: 640px) {
+  .catalogue-page {
+    padding-inline: 2.5rem;
+  }
+
+  .catalogue-even {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 4vw;
+    row-gap: clamp(4.5rem, 8vw, 7rem);
+  }
+}
+
+@media (min-width: 768px) {
+  /* The editorial rhythm, in blocks of four: regular, wide / wide, regular. A wide stage is one
+     column of twelve broader than a regular one, so the eye reads a composition and not a ranking.
+     The wide slots are the second and third of each block, never the first, so the piece that
+     happens to be listed first is not the one handed the widest frame. */
+  .catalogue-editorial {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 2.5vw;
+    row-gap: clamp(5rem, 9vw, 9rem);
+  }
+
+  .catalogue-editorial > li {
+    grid-column: 1 / span 5;
+  }
+
+  .catalogue-editorial > li:nth-child(4n + 2) {
+    grid-column: 7 / span 6;
+    margin-top: 9vw;
+  }
+
+  .catalogue-editorial > li:nth-child(4n + 3) {
+    grid-column: 1 / span 6;
+  }
+
+  .catalogue-editorial > li:nth-child(4n + 4) {
+    grid-column: 8 / span 5;
+    margin-top: 3vw;
+  }
+
+  /* The piece sits towards the outside of its own column, so the page breathes down the middle. */
+  .catalogue-editorial > li:nth-child(4n + 1) .piece-inner,
+  .catalogue-editorial > li:nth-child(4n + 3) .piece-inner {
+    margin-inline: 0 auto;
+  }
+
+  .catalogue-editorial > li:nth-child(4n + 2) .piece-inner,
+  .catalogue-editorial > li:nth-child(4n + 4) .piece-inner {
+    margin-inline: auto 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .catalogue-page {
+    padding: 5rem 4rem 10rem;
+  }
+
+  .catalogue-body {
+    margin-top: 6rem;
+  }
+
+  .catalogue-even {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 3vw;
+  }
+
+  .catalogue-editorial > li[data-stage="wide"] .piece-inner {
+    max-width: min(100%, 34rem);
+  }
+
+  .catalogue-editorial > li[data-stage="regular"] .piece-inner {
+    max-width: min(100%, 28rem);
+  }
+}
+
+/* An original that exists only as a direction. Words on the paper at the end of the catalogue: no
+   stage, no artwork and no price, because there is nothing to order. */
+.catalogue-concepts {
+  margin-top: clamp(5rem, 10vw, 9rem);
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--color-line);
+}
+
+.catalogue-concept-list {
+  display: grid;
+  gap: 2.5rem;
+  margin-top: 2rem;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  .catalogue-concept-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }

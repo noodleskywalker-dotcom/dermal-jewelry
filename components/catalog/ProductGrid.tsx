@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { formatPrice, placementLabel } from "@/lib/catalog";
+import { formatPrice, isFeatured, kindLabels, placementLabel } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { Modal } from "@/components/layout/Modal";
 import { FloatingObject } from "./FloatingObject";
@@ -16,6 +16,21 @@ const PANEL_HEIGHT_ESTIMATE = 560;
 
 type PanelPlacement = { side: "right" | "left" | "over"; shiftY: number };
 
+/**
+ * How the catalogue is laid out. "editorial" is the art-directed rhythm, "even" is the plain
+ * browsing view, and "column" is the older paired column a collection page still uses.
+ *
+ * The rhythm varies composition, never importance: which stage is wide follows the position on the
+ * page, not the piece standing in it, and a wide stage is only a little wider than its neighbour.
+ */
+export type CatalogueLayout = "editorial" | "even" | "column";
+
+const LAYOUT_CLASS: Record<CatalogueLayout, string> = {
+  editorial: "catalogue catalogue-editorial",
+  even: "catalogue catalogue-even",
+  column: "grid grid-cols-1 gap-x-[10vw] gap-y-24 sm:grid-cols-2 sm:[&>li:nth-child(even)]:mt-40 lg:gap-y-32",
+};
+
 /** Keeps the hover panel inside the viewport: beside the card when there is room, otherwise over it. */
 function placePanel(card: DOMRect, viewportW: number, viewportH: number): PanelPlacement {
   const side =
@@ -25,7 +40,15 @@ function placePanel(card: DOMRect, viewportW: number, viewportH: number): PanelP
   return { side, shiftY };
 }
 
-export function ProductGrid({ products, className }: { products: Product[]; className?: string }) {
+export function ProductGrid({
+  products,
+  className,
+  layout = "column",
+}: {
+  products: Product[];
+  className?: string;
+  layout?: CatalogueLayout;
+}) {
   // One preview at a time, across hover, keyboard focus and the mobile sheet.
   const [hover, setHover] = useState<{ id: string; placement: PanelPlacement } | null>(null);
   const [sheetProduct, setSheetProduct] = useState<Product | null>(null);
@@ -53,18 +76,23 @@ export function ProductGrid({ products, className }: { products: Product[]; clas
 
   return (
     <>
-      {/* No tiles: each piece stands on the paper, in a loose staggered column pair with a great deal of air. */}
-      <ul className={className ?? "grid grid-cols-1 gap-x-[10vw] gap-y-24 sm:grid-cols-2 sm:[&>li:nth-child(even)]:mt-40 lg:gap-y-32"}>
+      {/* No tiles: each piece stands on the paper, with a great deal of air around it. */}
+      <ul data-testid="catalogue" data-layout={layout} className={className ?? LAYOUT_CLASS[layout]}>
         {products.map((product, i) => {
           const open = hover?.id === product.id;
           const panelId = `tryon-panel-${product.slug}`;
+          // The wider stage falls on the second and third position of each block of four, so the
+          // piece that happens to be listed first is never the one given the widest frame.
+          const stage = layout === "editorial" && (i % 4 === 1 || i % 4 === 2) ? "wide" : "regular";
+          const kind = kindLabels(product).join(" · ");
           return (
             <li
               key={product.id}
               data-testid="product-card"
               data-product={product.slug}
+              data-stage={stage}
               data-object-host
-              className={`group relative ${open ? "z-30" : ""}`}
+              className={`piece group relative ${open ? "z-30" : ""}`}
               onPointerEnter={(e) => {
                 if (e.pointerType === "mouse") scheduleOpen(product, e.currentTarget, OPEN_DELAY_MS);
               }}
@@ -88,12 +116,24 @@ export function ProductGrid({ products, className }: { products: Product[]; clas
                 }
               }}
             >
-              <Link href={`/product/${product.slug}`} className="block" aria-describedby={open ? panelId : undefined}>
-                <span role="img" aria-label={`${product.title}: ${artworkLabel(product).toLowerCase()}. ${product.summary}`} className="relative mx-auto block aspect-square w-[min(78%,26rem)]">
+              <div className="piece-inner">
+              <Link href={`/product/${product.slug}`} className="piece-stage" aria-describedby={open ? panelId : undefined}>
+                <span
+                  role="img"
+                  aria-label={`${product.title}: ${artworkLabel(product).toLowerCase()}. ${product.summary}`}
+                  className="piece-object relative block aspect-square"
+                >
                   <FloatingObject product={product} depth={1} delay={i * -1.1} />
                 </span>
-                <span className="label-xs mt-2 block text-ash">
-                  {String(i + 1).padStart(2, "0")} · {artworkLabel(product)}
+                <span className="label-xs mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-ash">
+                  <span>
+                    {String(i + 1).padStart(2, "0")} · {artworkLabel(product)}
+                  </span>
+                  {isFeatured(product) && (
+                    <span data-testid="piece-flag" className="piece-flag">
+                      Featured
+                    </span>
+                  )}
                 </span>
                 <span className="mt-3 flex items-baseline justify-between gap-4">
                   <span className="font-display text-3xl font-light leading-tight tracking-[0.03em] sm:text-4xl">{product.title}</span>
@@ -102,26 +142,30 @@ export function ProductGrid({ products, className }: { products: Product[]; clas
                     {formatPrice(product.demoPrice, product.currency)}
                   </span>
                 </span>
-                <span className="label-xs mt-2 block text-ash">
-                  {product.placements.map(placementLabel).join(" · ")} · Demo
+                <span className="label-xs mt-2 block text-ash" data-testid="piece-kind">
+                  {product.placements.map(placementLabel).join(" · ")}
+                  {kind ? ` · ${kind}` : ""} · Demo
                 </span>
               </Link>
 
-              <button
-                type="button"
-                data-testid="try-on-button"
-                onClick={() => {
-                  cancelTimers();
-                  setHover(null);
-                  setSheetProduct(product);
-                }}
-                className="text-link mt-1"
-              >
-                Try on<span className="sr-only"> {product.title}</span> <span aria-hidden="true">↗</span>
-              </button>
-              <Link href={`/product/${product.slug}`} className="text-link ml-6 mt-1" data-testid="view-piece">
-                View piece<span className="sr-only"> {product.title}</span> <span aria-hidden="true">↗</span>
-              </Link>
+              <span className="mt-1 flex flex-wrap items-baseline gap-x-6">
+                <Link href={`/product/${product.slug}`} className="text-link" data-testid="view-piece">
+                  View piece<span className="sr-only"> {product.title}</span> <span aria-hidden="true">↗</span>
+                </Link>
+                <button
+                  type="button"
+                  data-testid="try-on-button"
+                  onClick={() => {
+                    cancelTimers();
+                    setHover(null);
+                    setSheetProduct(product);
+                  }}
+                  className="text-link"
+                >
+                  Try on<span className="sr-only"> {product.title}</span> <span aria-hidden="true">↗</span>
+                </button>
+              </span>
+              </div>
 
               {open && hover && (
                 <div

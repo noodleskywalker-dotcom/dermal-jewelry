@@ -1,6 +1,6 @@
 # DERMAL — project status
 
-Last updated: 22 September 2026. Branch: `feat/dermal-first-slice`.
+Last updated: 24 September 2026. Branch: `feat/dermal-first-slice`.
 
 Statuses used here: planned, implemented, tested, owner-approved, blocked, deferred.
 "Tested" means an automated or recorded check actually ran. See `docs/TEST_REPORT.md`.
@@ -10,6 +10,37 @@ Statuses used here: planned, implemented, tested, owner-approved, blocked, defer
 Milestone 1, the first vertical slice, is implemented and tested locally. The HYBRID **structure** is
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
+
+## Catalogue rebalance: DERMAL is the brand, DESERT EYE is one collection (24 September 2026, no credits)
+
+Direction **approved by the owner** on 24 September 2026; built, tested and verified, and now
+**awaiting the owner's visual review** of the frames. Review frames: `docs/screenshots/rebalance/`,
+fifteen desktop views at 1440 x 900 and five phone views on a Pixel 7, in the order the owner asked
+for them. Measurements behind the owner's seven confirmations are in `docs/TEST_REPORT.md` and can be
+re-run with `node tests/e2e/verify-rebalance.mjs`.
+
+The complaint was that the whole site read as a DESERT EYE site. The launch hero was not the problem
+and was not touched: everything after it was rebalanced.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Homepage opening | unchanged | The DESERT EYE cinematic, the dunes, the companion and the macro push-in are exactly as they were. |
+| Homepage turn | tested | A new `EXPLORE DERMAL` section after ON YOU: a rule, the statement that DESERT EYE is the current launch and one collection inside DERMAL, then the collection rail. Counts are read from the catalogue. |
+| Catalogue (`/shop`) | tested | Brand-neutral: warm paper, black type, one garnet marker. No sand, no world, no tinted tile, no border. Eight pieces, each on a stage of roughly equal weight. |
+| Catalogue rhythm | tested | An editorial grid in blocks of four (regular, wide / wide, regular). Which stage is wide follows the position on the page, never the piece, and the wide slots are the second and third of each block so the piece listed first is never the one given the widest frame. Measured: DESERT EYE 367 px against HORUS TRACE 446 px on desktop, identical on a phone; widest against narrowest 1.22x on desktop and 1.00x on a phone. |
+| Featured marker | tested | DESERT EYE and HORUS TRACE both carry a small garnet `Featured` word. Neither gets a larger frame. |
+| Catalogue card | tested | Name, placement, kind, demo price or `Price pending`, then `View piece` and `Try on`. The hover try-on panel and the phone sheet are unchanged. |
+| Catalogue views | tested | `Editorial` and `Grid`, carried in the address as `?view=`. Grid is even: every stage the same width. |
+| Discovery | tested | Line row first (All, Men, Women, Full collection, Inspired, Original, Limited edition), placements on a quieter row under it, then view and search. `All` is the default; no filter is preselected. |
+| Collection rail | tested | Rebuilt as the six design families in the owner's order: DESERT EYE — LOVE, HORUS TRACE, BLADE TRACE, CROSSLINE, ANKH TRACE, KIRI. Identical stage size, each with its own small world (sand, dark stone, blade light, polished light, silver, chrome). |
+| Ways into the catalogue | tested | Full collection, Men, Women, Inspired, Original, Try on your face, as text under the rail. No limited-edition entry: none has been announced. |
+| The selection (`/collections`) | tested | One browser, not two. The old rail of worlds is gone; the eight families and the KIRI concept are browsed on the selection rail, with the ways in underneath. |
+| Companion | unchanged | Still small, still the same size in the same corner on every page. Sand still belongs to the homepage and the selection; on the catalogue a press simply opens DESERT EYE. |
+| Product pages | unchanged | A product page still belongs to its own piece. HORUS TRACE keeps its prepared media stage. |
+
+Honesty held: KIRI is still `Original / Concept` with no artwork claim, no price and nothing to buy;
+no limited edition is invented; every price is still a demo price; no material, dimension or
+compatibility claim was added.
 
 ## The sand transition, local media (24 September 2026, no credits)
 
@@ -437,7 +468,9 @@ Vercel's Hobby plan is for non-commercial use; confirm the plan before any comme
 
 ## Routes to review
 
-`/`, `/collections` (the selection), `/collections?family=crimson-orbit`, `/shop`, `/shop?placement=dermal`, `/collections`, `/collections/desert-eye`,
+`/`, `/collections` (the selection), `/collections?family=crimson-orbit`, `/shop`, `/shop?view=even`,
+`/shop?browse=men`, `/shop?browse=women`, `/shop?browse=inspired`, `/shop?browse=original`,
+`/shop?placement=dermal`, `/collections/desert-eye`,
 `/collections/desert-eye?product=desert-eye-love&form=nose`,
 `/product/desert-eye-love`, `/face-studio`, `/face-studio?product=sand-vortex`, `/cart`, `/about`.
 

@@ -2,128 +2,76 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { lineLabels } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { useReducedMotion } from "@/lib/motion/useScrollProgress";
-import { ANCHORS, PlacementPreview } from "./PlacementPreview";
 import { FloatingObject } from "./FloatingObject";
 import { ConceptBlade } from "./SelectionRail";
+import { WaysIn } from "./WaysIn";
 import { SandLayer } from "@/components/story/SandLayer";
 
-// The ways into the collection, browsed sideways like a gallery: each entry is a world, not a
-// filter button. One entry centred, its neighbours well into the frame at either edge. A finger
-// swipes it, a mouse drags it, the arrows and keys step it; the vertical wheel stays with the page.
+// The collection browser, browsed sideways like a gallery: one design family centred, its
+// neighbours well into the frame at either edge. A finger swipes it, a mouse drags it, the arrows
+// and keys step it; the vertical wheel stays with the page.
 //
-// Worlds: DESERT EYE is sand and garnet; KIRI is ivory, chrome and one blade of light; LIMITED
-// EDITION is the dark campaign treatment; the full collection is clean and editorial. Nothing is
-// invented: no limited edition has been announced, and men and women both show the unisex pieces.
+// Every family gets the same stage (24 September 2026). DERMAL is the brand and DESERT EYE is one
+// collection inside it, so no family is given a larger frame or a longer look than another. A family
+// keeps its own small world inside that frame — sand and garnet for DESERT EYE, dark stone and a
+// tracing light for HORUS TRACE, a blade reflection for BLADE TRACE, polished light for CROSSLINE,
+// silver for ANKH TRACE, chrome for KIRI — while the surrounding page stays DERMAL.
+//
+// Nothing is invented: KIRI is a concept with no product, and the ways in below promise nothing that
+// has not been announced.
 
-type World = "sand" | "chrome" | "dark" | "signature" | "face";
+type World = "sand" | "trace" | "blade" | "line" | "symbol" | "chrome";
 type Entry = { id: string; name: string; kind: string; href: string; action: string; world: World; visual: React.ReactNode };
 
-export function BrowseRail({ products }: { products: Product[] }) {
-  const byslug = (slug: string) => products.find((p) => p.slug === slug) ?? products[0];
-  const desert = byslug("desert-eye-love");
-  const originals = products.filter((p) => p.origin === "original");
-  const anchor = ANCHORS["anti-eyebrow"] ?? { x: 0.66, y: 0.45 };
+/** The owner's order for the collection browser, with the world each family carries. */
+const FAMILIES: { slug: string; world: World; kind?: string }[] = [
+  { slug: "desert-eye-love", world: "sand" },
+  { slug: "horus-trace", world: "trace" },
+  { slug: "blade-trace", world: "blade" },
+  { slug: "crossline", world: "line" },
+  { slug: "ankh-trace", world: "symbol" },
+];
 
-  const entries: Entry[] = [
-    {
-      id: "desert-eye",
-      name: "DESERT EYE",
-      kind: "Inspired collection",
-      href: "/collections?family=desert-eye-love",
-      action: "Explore",
-      world: "sand",
-      visual: (
-        <span className="browse-object">
-          <SandLayer className="browse-sand" />
-          <FloatingObject product={desert} depth={1} />
-        </span>
-      ),
-    },
-    {
-      id: "kiri",
-      name: "KIRI",
-      kind: "Original · concept",
-      href: "/shop?browse=original",
-      action: "Explore",
-      world: "chrome",
-      visual: (
-        <span className="browse-object browse-blade" data-object-host>
-          <ConceptBlade />
-          <span aria-hidden="true" className="fo-blade" />
-        </span>
-      ),
-    },
-    {
-      id: "limited",
-      name: "LIMITED EDITION",
-      kind: "None announced",
-      href: "/shop?browse=limited",
-      action: "Explore",
-      world: "dark",
-      // eslint-disable-next-line @next/next/no-img-element
-      visual: <img src="/media/hero-orbit/desert-eye-love/f-048.jpg" alt="" aria-hidden="true" loading="lazy" className="browse-dark-media" />,
-    },
-    {
-      id: "full",
-      name: "FULL COLLECTION",
-      kind: `${products.length} pieces`,
-      href: "/shop",
-      action: "Explore",
-      world: "signature",
-      visual: (
-        <span className="browse-row">
-          {products.map((p, i) => (
-            <span key={p.id} className="browse-row-item">
-              <FloatingObject product={p} depth={1} delay={i * -1.3} />
-            </span>
-          ))}
-        </span>
-      ),
-    },
-    {
-      id: "men",
-      name: "MEN",
-      kind: "Unisex pieces included",
-      href: "/shop?browse=men",
-      action: "Explore",
-      world: "signature",
-      visual: (
-        <span className="browse-object">
-          <FloatingObject product={originals[1] ?? desert} depth={1} />
-        </span>
-      ),
-    },
-    {
-      id: "women",
-      name: "WOMEN",
-      kind: "Unisex pieces included",
-      href: "/shop?browse=women",
-      action: "Explore",
-      world: "signature",
-      visual: (
-        <span className="browse-object">
-          <FloatingObject product={originals[0] ?? desert} depth={1} />
-        </span>
-      ),
-    },
-    {
-      id: "face",
-      name: "TRY ON YOUR FACE",
-      kind: "Face Studio · your photo stays on this device",
-      href: "/face-studio",
-      action: "Enter",
-      world: "face",
-      visual: (
-        <span className="browse-face">
-          <span className="crop-head" style={{ "--px": anchor.x, "--py": anchor.y, "--s": 2.4, "--tx": 0.52, "--ty": 0.48 } as React.CSSProperties}>
-            <PlacementPreview product={desert} formId="anti-eyebrow" bare />
+export function BrowseRail({ products }: { products: Product[] }) {
+  const entries: Entry[] = FAMILIES.flatMap(({ slug, world }) => {
+    const product = products.find((p) => p.slug === slug);
+    if (!product) return [];
+    return [
+      {
+        id: slug,
+        name: product.title,
+        kind: lineLabels(product).join(" / "),
+        href: `/product/${product.slug}`,
+        action: "Explore",
+        world,
+        visual: (
+          <span className="browse-object">
+            {world === "sand" && <SandLayer className="browse-sand" />}
+            <FloatingObject product={product} depth={1} />
           </span>
-        </span>
-      ),
-    },
-  ];
+        ),
+      },
+    ];
+  });
+
+  // KIRI closes the rail on the same stage as the rest: a direction, named honestly, with nothing to buy.
+  entries.push({
+    id: "kiri",
+    name: "KIRI",
+    kind: "Original / Concept",
+    href: "/shop?browse=original",
+    action: "See the originals",
+    world: "chrome",
+    visual: (
+      <span className="browse-object browse-blade" data-object-host>
+        <ConceptBlade />
+        <span aria-hidden="true" className="fo-blade" />
+      </span>
+    ),
+  });
 
   const rail = useRef<HTMLUListElement>(null);
   const reduced = useReducedMotion();
@@ -253,6 +201,8 @@ export function BrowseRail({ products }: { products: Product[] }) {
           Next <span aria-hidden="true">→</span>
         </button>
       </div>
+
+      <WaysIn />
     </div>
   );
 }

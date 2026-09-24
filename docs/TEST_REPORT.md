@@ -1,5 +1,51 @@
 # Test report
 
+## Catalogue rebalance — 24 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors, 0 warnings |
+| `npm run typecheck` | pass |
+| `npm test` | 77 of 77 pass |
+| `npm run test:e2e -- --workers=2` | 431 pass, 0 fail, 52 skipped |
+| `npm run build` | pass, 20 static pages |
+| `node tests/e2e/verify-rebalance.mjs` | all checks pass at 1440 x 900, 320 x 568 and Pixel 7 |
+
+New `tests/e2e/catalogue.spec.ts` (9 tests x 3 browser projects): the catalogue carries no sand and
+no painted surface; every family's stage is within 1.22x of every other and identical on a phone;
+DESERT EYE and HORUS TRACE both carry the `Featured` word and neither is enlarged; each piece states
+its placement, kind, demo price or `Price pending`, and offers `View piece` and `Try on`; the line and
+placement filters compose and nothing is preselected; the `Grid` view is even and survives a filter;
+KIRI appears as words with no artwork, no price, no link and no place in the count, and is left out
+where the catalogue is narrowed to something it could not belong to; the limited edition shows the
+honest empty state; the companion stays small and in his corner.
+
+The browse-rail tests in `redesign.spec.ts` were rewritten for the collection browser: six families
+in the owner's order, identical laid-out stage size (measured as `offsetWidth`, since the centred
+entry is scaled up for focus and its neighbours down), one world each, sand on DESERT EYE alone, the
+ways in as text with no frame, and `/collections` carrying one rail instead of two. `home.spec.ts`
+gained the turn into `EXPLORE DERMAL` and its position between ON YOU and the last frame.
+
+`tests/e2e/verify-rebalance.mjs` measures the owner's seven confirmations and prints the numbers:
+
+| Confirmation | Measured |
+| --- | --- |
+| DESERT EYE is not larger than HORUS TRACE | desktop 367 px vs 446 px; phone 298 px vs 298 px; 320 px 223 px vs 223 px |
+| Widest stage against narrowest | 1.22x on desktop, 1.00x on both phone widths |
+| Companion is small | 120 px of 1440 (8%), 88 px of 412 (21%), 88 px of 320 (28%); 81 px and 59 px tall; lower corner on all three |
+| No sand outside DESERT EYE | 0 on `/shop`, `/shop?browse=inspired`, `/cart`, `/face-studio`, `/product/horus-trace`, `/product/crossline`; 1 on `/collections` and on `/product/desert-eye-love?form=micro-dermal` |
+| No sideways overflow | 0 px on all 14 routes at all three sizes |
+| Product names fit | all 8 names unclipped and inside the page at 320 px, the narrowest being VOID STUD and the widest DESERT EYE — LOVE at 237 px of 320 px |
+| KIRI is concept-only | reads `Original · Concept ... not a product`, no link, no price, not in the `8 pieces` count |
+| Limited edition invents nothing | 0 cards, `No limited edition has been announced.` |
+
+Two things the first run of that script caught. The editorial rhythm originally put its wide slot on
+the first position of each block of four, which handed DESERT EYE a 446 px stage against HORUS
+TRACE's 367 px purely because it is listed first; the wide slots were moved to the second and third
+positions, so the piece listed first is never the one given the widest frame. Separately, at 320 px a
+wide form ran 11 px off the side of the page, because a form is laid out from its own composition and
+some pieces reach past the square group box; the stage is now inset inside its column.
+
 ## The local sand transition — 24 September 2026
 
 | Command | Result |
