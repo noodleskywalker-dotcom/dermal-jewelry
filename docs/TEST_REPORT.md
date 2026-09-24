@@ -9,7 +9,7 @@
 | `npm test` | 77 of 77 pass |
 | `npm run test:e2e -- --workers=2` | 431 pass, 0 fail, 52 skipped |
 | `npm run build` | pass, 20 static pages |
-| `node tests/e2e/verify-rebalance.mjs` | all checks pass at 1440 x 900, 320 x 568 and Pixel 7 |
+| `node tests/e2e/verify-rebalance.mjs` | 117 of 117 checks pass at 1440 x 900, 320 x 568 and Pixel 7 |
 
 New `tests/e2e/catalogue.spec.ts` (9 tests x 3 browser projects): the catalogue carries no sand and
 no painted surface; every family's stage is within 1.22x of every other and identical on a phone;

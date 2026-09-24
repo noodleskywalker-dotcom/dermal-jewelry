@@ -42,6 +42,24 @@ Honesty held: KIRI is still `Original / Concept` with no artwork claim, no price
 no limited edition is invented; every price is still a demo price; no material, dimension or
 compatibility claim was added.
 
+Open visual points for the owner's review, none of them faults in the rebalance:
+
+1. The empty state's `Show all pieces` is the one boxed control on an otherwise borderless
+   catalogue. It is the standing `btn-line` style, and it now stands out.
+2. Drawn pieces fill their equal stages differently, because each form carries its own
+   `defaultScale`: CROSSLINE's bar reads small beside DESERT EYE's symbol. The stage is equal; the
+   artwork inside it is not.
+3. The companion is a fixed 5.5 rem, so his share of the width grows on a small screen: 8% at
+   1440 px, 21% on a Pixel 7, 28% at 320 px. He is internal art and never reaches a build.
+4. Removing the second rail left a band of empty paper between the collection links and the footer
+   on `/collections`.
+5. The wide and regular stages differ only from 1024 px up. Below that every stage is identical, so
+   the editorial rhythm reads on a phone as a plain single column.
+6. HORUS TRACE's dark stone is the only dark frame on the rail. As an unfocused neighbour at the
+   edge of the screen it reads as a grey block.
+7. The dark circle at the left edge of the full-page frames is the Next.js development overlay, not
+   part of the design. It does not exist in a build.
+
 ## The sand transition, local media (24 September 2026, no credits)
 
 Built and tested; **awaiting the owner's review**. Review package:
