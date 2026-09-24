@@ -823,3 +823,45 @@ How it is built:
 - **The selection closes tighter.** The page ends on a thin row of links, where the page-wide 6 rem
   gap before the footer read as forgotten paper. On this page alone the footer margin is 2.5 rem, so
   the rule under the collection links becomes the join: the band went from 96 px to 40 px.
+
+## Shopify integration (24 September 2026)
+
+- **Two owners, kept apart.** Shopify owns title, handle, price, variants, availability, inventory,
+  merchandise ids and every cart total. The repository owns the design family, its forms and
+  placement geometry, Face Studio coordinates, artwork, motion, collection worlds, the catalogue's
+  order, and the honest status of anything unverified. Neither reaches into the other.
+- **One model, so the interface never asks where data came from.** `DermalProduct` is the editorial
+  `Product` plus a `handle` and a `commerce` record. Every existing field still means what it did,
+  which is why no approved surface had to be rewritten to read it.
+- **The join key is the handle.** Never a position in an array: a product renamed or re-sorted in
+  Shopify must not change which family it belongs to. A Shopify product no family claims is ignored
+  rather than rendered, and reported as an orphan.
+- **There is no "probably purchasable".** `CommerceStatus` is a closed set — live, sold-out,
+  unmatched, concept, unavailable — and `purchaseState()` returns a definite answer with the sentence
+  to show beside it. A piece is purchasable only when Shopify has a variant that is genuinely for sale.
+- **A visual form is not a purchasable variant.** The storefront draws three forms of DESERT EYE;
+  until Shopify carries variants naming them, none can be added to a bag, and the button says so
+  rather than inventing a merchandise id.
+- **Shopify owns the money.** No total is calculated in the storefront. A subtotal we added up would
+  be a second opinion about money and the wrong one as soon as tax or a discount applied.
+- **An HTTP 200 carrying GraphQL errors is a failure.** It is the most common way a storefront
+  silently empties its own shelves, so the client throws on it rather than returning no products.
+- **A blank amount is not a price.** `Number("")` is zero, so an unparsable amount would have offered
+  a piece for free. A unit test caught it; `toMoney` now refuses blank, non-numeric and negative
+  amounts.
+- **An empty store is a supported state, not a bug.** With no Shopify product a piece keeps its whole
+  editorial presentation, shows a demo price still called a demo price, and is not purchasable. A
+  storefront that cannot reach its backend looks like a catalogue that cannot be bought from, never
+  like a blank page or a spinner.
+- **The demo bag stays until there is something real to put in a bag.** Removing it while the store
+  holds zero products would have left the approved interface with no bag at all. It is labelled a
+  demo throughout, the server already refuses checkout, and the Shopify cart takes over per product
+  the moment a variant exists. This is the one point in this pass worth the owner's decision.
+- **Commerce can never make a specification claim.** `materialsAreConfirmed()` is false unless a
+  `dermal.material_status` metafield says `confirmed`; `proposed` is an intention. The unverified
+  wording survives the join, and a test asserts no banned claim appears.
+- **Tags may only add.** A Shopify tag can add a piece to a browsing category and can never remove
+  one, so the approved taxonomy cannot be broken from the Shopify side.
+- **The token stays on the server.** The client refuses to run in a browser, nothing is prefixed
+  `NEXT_PUBLIC_`, the cart has one server door, and a browser test reads every script the storefront
+  serves to assert the token, the header name and the variable name appear in none of them.

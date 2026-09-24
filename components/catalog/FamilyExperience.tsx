@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { displayTitle, filmFor, formatPrice, lineLabels } from "@/lib/catalog";
+import { displayTitle, filmFor, lineLabels } from "@/lib/catalog";
+import { priceLabel, purchaseState } from "@/lib/commerce/display";
 import type { Product } from "@/lib/catalog/types";
 import { AddToBagButton } from "@/components/cart/AddToBagButton";
 import { RevealPlayer, type ConceptStills } from "@/components/reveal/RevealPlayer";
@@ -38,8 +39,10 @@ export function FamilyExperience({
   const { form, choose } = useFormChoice(product, initialFormId);
   const film = filmFor(product, form.id);
   const anchor = ANCHORS[form.placement] ?? { x: 0.5, y: 0.5 };
-  // A concept product has no decided price, so it is presented rather than sold.
-  const isConcept = form.demoPrice === 0;
+  // The price and the purchase state both come from the commerce layer, so a piece with a real
+  // Shopify variant and one with none are presented by the same code and neither is guessed at.
+  const price = priceLabel(product, form.id);
+  const purchase = purchaseState(product, form.id);
 
   const views: { id: ViewId; label: string }[] = [
     { id: "piece", label: "The piece" },
@@ -166,8 +169,9 @@ export function FamilyExperience({
         </fieldset>
 
         <p className="mt-8" data-testid="family-price">
-          <span className="label-xs block text-ash">{isConcept ? "Price" : "Demo price"}</span>{/* a concept piece has no demo price to show */}
-          <span className="mt-1 block font-display text-3xl font-light tracking-[0.06em]">{formatPrice(form.demoPrice, product.currency)}</span>
+          {/* Shopify's price when Shopify has one; otherwise the demo placeholder, still called one. */}
+          <span className="label-xs block text-ash">{price.caption}</span>
+          <span className="mt-1 block font-display text-3xl font-light tracking-[0.06em]">{price.value}</span>
         </p>
 
         <Link href={`/face-studio?product=${product.slug}&form=${form.id}`} data-testid="try-it-on" className="text-link mt-6">
@@ -175,7 +179,7 @@ export function FamilyExperience({
         </Link>
 
         <AddToBagButton product={product} formId={form.id} className="mt-5" />
-        <p className="label-xs mt-3 text-ash">Demo · nothing can be ordered yet</p>
+        {purchase.note && <p className="label-xs mt-3 text-ash" data-testid="purchase-note">{purchase.note}</p>}
 
         <div className="mt-10 divide-y divide-line border-y border-line">
           <details className="group">

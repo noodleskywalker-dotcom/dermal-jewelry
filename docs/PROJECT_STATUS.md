@@ -11,6 +11,35 @@ Milestone 1, the first vertical slice, is implemented and tested locally. The HY
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
 
+## Shopify integration architecture (24 September 2026, no credits, nothing created in Shopify)
+
+Built and verified; **awaiting the owner's review**, and waiting on the Shopify product records,
+which were deliberately not created. Full detail: `docs/SHOPIFY_INTEGRATION.md`.
+
+The approved interface is unchanged. Commerce was wired underneath it: every surface reads one
+model, and a piece with no Shopify product keeps its whole editorial presentation.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Storefront client | tested | Server-only, private-token header, refuses to run in a browser. A 200 carrying GraphQL errors is a failure, not an empty shop. |
+| Canonical model | tested | `DermalProduct` = editorial `Product` + `handle` + `commerce`. Every existing field unchanged, which is why no approved surface was rewritten. |
+| Handle mapping | tested | The join is the handle, never an array position. An unclaimed Shopify product is ignored and reported as an orphan. |
+| Variants | tested | Read from Shopify and mapped to a form through an option named Form, Placement, Style or Type. No variant is invented from a drawn form. |
+| Cart | tested | `cartCreate`, `cartLinesAdd`, `cartLinesUpdate`, `cartLinesRemove`, and restore by id. Shopify calculates every total. Only the cart id is stored in the browser. |
+| Checkout | not enabled | `checkoutUrl` is carried; the button is disabled and reads `Checkout — not yet live`. The server route still refuses unless the mode is `live`. |
+| Empty store | tested | The store holds zero products. Every page renders, every family keeps its presentation, nothing is purchasable. |
+| Failure behaviour | tested | A catalogue read that fails is logged on the server and falls back to the editorial catalogue. No blank page, no endless spinner. |
+| Concept pieces | tested | KIRI has no price, no button and no variant, and cannot be given one from Shopify. |
+| Filters and taxonomy | unchanged | All, Men, Women, Full collection, Inspired, Original, Limited edition, and the placements, all still present and still filtering the same way. |
+| Face Studio | unchanged | No geometry touched. A test asserts the studio offers every family and claims nothing about fit or suitability. |
+| Token safety | tested | No `NEXT_PUBLIC_` variable; a browser test reads every script served and finds no token, header name or variable name. |
+| Shopify records | **not created** | No product, variant, price, inventory or metafield definition was created, changed or deleted. |
+
+One point for the owner's decision: the demo bag was kept as the fallback rather than removed.
+With zero Shopify products, removing it would have left the approved interface with no bag at all.
+It is labelled a demo throughout and the server refuses checkout; the Shopify cart takes over per
+product as soon as a variant exists. Say the word and it can be removed instead.
+
 ## Catalogue rebalance: DERMAL is the brand, DESERT EYE is one collection (24 September 2026, no credits)
 
 Direction **approved by the owner** on 24 September 2026; built, tested and verified, and now

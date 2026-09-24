@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FamilyExperience } from "@/components/catalog/FamilyExperience";
 import { catalog } from "@/lib/catalog";
+import { getDermalProduct } from "@/lib/commerce/catalog";
 
 export function generateStaticParams() {
   return catalog.listProducts().map((p) => ({ slug: p.slug }));
@@ -35,7 +36,7 @@ function conceptFor(flag: string | undefined, slug: string) {
 export default async function ProductPage({ params, searchParams }: PageProps<"/product/[slug]">) {
   const { slug } = await params;
   const query = await searchParams;
-  const product = catalog.getProduct(slug);
+  const product = await getDermalProduct(slug);
   if (!product) notFound();
 
   return (

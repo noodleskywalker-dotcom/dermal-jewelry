@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { formatPrice, isFeatured, kindLabels, placementLabel } from "@/lib/catalog";
+import { isFeatured, kindLabels, placementLabel } from "@/lib/catalog";
+import { cardPrice } from "@/lib/commerce/display";
 import type { Product } from "@/lib/catalog/types";
 import { Modal } from "@/components/layout/Modal";
 import { FloatingObject } from "./FloatingObject";
@@ -138,8 +139,8 @@ export function ProductGrid({
                 <span className="mt-3 flex items-baseline justify-between gap-4">
                   <span className="font-display text-3xl font-light leading-tight tracking-[0.03em] sm:text-4xl">{product.title}</span>
                   <span className="min-w-0 text-right text-sm text-ash">
-                    <span className="sr-only">Demo price </span>
-                    {formatPrice(product.demoPrice, product.currency)}
+                    <span className="sr-only">Price </span>
+                    {cardPrice(product)}
                   </span>
                 </span>
                 <span className="label-xs mt-2 block text-ash" data-testid="piece-kind">

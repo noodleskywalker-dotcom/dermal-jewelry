@@ -1,5 +1,65 @@
 # Test report
 
+## Shopify integration architecture — 24 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors, 0 warnings |
+| `npm run typecheck` | pass |
+| `npm test` | 124 of 124 pass (47 new) |
+| `npm run test:e2e -- --workers=2` | 470 pass, 0 fail, 52 skipped (33 new) |
+| `npm run build` | pass, 20 static pages |
+
+Three new unit files and one new browser file.
+
+`tests/unit/commerce.test.ts` (28): money is read from Shopify's decimal strings and anything
+unparsable is refused; the join is by handle and never by array position; every family the owner
+listed as sellable exists and KIRI is not among them; tags are read bare or namespaced, in any case,
+and an unknown tag is ignored rather than turned into a category; a variant's form is read from its
+options and is null when nothing says, because a visual form is not a purchasable variant; a product
+whose variants are all out of stock is sold out whatever its own flag claims; a product with no
+variants cannot be bought; metafields are read only from the `dermal` namespace; the catalogue keeps
+its own order and membership whatever Shopify holds; an unmatched family keeps its full editorial
+presentation and is not purchasable; an empty store and an unreachable one are different states; an
+unclaimed Shopify product is ignored and reported as an orphan; a concept is never purchasable and
+never priced even when a matching Shopify product exists; prices fall back to the demo placeholder
+still labelled a demo; the helpers work on a plain editorial product that never met the commerce
+layer; nothing is purchasable when Shopify is unreachable; and a material is confirmed only when a
+metafield says `confirmed`, with the banned claims asserted absent.
+
+`tests/unit/shopify.test.ts` (10): the private-token header is sent and the public one never is; a
+200 carrying GraphQL errors is a failure rather than an empty shop; a 200 with no data is a failure;
+a non-200 carries its status and the token never appears in the error; a network failure is reported
+rather than hung on; an unconfigured environment refuses instead of calling a half-built URL; a
+catalogue read is cached under its tag and a cart call never is; and Shopify's totals pass through
+the cart summary without being recalculated.
+
+`tests/unit/cart-shopify.test.ts` (9): a cart is created when the customer has none and added to
+when they have one; a remembered cart Shopify no longer holds starts a fresh one; a network failure
+is **not** swallowed into a quiet new cart; quantity updates and removals go through the right
+mutations with the right variables; a refusal surfaces Shopify's reason; and a cart id Shopify does
+not know answers null rather than failing.
+
+`tests/e2e/commerce.spec.ts` (11 x 3 browsers): every page renders against the empty store with no
+page errors; the catalogue still holds all eight families and the whole taxonomy still filters as
+before; an unmatched piece shows a demo price and a demo bag button; the demo bag still works end to
+end and checkout stays disabled; KIRI has no price, no button and no product route; **no script the
+storefront serves contains the token, the private header name or the variable name**; the cart
+endpoint refuses malformed bodies and ids that are not Shopify ids, answers cleanly about a cart
+Shopify does not have, and never returns Shopify's internals; and Face Studio still offers every
+family while claiming nothing about fit or suitability.
+
+Two real defects were found by these tests and fixed in the code rather than in the test:
+
+1. `Number("")` is zero, so a blank amount from Shopify would have been shown as a price of zero and
+   offered a piece for free. `toMoney` now refuses blank, non-numeric and negative amounts.
+2. A reused mocked `Response` hid that a body can only be read once; the caching assertion was
+   rewritten to answer each call separately, which is what a real client does.
+
+Connectivity was proved by a read-only probe against `vxh01e-0d.myshopify.com` on API version
+`2026-07`: `shop` answered `My Store` with currency `QAR`, and `products(first: 10)` answered with an
+empty list. Nothing in Shopify was created, changed or deleted.
+
 ## Catalogue polish pass — 24 September 2026
 
 | Command | Result |

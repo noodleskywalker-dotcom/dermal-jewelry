@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ProductGrid, type CatalogueLayout } from "@/components/catalog/ProductGrid";
-import { type BrowseFilter, catalog, matchesBrowse, placements } from "@/lib/catalog";
+import { type BrowseFilter, matchesBrowse, placements } from "@/lib/catalog";
+import { getCatalogue } from "@/lib/commerce/catalog";
 import { site } from "@/lib/config/site";
 import type { PlacementId } from "@/lib/catalog/types";
 
@@ -43,7 +44,10 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
   // catalogue is not being narrowed to something it could not belong to.
   const showConcepts = !placement && !query && (!browse || browse === "full" || browse === "original");
 
-  let products = placement ? catalog.listByPlacement(placement) : catalog.listProducts();
+  // One server read of the catalogue, joined to Shopify. It falls back to the editorial catalogue
+  // when the store is empty or unreachable, so this page renders either way.
+  const { products: all } = await getCatalogue();
+  let products = placement ? all.filter((p) => p.placements.includes(placement)) : all;
   if (browse) products = products.filter((p) => matchesBrowse(p, browse));
   if (query) {
     const q = query.toLowerCase();
