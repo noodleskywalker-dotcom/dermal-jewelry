@@ -11,7 +11,16 @@
 // and sand has deep shadows of its own. Relative dominance is strongly negative for sand however dark
 // it is, and positive for the ground however dark or bright it is, so both stay on the right side.
 
+/**
+ * How the ground is told apart from the sand. "blue" is the original footage, shot on a blue studio.
+ * "luma" is for footage generated on black, where brightness alone separates the sand cleanly and a
+ * colour key would eat the sand's own dark grains.
+ */
+export type KeyMode = "blue" | "luma";
+
 export type KeySettings = {
+  /** Omitted means "blue", so existing footage is unchanged. */
+  mode?: KeyMode;
   /** The ground colour measured from the footage, 0 to 1 per channel. Used only to take blue back out of edges. */
   key: [number, number, number];
   /** Relative blue dominance at or below which a pixel is solid sand. Sand measures about -0.6 to -0.9. */
@@ -31,6 +40,12 @@ const smooth = (lo: number, hi: number, v: number) => {
 /** The same maths as the shader, for one pixel. Returns straight (not premultiplied) colour and alpha. */
 export function keyPixel(rgb: [number, number, number], settings: KeySettings = DEFAULT_KEY): { r: number; g: number; b: number; a: number } {
   const [r, g, b] = rgb;
+  if (settings.mode === "luma") {
+    // Dark is ground, bright is sand. The colour is kept as it is: there is no spill to take back out.
+    const luma = 0.299 * r + 0.587 * g + 0.114 * b;
+    const a = smooth(settings.solidAt, settings.clearAt, luma);
+    return a <= 0 ? { r: 0, g: 0, b: 0, a: 0 } : { r, g, b, a };
+  }
   const warmest = Math.max(r, g);
   const relative = (b - warmest) / Math.max(warmest, b, 0.02);
   const a = 1 - smooth(settings.solidAt, settings.clearAt, relative);
@@ -61,14 +76,19 @@ uniform float solidAt;
 uniform float clearAt;
 uniform float edge;
 uniform float floorAt;
+// 0: blue ground, keyed on blue dominance. 1: dark ground, keyed on brightness.
+uniform float lumaMode;
 void main() {
   vec3 c = texture2D(frame, uv).rgb;
   float warmest = max(c.r, c.g);
   float relative = (c.b - warmest) / max(max(warmest, c.b), 0.02);
-  float a = 1.0 - smoothstep(solidAt, clearAt, relative);
+  float blueAlpha = 1.0 - smoothstep(solidAt, clearAt, relative);
+  float lumaAlpha = smoothstep(solidAt, clearAt, dot(c, vec3(0.299, 0.587, 0.114)));
+  float a = mix(blueAlpha, lumaAlpha, lumaMode);
   float share = 1.0 - a;
-  vec3 s = clamp((c - share * key) / max(a, 0.3), 0.0, 1.0);
-  s.b = min(s.b, max(s.r, s.g));
+  vec3 spilled = clamp((c - share * key) / max(a, 0.3), 0.0, 1.0);
+  spilled.b = min(spilled.b, max(spilled.r, spilled.g));
+  vec3 s = mix(spilled, c, lumaMode);
   // Garbage matte. The sand enters through the left edge of the frame, so that edge is softened, and
   // the footage's floor, with its highlight, is hidden until the sand reaches it. (Reflecting the
   // footage past that edge was tried and rejected: it reads as an obvious butterfly shape.)

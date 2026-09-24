@@ -2,6 +2,26 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-24 — The sand transition is local now
+
+- **The mascot's transition plays media made on this machine**: a ribbon that starts at the gourd and
+  a full-frame wipe faded in over it while the grains are densest, composed into one clip with ffmpeg
+  so the join cannot read as a cut. The earlier supplied clip is still installed and is used only if
+  the local one fails to load; nothing was deleted.
+- **The keyer learned a second mode.** The supplied footage was shot on blue and keyed on blue
+  dominance; the local footage is generated on black, where that maths would eat the sand's own dark
+  grains. `KeySettings.mode` now chooses between "blue" and "luma", the shader carries both, and each
+  clip brings its own measurements. Existing footage is untouched: the mode defaults to "blue".
+- **Every number is measured from the composed clip**, not guessed: the stream enters the frame at
+  (0.17, 0.02), and no dark pixel survives past 1.9 s, so the page is only allowed to change from 2.1 s.
+- **The anchor stays normalised.** The gourd is a fraction of the mascot's picture and the entry point
+  is a fraction of the footage, so they meet exactly at 1440 × 900, 1920 × 1080, 390 × 844, 412 × 915
+  and 844 × 390: measured offset 0 px at all five.
+- **A press during a running transition is still ignored, but a press right after one is not.** The
+  mascot used to stay deaf for another 600 ms while his own pose settled; now only a transition that is
+  actually playing blocks him.
+- **Failure is honest**: if neither sand clip loads, or the browser cannot key, the link simply opens.
+
 ## 2026-09-24 — The mascot becomes a local video, and where local media does not go
 
 - **The mascot is animated now**, from two clips generated on this machine (no credits): a looping idle

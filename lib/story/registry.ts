@@ -67,7 +67,15 @@ export function internalMascotClips(internal: boolean): MascotClips | null {
   return internal ? { idle: "/api/dev-concept/mascot-idle", react: "/api/dev-concept/mascot-react" } : null;
 }
 
-/** The sand clip for page transitions. Development server only, like the rest of the internal media. */
+/**
+ * The sand clips for page transitions, development server only. The local one is composed on this
+ * machine and is what the transition uses; the earlier supplied clip stays as a fallback until the
+ * local transition has been reviewed.
+ */
 export function internalSandSource(internal: boolean): string | undefined {
+  return internal ? "/api/dev-concept/sandfx-local" : undefined;
+}
+
+export function internalSandFallback(internal: boolean): string | undefined {
   return internal ? "/api/dev-concept/sandfx" : undefined;
 }

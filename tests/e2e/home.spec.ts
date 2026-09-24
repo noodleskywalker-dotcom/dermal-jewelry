@@ -81,7 +81,6 @@ test.describe("homepage mascot (internal concept art, development server only)",
   });
 
   test("he idles quietly on his looping clip, and nothing happens by itself", async ({ page }) => {
-    const mascot = page.getByTestId("mascot");
     const clip = page.getByTestId("mascot-clip");
     test.skip((await clip.count()) === 0, "the animated clips are not on this machine");
     // The clip loops silently and never starts anything.
@@ -166,12 +165,13 @@ test.describe("homepage mascot (internal concept art, development server only)",
         const at = Number(fx?.dataset.time ?? 0);
         // Whichever of the two he is drawn with, the sand is aimed at the picture on screen.
         const picture = document.querySelector<HTMLElement>('[data-testid="mascot"] video, [data-testid="mascot"] img');
-        if (!fx || !picture || at < 0.1 || at > 2.2) return null;
+        if (!fx || !picture || at < 0.1 || at > 0.9) return null;
         const box = picture.getBoundingClientRect();
         const m = new DOMMatrixReadOnly(getComputedStyle(fx).transform);
         return {
           gourd: { x: box.left + 0.668 * box.width, y: box.top + 0.355 * box.height },
-          entry: { x: m.e + 0.012 * fx.width * m.a, y: m.f + 0.74 * fx.height * m.d },
+          // The composed local clip's stream enters at (0.17, 0.02) of the footage.
+          entry: { x: m.e + 0.17 * fx.width * m.a, y: m.f + 0.02 * fx.height * m.d },
         };
       },
       null,

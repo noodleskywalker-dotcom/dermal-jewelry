@@ -24,7 +24,9 @@ const FILES: Record<string, string[]> = {
   // Internal like every other character picture: a build answers 404 here.
   "mascot-idle": ["generated", "mascot", "idle.mp4"],
   "mascot-react": ["generated", "mascot", "react.mp4"],
-  // Generic sand effect on blue. It contains no character.
+  // The local sand transition, composed here on 24 September 2026 from two locally generated clips.
+  "sandfx-local": ["generated", "mascot", "sand-transition.mp4"],
+  // The earlier supplied sand effect on blue, kept as the fallback while the local one is reviewed.
   sandfx: ["generated", "stage2", "07-sand-only-a.mp4"],
 };
 

@@ -1,5 +1,22 @@
 # Test report
 
+## The local sand transition — 24 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors |
+| `npm run typecheck` | pass |
+| `npm test` | 77 of 77 pass |
+| `npx playwright test --workers=2` | 398 pass, 0 fail (one WebKit assertion about network requests was relaxed: WebKit does not surface media requests to the page) |
+| `npm run build` | pass |
+
+New `tests/e2e/sand-transition.spec.ts`: the local clip is the one requested and the supplied clip is
+not fetched at all; the sand's entry point sits on the gourd within 3 px; the page changes only after
+the effect reports itself covered, and the mascot reads again afterwards; a second press works; with
+both sand sources refused the link simply opens; and reduced motion has no video and no sand. The
+gourd assertion in `home.spec.ts` was re-measured for the new footage, and the mascot now answers a
+press as soon as a transition ends rather than 600 ms later.
+
 ## Animated mascot from local generation — 24 September 2026
 
 | Command | Result |

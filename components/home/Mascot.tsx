@@ -113,7 +113,9 @@ export function Mascot({ media, clips, href, label, transition = true }: { media
   }, []);
 
   const press = () => {
-    if (called) return;
+    // Only a transition that is actually running blocks another press; once it is over he answers again
+    // at once, without waiting for his own pose to settle back.
+    if (busy) return;
     if (!transition) {
       router.push(href);
       return;

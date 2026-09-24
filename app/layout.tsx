@@ -7,7 +7,7 @@ import { GlobalMascot } from "@/components/layout/GlobalMascot";
 import { PreviewNote } from "@/components/layout/PreviewNote";
 import { StudioProvider } from "@/components/studio/StudioProvider";
 import { SandTransitionProvider } from "@/components/transition/SandTransition";
-import { internalMascotClips, internalMascotMedia, internalSandSource, isInternalReview } from "@/lib/story/registry";
+import { internalMascotClips, internalMascotMedia, internalSandFallback, internalSandSource, isInternalReview } from "@/lib/story/registry";
 import { site } from "@/lib/config/site";
 import "./globals.css";
 
@@ -52,7 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* The Studio provider sits above every route so a chosen photo survives client-side navigation. */}
         <StudioProvider>
           {/* A build has no clip, so there the transition is simply a link. */}
-          <SandTransitionProvider src={internalSandSource(isInternalReview())}>
+          <SandTransitionProvider src={internalSandSource(isInternalReview())} fallbackSrc={internalSandFallback(isInternalReview())}>
             <Navbar />
             <main id="main" className="flex-1">
               {children}

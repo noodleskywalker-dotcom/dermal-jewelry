@@ -68,6 +68,7 @@ export function KeyedEffect({
     gl.uniform1f(gl.getUniformLocation(program, "solidAt"), solidAt);
     gl.uniform1f(gl.getUniformLocation(program, "clearAt"), clearAt);
     gl.uniform1f(gl.getUniformLocation(program, "edge"), effect.edgeFeather);
+    gl.uniform1f(gl.getUniformLocation(program, "lumaMode"), effect.key.mode === "luma" ? 1 : 0);
     const floorAt = gl.getUniformLocation(program, "floorAt");
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);

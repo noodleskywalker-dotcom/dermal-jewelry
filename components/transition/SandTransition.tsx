@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useReducedMotion } from "@/lib/motion/useScrollProgress";
-import { SAND_EFFECT } from "@/lib/story/sand-effect";
+import { LOCAL_SAND_EFFECT, SAND_EFFECT } from "@/lib/story/sand-effect";
 import type { StoryEffect } from "@/lib/story";
 import { KeyedEffect } from "@/components/story/KeyedEffect";
 
@@ -20,9 +20,19 @@ const SandContext = createContext<{ play: Play; available: boolean; busy: boolea
 export const useSandTransition = () => useContext(SandContext);
 
 const LOAD_TIMEOUT_MS = 6000;
-type Job = { video: HTMLVideoElement; origin: SandOrigin; href: string };
+type Job = { video: HTMLVideoElement; origin: SandOrigin; href: string; effect: StoryEffect };
 
-export function SandTransitionProvider({ src, children }: { /** Development-server address of the clip. Builds get none. */ src?: string; children: React.ReactNode }) {
+export function SandTransitionProvider({
+  src,
+  fallbackSrc,
+  children,
+}: {
+  /** The clip the transition uses: the local one. Builds get none. */
+  src?: string;
+  /** The earlier supplied clip, used only if the first one cannot be loaded. */
+  fallbackSrc?: string;
+  children: React.ReactNode;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const reduced = useReducedMotion();
@@ -32,8 +42,16 @@ export function SandTransitionProvider({ src, children }: { /** Development-serv
   const [loading, setLoading] = useState(false);
   const pushed = useRef(false);
   const skip = useRef<HTMLButtonElement>(null);
-  const effect = useMemo<StoryEffect>(() => ({ ...SAND_EFFECT, origin: { x: 0, y: 0 } }), []);
-  const available = Boolean(src) && !reduced;
+  // Each clip carries its own measurements: the local one is keyed on brightness, the older supplied
+  // one on its blue ground.
+  const effects = useMemo(
+    () => ({
+      local: { ...LOCAL_SAND_EFFECT, origin: { x: 0, y: 0 } } as StoryEffect,
+      supplied: { ...SAND_EFFECT, origin: { x: 0, y: 0 } } as StoryEffect,
+    }),
+    [],
+  );
+  const available = Boolean(src ?? fallbackSrc) && !reduced;
 
   const end = useCallback(() => {
     setJob((current) => {
@@ -45,42 +63,50 @@ export function SandTransitionProvider({ src, children }: { /** Development-serv
 
   const play = useCallback<Play>(
     ({ origin, href }) => {
-      if (!src || reduced) {
+      const sources: { url: string; effect: StoryEffect }[] = [];
+      if (src) sources.push({ url: src, effect: effects.local });
+      if (fallbackSrc) sources.push({ url: fallbackSrc, effect: effects.supplied });
+      if (!sources.length || reduced) {
         router.push(href);
         return;
       }
       setLoading(true);
-      const video = document.createElement("video");
-      video.muted = true;
-      video.playsInline = true;
-      video.preload = "auto";
-      let settled = false;
-      const fallback = setTimeout(() => {
-        if (settled) return;
-        settled = true;
-        setLoading(false);
-        router.push(href);
-      }, LOAD_TIMEOUT_MS);
-      video.oncanplaythrough = () => {
-        if (settled) return;
-        settled = true;
-        clearTimeout(fallback);
-        pushed.current = false;
-        setLeaving(false);
-        setLoading(false);
-        setJob({ video, origin, href });
+
+      // Each source is given one chance to load. If none of them does, the link simply opens: a
+      // visitor is never trapped waiting for an effect.
+      const attempt = (index: number) => {
+        const source = sources[index];
+        if (!source) {
+          setLoading(false);
+          router.push(href);
+          return;
+        }
+        const video = document.createElement("video");
+        video.muted = true;
+        video.playsInline = true;
+        video.preload = "auto";
+        let settled = false;
+        const give = (next: () => void) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          next();
+        };
+        const timer = setTimeout(() => give(() => attempt(index + 1)), LOAD_TIMEOUT_MS);
+        video.oncanplaythrough = () =>
+          give(() => {
+            pushed.current = false;
+            setLeaving(false);
+            setLoading(false);
+            setJob({ video, origin, href, effect: source.effect });
+          });
+        video.onerror = () => give(() => attempt(index + 1));
+        video.src = source.url;
+        video.load();
       };
-      video.onerror = () => {
-        if (settled) return;
-        settled = true;
-        clearTimeout(fallback);
-        setLoading(false);
-        router.push(href);
-      };
-      video.src = src;
-      video.load();
+      attempt(0);
     },
-    [src, reduced, router],
+    [src, fallbackSrc, effects, reduced, router],
   );
 
   // The clip is the clock: the next page opens only once the sand really covers this one.
@@ -94,7 +120,7 @@ export function SandTransitionProvider({ src, children }: { /** Development-serv
     requestAnimationFrame(() => skip.current?.focus());
     const tick = () => {
       const t = job.video.currentTime;
-      if (!pushed.current && t >= effect.coveredAt) {
+      if (!pushed.current && t >= job.effect.coveredAt) {
         pushed.current = true;
         router.push(job.href);
       }
@@ -106,7 +132,7 @@ export function SandTransitionProvider({ src, children }: { /** Development-serv
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [job, effect, router, end]);
+  }, [job, router, end]);
 
   // Once the new page is there, the sand clears from it.
   useEffect(() => {
@@ -135,8 +161,8 @@ export function SandTransitionProvider({ src, children }: { /** Development-serv
     <SandContext.Provider value={value}>
       {children}
       {job && (
-        <div data-testid="sand-transition" data-leaving={leaving} className="sand-transition fixed inset-0 z-[90] overflow-hidden">
-          <KeyedEffect video={job.video} effect={effect} target={job.origin} onUnavailable={skipNow} />
+        <div data-testid="sand-transition" data-source={job.effect.slot} data-leaving={leaving} className="sand-transition fixed inset-0 z-[90] overflow-hidden">
+          <KeyedEffect video={job.video} effect={job.effect} target={job.origin} onUnavailable={skipNow} />
           <button ref={skip} type="button" data-testid="sand-skip" onClick={skipNow} className="label-xs absolute right-4 top-20 inline-flex min-h-11 items-center bg-ink px-4 text-ivory sm:right-6">
             Skip <span aria-hidden="true">&nbsp;→</span>
           </button>

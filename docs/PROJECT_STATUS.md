@@ -11,6 +11,20 @@ Milestone 1, the first vertical slice, is implemented and tested locally. The HY
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
 
+## The sand transition, local media (24 September 2026, no credits)
+
+Built and tested; **awaiting the owner's review**. Review package:
+`references/review/2026-09-24-sand-transition/` — six states at 1440 × 900, 1920 × 1080, 390 × 844,
+412 × 915 and 844 × 390, and `video/sand-transition-walkthrough.webm`.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Local sand transition | tested | Ribbon from the gourd, then a full-frame wipe; one composed clip, keyed on brightness. |
+| Old supplied clip | kept | Fallback only, used if the local clip cannot be loaded. Nothing deleted. |
+| Gourd anchor | tested | Normalised; measured offset 0 px at all five sizes. |
+| Coverage before navigation | tested | The page changes only once the clip is opaque (2.1 s). |
+| Repeat presses, reduced motion, media failure | tested | Covered by `tests/e2e/sand-transition.spec.ts`. |
+
 ## Animated mascot from local generation (24 September 2026, no credits)
 
 Built and tested; **awaiting the owner's review**. Review package:
