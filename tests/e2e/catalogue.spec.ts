@@ -116,6 +116,35 @@ test.describe("finding a piece", () => {
   });
 });
 
+test.describe("perceived scale inside equal stages", () => {
+  test("a family's artwork is scaled for presentation only, and never outgrows its stage", async ({ page }) => {
+    await page.goto("/shop");
+    // The scale is presentation: DESERT EYE is drawn down, the thin forms are drawn up.
+    const scales = Object.fromEntries(
+      await page.getByTestId("product-card").evaluateAll((els) =>
+        els.map((el) => [el.getAttribute("data-product"), Number(el.querySelector(".fo-scale")?.getAttribute("data-scale"))]),
+      ),
+    ) as Record<string, number>;
+    expect(scales["desert-eye-love"]).toBeLessThan(1);
+    expect(scales["crossline"]).toBeGreaterThan(1);
+    expect(scales["blade-trace"]).toBeGreaterThan(1);
+    expect(scales["horus-trace"]).toBeGreaterThan(1);
+
+    // The stages themselves are untouched by it: equal layout width on a phone, and the page never
+    // gains a sideways scroll from a piece that was drawn larger.
+    const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(over).toBeLessThanOrEqual(1);
+  });
+
+  test("the geometry behind a piece is unchanged: Face Studio places it exactly as before", async ({ page }) => {
+    // The presentation scale lives on its own layer in the catalogue. Nothing under the photo frame
+    // has one, so a placed piece is the size the form says it is.
+    await page.goto("/product/crossline");
+    await page.getByRole("tab", { name: "Placement" }).click();
+    await expect(page.getByTestId("placement-preview").locator(".fo-scale")).toHaveCount(0);
+  });
+});
+
 test.describe("a concept is named, never sold", () => {
   test("KIRI is words at the end of the catalogue, with no stage, no price and nothing to order", async ({ page }) => {
     await page.goto("/shop");
@@ -145,8 +174,14 @@ test.describe("the companion stays an aside on the catalogue", () => {
     test.skip((await page.getByTestId("global-mascot").count()) === 0, "internal mascot art is not on this machine");
     const box = (await page.getByTestId("global-mascot").boundingBox())!;
     const view = page.viewportSize()!;
-    expect(box.width).toBeLessThan(view.width * 0.25);
+    // A fifth of the screen at most, even on the narrowest phone, and never taller than a twelfth.
+    expect(box.width).toBeLessThanOrEqual(view.width * 0.2);
+    expect(box.height).toBeLessThanOrEqual(view.height * 0.12);
     expect(view.width - (box.x + box.width)).toBeLessThan(40);
+    // Smaller, but still a target a thumb can find.
+    const tap = (await page.getByTestId("mascot").boundingBox())!;
+    expect(tap.height).toBeGreaterThanOrEqual(44);
+    expect(tap.width).toBeGreaterThanOrEqual(44);
     // No sand follows him here: a press on the catalogue simply opens DESERT EYE.
     await expect(page.getByTestId("sand-layer")).toHaveCount(0);
   });

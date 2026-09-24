@@ -86,6 +86,36 @@ export function matchesBrowse(product: Product, filter: BrowseFilter): boolean {
   return product.lines.includes(filter);
 }
 
+/**
+ * How much a family's artwork is scaled **for presentation only**, inside the equal stage it shares
+ * with every other family (the owner's polish pass, 24 September 2026).
+ *
+ * Equal stages are right, but a thin bar and a broad symbol do not read as equals when both are
+ * drawn at their authored size: measured as a share of its stage, CROSSLINE's ink came to 33% and
+ * DESERT EYE's to 96%, so one vanished and the other shouted. These multipliers bring the perceived
+ * mass into a band without flattening the pieces: a thin form stays thin, it simply stops
+ * disappearing. They were chosen from measurements, not by eye — see docs/TEST_REPORT.md.
+ *
+ * Each multiplier is capped so the piece's ink still fits inside its own stage, because a form that
+ * reaches past the stage is clipped at the edge of the page rather than made to look larger.
+ *
+ * This is presentation and nothing else. It never touches a form's `defaultScale` or a component's
+ * size, so Face Studio, the placement preview, the bag and every physical measurement are unchanged.
+ */
+const PRESENTATION_SCALE: Record<string, number> = {
+  "desert-eye-love": 0.76,
+  "horus-trace": 1.05,
+  "blade-trace": 1.08,
+  crossline: 1.3,
+  "ankh-trace": 1.15,
+  "crimson-orbit": 0.9,
+  "void-stud": 0.88,
+};
+
+export function presentationScale(product: Product): number {
+  return PRESENTATION_SCALE[product.slug] ?? 1;
+}
+
 export function availableForms(product: Product): ProductForm[] {
   return product.forms.filter((f) => f.status === "available");
 }

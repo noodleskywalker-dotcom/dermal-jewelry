@@ -100,11 +100,19 @@ test.describe("the collection browser", () => {
     }
     await expect(page.getByTestId("browse").getByTestId("sand-layer")).toHaveCount(1);
 
+    // HORUS TRACE's dark stone belongs to the centre. A neighbour is drawn at 0.45 opacity, where a
+    // dark frame would read as a grey block, so its frame is light until it arrives.
+    const horusFrame = () =>
+      page.locator('[data-entry="horus-trace"] .browse-visual').evaluate((el) => getComputedStyle(el).backgroundImage);
+    expect(await horusFrame()).toContain("rgb(242, 241, 239)");
+
     // The neighbour is well into the frame.
     const next = (await page.locator('[data-entry="horus-trace"]').boundingBox())!;
     expect(page.viewportSize()!.width - next.x).toBeGreaterThan(page.viewportSize()!.width * 0.08);
     await page.getByTestId("browse-next").click();
     await expect(current).toHaveAttribute("data-entry", "horus-trace");
+    // Centred, it takes its dark stone.
+    await expect.poll(horusFrame).toContain("rgb(42, 37, 40)");
     if (!isMobile) {
       await page.getByTestId("browse-rail").focus();
       await page.keyboard.press("ArrowRight");

@@ -1,5 +1,58 @@
 # Test report
 
+## Catalogue polish pass — 24 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors, 0 warnings |
+| `npm run typecheck` | pass |
+| `npm test` | 77 of 77 pass |
+| `npm run test:e2e -- --workers=2` | 437 pass, 0 fail, 52 skipped |
+| `npm run build` | pass, 20 static pages |
+| `node tests/e2e/verify-rebalance.mjs` | 195 of 195 checks pass at 1440 x 900, 320 x 568 and Pixel 7 |
+
+Perceived scale, measured as ink against the piece's own stage. Ink, not element boxes: an SVG is
+measured with `getBBox` and an image by scanning its alpha, so the transparent padding around a
+drawing is ignored. "Axis" is the longest dimension, which is what stops a thin form looking lost;
+"mass" is the geometric mean, which is the ink actually on the page.
+
+| Family | Axis before | Axis after | Mass before | Mass after |
+| --- | --- | --- | --- | --- |
+| DESERT EYE — LOVE | 96% | 73% | 96% | 73% |
+| HORUS TRACE | 87% | 92% | 66% | 69% |
+| BLADE TRACE | 85% | 92% | 40% | 43% |
+| CROSSLINE | 70% | 91% | 33% | 43% |
+| ANKH TRACE | 80% | 92% | 55% | 64% |
+| CRIMSON ORBIT | 81% | 73% | 81% | 73% |
+| SAND VORTEX | 69% | 69% | 66% | 66% |
+| VOID STUD | 84% | 74% | 83% | 73% |
+
+Every family's ink is now inside its own stage, so nothing is clipped. A thin form still carries
+less mass than a broad one, which is honest: making CROSSLINE's bar match ANKH TRACE's mass would
+mean drawing it wider than the stage it stands on.
+
+The first attempt at these multipliers was not capped to the stage. BLADE TRACE was then cut off at
+the left margin and `/shop` gained up to 39 px of sideways scroll on a phone, which the verification
+script caught. The multipliers were recomputed from the measurements so the ink fits, and the
+catalogue grid took `overflow-x: clip` so the transparent overlays on a scaled stage — the light
+sweep and the shadow layer — cannot lengthen the page.
+
+Other measurements from the same run:
+
+| Check | Before | After |
+| --- | --- | --- |
+| Companion at 320 px | 88 px, 28% of the width | 58 px, 18%, tap target 58 x 44 px |
+| Companion on a Pixel 7 | 88 px, 21% | 74 px, 18%, tap target 74 x 44 px |
+| Companion at 1440 px | 120 px, 8% | unchanged, tap target 120 x 44 px |
+| Band before the footer on `/collections` | 96 px | 40 px, page 80 px shorter |
+| HORUS TRACE frame as a neighbour | `rgb(42, 37, 40)` under 0.45 opacity | `rgb(242, 241, 239)`, taking `rgb(42, 37, 40)` when centred |
+| Sideways overflow, 14 routes x 3 sizes | 0 px | 0 px |
+
+New browser tests: the presentation scale is applied and never outgrows its stage; the placement
+preview carries no scale layer, which is how the geometry behind Face Studio is held unchanged; the
+companion is at most a fifth of the width with a 44 px target; and HORUS TRACE's frame is light as a
+neighbour and dark when centred.
+
 ## Catalogue rebalance — 24 September 2026
 
 | Command | Result |

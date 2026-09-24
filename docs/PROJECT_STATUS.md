@@ -42,22 +42,26 @@ Honesty held: KIRI is still `Original / Concept` with no artwork claim, no price
 no limited edition is invented; every price is still a demo price; no material, dimension or
 compatibility claim was added.
 
-Open visual points for the owner's review, none of them faults in the rebalance:
+### Polish pass (24 September 2026, no credits)
 
-1. The empty state's `Show all pieces` is the one boxed control on an otherwise borderless
-   catalogue. It is the standing `btn-line` style, and it now stands out.
-2. Drawn pieces fill their equal stages differently, because each form carries its own
-   `defaultScale`: CROSSLINE's bar reads small beside DESERT EYE's symbol. The stage is equal; the
-   artwork inside it is not.
-3. The companion is a fixed 5.5 rem, so his share of the width grows on a small screen: 8% at
-   1440 px, 21% on a Pixel 7, 28% at 320 px. He is internal art and never reaches a build.
-4. Removing the second rail left a band of empty paper between the collection links and the footer
-   on `/collections`.
-5. The wide and regular stages differ only from 1024 px up. Below that every stage is identical, so
-   the editorial rhythm reads on a phone as a plain single column.
-6. HORUS TRACE's dark stone is the only dark frame on the rail. As an unfocused neighbour at the
-   edge of the screen it reads as a grey block.
-7. The dark circle at the left edge of the full-page frames is the Next.js development overlay, not
+The owner approved the architecture and taxonomy and asked for a visual-polish pass only. Four of
+the seven points above were addressed; the structure, filters, taxonomy, ordering, view modes, KIRI
+handling and the limited-edition empty state were not touched.
+
+| Point | Done |
+| --- | --- |
+| Perceived product scale | `presentationScale(product)` scales a family's artwork inside the equal stage, on its own layer. Measured as ink against its stage: CROSSLINE 33% to 43% mass and 70% to 91% along its own axis, DESERT EYE 96% to 73%, HORUS TRACE 87% to 92% along its axis, ANKH TRACE 55% to 64%. Every piece now sits inside its own stage and none is clipped. Geometry is untouched, so Face Studio is unchanged. |
+| Mobile companion | `min(5.5rem, 18vw)` under 640 px: 18% of the width at 320 px and on a Pixel 7, down from 28% at 320 px, with a 44 px tap target kept. |
+| Selection's empty band | The footer closes to 2.5 rem on this page and the ways row tightened: the band went from 96 px to 40 px and the page is 80 px shorter. |
+| HORUS TRACE as a neighbour | Its frame is light stone until it is centred, where it takes its dark stone. Its product page media is unchanged. |
+
+Points left as they were, and why:
+
+1. The empty state's `Show all pieces` is the one boxed control on an otherwise borderless catalogue.
+   It is the standing `btn-line` style used site-wide; changing it is a site-wide decision.
+2. The wide and regular stages differ only from 1024 px up. Below that every stage is identical,
+   which is the intended mobile behaviour.
+3. The dark circle at the left edge of the full-page frames is the Next.js development overlay, not
    part of the design. It does not exist in a build.
 
 ## The sand transition, local media (24 September 2026, no credits)

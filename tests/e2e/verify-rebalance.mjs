@@ -77,12 +77,88 @@ for (const size of SIZES) {
     const box = await page.getByTestId("global-mascot").boundingBox();
     const view = page.viewportSize();
     const share = box.width / view.width;
-    note(share <= 0.3, `companion is ${Math.round(box.width)}px of ${view.width}px wide (${Math.round(share * 100)}%)`);
+    note(share <= 0.2, `companion is ${Math.round(box.width)}px of ${view.width}px wide (${Math.round(share * 100)}%)`);
     note(box.height <= view.height * 0.12, `companion is ${Math.round(box.height)}px of ${view.height}px tall`);
     note(view.height - (box.y + box.height) < 40, "companion sits in the lower corner");
+    // Smaller, but still a target a thumb can find.
+    const tap = await page.getByTestId("mascot").boundingBox();
+    note(tap.height >= 44 && tap.width >= 44, `companion tap target ${Math.round(tap.width)} x ${Math.round(tap.height)}px`);
   } else {
     console.log("--    no companion on this machine (internal art absent)");
   }
+
+  // 8 (polish): perceived mass inside the equal stages. Ink bounds, not element boxes: an SVG is
+  //    measured with getBBox and an image by scanning its alpha, so transparent padding is ignored.
+  const mass = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-testid="product-card"]')].map((el) => {
+      const stage = el.querySelector(".piece-object").getBoundingClientRect();
+      const boxes = [];
+      for (const span of [...el.querySelectorAll(".fo-art > span")].filter((s) => s.querySelector("img, svg"))) {
+        const r = span.getBoundingClientRect();
+        const svg = span.querySelector("svg");
+        if (svg && svg.viewBox.baseVal && svg.viewBox.baseVal.width) {
+          const vb = svg.viewBox.baseVal;
+          const bb = svg.getBBox();
+          const sx = r.width / vb.width;
+          const sy = r.height / vb.height;
+          boxes.push({ left: r.left + bb.x * sx, right: r.left + (bb.x + bb.width) * sx, top: r.top + bb.y * sy, bottom: r.top + (bb.y + bb.height) * sy });
+          continue;
+        }
+        const img = span.querySelector("img");
+        if (!img || !img.naturalWidth) {
+          boxes.push(r);
+          continue;
+        }
+        const cv = document.createElement("canvas");
+        cv.width = img.naturalWidth;
+        cv.height = img.naturalHeight;
+        const ctx = cv.getContext("2d", { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0);
+        const d = ctx.getImageData(0, 0, cv.width, cv.height).data;
+        let x0 = cv.width;
+        let y0 = cv.height;
+        let x1 = 0;
+        let y1 = 0;
+        for (let y = 0; y < cv.height; y += 1)
+          for (let x = 0; x < cv.width; x += 1)
+            if (d[(y * cv.width + x) * 4 + 3] > 24) {
+              if (x < x0) x0 = x;
+              if (x > x1) x1 = x;
+              if (y < y0) y0 = y;
+              if (y > y1) y1 = y;
+            }
+        if (x1 < x0) {
+          boxes.push(r);
+          continue;
+        }
+        boxes.push({ left: r.left + (x0 / cv.width) * r.width, right: r.left + ((x1 + 1) / cv.width) * r.width, top: r.top + (y0 / cv.height) * r.height, bottom: r.top + ((y1 + 1) / cv.height) * r.height });
+      }
+      const w = Math.max(...boxes.map((b) => b.right)) - Math.min(...boxes.map((b) => b.left));
+      const h = Math.max(...boxes.map((b) => b.bottom)) - Math.min(...boxes.map((b) => b.top));
+      const left = Math.min(...boxes.map((b) => b.left));
+      const right = Math.max(...boxes.map((b) => b.right));
+      return [
+        el.getAttribute("data-product"),
+        {
+          // Along its own axis: what stops a thin piece looking lost.
+          longest: Math.round((Math.max(w, h) / stage.width) * 100),
+          // Geometric mean: the ink on the page. A thin form is honestly lighter than a broad one.
+          mass: Math.round((Math.sqrt(w * h) / stage.width) * 100),
+          inside: left >= stage.left - 1 && right <= stage.right + 1,
+        },
+      ];
+    }),
+  );
+  const ink = Object.fromEntries(mass);
+  for (const [product, m] of mass) {
+    note(m.longest >= 68 && m.longest <= 95, `${product} reads at ${m.longest}% of its stage along its own axis`);
+    note(m.mass >= 40, `${product} carries ${m.mass}% ink mass`);
+    note(m.inside, `${product} is drawn inside its stage and is never clipped`);
+  }
+  note(
+    ink["horus-trace"].longest >= ink["desert-eye-love"].longest,
+    `HORUS TRACE reads at least as large as DESERT EYE (${ink["horus-trace"].longest}% vs ${ink["desert-eye-love"].longest}%)`,
+  );
 
   // 3: sand only where DESERT EYE is the subject.
   for (const [route, expected] of [

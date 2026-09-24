@@ -19,7 +19,7 @@ export default async function SelectionPage({ searchParams }: PageProps<"/collec
       <h1 className="sr-only">The selection</h1>
       <p className="label-xs px-6 pt-10 sm:px-10 lg:px-16 lg:pt-16">The pieces</p>
       <SelectionRail products={catalog.listProducts()} concepts={site.concepts} initialSlug={first(query.family)} />
-      <section aria-labelledby="ways-heading" className="pb-10">
+      <section aria-labelledby="ways-heading" className="pb-4">
         <h2 id="ways-heading" className="sr-only">Ways in</h2>
         <WaysIn />
       </section>

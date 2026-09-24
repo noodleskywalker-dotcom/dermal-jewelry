@@ -794,3 +794,32 @@ How it is built:
   side of a 320 px page.
 - **The companion stays an aside.** Same size, same corner, every page. His sand still belongs to the
   homepage and the selection; on the catalogue a press simply opens DESERT EYE.
+
+## Catalogue polish (24 September 2026)
+
+- **Perceived scale is presentation, never geometry.** Equal stages are right, but a thin bar and a
+  broad symbol drawn at their authored size do not read as equals: measured as ink against its own
+  stage, CROSSLINE came to 33% and DESERT EYE to 96%. `presentationScale(product)` scales a family's
+  artwork inside the stage it shares with every other. It lives on its own `.fo-scale` layer between
+  the drift animation and the hover transforms, so it disturbs neither, and it never touches a form's
+  `defaultScale` or a component's size — Face Studio, the placement preview and the bag are
+  unaffected, which a test asserts by checking the placement preview carries no such layer.
+- **A piece is never drawn larger than its stage.** Every multiplier is capped so the ink still fits:
+  a form that reaches past the stage is clipped at the edge of the page, not made to look larger. The
+  first attempt at these numbers was not capped, and BLADE TRACE was cut off at the left margin while
+  the page gained 39 px of sideways scroll.
+- **Thin forms are judged on their own axis.** A long thin piece cannot reach the same ink mass as a
+  broad one without becoming wider than its stage, so the check is the longest dimension (68–95% of
+  the stage for every family) with mass as a floor, not a target.
+- **The catalogue grid clips sideways.** A scaled stage carries transparent overlays that reach past
+  it and would lengthen the page. `overflow-x: clip`, not `hidden`, so it never becomes a scroll
+  container; the ink is capped to fit, so nothing visible is lost.
+- **The companion is a share of the screen, not a fixed block.** At a fixed 5.5 rem he took 28% of a
+  320 px phone. He is now `min(5.5rem, 18vw)` up to 640 px, which holds him at 18% from 320 px up,
+  with a 44 px tap target so the smaller picture is still pressable.
+- **A dark world is for the centre of the rail only.** A neighbour is drawn at 0.45 opacity, and a
+  dark frame at 0.45 over paper is a grey block, so HORUS TRACE stands on light stone until it
+  arrives in the middle and takes its dark stone there. Its product page is untouched.
+- **The selection closes tighter.** The page ends on a thin row of links, where the page-wide 6 rem
+  gap before the footer read as forgotten paper. On this page alone the footer margin is 2.5 rem, so
+  the rule under the collection links becomes the join: the band went from 96 px to 40 px.

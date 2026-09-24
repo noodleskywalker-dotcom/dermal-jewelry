@@ -1,4 +1,4 @@
-import { formOf } from "@/lib/catalog";
+import { formOf, presentationScale } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { resolveComponents } from "@/lib/studio/geometry";
 import { FormVisual } from "./FormVisual";
@@ -64,9 +64,13 @@ export function FloatingObject({
   const stone = parts.find((c) => STONES.has(c.art)) ?? parts[0];
   // The polished surface lies just under the lowest piece, so the mirror line is there, not at the box edge.
   const mirror = Math.max(...parts.map((c) => c.topPct + c.widthPct * 0.42));
+  // Presentation scale only: how large this family reads inside the stage every family shares. It
+  // never changes the form's geometry, so Face Studio and the placement preview are untouched.
+  const scale = presentationScale(product);
   return (
     <span className="fo" data-motion={motion} data-depth={depth} style={{ "--depth": depth, "--fo-delay": `${delay}s` } as React.CSSProperties}>
       <span className={`fo-drift ${drift ? "fo-drifting" : ""}`}>
+        <span className="fo-scale" data-scale={scale} style={{ "--fo-scale": scale } as React.CSSProperties}>
         <span className="fo-art">
           {reflection && (
             <span aria-hidden="true" className="fo-reflection" style={{ "--mirror": `${mirror}%` } as React.CSSProperties}>
@@ -81,6 +85,7 @@ export function FloatingObject({
           {stone && motion !== "blade" && motion !== "sweep" && motion !== "pendulum" && motion !== "edge" && <span aria-hidden="true" className="fo-glint" style={{ left: `${stone.leftPct - stone.widthPct * 0.14}%`, top: `${stone.topPct - stone.widthPct * 0.16}%` }} />}
           {motion === "sand" &&
             GRAINS.map((g, i) => <span key={i} aria-hidden="true" className="fo-grain" style={{ "--gx": g.gx, "--gdx": g.gdx, "--gdy": g.gdy, "--gdelay": g.gdelay } as React.CSSProperties} />)}
+        </span>
         </span>
       </span>
     </span>
