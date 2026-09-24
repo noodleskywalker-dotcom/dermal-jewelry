@@ -11,6 +11,37 @@ Milestone 1, the first vertical slice, is implemented and tested locally. The HY
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
 
+## Homepage resequencing: the selection is the third screen (24 September 2026, no credits)
+
+Built and tested; **awaiting the owner's visual review**. Frames: `docs/screenshots/homepage/`,
+1440 x 900 and Pixel 7.
+
+The complaint was that the first several screens were all DESERT EYE, so the brand read as being
+built around one collection. The launch now owns the opening and nothing after it.
+
+| Screen | Was | Is |
+| --- | --- | --- |
+| 01 | The piece in low light | unchanged |
+| 02 | The piece turned, 460svh of pinned scroll | The same turn at 200svh, all four beats intact |
+| 03 | CRAFTED IN SAND / 02 THE WORLD | **THE SELECTION** |
+| 04-08 | Macro push-in, the meaning, the assembly, the forms | removed from this page |
+| 09 | On you | unchanged, now screen 04 |
+| 10 | The collection rail | now part of THE SELECTION |
+| 11 | The last frame | unchanged |
+
+Measured: the selection begins at **3.0 screens** on both 1440 x 900 and a Pixel 7, down from 5.6.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| THE SELECTION | tested | Heading, "Objects engineered for the face", the six families on one rail, View full collection to `/shop`. |
+| Neutral canvas | tested | Every stage is DERMAL's paper. A test asserts all six frames are identical and that the identity halo is under three-quarters of its stage. |
+| Micro-worlds | tested | Sand, polished stone, blade sweep, clean light, silver, chrome — each contained around its own piece. HORUS TRACE's dark rectangle is gone. |
+| Each family | tested | Index, name, lines, the forms it is really drawn in, View piece, Try on. No price: Shopify has none and a demo price does not belong here. |
+| KIRI | tested | Concept only. No link, no try-on, no price. |
+| Removed sections | tested | A test asserts CRAFTED IN SAND and the other launch-world sections are no longer on the page. |
+| Media and components | kept | Nothing deleted. `DesertWorld`, `MacroScrub`, `MacroDetail`, `PieceStory`, `AssemblySection` and `FormsStage` and all their media remain, ready to be moved into the DESERT EYE product page when the owner asks. |
+| Everything else | untouched | `/shop`, product pages, Face Studio, the Shopify integration, the cart, taxonomy and filters are unchanged. |
+
 ## First Shopify product: stopped at the owner's own conditions (24 September 2026)
 
 **No Shopify product was created.** Three independent blocks, two of them the owner's stop

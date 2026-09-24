@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { lineLabels } from "@/lib/catalog";
+import { availableForms, lineLabels } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 import { FloatingObject } from "./FloatingObject";
 import { ConceptBlade } from "./SelectionRail";
-import { WaysIn } from "./WaysIn";
 import { SandLayer } from "@/components/story/SandLayer";
 
 // The collection browser, browsed sideways like a gallery: one design family centred, its
@@ -24,7 +23,17 @@ import { SandLayer } from "@/components/story/SandLayer";
 // has not been announced.
 
 type World = "sand" | "trace" | "blade" | "line" | "symbol" | "chrome";
-type Entry = { id: string; name: string; kind: string; href: string; action: string; world: World; visual: React.ReactNode };
+type Entry = {
+  id: string;
+  name: string;
+  kind: string;
+  /** The forms this family is actually drawn in, or the honest status of a concept. */
+  forms: string;
+  /** A concept has nowhere to go: no piece to view and nothing to try on. */
+  href: string | null;
+  world: World;
+  visual: React.ReactNode;
+};
 
 /** The owner's order for the collection browser, with the world each family carries. */
 const FAMILIES: { slug: string; world: World; kind?: string }[] = [
@@ -43,12 +52,14 @@ export function BrowseRail({ products }: { products: Product[] }) {
       {
         id: slug,
         name: product.title,
-        kind: lineLabels(product).join(" / "),
+        kind: lineLabels(product).join(" · "),
+        forms: availableForms(product).map((f) => f.label).join(" / "),
         href: `/product/${product.slug}`,
-        action: "Explore",
         world,
         visual: (
           <span className="browse-object">
+            {/* The family's own detail, held close to the piece. The stage behind it stays DERMAL. */}
+            <span aria-hidden="true" className="browse-halo" />
             {world === "sand" && <SandLayer className="browse-sand" />}
             <FloatingObject product={product} depth={1} />
           </span>
@@ -57,16 +68,19 @@ export function BrowseRail({ products }: { products: Product[] }) {
     ];
   });
 
-  // KIRI closes the rail on the same stage as the rest: a direction, named honestly, with nothing to buy.
+  // KIRI closes the rail on the same stage as the rest: a direction, named honestly, with no piece
+  // to view, nothing to try on and no price.
   entries.push({
     id: "kiri",
     name: "KIRI",
-    kind: "Original / Concept",
-    href: "/shop?browse=original",
-    action: "See the originals",
+    kind: "Original · Concept",
+    // Its status is said once, under the label, and not repeated where the forms would go.
+    forms: "",
+    href: null,
     world: "chrome",
     visual: (
       <span className="browse-object browse-blade" data-object-host>
+        <span aria-hidden="true" className="browse-halo" />
         <ConceptBlade />
         <span aria-hidden="true" className="fo-blade" />
       </span>
@@ -178,16 +192,47 @@ export function BrowseRail({ products }: { products: Product[] }) {
           const current = i === index;
           return (
             <li key={entry.id} data-testid="browse-entry" data-entry={entry.id} data-world={entry.world} data-current={current} className="browse-entry">
-              <Link href={entry.href} draggable={false} tabIndex={current ? 0 : -1} className="browse-visual" aria-label={`${entry.name}, ${entry.kind}`}>
-                {entry.visual}
-              </Link>
-              <div className="browse-label">
-                <p className="label-xs">{String(i + 1).padStart(2, "0")}</p>
-                <h3 className="mt-2 font-display text-[clamp(1.75rem,3.2vw,3rem)] font-light leading-none tracking-[0.06em]">{entry.name}</h3>
-                <p className="label-xs mt-3 text-ash">{entry.kind}</p>
-                <Link href={entry.href} draggable={false} tabIndex={current ? 0 : -1} className="text-link mt-3" data-testid="browse-go">
-                  {entry.action} <span aria-hidden="true">↗</span>
+              {entry.href ? (
+                <Link href={entry.href} draggable={false} tabIndex={current ? 0 : -1} className="browse-visual" aria-label={`${entry.name}, ${entry.kind}`}>
+                  {entry.visual}
                 </Link>
+              ) : (
+                // A concept is looked at, not opened: there is no piece behind it to link to.
+                <div className="browse-visual" role="img" aria-label={`${entry.name}, ${entry.kind}`}>
+                  {entry.visual}
+                </div>
+              )}
+              <div className="browse-label">
+                <p className="label-xs" data-testid="browse-entry-index">
+                  {String(i + 1).padStart(2, "0")} / {String(entries.length).padStart(2, "0")}
+                </p>
+                <h3 className="mt-2 font-display text-[clamp(1.75rem,3.2vw,3rem)] font-light leading-none tracking-[0.06em]">{entry.name}</h3>
+                <span className="browse-meta">
+                  <span className="label-xs block text-ash">{entry.kind}</span>
+                  {entry.forms && (
+                    <span className="label-xs mt-1 block text-ash" data-testid="browse-entry-forms">{entry.forms}</span>
+                  )}
+                </span>
+                {entry.href ? (
+                  <span className="browse-actions">
+                    <Link href={entry.href} draggable={false} tabIndex={current ? 0 : -1} className="text-link" data-testid="browse-go">
+                      View piece <span aria-hidden="true">↗</span>
+                    </Link>
+                    <Link
+                      href={`/face-studio?product=${entry.id}`}
+                      draggable={false}
+                      tabIndex={current ? 0 : -1}
+                      className="text-link"
+                      data-testid="browse-tryon"
+                    >
+                      Try on <span aria-hidden="true">↗</span>
+                    </Link>
+                  </span>
+                ) : (
+                  <p className="label-xs browse-actions text-ash" data-testid="browse-concept-note">
+                    Not yet available
+                  </p>
+                )}
               </div>
             </li>
           );
@@ -201,8 +246,6 @@ export function BrowseRail({ products }: { products: Product[] }) {
           Next <span aria-hidden="true">→</span>
         </button>
       </div>
-
-      <WaysIn />
     </div>
   );
 }

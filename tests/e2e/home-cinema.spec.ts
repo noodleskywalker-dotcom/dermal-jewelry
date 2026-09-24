@@ -67,7 +67,8 @@ test.describe("the turn", () => {
     await at(0.9);
     await expect(section.getByText("01 / 04")).toBeVisible();
     await page.evaluate(([y]) => window.scrollTo(0, y), [box.y + box.height + 50]);
-    await expect(page.getByTestId("story-section")).toBeInViewport();
+    // Past the turn the page hands over to the selection, which is where the launch ends.
+    await expect(page.getByTestId("collection-section")).toBeInViewport();
     expect(errors).toEqual([]);
   });
 
@@ -80,8 +81,7 @@ test.describe("the turn", () => {
     // Only the two ambient loops (the opening shot and the dunes) play by themselves; the product film
     // is idle. The mascot's own clip is left out: it is internal art and gives way to these anyway.
     const loops = await page.locator("video[autoplay]:not([data-testid='mascot-clip'])").evaluateAll((vs) => vs.map((v) => v.className.split(" ")[0]));
-    expect(loops.sort()).toEqual(["cinema-hero-media", "world-media"]);
-    await expect(page.getByTestId("assembly-section").getByTestId("product-film")).toHaveAttribute("data-state", "idle");
+    expect(loops.sort()).toEqual(["cinema-hero-media"]);
   });
 
   test("with reduced motion the turn is a plain still and nothing is pinned", async ({ page }) => {
@@ -89,7 +89,6 @@ test.describe("the turn", () => {
     await page.goto("/");
     await expect(hero(page)).toHaveAttribute("data-mode", "still");
     await expect(hero(page).locator("canvas")).toHaveCount(0);
-    await expect(page.getByTestId("macro-scrub")).toHaveAttribute("data-mode", "still");
     const pinned = await page.evaluate(() => [...document.querySelectorAll("main *")].filter((el) => getComputedStyle(el).position === "sticky" && el.getBoundingClientRect().height > window.innerHeight * 0.85).length);
     expect(pinned).toBe(0);
   });
@@ -109,97 +108,6 @@ test.describe("the turn", () => {
 });
 
 test.describe("the sections", () => {
-  test("the world: crafted in sand, three words over the dunes, and no claims", async ({ page }) => {
-    await page.goto("/");
-    const story = page.getByTestId("story-section");
-    await expect(story.getByRole("heading")).toHaveText("Crafted in sand");
-    for (const word of ["Sand.", "Solitude.", "Identity."]) await expect(story).toContainText(word);
-    const words = (await story.innerText()).toLowerCase();
-    for (const banned of ["luxury", "timeless", "exquisite", "elevate", "ruby"]) expect(words).not.toContain(banned);
-    await expect(story.getByTestId("mascot")).toHaveCount(0);
-  });
-
-  test("the companion: the small reader in his dunes, an honest line, and the way into his world", async ({ page }) => {
-    await page.goto("/");
-    const companion = page.getByTestId("companion-section");
-    test.skip((await companion.count()) === 0, "internal companion art is not on this machine");
-    await expect(companion.getByRole("heading")).toHaveText("He reads where the wind stops.");
-    await expect(companion.getByRole("img")).toHaveAttribute("alt", /small reader of DESERT EYE/);
-    await expect(companion).toContainText("not an official collaboration");
-    await expect(companion.getByRole("link", { name: /Enter DESERT EYE/ })).toHaveAttribute("href", "/collections?family=desert-eye-love");
-    // While he fills the screen here, the corner companion steps aside so there is only one of him.
-    await companion.getByRole("img").evaluate((el) => el.scrollIntoView({ block: "center" }));
-    await expect(page.getByTestId("global-mascot")).toHaveAttribute("data-hidden", "true");
-  });
-
-  test("the macro stage pushes into the stone as the page scrolls, one callout at a time", async ({ page }) => {
-    await page.goto("/");
-    const macro = page.getByTestId("macro-scrub");
-    await expect(macro).toHaveAttribute("data-mode", "scrub");
-    const box = (await macro.boundingBox())!;
-    const h = page.viewportSize()!.height;
-    const at = async (frac: number) => {
-      await page.evaluate(([y]) => window.scrollTo(0, y), [box.y + (box.height - h) * frac]);
-      await page.waitForTimeout(400);
-    };
-    await at(0.2);
-    await expect.poll(() => macro.getAttribute("data-ready"), { timeout: 20000 }).toBe("true");
-    await at(0.2);
-    const early = Number(await macro.getAttribute("data-frame"));
-    await expect(macro.locator('[data-testid="macro-callout"][data-on="true"]')).toHaveText("Surface form");
-    await at(0.9);
-    const close = Number(await macro.getAttribute("data-frame"));
-    await expect(macro.locator('[data-testid="macro-callout"][data-on="true"]')).toHaveText("Facet");
-    // The film pulls back, so the page walks it backwards: closer means an earlier frame.
-    expect(close).toBeLessThan(early);
-    await expect(macro).toContainText("not a size");
-  });
-
-  test("macro detail: four sharp close views with tiny callouts and no claims", async ({ page }) => {
-    await page.goto("/");
-    const detail = page.getByTestId("detail-section");
-    await expect(detail.getByTestId("detail-crop")).toHaveCount(4);
-    for (const word of ["Facet", "Openwork", "Polished edge", "Surface form"]) await expect(detail).toContainText(word);
-    await expect(detail).toContainText("Prototype render");
-    const words = (await detail.innerText()).toLowerCase().split(/\s+/);
-    for (const banned of ["ruby", "implant", "certified", "mm", "titanium"]) expect(words).not.toContain(banned);
-  });
-
-  test("the piece: what it means, in the owner's safe material wording", async ({ page }) => {
-    await page.goto("/");
-    const story = page.getByTestId("piece-story");
-    await expect(story.getByRole("heading")).toContainText("worn at the edge of the eye");
-    await expect(story).toContainText("Deep-red faceted gemstone · material not yet confirmed");
-    await expect(story).toContainText("Titanium · proposed");
-    const text = (await story.innerText()).toLowerCase();
-    for (const banned of ["ruby", "implant-grade", "grade 5", "official collaboration", "certified"]) expect(text).not.toContain(banned);
-  });
-
-  test("assembly: the film as a campaign film, the whole width, idle until a press", async ({ page }) => {
-    await page.goto("/");
-    const assembly = page.getByTestId("assembly-section");
-    await expect(assembly.getByTestId("product-film")).toHaveAttribute("data-state", "idle");
-    await expect(assembly).toContainText("Assembled with intent");
-    const frame = (await assembly.locator(".product-film-frame").boundingBox())!;
-    expect(frame.width).toBeGreaterThan(page.viewportSize()!.width * 0.9);
-    await expect(assembly.getByTestId("film-captions").locator("div")).toHaveCount(0);
-  });
-
-  test("the forms: one stage, the form changes in place and carries to the product page", async ({ page }) => {
-    await page.goto("/");
-    const forms = page.getByTestId("forms-section");
-    await expect(forms).toHaveAttribute("data-form", "anti-eyebrow");
-    await expect(forms.locator("img.forms-still")).toHaveCount(1);
-    await expect(forms.getByTestId("piece-assembly")).toHaveCount(0);
-    await page.locator("label", { has: page.getByTestId("home-form-nose") }).click();
-    await expect(forms).toHaveAttribute("data-form", "nose");
-    await expect(forms.getByTestId("piece-assembly")).toHaveAttribute("data-hardware", "stud");
-    await expect(forms).toContainText("QAR 190");
-    await expect(forms.getByTestId("forms-explore")).toHaveAttribute("href", "/product/desert-eye-love?form=nose");
-    await forms.getByTestId("forms-explore").click();
-    await expect(page.getByTestId("family")).toHaveAttribute("data-form", "nose");
-  });
-
   test("see it on you: a close crop around the placement, the piece on it, and one way in", async ({ page }) => {
     await page.goto("/");
     const onyou = page.getByTestId("onyou-section");

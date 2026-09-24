@@ -893,3 +893,30 @@ How it is built:
 - **No franchise reference in commercial copy.** The description names no anime character or series.
   The project has no clearance for commercial use of that reference, so it cannot appear on a product
   record even though it is what inspired the design.
+
+## Homepage resequencing (24 September 2026)
+
+- **The launch owns the opening and nothing after it.** A visitor spent five and a half screens
+  inside the DESERT EYE world and came away thinking the brand was built around it. The homepage is
+  now: the piece in low light, the piece turned, THE SELECTION, on you, the last frame.
+- **CRAFTED IN SAND is off the homepage.** So are the macro push-in, the meaning, the assembly and
+  the forms stage: each was another screen of one collection's world standing between the launch and
+  the collection. Their components and media are untouched and still in the repository. Moving that
+  storytelling into `/product/desert-eye-love` is a separate change, and was not made here because
+  the same brief says not to change product pages. Nothing is duplicated across the two pages.
+- **The turn was shortened, not removed.** At `460svh` the pinned stage alone was 4.6 screens, which
+  is the whole complaint. At `200svh` all four beats still have room — 72 frames over two screens is
+  about 25px a frame — and the selection now begins at exactly 3.0 screens on both desktop and phone.
+- **THE SELECTION stands on DERMAL's paper.** Warm ivory, the same stage for all six families, no
+  sand, no desert, no campaign environment, no oversized launch branding.
+- **A family's world is a detail, not a frame.** Each identity is now a halo held close to the piece
+  and at most three-quarters of the stage wide: sand and garnet, a polished dark stone, a blade
+  sweep, clean light, silver, chrome. HORUS TRACE's dark stone was a full dark rectangle behind the
+  words; it is a disc under its own piece now.
+- **Each family says what it is and offers two ways on.** Index, name, lines, the forms it is really
+  drawn in, then View piece and Try on. No price appears in the rail: Shopify has none, and a demo
+  placeholder has no business on the homepage.
+- **KIRI has nothing to open.** No link on its stage, no try-on, no price — a concept that reads
+  "Concept · not yet available" and stays a direction.
+- **One call to action.** View full collection goes to `/shop`; Men, Women, Inspired, Original and
+  Try on your face stay available underneath it and stay quiet.

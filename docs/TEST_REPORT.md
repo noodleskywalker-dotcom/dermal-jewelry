@@ -1,5 +1,49 @@
 # Test report
 
+## Homepage resequencing — 24 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors, 0 warnings |
+| `npm run typecheck` | pass |
+| `npm test` | 129 of 129 pass |
+| `npm run test:e2e -- --workers=2` | 455 pass, 0 fail, 52 skipped |
+| `npm run build` | pass, 20 static pages |
+| Homepage confirmations | 34 of 34 pass at 1440 x 900 and on a Pixel 7 |
+
+The homepage was resequenced so the launch owns the opening and nothing after it. Measured, both
+sizes: **THE SELECTION begins at 3.00 screens**, down from 5.60. The pinned turn was shortened from
+`460svh` to `200svh`, which is what bought the difference; all four of its beats still have room.
+
+| Confirmation | Measured |
+| --- | --- |
+| THE SELECTION is the third major screen | 3.00 screens on desktop and on a phone |
+| CRAFTED IN SAND is gone | `story-section` absent, and the words appear nowhere on the page |
+| The other launch-world sections are gone | `companion-section`, `macro-scrub`, `detail-section`, `assembly-section`, `forms-section` all absent |
+| DESERT EYE does not dominate after screen 2 | The only sections past screen 2 are the selection, on you and the last frame |
+| Sand is contained | One sand layer on the whole page: DESERT EYE's own slide on the rail |
+| Equal stages | Six stages, all 806 x 403 on desktop and 288 x 216 on a phone — one distinct size |
+| One canvas | Every stage carries the same DERMAL paper; one distinct background across all six |
+| Identity contained | HORUS TRACE's halo is 37% of its stage on desktop, 63% on a phone — a detail on the piece, not a frame |
+| No demo prices | No price, no demo price and no bare amount anywhere in THE SELECTION |
+| KIRI | `Original · Concept`, `Not yet available`, said once, with no link and no try-on |
+
+Three defects were found while building this and fixed in the code rather than in a test:
+
+1. The label row still used the old four-column grid, so a family's name wrapped and its forms
+   collided once the forms line and the two actions were added. It is a wrapping baseline row now.
+2. The lede said "8 design families" above a rail showing six. The copy is short and countless now.
+3. KIRI said "not yet available" twice — once where the forms go and once as its status. It says it
+   once. A test holds that.
+
+The browser tests for the removed sections were deleted rather than left passing against nothing:
+seven tests in `home-cinema.spec.ts` covered the sand world, the companion, the macro stage, the
+macro detail, the meaning, the assembly and the forms stage. The turn's own tests now assert it hands
+over to the selection, and that the opening shot is the only looping media left on the page.
+
+`/shop`, `/collections`, the product pages, Face Studio, the Shopify integration and the cart were
+not touched, which `git diff` against each path confirms.
+
 ## One cart, never two — 24 September 2026
 
 | Command | Result |

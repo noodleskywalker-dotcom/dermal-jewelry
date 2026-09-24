@@ -39,8 +39,9 @@ test.describe("landing page", () => {
           return (s.position === "sticky" || s.position === "fixed") && el.getBoundingClientRect().height >= window.innerHeight * 0.85;
         }).map((el) => el.className.split(" ")[0]),
     );
-    const wide = viewport.width >= 768;
-    expect(pinned).toEqual(wide ? ["launch-stage", "world-frame", "companion-frame", "macro-stage"] : ["launch-stage", "world-frame", "macro-stage"]);
+    // The launch owns the opening and nothing after it, so the turn is the only pinned stage left
+    // on this page (the owner's homepage correction, 24 September 2026).
+    expect(pinned).toEqual(["launch-stage"]);
     await page.mouse.move(200, 300);
     await page.mouse.wheel(0, 400);
     await expect.poll(() => page.evaluate(() => Math.round(window.scrollY))).toBe(400);
@@ -57,29 +58,55 @@ test.describe("landing page", () => {
     await expect(page.getByTestId("selection-slide")).toHaveCount(8);
   });
 
-  test("after the launch the page turns into the brand and shows every family on one stage", async ({ page }) => {
+  test("the third screen is THE SELECTION, and it holds every family on one stage", async ({ page }) => {
     await page.goto("/");
     const section = page.getByTestId("collection-section");
-    // The turn: the campaign has ended and the collection begins, said in words before it is shown.
-    await expect(section.getByRole("heading", { name: "Explore DERMAL" })).toBeVisible();
-    await expect(section.getByTestId("explore-lede")).toContainText("DESERT EYE is the current launch");
-    await expect(section.getByTestId("explore-lede")).toContainText("one collection inside DERMAL");
+    await expect(section.getByRole("heading", { name: "The selection" })).toBeVisible();
+    await expect(section.getByTestId("explore-lede")).toContainText("Objects engineered for the face");
     await expect(section.getByTestId("explore-shop")).toHaveAttribute("href", "/shop");
+    await expect(section.getByTestId("explore-shop")).toContainText("View full collection");
+
+    // It really is the third screen: the launch owns two and hands over here.
+    const screens = await section.evaluate((el) => (el.getBoundingClientRect().top + window.scrollY) / window.innerHeight);
+    expect(screens).toBeLessThanOrEqual(3.2);
+
     // Six design families, none of them given a larger frame than the others.
     await expect(section.getByTestId("browse-entry")).toHaveCount(6);
-    await expect(section.locator('[data-entry="kiri"]')).toContainText("Original");
+    await expect(section.locator('[data-entry="kiri"]')).toContainText("Concept");
     await expect(section.locator('[data-entry="desert-eye-love"]')).toContainText("Inspired");
     await expect(section.locator('[data-entry="horus-trace"]')).toContainText("Symbolic");
     await expect(section.getByTestId("product-card")).toHaveCount(0);
   });
 
-  test("the turn comes after the launch story and before the last frame", async ({ page }) => {
+  test("the sand world is gone from the homepage, and its media is still in the repository", async ({ page }) => {
+    await page.goto("/");
+    // CRAFTED IN SAND no longer exists in the homepage scroll.
+    await expect(page.getByTestId("story-section")).toHaveCount(0);
+    await expect(page.getByText("Crafted in sand")).toHaveCount(0);
+    // Nor do the other launch-world sections that stood between the turn and the collection.
+    for (const id of ["macro-scrub", "detail-section", "assembly-section", "forms-section", "companion-section"]) {
+      await expect(page.getByTestId(id)).toHaveCount(0);
+    }
+    // The selection's own canvas is DERMAL's paper, not a collection's world.
+    const stage = await page
+      .locator('[data-entry="horus-trace"] .browse-visual')
+      .evaluate((el) => getComputedStyle(el).backgroundImage);
+    expect(stage).toContain("250, 249, 246");
+  });
+
+  test("the page runs launch, selection, on you, last frame — in that order", async ({ page }) => {
     await page.goto("/");
     const top = async (id: string) => (await page.getByTestId(id).evaluate((el) => el.getBoundingClientRect().top + window.scrollY)) as number;
-    const [onyou, turn, final] = [await top("onyou-section"), await top("collection-section"), await top("final-section")];
-    expect(turn).toBeGreaterThan(onyou);
-    expect(final).toBeGreaterThan(turn);
-    // Below the turn, the only sand on the page is DESERT EYE's own slide on the rail.
+    const [hero, selection, onyou, final] = [
+      await top("cinema-hero"),
+      await top("collection-section"),
+      await top("onyou-section"),
+      await top("final-section"),
+    ];
+    expect(selection).toBeGreaterThan(hero);
+    expect(onyou).toBeGreaterThan(selection);
+    expect(final).toBeGreaterThan(onyou);
+    // The only sand left on the page is DESERT EYE's own slide on the rail, and it leaves with it.
     const rail = page.getByTestId("browse");
     await expect(rail.getByTestId("sand-layer")).toHaveCount(1);
     const host = rail.locator('[data-testid="browse-entry"]', { has: page.getByTestId("sand-layer") });
@@ -94,7 +121,7 @@ test.describe("homepage mascot (internal concept art, development server only)",
     // Wait until the page is interactive: his pictures are in, and his first idle beat has been scheduled.
     await page.waitForFunction(() => [...document.querySelectorAll<HTMLImageElement>('[data-testid="mascot"] img')].every((i) => i.complete && i.naturalWidth > 0));
     // He steps aside over the dark opening shot, so the page is taken past it first.
-    await page.getByTestId("forms-section").evaluate((el) => el.scrollIntoView());
+    await page.getByTestId("collection-section").evaluate((el) => el.scrollIntoView());
     await expect(page.getByTestId("global-mascot")).toHaveAttribute("data-hidden", "false");
     await page.waitForTimeout(400);
   });
@@ -222,7 +249,7 @@ test.describe("homepage mascot (internal concept art, development server only)",
   test("with reduced motion he holds still and the press is simply a link", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
-    await page.getByTestId("forms-section").evaluate((el) => el.scrollIntoView());
+    await page.getByTestId("collection-section").evaluate((el) => el.scrollIntoView());
     const mascot = page.getByTestId("mascot");
     await page.waitForTimeout(2500);
     await expect(mascot).toHaveAttribute("data-pose", "idle");

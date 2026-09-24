@@ -100,19 +100,27 @@ test.describe("the collection browser", () => {
     }
     await expect(page.getByTestId("browse").getByTestId("sand-layer")).toHaveCount(1);
 
-    // HORUS TRACE's dark stone belongs to the centre. A neighbour is drawn at 0.45 opacity, where a
-    // dark frame would read as a grey block, so its frame is light until it arrives.
-    const horusFrame = () =>
-      page.locator('[data-entry="horus-trace"] .browse-visual').evaluate((el) => getComputedStyle(el).backgroundImage);
-    expect(await horusFrame()).toContain("rgb(242, 241, 239)");
+    // Every stage is DERMAL's paper. A family's identity is a detail held close to its own piece,
+    // never the whole frame: no stage is a dark rectangle behind the words.
+    const stages = await entries
+      .locator(".browse-visual")
+      .evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundImage));
+    expect(new Set(stages).size).toBe(1);
+    expect(stages[0]).toContain("250, 249, 246");
+    // The detail itself is contained: it is a halo on the piece, and it is smaller than the stage.
+    const halo = await page
+      .locator('[data-entry="horus-trace"] .browse-halo')
+      .evaluate((el) => {
+        const stage = el.closest(".browse-visual")!.getBoundingClientRect();
+        return el.getBoundingClientRect().width / stage.width;
+      });
+    expect(halo).toBeLessThan(0.75);
 
     // The neighbour is well into the frame.
     const next = (await page.locator('[data-entry="horus-trace"]').boundingBox())!;
     expect(page.viewportSize()!.width - next.x).toBeGreaterThan(page.viewportSize()!.width * 0.08);
     await page.getByTestId("browse-next").click();
     await expect(current).toHaveAttribute("data-entry", "horus-trace");
-    // Centred, it takes its dark stone.
-    await expect.poll(horusFrame).toContain("rgb(42, 37, 40)");
     if (!isMobile) {
       await page.getByTestId("browse-rail").focus();
       await page.keyboard.press("ArrowRight");
@@ -120,10 +128,12 @@ test.describe("the collection browser", () => {
     }
     await expect(page.getByTestId("browse").getByTestId("product-card")).toHaveCount(0);
 
-    // The ways into the catalogue are text under the rail, never a stage of their own.
+    // The ways into the catalogue are text under the rail, never a stage of their own. The full
+    // collection is the section's own call to action, so it is not repeated in this row.
     const ways = page.getByTestId("browse-ways");
     const hrefs = await ways.getByRole("link").evaluateAll((els) => els.map((el) => el.getAttribute("href")));
-    expect(hrefs).toEqual(["/shop", "/shop?browse=men", "/shop?browse=women", "/shop?browse=inspired", "/shop?browse=original", "/face-studio"]);
+    expect(hrefs).toEqual(["/shop?browse=men", "/shop?browse=women", "/shop?browse=inspired", "/shop?browse=original", "/face-studio"]);
+    await expect(page.getByTestId("explore-shop")).toHaveAttribute("href", "/shop");
     // They are links on the paper, with no frame of their own.
     const framed = await ways.getByRole("link").evaluateAll((els) =>
       els.filter((el) => {
@@ -134,13 +144,29 @@ test.describe("the collection browser", () => {
     expect(framed).toBe(0);
   });
 
-  test("a family opens its own page, and KIRI stays a concept with nothing to buy", async ({ page }) => {
+  test("each family offers its piece and a try-on, and says which forms it is drawn in", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator('[data-entry="horus-trace"] [data-testid="browse-go"]')).toHaveAttribute("href", "/product/horus-trace");
+    await expect(page.locator('[data-entry="horus-trace"] [data-testid="browse-tryon"]')).toHaveAttribute("href", "/face-studio?product=horus-trace");
     await expect(page.locator('[data-entry="desert-eye-love"] [data-testid="browse-go"]')).toHaveAttribute("href", "/product/desert-eye-love");
+    // The forms a family is really drawn in, from the catalogue and not invented here.
+    await expect(page.locator('[data-entry="desert-eye-love"] [data-testid="browse-entry-forms"]')).toHaveText(
+      "Anti-eyebrow / Micro dermal / Nose",
+    );
+    await expect(page.locator('[data-entry="horus-trace"] [data-testid="browse-entry-forms"]')).toHaveText("Anti-eyebrow");
+  });
+
+  test("KIRI is a concept: nothing to open, nothing to try on, and no price", async ({ page }) => {
+    await page.goto("/");
     const kiri = page.locator('[data-entry="kiri"]');
-    await expect(kiri).toContainText("Original / Concept");
-    await expect(kiri.getByTestId("browse-go")).toHaveAttribute("href", "/shop?browse=original");
+    await expect(kiri).toContainText("Original · Concept");
+    await expect(kiri.getByTestId("browse-concept-note")).toHaveText("Not yet available");
+    // Said once: the status does not also appear where the forms would go.
+    await expect(kiri.getByTestId("browse-entry-forms")).toHaveCount(0);
+    await expect(kiri.getByTestId("browse-go")).toHaveCount(0);
+    await expect(kiri.getByTestId("browse-tryon")).toHaveCount(0);
+    await expect(kiri.getByRole("link")).toHaveCount(0);
+    await expect(kiri).not.toContainText("QAR");
   });
 
   test("the selection page browses the same families without a second rail", async ({ page }) => {

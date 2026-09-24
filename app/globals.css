@@ -1736,7 +1736,11 @@ input[type="range"].studio-range::-moz-range-thumb {
 /* 01–02: the piece fills the screen; scroll turns it. --p (0..1) comes from useScrollProgress. */
 .launch {
   position: relative;
-  height: 460svh;
+  /* The turn is the launch's second and last screen, and it has to stay short: at 460svh the
+     selection did not arrive until five and a half screens of scrolling, which is the very thing
+     the homepage correction of 24 September 2026 was about. At 200svh all four beats still have
+     room — 72 frames over two screens is about 25px a frame — and the selection lands third. */
+  height: 200svh;
   --p: 0;
 }
 .launch-stage {
@@ -2428,32 +2432,47 @@ body[data-mascot] :is([data-testid="selection-steps"], [data-testid="browse-step
   aspect-ratio: 4 / 3;
   overflow: hidden;
 }
-.browse-entry[data-world="sand"] .browse-visual {
-  background: linear-gradient(to bottom, #f3eee4 0%, #e6dac4 100%);
+/* The stage is DERMAL's paper, the same for every family (the owner's correction, 24 September
+   2026). A family's identity is a detail held close to its own piece — a halo, a light, a few
+   grains — and never the whole frame. No family's world takes the page over, and no stage is a
+   dark rectangle behind the words. */
+.browse-visual {
+  background: linear-gradient(to bottom, #faf9f6 0%, #f4f2ec 100%);
 }
-.browse-entry[data-world="chrome"] .browse-visual {
-  background: linear-gradient(135deg, #fbfaf7 0%, #eef0f2 60%, #dfe3e7 100%);
+
+/* The contained detail: a soft disc behind the piece, a little wider than the piece itself. */
+.browse-halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 126%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.85;
 }
-/* Each family's own small world, inside a frame every family shares. Nothing here is louder than
-   its neighbour: one wash, one light, no campaign treatment. */
-.browse-entry[data-world="trace"] .browse-visual {
-  /* A neighbour is drawn at 0.45 opacity, and a dark frame at 0.45 over paper is a grey block. So
-     an unfocused HORUS TRACE stands on light stone and the piece reads; the dark comes in as it
-     arrives in the middle. Its product page is untouched. */
-  background: radial-gradient(120% 90% at 50% 40%, #f2f1ef 0%, #e4e3e2 60%, #d8d7d6 100%);
-  transition: background 0.8s var(--ease-editorial);
+.browse-entry[data-world="sand"] .browse-halo {
+  background: radial-gradient(circle, rgb(226 208 172 / 0.55) 0%, rgb(226 208 172 / 0.22) 45%, transparent 68%);
 }
-.browse-entry[data-world="trace"][data-current="true"] .browse-visual {
-  background: radial-gradient(120% 90% at 50% 40%, #2a2528 0%, #17151a 60%, #0f0e12 100%);
+/* HORUS TRACE's stone is a dark disc under its own piece, never a dark frame behind the section. */
+.browse-entry[data-world="trace"] .browse-halo {
+  /* A polished stone the piece rests on, not a cloud behind it. */
+  width: 108%;
+  background: radial-gradient(circle, rgb(38 33 38 / 0.34) 0%, rgb(38 33 38 / 0.13) 42%, transparent 62%);
 }
-.browse-entry[data-world="blade"] .browse-visual {
-  background: linear-gradient(115deg, #f4f4f3 0%, #e8eaec 48%, #f6f6f5 52%, #dcdfe3 100%);
+.browse-entry[data-world="blade"] .browse-halo {
+  background: linear-gradient(115deg, transparent 38%, rgb(210 218 226 / 0.5) 49%, rgb(255 255 255 / 0.65) 51%, transparent 62%);
+  border-radius: 0;
 }
-.browse-entry[data-world="line"] .browse-visual {
-  background: linear-gradient(to right, #f5f3ee 0%, #fdfdfb 50%, #f1efe9 100%);
+.browse-entry[data-world="line"] .browse-halo {
+  background: radial-gradient(circle, rgb(255 255 255 / 0.9) 0%, rgb(240 238 232 / 0.45) 40%, transparent 64%);
 }
-.browse-entry[data-world="symbol"] .browse-visual {
-  background: radial-gradient(90% 90% at 50% 45%, #fbfaf7 0%, #eceef0 60%, #dfe2e6 100%);
+.browse-entry[data-world="symbol"] .browse-halo {
+  background: radial-gradient(circle, rgb(226 230 235 / 0.7) 0%, rgb(201 206 214 / 0.28) 46%, transparent 68%);
+}
+.browse-entry[data-world="chrome"] .browse-halo {
+  background: radial-gradient(circle, rgb(236 239 242 / 0.8) 0%, rgb(201 206 214 / 0.3) 44%, transparent 66%);
 }
 .browse-object {
   position: relative;
@@ -2490,6 +2509,10 @@ body:has(.gallery) footer {
 .browse-label {
   padding: 1.25rem 0 0;
 }
+.browse-meta {
+  display: block;
+  margin-top: 0.75rem;
+}
 .browse-steps {
   display: flex;
   justify-content: space-between;
@@ -2514,13 +2537,20 @@ body:has(.gallery) footer {
     width: 34%;
   }
   .browse-label {
-    display: grid;
-    grid-template-columns: auto 1fr auto auto;
+    display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
-    column-gap: 2rem;
+    gap: 0.5rem 2.25rem;
   }
   .browse-label > * {
     margin-top: 0 !important;
+  }
+  .browse-label h3 {
+    flex: 0 1 auto;
+  }
+  /* The kind and the forms sit together, and the two actions close the row. */
+  .browse-meta {
+    flex: 1 1 auto;
   }
   .browse-steps {
     padding: 1.5rem 4rem 0;
@@ -3210,5 +3240,48 @@ body:has(.cinema-hero) header[data-scrolled="false"] a[aria-label$="home"] {
 @media (min-width: 768px) {
   .catalogue-concept-list {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+
+/* ------------------------------------------------------------------ */
+/* THE SELECTION, the homepage's third screen (24 September 2026). The canvas is DERMAL's, not any
+   one collection's: warm ivory, room to breathe, and the rail given the weight of a major section. */
+.selection-world {
+  background: var(--color-paper);
+  padding-block: 1rem 0;
+}
+
+.browse-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.75rem;
+  margin-top: 0.75rem;
+}
+
+.selection-cta {
+  margin-inline: auto;
+  max-width: 120rem;
+  padding: 2.5rem 1.5rem 0;
+}
+
+.selection-cta-main {
+  font-size: 0.9375rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.selection-cta .browse-ways {
+  padding-inline: 0;
+  padding-top: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .selection-cta {
+    padding: 3rem 4rem 0;
+  }
+  /* On a wide screen the label is one line, so the two actions sit at its end. */
+  .browse-actions {
+    margin-top: 0 !important;
   }
 }

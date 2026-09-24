@@ -1,27 +1,29 @@
-import { AssemblySection } from "@/components/home/AssemblySection";
 import { CinemaHero } from "@/components/home/CinemaHero";
-import { DesertWorld } from "@/components/home/DesertWorld";
-import { ExploreDermal } from "@/components/home/ExploreDermal";
 import { FinalCta } from "@/components/home/FinalCta";
-import { FormsStage } from "@/components/home/FormsStage";
 import { LaunchHero } from "@/components/home/LaunchHero";
-import { MacroDetail } from "@/components/home/MacroDetail";
-import { MacroScrub } from "@/components/home/MacroScrub";
-import { PieceStory } from "@/components/home/PieceStory";
 import { SeeItOnYou } from "@/components/home/SeeItOnYou";
+import { TheSelection } from "@/components/home/TheSelection";
 import { catalog } from "@/lib/catalog";
-import { internalCompanionStill, isInternalReview } from "@/lib/story/registry";
 
 const CINEMA = "/media/cinema";
 
-// The homepage as a short film you walk into (the owner's cinematic direction, 22 September 2026):
-// the piece in low light; the piece turned; the dunes; the small reader of the dunes; closer and
-// closer into the stone; what the piece means; the assembly; the forms; on you; the ways in; the
-// last frame. Media is generated from the exact approved product frame; nothing redraws the jewelry.
+// The homepage, resequenced on the owner's correction of 24 September 2026.
 //
-// The launch owns the opening, and only the opening: after ON YOU the page turns into EXPLORE DERMAL
-// and hands the visitor the whole collection on an even-handed rail (the owner's rebalance,
-// 24 September 2026).
+// The complaint was that a visitor spent the first several screens inside the DESERT EYE world and
+// came away thinking the whole brand was built around it. So the launch now owns the opening and
+// nothing after it:
+//
+//   01  the piece in low light — the DESERT EYE launch
+//   02  the piece turned — one concise reveal, and that is the last of the launch
+//   03  THE SELECTION — every design family on the same stage, on DERMAL's own paper
+//   04  on you — Face Studio
+//   05  (reserved: the Custom Atelier introduction, not built)
+//   06  the last frame
+//
+// CRAFTED IN SAND, the macro push-in, the meaning, the assembly and the forms stage were taken off
+// this page. Their components and media are untouched and still in the repository: the owner may
+// move that storytelling into /product/desert-eye-love, which is a separate change and not this one.
+// Nothing is duplicated across the two pages.
 export default function HomePage() {
   const products = catalog.listProducts();
   const featured = products[0];
@@ -35,21 +37,8 @@ export default function HomePage() {
         ]}
       />
       <LaunchHero frames={{ dir: `${CINEMA}/orbit`, count: 72, poster: `${CINEMA}/orbit/poster.jpg` }} />
-      <DesertWorld
-        poster={`${CINEMA}/sand-poster.jpg`}
-        companion={internalCompanionStill(isInternalReview())}
-        sand={[
-          { src: `${CINEMA}/sand.webm`, type: "video/webm" },
-          { src: `${CINEMA}/sand.mp4`, type: "video/mp4" },
-        ]}
-      />
-      <MacroScrub dir={`${CINEMA}/macro`} count={64} />
-      <MacroDetail src={`${CINEMA}/piece-4k.jpg`} />
-      <PieceStory still={`${CINEMA}/piece-4k.jpg`} />
-      <AssemblySection product={featured} />
-      <FormsStage product={featured} still={`${CINEMA}/piece-4k.jpg`} />
+      <TheSelection products={products} />
       <SeeItOnYou product={featured} />
-      <ExploreDermal products={products} />
       <FinalCta still={`${CINEMA}/hero-final.jpg`} shopHref="/collections" />
     </>
   );
