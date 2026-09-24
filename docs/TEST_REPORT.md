@@ -1,5 +1,23 @@
 # Test report
 
+## Animated mascot from local generation — 24 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors |
+| `npm run typecheck` | pass |
+| `npm test` | 77 of 77 pass |
+| `npx playwright test --workers=2` | 380 pass, 0 fail |
+| `npm run build` | pass |
+
+The mascot's clip is a `<video>` on every page now, which broke four assertions that counted every
+video on a page ("Face Studio has no film", the film's poster states, and the homepage's list of
+自-playing loops). They are scoped to the product film and the cinematic loops instead. The mascot
+tests were rewritten for the animated version: the idle clip loops muted and pauses while any other
+video plays, a press switches it to the reaction clip which does not loop, hover halves its playback
+rate, and with reduced motion the five stills come back and a press navigates with no sand. The sand
+is still aimed at whichever picture is on screen, so the gourd check works for both.
+
 ## BLADE TRACE — 23 September 2026
 
 | Command | Result |

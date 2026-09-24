@@ -57,6 +57,16 @@ export function internalCompanionStill(internal: boolean): string | undefined {
   return internal ? "/api/dev-concept/companion-dune" : undefined;
 }
 
+export type MascotClips = { idle: string; react: string };
+
+/**
+ * The mascot's animated clips, generated on this machine. Like the stills they only exist on a
+ * development server; a build gets null and the page falls back to the still poses.
+ */
+export function internalMascotClips(internal: boolean): MascotClips | null {
+  return internal ? { idle: "/api/dev-concept/mascot-idle", react: "/api/dev-concept/mascot-react" } : null;
+}
+
 /** The sand clip for page transitions. Development server only, like the rest of the internal media. */
 export function internalSandSource(internal: boolean): string | undefined {
   return internal ? "/api/dev-concept/sandfx" : undefined;

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 import { pointOnContained } from "@/lib/story";
-import type { MascotMedia } from "@/lib/story/registry";
+import type { MascotClips, MascotMedia } from "@/lib/story/registry";
 import { useSandTransition } from "@/components/transition/SandTransition";
 
 type Pose = keyof MascotMedia;
@@ -17,18 +17,45 @@ const ASPECT = 2528 / 1696;
 // video, and the page only ever swaps between them: a slow blink, a page turned, a rare tiny yawn, and a
 // gentle breathing movement. Pressing him makes him look up and raise a hand, then sand leaves his
 // gourd and becomes the transition into the selection. Internal concept art: a build never gets it.
-export function Mascot({ media, href, label, transition = true }: { media: MascotMedia; href: string; label: string; /** false: a press simply opens the page, no sand. */ transition?: boolean }) {
+export function Mascot({ media, clips, href, label, transition = true }: { media: MascotMedia; /** Animated clips, generated locally. Without them he is the five stills. */ clips?: MascotClips | null; href: string; label: string; /** false: a press simply opens the page, no sand. */ transition?: boolean }) {
   const reduced = useReducedMotion();
+  const live = Boolean(clips) && !reduced;
+  const video = useRef<HTMLVideoElement>(null);
+  // "idle" loops; "react" runs once when he is pressed and then holds its last frame.
+  const [clip, setClip] = useState<"idle" | "react">("idle");
+  // A product film or a cinematic stage is worth more than the mascot, so he stops while one plays.
+  const [yielding, setYielding] = useState(false);
   const router = useRouter();
   const glance = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { play, busy } = useSandTransition();
   const [pose, setPose] = useState<Pose>("idle");
   const [called, setCalled] = useState(false);
-  const picture = useRef<HTMLImageElement>(null);
+  // Either the still or the clip: whichever is on screen is what the sand is aimed at.
+  const picture = useRef<HTMLImageElement | null>(null);
 
-  // Idle life. Each beat is short and returns to the reading pose.
+  // While any other video on the page is playing, the mascot's own clip pauses: two decoders on a
+  // small machine cost more than the motion is worth.
   useEffect(() => {
-    if (reduced || called) return;
+    if (!live) return;
+    const others = () => [...document.querySelectorAll("video")].filter((v) => v !== video.current && !v.paused && !v.ended);
+    const read = () => setYielding(others().length > 0);
+    read();
+    for (const type of ["play", "playing", "pause", "ended", "emptied"]) document.addEventListener(type, read, true);
+    return () => {
+      for (const type of ["play", "playing", "pause", "ended", "emptied"]) document.removeEventListener(type, read, true);
+    };
+  }, [live]);
+
+  useEffect(() => {
+    const v = video.current;
+    if (!v || !live) return;
+    if (yielding && clip === "idle") v.pause();
+    else void v.play().catch(() => undefined);
+  }, [yielding, clip, live]);
+
+  // Idle life for the still version. Each beat is short and returns to the reading pose.
+  useEffect(() => {
+    if (reduced || called || live) return;
     const timers: ReturnType<typeof setTimeout>[] = [];
     const beat = (name: Pose, every: number, hold: number, offset: number) => {
       const run = () => {
@@ -42,7 +69,7 @@ export function Mascot({ media, href, label, transition = true }: { media: Masco
     beat("page", 9500, 900, 5200);
     beat("yawn", 21000, 1500, 13000);
     return () => timers.forEach(clearTimeout);
-  }, [reduced, called]);
+  }, [reduced, called, live]);
 
   // He holds his look for as long as the sand is loading or playing, so the point the sand was aimed
   // at never moves under it. Once the transition is over and he is still on screen, he reads again.
@@ -57,13 +84,26 @@ export function Mascot({ media, href, label, transition = true }: { media: Masco
     const timer = setTimeout(() => {
       setCalled(false);
       setPose("idle");
+      setClip("idle");
     }, 600);
     return () => clearTimeout(timer);
   }, [busy]);
 
-  // Hover: he pauses, glances up at the viewer for a moment, and goes back to his book. Never the transition.
+  // Hover: he pauses, glances up at the viewer for a moment, and goes back to his book. Never the
+  // transition. The animated version cannot pose on demand, so it only slows for a moment instead.
   const onHover = () => {
     if (called || reduced) return;
+    if (live) {
+      const v = video.current;
+      if (v) {
+        v.playbackRate = 0.5;
+        if (glance.current) clearTimeout(glance.current);
+        glance.current = setTimeout(() => {
+          if (video.current) video.current.playbackRate = 1;
+        }, 1100);
+      }
+      return;
+    }
     setPose("look");
     if (glance.current) clearTimeout(glance.current);
     glance.current = setTimeout(() => setPose((p) => (p === "look" ? "idle" : p)), 1100);
@@ -80,6 +120,14 @@ export function Mascot({ media, href, label, transition = true }: { media: Masco
     }
     setCalled(true);
     setPose("look");
+    if (live) {
+      setClip("react");
+      const v = video.current;
+      if (v) {
+        v.currentTime = 0;
+        void v.play().catch(() => undefined);
+      }
+    }
     // He looks up and raises his hand first; the sand answers a moment later.
     setTimeout(
       () => {
@@ -96,12 +144,33 @@ export function Mascot({ media, href, label, transition = true }: { media: Masco
   return (
     <button type="button" data-testid="mascot" data-pose={pose} aria-label={label} onClick={press} onMouseEnter={onHover} onFocus={onHover} className="mascot group relative block w-full cursor-pointer appearance-none border-0 bg-transparent p-0">
       <span className="mascot-body relative block" style={{ aspectRatio: String(ASPECT) }}>
-        {(Object.keys(media) as Pose[]).map((name) => (
+        {live && clips && (
+          // The locally generated clip, drawn with multiply so its white ground disappears into the page.
+          <video
+            ref={(el) => {
+              video.current = el;
+              picture.current = el as unknown as HTMLImageElement;
+            }}
+            key={clip}
+            data-testid="mascot-clip"
+            data-clip={clip}
+            src={clip === "idle" ? clips.idle : clips.react}
+            poster={media.idle}
+            muted
+            playsInline
+            autoPlay
+            loop={clip === "idle"}
+            preload="auto"
+            aria-hidden="true"
+            className="mascot-layer absolute inset-0 h-full w-full select-none object-contain object-[left_bottom]"
+          />
+        )}
+        {!live && (Object.keys(media) as Pose[]).map((name) => (
           // Internal stills from the development server. They are never optimised, cached or deployed.
           // eslint-disable-next-line @next/next/no-img-element
           <img
             key={name}
-            ref={name === "idle" ? picture : undefined}
+            ref={name === "idle" && !live ? picture : undefined}
             src={media[name]}
             alt=""
             draggable={false}

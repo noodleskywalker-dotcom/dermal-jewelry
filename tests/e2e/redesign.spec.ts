@@ -147,8 +147,15 @@ test.describe("the companion on every page", () => {
     await page.goto("/about");
     test.skip((await page.getByTestId("global-mascot").count()) === 0, "internal mascot art is not on this machine");
     await page.getByTestId("mascot").hover();
-    await expect(page.getByTestId("mascot")).toHaveAttribute("data-pose", "look");
-    await expect(page.getByTestId("mascot")).toHaveAttribute("data-pose", "idle", { timeout: 4000 });
+    // Animated, he slows his clip for the glance; on the stills he changes pose. Either way he stays put.
+    const clip = page.getByTestId("mascot-clip");
+    if ((await clip.count()) > 0) {
+      await expect.poll(() => clip.evaluate((v: HTMLVideoElement) => v.playbackRate)).toBeLessThan(1);
+      await expect.poll(() => clip.evaluate((v: HTMLVideoElement) => v.playbackRate), { timeout: 4000 }).toBe(1);
+    } else {
+      await expect(page.getByTestId("mascot")).toHaveAttribute("data-pose", "look");
+      await expect(page.getByTestId("mascot")).toHaveAttribute("data-pose", "idle", { timeout: 4000 });
+    }
     await expect(page).toHaveURL(/\/about$/);
   });
 });

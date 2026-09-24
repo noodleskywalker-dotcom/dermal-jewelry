@@ -7,7 +7,7 @@ import { GlobalMascot } from "@/components/layout/GlobalMascot";
 import { PreviewNote } from "@/components/layout/PreviewNote";
 import { StudioProvider } from "@/components/studio/StudioProvider";
 import { SandTransitionProvider } from "@/components/transition/SandTransition";
-import { internalMascotMedia, internalSandSource, isInternalReview } from "@/lib/story/registry";
+import { internalMascotClips, internalMascotMedia, internalSandSource, isInternalReview } from "@/lib/story/registry";
 import { site } from "@/lib/config/site";
 import "./globals.css";
 
@@ -60,7 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Footer />
             <BagDrawer />
             <PreviewNote />
-            <GlobalMascot media={internalMascotMedia(isInternalReview())} />
+            <GlobalMascot media={internalMascotMedia(isInternalReview())} clips={internalMascotClips(isInternalReview())} />
           </SandTransitionProvider>
         </StudioProvider>
       </body>

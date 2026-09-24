@@ -11,6 +11,21 @@ Milestone 1, the first vertical slice, is implemented and tested locally. The HY
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
 
+## Animated mascot from local generation (24 September 2026, no credits)
+
+Built and tested; **awaiting the owner's review**. Review package:
+`references/review/2026-09-24-local-media/` (desktop and mobile, plus the local transition composite).
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Mascot idle and reaction clips | tested | Generated locally on the RTX 4060 Ti; served by the internal dev route, never in `public/`. |
+| Multiply blending instead of keying | tested | No video rectangle on the ivory page. |
+| Yields to other video | tested | Pauses while any other clip plays, resumes when the page is quiet. |
+| Reduced motion | tested | Five stills, direct navigation, no sand. |
+| Full-frame sand wipe and composite | tested locally | Proven in `gaara-transition-full.mp4`; the site's own sand transition is unchanged for now. |
+| HORUS TRACE | unchanged | The existing site clip is better lit than the local 1440p version. |
+| DESERT EYE subtle motion | held | Kept as a library asset; nothing on the site is weaker than it. |
+
 ## BLADE TRACE (23 September 2026, no credits)
 
 Built and tested; **awaiting the owner's review**. Review package:

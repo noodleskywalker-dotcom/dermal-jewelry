@@ -67,10 +67,10 @@ test.describe("first load", () => {
     await page.goto("/face-studio?product=desert-eye-love");
     await expect(page.getByTestId("studio-head")).toBeVisible();
     await expect(film(page)).toHaveCount(0);
-    await expect(page.locator("video")).toHaveCount(0);
+    await expect(page.locator("video:not([data-testid='mascot-clip'])")).toHaveCount(0);
     await page.getByTestId("photo-input").first().setInputFiles(FIXTURE);
     await expect(page.getByTestId("placed-item")).toHaveCount(1);
-    await expect(page.locator("video")).toHaveCount(0);
+    await expect(page.locator("video:not([data-testid='mascot-clip'])")).toHaveCount(0);
   });
 });
 
@@ -175,7 +175,7 @@ test.describe("playback", () => {
     await expect(film(page)).toHaveAttribute("data-state", "playing", { timeout: 15000 });
     await chooseForm(page, "micro-dermal");
     await expect(film(page)).toHaveCount(0);
-    await expect(page.locator("video")).toHaveCount(0);
+    await expect(page.locator("video:not([data-testid='mascot-clip'])")).toHaveCount(0);
     await chooseForm(page, "anti-eyebrow");
     await expect(film(page)).toHaveAttribute("data-state", "idle");
   });
@@ -186,7 +186,7 @@ test.describe("playback", () => {
     await expect(film(page)).toHaveAttribute("data-state", "playing", { timeout: 15000 });
     await page.getByTestId("try-it-on").click();
     await expect(page).toHaveURL(/\/face-studio\?product=desert-eye-love&form=anti-eyebrow/);
-    await expect(page.locator("video")).toHaveCount(0);
+    await expect(page.locator("video:not([data-testid='mascot-clip'])")).toHaveCount(0);
     await page.goBack();
     await expect(page.getByTestId("pdp-beauty")).toBeVisible();
     await page.getByRole("tab", { name: "Assembly" }).click();

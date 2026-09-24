@@ -2,6 +2,29 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-24 — The mascot becomes a local video, and where local media does not go
+
+- **The mascot is animated now**, from two clips generated on this machine (no credits): a looping idle
+  and a click reaction. They are served by the internal `/api/dev-concept` route from `references/`,
+  like every other character picture, so nothing franchise-related enters `public/` or a build.
+- **The white ground is not keyed, it is multiplied.** Colour keying was tried and rejected: keying
+  white also eats his pale skin and the book's pages. The clips keep their white ground and the page
+  draws them with `mix-blend-mode: multiply`, which is what the still mascot already did.
+- **He gives way to any other video.** While a product film, the opening loop or any other clip is
+  playing, the mascot's own clip pauses; it resumes when the page is quiet again. Two decoders on a
+  16 GB machine cost more than the motion is worth.
+- **Hover** slows his clip to half speed for a moment instead of posing, since a clip cannot hold a
+  pose on demand. **Reduced motion** keeps the five stills and a press navigates with no sand.
+- **HORUS TRACE keeps its current site clip.** The local 1440p version is sharper, but flatter and
+  dimmer than the media already on the page, and the rule is not to replace better media merely because
+  something is local. The local clip stays in the workstation as a spare.
+- **The DESERT EYE subtle-motion clip is not placed yet.** Its move is very small and the piece sits
+  small in frame; the homepage orbit and the approved film both beat it where it might have gone. It
+  stays a library asset until there is a quiet product stage that needs it.
+- **The sand transition on the site is unchanged.** The two new local sand clips (a ribbon from a point
+  and a full-frame wipe) are proven in a local composite and are ready to replace the supplied clip,
+  but that is a separate change to a working, approved animation.
+
 ## 2026-09-23 — BLADE TRACE approved as a catalogue product
 
 - **The fourth reference became a product.** The owner approved it as BLADE TRACE, Inspired / Weapon

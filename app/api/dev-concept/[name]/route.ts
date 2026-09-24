@@ -20,6 +20,10 @@ const FILES: Record<string, string[]> = {
   "chibi-look": ["generated", "chibi", "05-look.png"],
   // The small reader on a dune, for the homepage companion section (22 September 2026).
   "companion-dune": ["generated", "cinema", "gaara-dune.jpg"],
+  // The mascot's animated clips, generated locally on 23 September 2026 (Wan 2.2 on this machine).
+  // Internal like every other character picture: a build answers 404 here.
+  "mascot-idle": ["generated", "mascot", "idle.mp4"],
+  "mascot-react": ["generated", "mascot", "react.mp4"],
   // Generic sand effect on blue. It contains no character.
   sandfx: ["generated", "stage2", "07-sand-only-a.mp4"],
 };

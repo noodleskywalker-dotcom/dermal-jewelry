@@ -77,8 +77,9 @@ test.describe("the turn", () => {
     await page.goto("/");
     await expect.poll(() => hero(page).getAttribute("data-ready"), { timeout: 20000 }).toBe("true");
     expect(new Set(frames).size).toBe(72);
-    // Only the two ambient loops (the opening shot and the dunes) play by themselves; the product film is idle.
-    const loops = await page.locator("video[autoplay]").evaluateAll((vs) => vs.map((v) => v.className.split(" ")[0]));
+    // Only the two ambient loops (the opening shot and the dunes) play by themselves; the product film
+    // is idle. The mascot's own clip is left out: it is internal art and gives way to these anyway.
+    const loops = await page.locator("video[autoplay]:not([data-testid='mascot-clip'])").evaluateAll((vs) => vs.map((v) => v.className.split(" ")[0]));
     expect(loops.sort()).toEqual(["cinema-hero-media", "world-media"]);
     await expect(page.getByTestId("assembly-section").getByTestId("product-film")).toHaveAttribute("data-state", "idle");
   });

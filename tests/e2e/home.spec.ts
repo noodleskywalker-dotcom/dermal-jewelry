@@ -80,8 +80,46 @@ test.describe("homepage mascot (internal concept art, development server only)",
     await page.waitForTimeout(400);
   });
 
-  test("he idles quietly, and nothing happens by itself", async ({ page }) => {
+  test("he idles quietly on his looping clip, and nothing happens by itself", async ({ page }) => {
     const mascot = page.getByTestId("mascot");
+    const clip = page.getByTestId("mascot-clip");
+    test.skip((await clip.count()) === 0, "the animated clips are not on this machine");
+    // The clip loops silently and never starts anything.
+    expect(await clip.evaluate((v: HTMLVideoElement) => [v.loop, v.muted])).toEqual([true, true]);
+    await expect(clip).toHaveAttribute("data-clip", "idle");
+    // The homepage's own opening loop is playing, and the mascot gives way to it rather than decoding
+    // a second video beside it.
+    await expect.poll(() => clip.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
+    await expect(page.getByTestId("sand-transition")).toHaveCount(0);
+    await expect(page).toHaveURL(/\/$/);
+  });
+
+  test("on a quiet page his clip runs, and it stops again when a film starts", async ({ page }) => {
+    const clip = page.getByTestId("mascot-clip");
+    test.skip((await clip.count()) === 0, "the animated clips are not on this machine");
+    await page.goto("/about");
+    await expect(page.getByTestId("mascot-clip")).toHaveCount(1);
+    const quiet = page.getByTestId("mascot-clip");
+    await expect.poll(() => quiet.evaluate((v: HTMLVideoElement) => v.paused)).toBe(false);
+    const before = await quiet.evaluate((v: HTMLVideoElement) => v.currentTime);
+    await page.waitForTimeout(900);
+    expect(await quiet.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(before);
+    // A film of any kind takes precedence: the mascot pauses while it plays.
+    await page.evaluate(() => {
+      const v = document.createElement("video");
+      v.muted = true;
+      v.loop = true;
+      v.src = "/media/horus-trace/film.mp4";
+      v.setAttribute("data-testid", "fake-film");
+      document.body.appendChild(v);
+      return v.play();
+    });
+    await expect.poll(() => quiet.evaluate((v: HTMLVideoElement) => v.paused), { timeout: 5000 }).toBe(true);
+  });
+
+  test("with the clips absent he is still the five stills", async ({ page }) => {
+    const mascot = page.getByTestId("mascot");
+    test.skip((await page.getByTestId("mascot-clip").count()) > 0, "this machine has the animated clips");
     await expect(mascot).toHaveAttribute("data-pose", "idle");
     await expect(mascot.locator("img")).toHaveCount(5);
     // A blink lasts a sixth of a second, so poses are recorded inside the page rather than polled for.
@@ -104,11 +142,19 @@ test.describe("homepage mascot (internal concept art, development server only)",
     await expect.poll(() => mascot.locator("img").evaluateAll((imgs) => imgs.filter((i) => getComputedStyle(i).opacity === "1").length)).toBe(1);
   });
 
-  test("pressing him makes him look up, then sand from his gourd covers the page and the selection opens under it", async ({ page }) => {
+  test("pressing him plays his reaction, then sand from his gourd covers the page and the selection opens under it", async ({ page }) => {
     test.setTimeout(45_000);
     const mascot = page.getByTestId("mascot");
+    const clip = page.getByTestId("mascot-clip");
+    const animated = (await clip.count()) > 0;
     await mascot.click();
-    await expect(mascot).toHaveAttribute("data-pose", "look");
+    if (animated) {
+      // The reaction runs once instead of looping, and he holds it while the sand travels.
+      await expect(clip).toHaveAttribute("data-clip", "react");
+      expect(await clip.evaluate((v: HTMLVideoElement) => v.loop)).toBe(false);
+    } else {
+      await expect(mascot).toHaveAttribute("data-pose", "look");
+    }
     const sand = page.getByTestId("sand-transition");
     await expect(sand).toBeVisible({ timeout: 10_000 });
     await expect(page.getByTestId("sand-skip")).toBeVisible();
@@ -118,9 +164,10 @@ test.describe("homepage mascot (internal concept art, development server only)",
       () => {
         const fx = document.querySelector<HTMLCanvasElement>('[data-testid="story-effect"]');
         const at = Number(fx?.dataset.time ?? 0);
-        const img = document.querySelector<HTMLImageElement>('[data-testid="mascot"] img');
-        if (!fx || !img || at < 0.1 || at > 2.2) return null;
-        const box = img.getBoundingClientRect();
+        // Whichever of the two he is drawn with, the sand is aimed at the picture on screen.
+        const picture = document.querySelector<HTMLElement>('[data-testid="mascot"] video, [data-testid="mascot"] img');
+        if (!fx || !picture || at < 0.1 || at > 2.2) return null;
+        const box = picture.getBoundingClientRect();
         const m = new DOMMatrixReadOnly(getComputedStyle(fx).transform);
         return {
           gourd: { x: box.left + 0.668 * box.width, y: box.top + 0.355 * box.height },
