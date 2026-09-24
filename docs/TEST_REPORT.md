@@ -1,5 +1,32 @@
 # Test report
 
+## One cart, never two — 24 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors, 0 warnings |
+| `npm run typecheck` | pass |
+| `npm test` | 129 of 129 pass (5 new) |
+| `npm run test:e2e -- --workers=2` | 470 pass, 0 fail, 52 skipped |
+| `npm run build` | pass, 20 static pages |
+
+The owner's rule of the same day, held in place by tests rather than by prose: the demo bag is a
+development fallback and can never become a second commerce system.
+
+Five new checks in `tests/unit/commerce.test.ts`: the demo bag is offered only while nothing on the
+storefront can really be bought, and the same piece reads "Not yet available" the moment one real
+variant exists anywhere; a piece Shopify genuinely sells is bought through Shopify and carries a
+merchandise id; a concept stays a concept whether or not the storefront is selling; an unreachable
+Shopify never offers a demo line once the storefront is live; and when Shopify sells one family, only
+that family becomes purchasable while every other stays on the fallback.
+
+No user interface changed, which the unchanged browser totals show: the same 470 tests pass, and the
+catalogue, filters, product pages, bag markup and Face Studio assertions are all untouched.
+
+Shopify was probed read-only before and after: store `vxh01e-0d.myshopify.com`, currency QAR, HTTP
+200, no GraphQL errors, **0 products**, 0 purchasable. The storefront is in fallback, which is the
+state these tests exercise.
+
 ## Shopify integration architecture — 24 September 2026
 
 | Command | Result |

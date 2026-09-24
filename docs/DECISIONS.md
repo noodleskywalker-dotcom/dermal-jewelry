@@ -865,3 +865,31 @@ How it is built:
 - **The token stays on the server.** The client refuses to run in a browser, nothing is prefixed
   `NEXT_PUBLIC_`, the cart has one server door, and a browser test reads every script the storefront
   serves to assert the token, the header name and the variable name appear in none of them.
+
+## One cart, and the first product (24 September 2026)
+
+- **The demo bag is a development fallback and nothing else.** The owner kept it while Shopify has
+  nothing purchasable, on the condition that it can never become a second commerce system. That
+  condition is now code, not prose.
+- **One real variant switches the whole storefront.** `getCommerceState()` reports whether *any*
+  piece has a Shopify variant genuinely for sale, and a provider carries it everywhere. From that
+  moment Shopify is the only cart on the site: a piece with no Shopify product of its own reads
+  "Not yet available" rather than offering a demo line beside real ones.
+- **A Shopify cart existing at all has the same effect**, so the two are never shown side by side
+  even before the catalogue read has caught up.
+- **The demo bag is emptied as Shopify takes over.** A placeholder line must never sit beside a real
+  one, and must never be carried into a purchase.
+- **The first product was not created, and could not have been.** Three independent blocks: no form
+  is approved for manufacture, there is no selling price, and the token carries zero Admin scopes so
+  product creation is not a thing this project can perform at all. The first two are the owner's own
+  stop conditions; the third is a permissions fact, reported rather than worked around.
+- **A Storefront token cannot create products.** The Storefront API exposes no product mutation by
+  design. Product creation needs an Admin token with `write_products`, which this project does not
+  have and which is the owner's to issue.
+- **The record is written down instead of guessed at.** `docs/SHOPIFY_FIRST_PRODUCT.md` holds
+  everything known about the DESERT EYE product — title, handle, draft status, vendor, type, tags,
+  description, metafield values, media — with variant, price and inventory left explicitly blank as
+  the owner's to supply.
+- **No franchise reference in commercial copy.** The description names no anime character or series.
+  The project has no clearance for commercial use of that reference, so it cannot appear on a product
+  record even though it is what inspired the design.

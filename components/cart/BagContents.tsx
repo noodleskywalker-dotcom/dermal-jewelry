@@ -1,10 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { catalog, formatPrice, formOf } from "@/lib/catalog";
 import { bagSubtotal, MAX_QUANTITY } from "@/lib/cart/bag";
 import { bagActions, useBag } from "@/lib/cart/store";
 import { cartActions, useShopifyCart } from "@/lib/cart/shopify-store";
+import { useCommerceLive } from "@/components/commerce/CommerceProvider";
 import { site } from "@/lib/config/site";
 import { ProductArtwork } from "@/components/catalog/ProductArtwork";
 
@@ -17,13 +19,24 @@ import { ProductArtwork } from "@/components/catalog/ProductArtwork";
 export function BagContents({ onNavigate }: { onNavigate?: () => void }) {
   const bag = useBag();
   const { cart, status, error } = useShopifyCart();
+  const commerceLive = useCommerceLive();
+  // Shopify is the only cart from the moment the storefront really sells anything, or the moment a
+  // Shopify cart exists at all. The demo bag is a development fallback and never runs beside it.
+  const shopifyOwnsTheBag = commerceLive || cart !== null;
   const live = cart && cart.lines.length > 0 ? cart : null;
   const subtotal = bagSubtotal(bag, catalog);
 
-  if (!live && bag.lines.length === 0) {
+  // A demo line must never sit beside a real one, so the demo bag is emptied as Shopify takes over.
+  useEffect(() => {
+    if (shopifyOwnsTheBag) bagActions.clear();
+  }, [shopifyOwnsTheBag]);
+
+  const showDemo = !shopifyOwnsTheBag && bag.lines.length > 0;
+
+  if (!live && !showDemo) {
     return (
       <div className="px-6 py-16" data-testid="bag-empty">
-        <p className="font-display text-4xl font-light leading-tight">Your {cart ? "bag" : "demo bag"} is empty.</p>
+        <p className="font-display text-4xl font-light leading-tight">Your {shopifyOwnsTheBag ? "bag" : "demo bag"} is empty.</p>
         <p className="mt-3 text-sm text-ash">Add a piece from the shop or from Face Studio.</p>
         {error && <p className="mt-3 text-sm text-ash" data-testid="bag-error">{error}</p>}
         <Link href="/shop" onClick={onNavigate} className="btn-line mt-8">

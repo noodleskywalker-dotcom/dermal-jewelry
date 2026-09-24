@@ -71,14 +71,18 @@ export type PurchaseState = {
  * Whether this piece, in this form, can be bought — and if not, why not, in words a customer can
  * read. Nothing here ever guesses: without a Shopify variant the answer is always no.
  */
-export function purchaseState(product: Product, formId?: FormId): PurchaseState {
+export function purchaseState(product: Product, formId?: FormId, commerceLive = false): PurchaseState {
   const commerce = commerceOf(product);
   const form = formOf(product, formId);
 
-  if (!commerce) {
-    // Editorial-only build: the demo bag, plainly labelled as a demo.
-    return { canBuy: false, merchandiseId: null, action: "Add to demo bag", note: "Demo · nothing can be ordered yet" };
-  }
+  // The demo bag exists only while nothing on the storefront can really be bought. Once one real
+  // variant is for sale, Shopify is the only cart and a piece without one says so plainly instead
+  // of offering a placeholder line beside real ones.
+  const fallback: PurchaseState = commerceLive
+    ? { canBuy: false, merchandiseId: null, action: "", note: "Not yet available" }
+    : { canBuy: false, merchandiseId: null, action: "Add to demo bag", note: "Demo · nothing can be ordered yet" };
+
+  if (!commerce) return fallback;
 
   switch (commerce.status) {
     case "concept":
@@ -97,10 +101,12 @@ export function purchaseState(product: Product, formId?: FormId): PurchaseState 
     case "sold-out":
       return { canBuy: false, merchandiseId: null, action: "Add to bag", note: "Sold out." };
     case "unavailable":
-      return { canBuy: false, merchandiseId: null, action: "Add to demo bag", note: "The bag is unavailable right now." };
+      return commerceLive
+        ? { canBuy: false, merchandiseId: null, action: "", note: "The bag is unavailable right now." }
+        : { canBuy: false, merchandiseId: null, action: "Add to demo bag", note: "The bag is unavailable right now." };
     case "unmatched":
     default:
-      return { canBuy: false, merchandiseId: null, action: "Add to demo bag", note: "Demo · nothing can be ordered yet" };
+      return fallback;
   }
 }
 

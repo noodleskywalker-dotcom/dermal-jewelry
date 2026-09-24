@@ -48,6 +48,13 @@ export const bagActions = {
   add: (productId: string, formId: FormId, quantity = 1) => commit(addToBag(bag, productId, formId, quantity)),
   setQuantity: (productId: string, formId: FormId, quantity: number) => commit(setQuantity(bag, productId, formId, quantity)),
   remove: (productId: string, formId: FormId) => commit(removeFromBag(bag, productId, formId)),
+  /**
+   * Empties the demo bag. Called when Shopify becomes the real cart: a demo line must never sit
+   * beside a real one, and a placeholder must never be carried into a purchase.
+   */
+  clear: () => {
+    if (bag.lines.length) commit(EMPTY_BAG);
+  },
   openDrawer: () => {
     drawerOpen = true;
     emit();

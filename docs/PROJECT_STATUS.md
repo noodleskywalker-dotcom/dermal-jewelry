@@ -11,6 +11,30 @@ Milestone 1, the first vertical slice, is implemented and tested locally. The HY
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
 
+## First Shopify product: stopped at the owner's own conditions (24 September 2026)
+
+**No Shopify product was created.** Three independent blocks, two of them the owner's stop
+conditions. Detail and the prepared record: `docs/SHOPIFY_FIRST_PRODUCT.md`.
+
+| Block | Evidence | Needed |
+| --- | --- | --- |
+| No form approved for manufacture | `docs/production/ASSET_MANIFEST.md`: "None of the three is manufacturing-ready", and the site says so on every form | Which single form is sellable |
+| No selling price | `docs/PRODUCT_SPEC_GAPS.md`: "Selling price — unknown. 390 ... are demo placeholders" | The real QAR price for that form |
+| No Admin permission | The token carries **zero** Admin scopes; `products` and `publications` answer `ACCESS_DENIED`. The Storefront API exposes no product mutation by design | An Admin token with `write_products`, or the owner creates the product in the Shopify admin |
+
+What was verified read-only: store "My Store", currency **QAR** (the only enabled presentment
+currency), **0** products visible to the Headless storefront, all 24 `cart*` mutations available.
+
+The cart rule the owner approved was implemented in the same pass:
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| One cart, never two | tested | `getCommerceState()` plus a provider. One real variant anywhere makes Shopify the only cart on the site. |
+| No mixing | tested | A Shopify cart existing at all takes the bag over, and the demo bag is emptied as it does. |
+| Fallback wording | tested | A piece with no Shopify product reads "Not yet available" once the storefront is selling, and "Add to demo bag" only while nothing is. |
+| Concept pieces | tested | KIRI stays a concept whether or not the storefront is selling. |
+| Checkout | unchanged | Still disabled, both backings. |
+
 ## Shopify integration architecture (24 September 2026, no credits, nothing created in Shopify)
 
 Built and verified; **awaiting the owner's review**, and waiting on the Shopify product records,

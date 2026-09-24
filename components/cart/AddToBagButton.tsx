@@ -6,6 +6,7 @@ import type { Product } from "@/lib/catalog/types";
 import { purchaseState } from "@/lib/commerce/display";
 import { bagActions } from "@/lib/cart/store";
 import { cartActions, useShopifyCart } from "@/lib/cart/shopify-store";
+import { useCommerceLive } from "@/components/commerce/CommerceProvider";
 
 /**
  * One button, two backings.
@@ -20,11 +21,19 @@ import { cartActions, useShopifyCart } from "@/lib/cart/shopify-store";
 export function AddToBagButton({ product, formId, className }: { product: Product; formId?: string; className?: string }) {
   const [added, setAdded] = useState<string | null>(null);
   const form = formOf(product, formId);
-  const purchase = purchaseState(product, form.id);
+  const commerceLive = useCommerceLive();
+  const purchase = purchaseState(product, form.id, commerceLive);
   const { status, error } = useShopifyCart();
 
-  // A concept has nothing to add. It is presented, and says so where the button would be.
-  if (!purchase.action) return null;
+  // A concept, and a piece with no Shopify variant once the store is really selling, have nothing
+  // to add. They are presented, and the note beside them says so where the button would be.
+  if (!purchase.action) {
+    return purchase.note ? (
+      <p className={`label-xs text-ash ${className ?? ""}`} data-testid="purchase-unavailable">
+        {purchase.note}
+      </p>
+    ) : null;
+  }
 
   const busy = status === "busy";
 

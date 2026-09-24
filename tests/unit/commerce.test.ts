@@ -343,3 +343,60 @@ describe("specifications are never invented by commerce", () => {
     }
   });
 });
+
+describe("one cart, never two", () => {
+  const live = joinCatalogue(products, [shopifyProduct({ handle: "desert-eye-love" })], true);
+
+  it("the demo bag is offered only while nothing on the storefront can really be bought", () => {
+    const unmatched = joinCatalogue(products, [], true).find((p) => p.slug === "horus-trace")!;
+    // Nothing is for sale anywhere: the demo bag is the fallback, and says it is a demo.
+    expect(purchaseState(unmatched, undefined, false)).toMatchObject({
+      canBuy: false,
+      action: "Add to demo bag",
+      note: "Demo · nothing can be ordered yet",
+    });
+    // One real variant exists somewhere on the storefront: the demo bag is gone, everywhere.
+    expect(purchaseState(unmatched, undefined, true)).toMatchObject({
+      canBuy: false,
+      action: "",
+      note: "Not yet available",
+    });
+  });
+
+  it("a piece Shopify really sells is bought through Shopify, and carries a merchandise id", () => {
+    const desert = live.find((p) => p.slug === "desert-eye-love")!;
+    const state = purchaseState(desert, "anti-eyebrow", true);
+    expect(state.canBuy).toBe(true);
+    expect(state.merchandiseId).toMatch(/^gid:\/\/shopify\/ProductVariant\//);
+    expect(state.action).toBe("Add to bag");
+  });
+
+  it("a concept stays a concept whether or not the storefront is selling", () => {
+    const conceptFamily: Product = {
+      ...products[0],
+      id: "demo-concept-2",
+      slug: "another-concept",
+      forms: products[0].forms.map((f) => ({ ...f, status: "concept-pending" as const })),
+    };
+    const joined = joinCatalogue([conceptFamily], [], true)[0];
+    for (const commerceLive of [false, true]) {
+      expect(purchaseState(joined, undefined, commerceLive).action).toBe("");
+      expect(purchaseState(joined, undefined, commerceLive).canBuy).toBe(false);
+    }
+  });
+
+  it("an unreachable Shopify never offers a demo line once the storefront is selling", () => {
+    const unreachable = joinCatalogue(products, [], false).find((p) => p.slug === "crossline")!;
+    expect(purchaseState(unreachable, undefined, true).action).toBe("");
+    expect(purchaseState(unreachable, undefined, false).action).toBe("Add to demo bag");
+  });
+
+  it("only the family Shopify sells becomes purchasable; the rest stay fallback", () => {
+    const purchasable = live.filter((p) => isPurchasable(p)).map((p) => p.slug);
+    expect(purchasable).toEqual(["desert-eye-love"]);
+    for (const product of live) {
+      if (product.slug === "desert-eye-love") continue;
+      expect(purchaseState(product, undefined, true).canBuy).toBe(false);
+    }
+  });
+});

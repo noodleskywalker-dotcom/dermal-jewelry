@@ -10,6 +10,7 @@ import {
 import { PRODUCTS_QUERY } from "@/lib/shopify/queries";
 import type { ShopifyProductsAnswer } from "@/lib/shopify/types";
 import type { DermalProduct } from "./model";
+import { isPurchasable } from "./model";
 import { joinCatalogue, orphanHandles } from "./normalize";
 
 /**
@@ -77,4 +78,20 @@ export async function getCatalogue(): Promise<CatalogueState> {
 export async function getDermalProduct(slug: string): Promise<DermalProduct | undefined> {
   const { products } = await getCatalogue();
   return products.find((p) => p.slug === slug);
+}
+
+/**
+ * Whether this storefront has real commerce yet: at least one piece with a Shopify variant that is
+ * genuinely for sale.
+ *
+ * It is the switch behind the owner's rule of 24 September 2026. The demo bag is a development
+ * fallback and nothing more, so the moment one real variant exists Shopify becomes the only cart on
+ * the site — including for pieces that have no Shopify product of their own yet. Two purchasable
+ * carts are never maintained side by side, and a demo line can never end up beside a real one.
+ *
+ * It reuses the same cached catalogue read, so asking costs nothing extra.
+ */
+export async function getCommerceState(): Promise<{ live: boolean; reachable: boolean }> {
+  const { products, reachable } = await getCatalogue();
+  return { live: products.some(isPurchasable), reachable };
 }
