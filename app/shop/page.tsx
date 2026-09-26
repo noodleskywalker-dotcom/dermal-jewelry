@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CommissionCta } from "@/components/commission/CommissionCta";
 import { ProductGrid, type CatalogueLayout } from "@/components/catalog/ProductGrid";
 import { type BrowseFilter, matchesBrowse, placements } from "@/lib/catalog";
 import { getCatalogue } from "@/lib/commerce/catalog";
@@ -190,6 +191,10 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
           </ul>
         </section>
       )}
+
+      <div className="commission-cta-section">
+        <CommissionCta />
+      </div>
     </div>
   );
 }

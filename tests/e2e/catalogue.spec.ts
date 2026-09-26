@@ -24,7 +24,7 @@ test.describe("the catalogue is the brand, not one collection", () => {
   test("every family has a stage of roughly equal weight, and DESERT EYE is not the largest", async ({ page, isMobile }) => {
     await page.goto("/shop");
     const cards = page.getByTestId("product-card");
-    await expect(cards).toHaveCount(8);
+    await expect(cards).toHaveCount(10);
 
     const stages = Object.fromEntries(
       await cards.evaluateAll((els) =>
@@ -71,14 +71,14 @@ test.describe("the catalogue is the brand, not one collection", () => {
 test.describe("finding a piece", () => {
   test("the catalogue opens on everything, and the lines and placements filter it", async ({ page }) => {
     await page.goto("/shop");
-    await expect(page.getByTestId("catalogue-count")).toHaveText("8 pieces");
+    await expect(page.getByTestId("catalogue-count")).toHaveText("10 pieces");
     // Nothing is preselected: no line and no placement is current until one is chosen.
     const lines = page.getByRole("navigation", { name: "Browse the collection" });
     await expect(lines.locator('[aria-current="true"]')).toHaveText("All");
 
     await lines.getByRole("link", { name: "Full collection", exact: true }).click();
     await expect(page).toHaveURL(/browse=full/);
-    await expect(page.getByTestId("product-card")).toHaveCount(8);
+    await expect(page.getByTestId("product-card")).toHaveCount(10);
 
     await page.goto("/shop?browse=original");
     const originals = await page.getByTestId("product-card").evaluateAll((els) => els.map((el) => el.getAttribute("data-product")));
@@ -99,7 +99,7 @@ test.describe("finding a piece", () => {
     await expect(page).toHaveURL(/view=even/);
     const grid = page.getByTestId("catalogue");
     await expect(grid).toHaveAttribute("data-layout", "even");
-    await expect(page.getByTestId("product-card")).toHaveCount(8);
+    await expect(page.getByTestId("product-card")).toHaveCount(10);
     // Even means even: every stage in the grid view is the same width.
     const widths = await page.locator(".piece-object").evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().width)));
     expect(new Set(widths).size).toBe(1);
@@ -128,7 +128,10 @@ test.describe("perceived scale inside equal stages", () => {
     expect(scales["desert-eye-love"]).toBeLessThan(1);
     expect(scales["crossline"]).toBeGreaterThan(1);
     expect(scales["blade-trace"]).toBeGreaterThan(1);
-    expect(scales["horus-trace"]).toBeGreaterThan(1);
+    // HORUS TRACE is presented by its design render now (26 September 2026); a render is framed
+    // full-bleed in its square, so its scale brings it down, never up.
+    expect(scales["horus-trace"]).toBeLessThan(1);
+    for (const slug of ["japanese-angel", "ankh-eye"]) expect(scales[slug]).toBeLessThanOrEqual(1);
 
     // The stages themselves are untouched by it: equal layout width on a phone, and the page never
     // gains a sideways scroll from a piece that was drawn larger.
@@ -157,7 +160,7 @@ test.describe("a concept is named, never sold", () => {
     await expect(kiri.locator("img, svg")).toHaveCount(0);
     await expect(kiri).not.toContainText("QAR");
     await expect(kiri.getByRole("link")).toHaveCount(0);
-    await expect(page.getByTestId("catalogue-count")).toHaveText("8 pieces");
+    await expect(page.getByTestId("catalogue-count")).toHaveText("10 pieces");
     // It is left out where the catalogue is narrowed to something it could not belong to.
     await page.goto("/shop?placement=anti-eyebrow");
     await expect(page.getByTestId("catalogue-concepts")).toHaveCount(0);

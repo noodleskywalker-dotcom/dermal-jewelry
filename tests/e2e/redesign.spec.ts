@@ -9,7 +9,8 @@ const PRODUCT = "/product/desert-eye-love";
 test.describe("material hotspots on the piece", () => {
   test("each part opens a refined annotation with the owner's wording, and nothing is invented", async ({ page }) => {
     await page.goto(PRODUCT);
-    await expect(page.getByTestId("pdp-beauty")).toBeVisible();
+    // The anti-eyebrow form opens on the design render, and the hotspots sit on it.
+    await expect(page.getByTestId("render-stage")).toBeVisible();
     for (const id of ["gemstone", "bar", "symbol"]) await expect(page.getByTestId(`hotspot-${id}`)).toBeVisible();
 
     await page.getByTestId("hotspot-gemstone").click();
@@ -72,9 +73,9 @@ test.describe("the collection browser", () => {
     // every design family stands on the same stage: DESERT EYE is not given a larger frame.
     await page.goto("/");
     const entries = page.getByTestId("browse-entry");
-    await expect(entries).toHaveCount(6);
+    await expect(entries).toHaveCount(8);
     const names = await entries.locator("h3").allInnerTexts();
-    expect(names).toEqual(["DESERT EYE — LOVE", "HORUS TRACE", "BLADE TRACE", "CROSSLINE", "ANKH TRACE", "KIRI"]);
+    expect(names).toEqual(["DESERT EYE — LOVE", "HORUS TRACE", "BLADE TRACE", "CROSSLINE", "ANKH TRACE", "JAPANESE ANGEL", "ANKH + EYE", "KIRI"]);
 
     // The same stage for every family. Laid-out size, not the painted size: the centred entry is
     // scaled up a little and its neighbours down, which is focus and not a larger frame.
@@ -94,6 +95,8 @@ test.describe("the collection browser", () => {
       ["blade-trace", "blade"],
       ["crossline", "line"],
       ["ankh-trace", "symbol"],
+      ["japanese-angel", "line"],
+      ["ankh-eye", "symbol"],
       ["kiri", "chrome"],
     ]) {
       await expect(page.locator(`[data-entry="${entry}"]`)).toHaveAttribute("data-world", world);
@@ -172,7 +175,7 @@ test.describe("the collection browser", () => {
   test("the selection page browses the same families without a second rail", async ({ page }) => {
     await page.goto("/collections");
     await expect(page.getByTestId("browse")).toHaveCount(0);
-    await expect(page.getByTestId("selection-slide")).toHaveCount(8);
+    await expect(page.getByTestId("selection-slide")).toHaveCount(10);
     await expect(page.getByTestId("browse-ways")).toBeVisible();
   });
 });
@@ -192,7 +195,7 @@ test.describe("shop filters", () => {
     await nav.getByRole("link", { name: "Men", exact: true }).click();
     await expect(page).toHaveURL(/browse=men/);
     // Every piece is unisex, so men and women both show the whole collection.
-    await expect(page.getByTestId("product-card")).toHaveCount(8);
+    await expect(page.getByTestId("product-card")).toHaveCount(10);
     await page.goto("/shop?browse=inspired");
     // DESERT EYE and BLADE TRACE are the inspired pieces; the rest are originals or symbolic.
     await expect(page.getByTestId("product-card")).toHaveCount(2);

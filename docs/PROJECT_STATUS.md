@@ -1,6 +1,6 @@
 # DERMAL — project status
 
-Last updated: 24 September 2026. Branch: `feat/dermal-first-slice`.
+Last updated: 26 September 2026. Branch: `feat/dermal-first-slice`.
 
 Statuses used here: planned, implemented, tested, owner-approved, blocked, deferred.
 "Tested" means an automated or recorded check actually ran. See `docs/TEST_REPORT.md`.
@@ -10,6 +10,26 @@ Statuses used here: planned, implemented, tested, owner-approved, blocked, defer
 Milestone 1, the first vertical slice, is implemented and tested locally. The HYBRID **structure** is
 owner-approved (22 September 2026); the visual refinement built on it below is waiting for owner review.
 Nothing was merged to `main` or deployed to production.
+
+## Launch prep: product renders and commission requests (26 September 2026, no credits)
+
+Built and tested; **awaiting the owner's launch review**. Nothing merged, deployed, created in Shopify
+or enabled for checkout. Frames: `docs/screenshots/launch/`. Tests: `docs/TEST_REPORT.md`.
+
+| Area | Status | Notes |
+| --- | --- | --- |
+| Render mapping | tested | 09:56:38 DESERT EYE, 09:59:20 HORUS TRACE, 10:33:20 JAPANESE ANGEL, 10:35:24 ANKH + EYE — matched by looking, not by time. Originals in `references/renders/2026-09-26/` (gitignored). |
+| Delivery images | tested | `public/products/<family>/{hero,catalogue,detail}.webp`, paper lifted out (transparent), 1.5 MB for all twelve. Built by `scripts/build-product-renders.mjs`. |
+| Baked-in claims | removed | "TITANIUM", "HAND POLISHED", "PRECISION SET", the franchise name and "T1" from the DESERT EYE sheet never reach the site. |
+| Where they show | tested | THE SELECTION rail, `/shop`, `/collections`, product pages, the hover/rail stages. Labelled "Design render · not photography of a made piece", and "· concept" on the two concept families. |
+| Form rule | tested | A render stands in only for the form it shows (anti-eyebrow for DESERT EYE and HORUS TRACE). Other forms, Face Studio, the placement preview and the bag keep the drawn geometry, unchanged. |
+| DESERT EYE product page | tested | Opens on the render with the material hotspots placed on it; 360° and the film are unchanged. |
+| HORUS TRACE product page | tested | Opens on the render; its prepared film is under "In motion". The render has no surface bar or dark stone; the text was not rewritten (owner's choice). |
+| JAPANESE ANGEL, ANKH + EYE | tested | New concept families (owner's choice): no form drawn, "Concept pending", not for sale, no try-on, not in Face Studio, no bag line even from tampered storage. ANKH TRACE keeps its own artwork. |
+| Navigation | tested | Shop, Collections, Commission, Face Studio, About, then Bag. |
+| `/commission` | tested | Editorial opening, simple form, drag and drop, Choose files (library), Take photo (phones), previews, remove, preferences, two confirmations, success with DRM-C reference, honest failure that keeps everything. |
+| Commission delivery | built, **not sending** | Private Vercel Blob + Resend. Refuses honestly (503) until `BLOB_READ_WRITE_TOKEN` and `RESEND_API_KEY` are set. See `docs/COMMISSION.md`. |
+| Catalogue link | tested | "Can’t find what you want? Commission your own →" at the foot of `/shop`, `/collections` and the product information. |
 
 ## Homepage resequencing: the selection is the third screen (24 September 2026, no credits)
 

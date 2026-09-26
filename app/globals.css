@@ -1041,6 +1041,17 @@ input[type="range"].studio-range::-moz-range-thumb {
 .fo-scale {
   transform: scale(var(--fo-scale, 1));
 }
+/* A design render in the same frame. Its paper was lifted out when it was built, so it sits straight
+   on the page; contain keeps its proportions whatever the stage. */
+.fo-render {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
 /* Cursor depth: nearer pieces travel further. --mx and --my come from the enclosing depth field. */
 .fo {
   transform: translate3d(calc(var(--mx, 0) * var(--depth, 1) * -14px), calc(var(--my, 0) * var(--depth, 1) * -10px), 0);
@@ -2202,6 +2213,7 @@ input[type="range"].studio-range::-moz-range-thumb {
   background: #dcd8d1;
 }
 .pdp-stage:has(.piece-assembly),
+.pdp-stage:has(.render-stage),
 .pdp-stage:has([data-testid="tryon-preview"]),
 .pdp-stage:has([data-testid="reveal-player"]) {
   background: transparent;
@@ -2594,6 +2606,8 @@ body:has(.gallery) footer {
   width: 44px;
   height: 44px;
   cursor: pointer;
+  /* Above any open note, so every part of the piece stays reachable. */
+  z-index: 3;
 }
 .hotspot-ring {
   width: 14px;
@@ -3284,4 +3298,525 @@ body:has(.cinema-hero) header[data-scrolled="false"] a[aria-label$="home"] {
   .browse-actions {
     margin-top: 0 !important;
   }
+}
+
+/* ───────── Design renders on the product page (26 September 2026) ─────────
+   The render stands on the page's own paper with generous air around it. It is contained, never
+   cropped or stretched, and its height is capped so a wide piece and a tall one sit at the same weight. */
+.render-stage {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+.render-stage-frame {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 3.5rem) clamp(0.5rem, 3vw, 3rem);
+}
+/* The picture's box, in its own proportions: as wide as the stage allows, and never taller than it. */
+.render-stage-figure {
+  position: relative;
+  width: min(100%, calc(min(64svh, 44rem) * var(--ratio, 1)));
+}
+.render-stage-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  animation: render-in 0.7s var(--ease-settle) both;
+}
+.render-stage-controls {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 1.5rem;
+  padding: 0 clamp(0.5rem, 3vw, 3rem) 1rem;
+}
+/* On a desktop the stage has a fixed height; the render fills it and shrinks to fit, never past it. */
+@media (min-width: 1024px) {
+  .render-stage {
+    height: 100%;
+  }
+  .render-stage-frame {
+    flex: 1;
+    min-height: 0;
+    container-type: size;
+  }
+  .render-stage-figure {
+    width: min(100cqw, 100cqh * var(--ratio, 1));
+  }
+}
+@keyframes render-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .render-stage-image {
+    animation: none;
+  }
+}
+
+/* ───────── Commission (26 September 2026) ─────────
+   The same paper, type and garnet as the rest of DERMAL. Fields are hairlines on the page, not boxes;
+   choices are words that take a garnet rule when chosen. Everything wraps: nothing may push the page
+   sideways at 320 px. */
+.commission {
+  overflow-x: clip;
+}
+.commission-hero {
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 6rem);
+  align-items: center;
+  max-width: 100rem;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 8vw, 7rem) clamp(1rem, 5vw, 4rem) clamp(2rem, 5vw, 4rem);
+}
+@media (min-width: 900px) {
+  .commission-hero {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  }
+}
+.commission-title {
+  margin-top: 1.25rem;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8.4vw, 8.5rem);
+  font-weight: 300;
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.commission-lede {
+  margin-top: 1.75rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.6vw, 2.4rem);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--color-garnet);
+}
+.commission-intro {
+  max-width: 34rem;
+  margin-top: 1.25rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-ash);
+}
+.commission-hero-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.commission-hero-image {
+  width: 100%;
+  max-width: 34rem;
+  height: auto;
+}
+.commission-body {
+  display: grid;
+  gap: clamp(2rem, 5vw, 5rem);
+  max-width: 100rem;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 5vw, 4rem) clamp(4rem, 10vw, 9rem);
+  border-top: 1px solid var(--color-line);
+  scroll-margin-top: 4rem;
+}
+@media (min-width: 1024px) {
+  .commission-body {
+    grid-template-columns: minmax(14rem, 0.32fr) minmax(0, 1fr);
+    align-items: start;
+  }
+  .commission-steps {
+    position: sticky;
+    top: 6rem;
+  }
+}
+.commission-steps {
+  display: grid;
+  gap: 1.5rem;
+}
+.commission-steps li {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+.commission-steps p {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 300;
+  line-height: 1.35;
+}
+.commission-form {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4rem);
+  min-width: 0;
+  max-width: 56rem;
+}
+.commission-step {
+  display: grid;
+  gap: 1.75rem;
+  min-width: 0;
+}
+.commission-step-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.9rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--color-line);
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.commission-step-title > span[aria-hidden] {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  color: var(--color-garnet);
+}
+.commission-optional,
+.commission-help {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-ash);
+}
+.commission-grid {
+  display: grid;
+  gap: 1.75rem 2.5rem;
+}
+@media (min-width: 640px) {
+  .commission-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.commission-field {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.commission-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.commission-input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.5rem 0;
+  border: 0;
+  border-bottom: 1px solid var(--color-ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-ink);
+  /* 16 px, so iOS never zooms into a field. */
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.commission-input::placeholder {
+  color: var(--color-ash);
+  opacity: 1;
+}
+.commission-input:focus {
+  outline: none;
+  border-bottom-color: var(--color-garnet);
+  box-shadow: 0 1px 0 var(--color-garnet);
+}
+.commission-input[aria-invalid="true"] {
+  border-bottom-color: var(--color-garnet);
+}
+.commission-textarea {
+  min-height: 11rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--color-ink);
+  resize: vertical;
+}
+.commission-textarea:focus {
+  border-color: var(--color-garnet);
+  box-shadow: inset 0 0 0 1px var(--color-garnet);
+}
+.commission-error {
+  font-size: 0.875rem;
+  color: var(--color-garnet);
+}
+.commission-choices {
+  display: grid;
+  gap: 0.6rem;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.commission-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+}
+.commission-chip {
+  position: relative;
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ash);
+  transition: color 0.3s var(--ease-editorial);
+}
+.commission-chip span {
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: border-color 0.3s var(--ease-editorial);
+}
+.commission-chip:hover,
+.commission-chip:has(input:checked) {
+  color: var(--color-ink);
+}
+.commission-chip:has(input:checked) span {
+  border-bottom-color: var(--color-garnet);
+}
+.commission-chip:has(input:focus-visible) span {
+  outline: 2px solid var(--color-garnet);
+  outline-offset: 4px;
+}
+.commission-drop {
+  display: grid;
+  justify-items: start;
+  gap: 1.25rem;
+  padding: clamp(1.25rem, 4vw, 2.75rem);
+  border: 1px dashed var(--color-ash);
+  transition: background-color 0.3s var(--ease-editorial), border-color 0.3s var(--ease-editorial);
+}
+.commission-drop[data-dragging="true"] {
+  border-style: solid;
+  border-color: var(--color-garnet);
+  background: #f3f0e9;
+}
+.commission-drop-lede {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+  font-weight: 300;
+  line-height: 1.3;
+}
+.commission-drop-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.commission-drop-actions .btn-line {
+  padding-inline: 1.5rem;
+}
+.commission-drop-actions .btn-line:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+.commission-drop-actions .btn-line:disabled:hover {
+  background: transparent;
+  color: inherit;
+}
+/* Phones and tablets: a camera button, and no talk of dragging. A mouse gets the drop target. */
+.commission-touch-only {
+  display: none;
+}
+@media (pointer: coarse) {
+  .commission-touch-only {
+    display: inline-flex;
+  }
+  .commission-desktop-only {
+    display: none;
+  }
+}
+.commission-notice {
+  font-size: 0.875rem;
+  color: var(--color-ash);
+}
+.commission-notice:empty {
+  display: none;
+}
+.commission-previews {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 8.5rem), 1fr));
+  gap: 1.5rem 1rem;
+}
+.commission-preview {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+.commission-thumb {
+  display: flex;
+  aspect-ratio: 1;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #f3f0e9;
+}
+.commission-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.commission-thumb-pdf {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.3em;
+  color: var(--color-garnet);
+}
+.commission-thumb-name {
+  overflow: hidden;
+  font-size: 0.8125rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.commission-remove {
+  justify-self: start;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-ash);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.commission-remove:hover {
+  color: var(--color-garnet);
+}
+.commission-check-row {
+  display: grid;
+  gap: 0.35rem;
+}
+.commission-check {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  min-height: 44px;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+.commission-check input {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.2rem;
+  accent-color: var(--color-garnet);
+}
+.commission-trap {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.commission-failed {
+  padding: 1.1rem 1.25rem;
+  border-left: 2px solid var(--color-garnet);
+  background: #f3f0e9;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+.commission-failed:focus {
+  outline: 2px solid var(--color-garnet);
+  outline-offset: 2px;
+}
+.commission-submit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 2rem;
+}
+.commission-submit .btn-solid {
+  min-width: min(100%, 16rem);
+}
+.commission-submit .btn-solid:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+.commission-success {
+  max-width: 44rem;
+  padding: clamp(1rem, 4vw, 3rem) 0;
+}
+.commission-success-title {
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.commission-success-title:focus {
+  outline: none;
+}
+.commission-reference {
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  letter-spacing: 0.18em;
+  color: var(--color-garnet);
+}
+.commission-success-copy {
+  margin-top: 2rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--color-ash);
+}
+.commission-success-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 2rem;
+  margin-top: 2.5rem;
+}
+/* The catalogue's quiet line to a commission. */
+.commission-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-line);
+}
+.commission-cta-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: color 0.3s var(--ease-editorial);
+}
+.commission-cta-link:hover {
+  color: var(--color-garnet);
+}
+.commission-cta-section {
+  max-width: 120rem;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 4rem) clamp(3rem, 6vw, 5rem);
+}
+
+/* The form's one wrapper: it only exists to hold the controls disabled until the page is ready. */
+.commission-fieldset {
+  display: contents;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
 }

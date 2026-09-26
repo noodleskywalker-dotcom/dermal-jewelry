@@ -60,7 +60,7 @@ test.describe("prototype product art", () => {
     // The anti-eyebrow form opens on its product animation; the film is presentation, so the exact art
     // is checked on the placement head, and the assembly is checked on a form without a film.
     await page.goto("/product/desert-eye-love");
-    await expect(page.getByTestId("pdp-beauty")).toBeVisible();
+    await expect(page.getByTestId("render-stage")).toBeVisible();
     await page.getByRole("tab", { name: "Placement" }).click();
     await waitForArt(page);
     const placed = await inspect(page.getByTestId("placement-preview"));
@@ -75,9 +75,12 @@ test.describe("prototype product art", () => {
     // Shop grid and bag thumbnail.
     await page.goto("/shop");
     await waitForArt(page);
+    // The shop card shows the owner's design render of the anti-eyebrow piece (26 September 2026);
+    // the per-form prototype art stays on every surface that shows a single form, checked above and below.
     const card = page.locator('[data-testid="product-card"][data-product="desert-eye-love"]');
-    expect((await inspect(card)).length).toBe(2);
-    await expect(card).toContainText("Prototype artwork");
+    await expect(card.getByTestId("piece-render")).toHaveAttribute("src", "/products/desert-eye/catalogue.webp");
+    await expect(card.getByTestId("piece-asset")).toHaveCount(0);
+    await expect(card).toContainText("Design render");
     await expect(page.locator('[data-testid="product-card"][data-product="sand-vortex"]')).toContainText("Concept artwork");
     await page.goto("/product/desert-eye-love?form=nose");
     await page.getByTestId("add-to-bag").click();

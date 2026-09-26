@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { catalog, displayTitle, formatPrice, formOf, placementLabel } from "@/lib/catalog";
+import { catalog, displayTitle, formatPrice, formOf, isConceptFamily, placementLabel } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { bagActions } from "@/lib/cart/store";
 import { SCALE_MAX, SCALE_MIN, TWEAK_SCALE_MAX, TWEAK_SCALE_MIN, ZERO_TWEAK } from "@/lib/studio/geometry";
@@ -38,10 +38,12 @@ const toolButton =
 export function FaceStudio({ initialProductSlug, initialFormId }: { initialProductSlug?: string; initialFormId?: string }) {
   const studio = useStudio();
   const { photo, look, change, selectProduct, selectSide, selectForm } = studio;
-  const products = catalog.listProducts();
+  // A concept family has no drawn form, so it has nothing to place: the Studio never offers one.
+  const products = catalog.listProducts().filter((p) => !isConceptFamily(p));
+  const placeable = (id: string | undefined) => products.find((p) => p.id === id);
   const active = activeItem(look);
-  const activeProduct = active ? catalog.getProductById(active.productId) : undefined;
-  const currentProduct = activeProduct ?? catalog.getProductById(studio.productId) ?? products[0];
+  const activeProduct = placeable(active?.productId);
+  const currentProduct = activeProduct ?? placeable(studio.productId) ?? products[0];
 
   const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
   const [showJewelry, setShowJewelry] = useState(true);
@@ -77,7 +79,7 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
     if (!initialProductSlug || appliedSlug.current === key) return;
     appliedSlug.current = key;
     const product = catalog.getProduct(initialProductSlug);
-    if (!product) return;
+    if (!product || isConceptFamily(product)) return;
     selectProduct(product.id);
     // Only a real, available form is accepted from the URL. The URL never carries photo data.
     const form = initialFormId ? formOf(product, initialFormId) : null;

@@ -102,9 +102,15 @@ export function matchesBrowse(product: Product, filter: BrowseFilter): boolean {
  * This is presentation and nothing else. It never touches a form's `defaultScale` or a component's
  * size, so Face Studio, the placement preview, the bag and every physical measurement are unchanged.
  */
+//
+// A family with a design render is presented by its render instead of its drawn pieces, so its value
+// scales the render's square frame (26 September 2026). Those four were set so the renders' ink reads
+// as equals beside each other and beside the drawn families; see docs/TEST_REPORT.md.
 const PRESENTATION_SCALE: Record<string, number> = {
-  "desert-eye-love": 0.76,
-  "horus-trace": 1.05,
+  "desert-eye-love": 0.94,
+  "horus-trace": 0.9,
+  "japanese-angel": 0.88,
+  "ankh-eye": 0.84,
   "blade-trace": 1.08,
   crossline: 1.3,
   "ankh-trace": 1.15,
@@ -118,6 +124,21 @@ export function presentationScale(product: Product): number {
 
 export function availableForms(product: Product): ProductForm[] {
   return product.forms.filter((f) => f.status === "available");
+}
+
+/** The design render for a form, when the render really shows that form; otherwise nothing. */
+export function renderFor(product: Product, formId?: string | null): Product["render"] {
+  const render = product.render;
+  if (!render) return undefined;
+  return !render.forms || render.forms.includes(formOf(product, formId).id) ? render : undefined;
+}
+
+/**
+ * A family with no configured form is a concept: it can be looked at, never placed, tried on, priced
+ * or bought, however the store is configured.
+ */
+export function isConceptFamily(product: Product): boolean {
+  return product.forms.every((form) => form.status !== "available");
 }
 
 /**

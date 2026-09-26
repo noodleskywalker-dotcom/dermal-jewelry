@@ -1,10 +1,11 @@
-import { formOf } from "@/lib/catalog";
+import { formOf, renderFor } from "@/lib/catalog";
 import { formAssets } from "@/lib/catalog/assets";
 import type { Product } from "@/lib/catalog/types";
 import { FormVisual } from "./FormVisual";
 
 /** What the artwork for a form is, in plain words. Prototype art is never called a product photograph. */
 export function artworkLabel(product: Product, formId?: string): string {
+  if (renderFor(product, formId)) return "Design render";
   const form = formOf(product, formId);
   const exact = Boolean(formAssets(product, form.id, "left"));
   return exact && form.composition?.artClass === "prototype-product-art" ? "Prototype artwork" : "Concept artwork";

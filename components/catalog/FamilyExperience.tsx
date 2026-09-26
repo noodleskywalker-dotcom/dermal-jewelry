@@ -2,22 +2,24 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { displayTitle, filmFor, lineLabels } from "@/lib/catalog";
+import { displayTitle, filmFor, isConceptFamily, lineLabels, renderFor } from "@/lib/catalog";
 import { priceLabel, purchaseState } from "@/lib/commerce/display";
 import type { Product } from "@/lib/catalog/types";
 import { AddToBagButton } from "@/components/cart/AddToBagButton";
 import { RevealPlayer, type ConceptStills } from "@/components/reveal/RevealPlayer";
 import { useFormChoice } from "@/components/studio/useFormChoice";
 import { motionOf } from "./FloatingObject";
-import { DESERT_EYE_HOTSPOTS, MaterialHotspots } from "./MaterialHotspots";
+import { DESERT_EYE_HOTSPOTS, DESERT_EYE_RENDER_HOTSPOTS, MaterialHotspots } from "./MaterialHotspots";
 import { OrbitViewer } from "./OrbitViewer";
 import { PieceAssembly } from "./PieceAssembly";
 import { ProductStage } from "./ProductStage";
+import { RenderStage } from "./RenderStage";
+import { CommissionCta } from "@/components/commission/CommissionCta";
 import { ANCHORS, PlacementPreview } from "./PlacementPreview";
 import { ProductFilm } from "./ProductFilm";
 import { TryOnPreview } from "./TryOnPreview";
 
-type ViewId = "piece" | "orbit" | "assembly" | "hardware" | "reveal" | "placement" | "tryon";
+type ViewId = "piece" | "motion" | "orbit" | "assembly" | "hardware" | "reveal" | "placement" | "tryon";
 
 const ORBIT = "/media/hero-orbit/desert-eye-love";
 
@@ -43,16 +45,26 @@ export function FamilyExperience({
   // Shopify variant and one with none are presented by the same code and neither is guessed at.
   const price = priceLabel(product, form.id);
   const purchase = purchaseState(product, form.id);
+  // A family known only from its render has no form drawn yet: nothing to place or try on.
+  const conceptOnly = isConceptFamily(product);
+  // The render leads only for a form it really shows; any other form keeps its own drawn piece.
+  const render = renderFor(product, form.id);
 
   const views: { id: ViewId; label: string }[] = [
     { id: "piece", label: "The piece" },
+    // With a design render as the piece, prepared film media moves to a view of its own.
+    ...(render && product.media ? [{ id: "motion" as const, label: "In motion" }] : []),
     // A piece with prepared media shows the drawn hardware on its own; without media, "The piece" is it.
     ...(product.media ? [{ id: "hardware" as const, label: "Hardware" }] : []),
     ...(film ? [{ id: "orbit" as const, label: "360°" }, { id: "assembly" as const, label: "Assembly" }] : []),
     // The concept-reveal prototype is superseded on a filmed form; development fixtures can still open it.
     ...(product.reveal.mode !== "none" && (!film || fixtureSrc || concept) ? [{ id: "reveal" as const, label: "Concept reveal" }] : []),
-    { id: "placement", label: "Placement" },
-    { id: "tryon", label: "Try on" },
+    ...(conceptOnly
+      ? []
+      : [
+          { id: "placement" as const, label: "Placement" },
+          { id: "tryon" as const, label: "Try on" },
+        ]),
   ];
   const [view, setView] = useState<ViewId>("piece");
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -80,7 +92,11 @@ export function FamilyExperience({
       {/* The stage. */}
       <div className="pdp-stage-column">
         <div role="tabpanel" id={`panel-${current}`} aria-labelledby={`tab-${current}`} data-testid="pdp-stage" data-view={current} className="pdp-stage">
-          {current === "piece" && film && (
+          {current === "piece" && render && (
+            <RenderStage render={render} title={product.title} hotspots={film ? DESERT_EYE_RENDER_HOTSPOTS : undefined} />
+          )}
+          {current === "motion" && product.media && <ProductStage media={product.media} title={product.title} />}
+          {current === "piece" && !render && film && (
             // The beauty frame of the approved orbit: the finished piece, large, never a schematic first.
             // The frame box matches the picture's cover crop, so the hotspots stay on the parts.
             <div className="pdp-cover">
@@ -89,8 +105,8 @@ export function FamilyExperience({
               <MaterialHotspots spots={DESERT_EYE_HOTSPOTS} />
             </div>
           )}
-          {current === "piece" && product.media && <ProductStage media={product.media} title={product.title} />}
-          {current === "piece" && !film && !product.media && <PieceAssembly key={product.id} product={product} formId={form.id} sand={motionOf(product, form.id) === "sand"} />}
+          {current === "piece" && !render && product.media && <ProductStage media={product.media} title={product.title} />}
+          {current === "piece" && !render && !film && !product.media && <PieceAssembly key={product.id} product={product} formId={form.id} sand={motionOf(product, form.id) === "sand"} />}
           {current === "hardware" && <PieceAssembly key={`hw:${product.id}`} product={product} formId={form.id} sand={false} />}
           {current === "orbit" && film && <OrbitViewer dir={ORBIT} count={72} title={product.title} />}
           {current === "assembly" && film && <ProductFilm key={`${product.id}:${form.id}`} product={product} film={film} formId={form.id} />}
@@ -174,12 +190,15 @@ export function FamilyExperience({
           <span className="mt-1 block font-display text-3xl font-light tracking-[0.06em]">{price.value}</span>
         </p>
 
-        <Link href={`/face-studio?product=${product.slug}&form=${form.id}`} data-testid="try-it-on" className="text-link mt-6">
-          Try on your face <span aria-hidden="true">↗</span>
-        </Link>
+        {!conceptOnly && (
+          <Link href={`/face-studio?product=${product.slug}&form=${form.id}`} data-testid="try-it-on" className="text-link mt-6">
+            Try on your face <span aria-hidden="true">↗</span>
+          </Link>
+        )}
 
         <AddToBagButton product={product} formId={form.id} className="mt-5" />
-        {purchase.note && <p className="label-xs mt-3 text-ash" data-testid="purchase-note">{purchase.note}</p>}
+        {/* Without an action the button's place already carries the note, so it is not said twice. */}
+        {purchase.action && purchase.note && <p className="label-xs mt-3 text-ash" data-testid="purchase-note">{purchase.note}</p>}
 
         <div className="mt-10 divide-y divide-line border-y border-line">
           <details className="group">
@@ -215,6 +234,7 @@ export function FamilyExperience({
         <p className="label-xs mt-4 text-ash" data-testid="spec-status">
           {product.specs.some((s) => s.status === "unverified") ? "Prototype specification · final production details pending · unverified" : "Confirmed specification"}
         </p>
+        <CommissionCta className="mt-12" />
       </aside>
     </div>
   );

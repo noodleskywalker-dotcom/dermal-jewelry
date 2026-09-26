@@ -77,6 +77,16 @@ export function MaterialHotspots({ spots }: { spots: Hotspot[] }) {
 }
 
 /** The anti-eyebrow piece in the orbit's first frame: gemstone, surface bar, symbol. The owner's wording. */
+/**
+ * The same annotations placed on the owner's design render of 26 September 2026 (the product page's
+ * lead picture for the anti-eyebrow form), measured on public/products/desert-eye/hero.webp.
+ */
+export const DESERT_EYE_RENDER_POSITIONS: Record<string, { x: number; y: number }> = {
+  gemstone: { x: 0.136, y: 0.46 },
+  bar: { x: 0.36, y: 0.43 },
+  symbol: { x: 0.71, y: 0.52 },
+};
+
 export const DESERT_EYE_HOTSPOTS: Hotspot[] = [
   {
     id: "gemstone",
@@ -116,3 +126,5 @@ export const DESERT_EYE_HOTSPOTS: Hotspot[] = [
     ],
   },
 ];
+
+export const DESERT_EYE_RENDER_HOTSPOTS: Hotspot[] = DESERT_EYE_HOTSPOTS.map((spot) => ({ ...spot, ...DESERT_EYE_RENDER_POSITIONS[spot.id] }));

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { displayTitle, formOf, lineLabels } from "@/lib/catalog";
+import { displayTitle, formOf, lineLabels, isConceptFamily } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 import { SandLayer } from "@/components/story/SandLayer";
@@ -165,6 +165,9 @@ export function SelectionRail({
           const form = formOf(product, forms[product.id]);
           const current = i === index;
           const sand = motionOf(product) === "sand";
+          // A concept has a page to look at, and no form to name or face to try it on.
+          const concept = isConceptFamily(product);
+          const href = concept ? `/product/${product.slug}` : `/product/${product.slug}?form=${form.id}`;
           return (
             <li
               key={product.id}
@@ -178,9 +181,9 @@ export function SelectionRail({
               className="selection-slide"
             >
               <Link
-                href={`/product/${product.slug}?form=${form.id}`}
+                href={href}
                 draggable={false}
-                aria-label={`View ${product.title}, ${form.label} form`}
+                aria-label={concept ? `View ${product.title}, concept` : `View ${product.title}, ${form.label} form`}
                 tabIndex={current ? 0 : -1}
                 className="selection-object relative mx-auto block aspect-square"
               >
@@ -201,12 +204,16 @@ export function SelectionRail({
                 <h2 className="mt-2 font-display text-[clamp(2rem,4vw,3.5rem)] font-light leading-none tracking-[0.06em]">{displayTitle(product.title)}</h2>
                 <p className="label-xs mt-4 flex min-h-11 items-center justify-center text-ash">{lineLabels(product).join(" · ")}</p>
                 <div className="mt-2 flex flex-wrap items-center justify-center gap-x-8">
-                  <Link href={`/product/${product.slug}?form=${form.id}`} draggable={false} data-testid="selection-view" tabIndex={current ? 0 : -1} className="text-link">
+                  <Link href={href} draggable={false} data-testid="selection-view" tabIndex={current ? 0 : -1} className="text-link">
                     Explore <span aria-hidden="true">↗</span>
                   </Link>
-                  <Link href={`/face-studio?product=${product.slug}&form=${form.id}`} draggable={false} tabIndex={current ? 0 : -1} className="text-link">
-                    Try on <span aria-hidden="true">↗</span>
-                  </Link>
+                  {concept ? (
+                    <span className="label-xs text-ash" data-testid="selection-concept-note">Concept · not yet available</span>
+                  ) : (
+                    <Link href={`/face-studio?product=${product.slug}&form=${form.id}`} draggable={false} tabIndex={current ? 0 : -1} className="text-link">
+                      Try on <span aria-hidden="true">↗</span>
+                    </Link>
+                  )}
                 </div>
               </div>
             </li>

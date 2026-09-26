@@ -55,7 +55,7 @@ test.describe("landing page", () => {
     await page.goto("/");
     await page.getByTestId("cta-selection").click();
     await expect(page).toHaveURL(/\/collections$/);
-    await expect(page.getByTestId("selection-slide")).toHaveCount(8);
+    await expect(page.getByTestId("selection-slide")).toHaveCount(10);
   });
 
   test("the third screen is THE SELECTION, and it holds every family on one stage", async ({ page }) => {
@@ -70,8 +70,8 @@ test.describe("landing page", () => {
     const screens = await section.evaluate((el) => (el.getBoundingClientRect().top + window.scrollY) / window.innerHeight);
     expect(screens).toBeLessThanOrEqual(3.2);
 
-    // Six design families, none of them given a larger frame than the others.
-    await expect(section.getByTestId("browse-entry")).toHaveCount(6);
+    // Eight entries (seven families and KIRI), none of them given a larger frame than the others.
+    await expect(section.getByTestId("browse-entry")).toHaveCount(8);
     await expect(section.locator('[data-entry="kiri"]')).toContainText("Concept");
     await expect(section.locator('[data-entry="desert-eye-love"]')).toContainText("Inspired");
     await expect(section.locator('[data-entry="horus-trace"]')).toContainText("Symbolic");

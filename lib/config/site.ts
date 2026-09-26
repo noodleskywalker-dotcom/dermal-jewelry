@@ -19,10 +19,12 @@ export const site = {
    */
   concepts: [{ name: "KIRI", kind: "Original", status: "Concept", note: "Reduced blade geometry. A concept form, not a product: in design, nothing to order." }],
   currency: "QAR",
+  // The owner's order (26 September 2026). The bag closes the bar on its own, after these.
   nav: [
     { href: "/shop", label: "Shop" },
-    { href: "/face-studio", label: "Face Studio" },
     { href: "/collections", label: "Collections" },
+    { href: "/commission", label: "Commission" },
+    { href: "/face-studio", label: "Face Studio" },
     { href: "/about", label: "About" },
   ],
 } as const;

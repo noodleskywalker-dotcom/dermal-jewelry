@@ -1,4 +1,4 @@
-import { formatPrice, formOf } from "@/lib/catalog";
+import { formatPrice, formOf, isConceptFamily } from "@/lib/catalog";
 import type { FormId, Product } from "@/lib/catalog/types";
 import type { CommerceRecord, DermalProduct } from "./model";
 import { variantForForm } from "./model";
@@ -32,7 +32,8 @@ export function priceLabel(product: Product, formId?: FormId): PriceLabel {
   const commerce = commerceOf(product);
   const form = formOf(product, formId);
 
-  if (commerce?.status === "concept") return { caption: "Concept", value: "Not for sale" };
+  // A concept is never priced, whether or not it came through the commerce layer.
+  if (commerce?.status === "concept" || isConceptFamily(product)) return { caption: "Concept", value: "Not for sale" };
 
   if (commerce && (commerce.status === "live" || commerce.status === "sold-out")) {
     const dermal = product as DermalProduct;
@@ -82,6 +83,7 @@ export function purchaseState(product: Product, formId?: FormId, commerceLive = 
     ? { canBuy: false, merchandiseId: null, action: "", note: "Not yet available" }
     : { canBuy: false, merchandiseId: null, action: "Add to demo bag", note: "Demo · nothing can be ordered yet" };
 
+  if (isConceptFamily(product)) return { canBuy: false, merchandiseId: null, action: "", note: "Concept · not yet available" };
   if (!commerce) return fallback;
 
   switch (commerce.status) {

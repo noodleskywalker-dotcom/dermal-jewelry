@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { availableForms, lineLabels } from "@/lib/catalog";
+import { availableForms, isConceptFamily, lineLabels } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 import { FloatingObject } from "./FloatingObject";
@@ -31,6 +31,8 @@ type Entry = {
   forms: string;
   /** A concept has nowhere to go: no piece to view and nothing to try on. */
   href: string | null;
+  /** False for a family that exists only as a design render: it can be viewed, not tried on. */
+  tryOn: boolean;
   world: World;
   visual: React.ReactNode;
 };
@@ -42,19 +44,24 @@ const FAMILIES: { slug: string; world: World; kind?: string }[] = [
   { slug: "blade-trace", world: "blade" },
   { slug: "crossline", world: "line" },
   { slug: "ankh-trace", world: "symbol" },
+  // Known from the owner's renders of 26 September 2026 and not yet configured: viewable, never tried on.
+  { slug: "japanese-angel", world: "line" },
+  { slug: "ankh-eye", world: "symbol" },
 ];
 
 export function BrowseRail({ products }: { products: Product[] }) {
   const entries: Entry[] = FAMILIES.flatMap(({ slug, world }) => {
     const product = products.find((p) => p.slug === slug);
     if (!product) return [];
+    const concept = isConceptFamily(product);
     return [
       {
         id: slug,
         name: product.title,
-        kind: lineLabels(product).join(" · "),
+        kind: [...lineLabels(product), ...(concept ? ["Concept"] : [])].join(" · "),
         forms: availableForms(product).map((f) => f.label).join(" / "),
         href: `/product/${product.slug}`,
+        tryOn: !concept,
         world,
         visual: (
           <span className="browse-object">
@@ -77,6 +84,7 @@ export function BrowseRail({ products }: { products: Product[] }) {
     // Its status is said once, under the label, and not repeated where the forms would go.
     forms: "",
     href: null,
+    tryOn: false,
     world: "chrome",
     visual: (
       <span className="browse-object browse-blade" data-object-host>
@@ -218,6 +226,7 @@ export function BrowseRail({ products }: { products: Product[] }) {
                     <Link href={entry.href} draggable={false} tabIndex={current ? 0 : -1} className="text-link" data-testid="browse-go">
                       View piece <span aria-hidden="true">↗</span>
                     </Link>
+                    {entry.tryOn && (
                     <Link
                       href={`/face-studio?product=${entry.id}`}
                       draggable={false}
@@ -227,6 +236,7 @@ export function BrowseRail({ products }: { products: Product[] }) {
                     >
                       Try on <span aria-hidden="true">↗</span>
                     </Link>
+                    )}
                   </span>
                 ) : (
                   <p className="label-xs browse-actions text-ash" data-testid="browse-concept-note">

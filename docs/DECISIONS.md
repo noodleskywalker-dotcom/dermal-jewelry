@@ -2,6 +2,43 @@
 
 Dated records of choices that are not obvious from the code.
 
+## 2026-09-26 — Launch prep: the owner's renders, and commission requests
+
+- **Renders map by what they show, not by timestamp.** Each of the four files was opened and matched:
+  09:56:38 is DESERT EYE (red 愛 symbol, red stone), 09:59:20 HORUS TRACE (Eye of Horus), 10:33:20
+  JAPANESE ANGEL (two Japanese characters), 10:35:24 ANKH + EYE (an ankh with two eyes).
+- **The paper is lifted out of each render**, so a piece stands on DERMAL's own paper with no image box.
+  `scripts/build-product-renders.mjs` fits a smooth surface to each crop's paper lighting, divides it
+  out, removes the last faint haze, and keeps the render's real shadow as translucency. Originals stay
+  untouched in `references/renders/2026-09-26/` (gitignored).
+- **Words in the DESERT EYE sheet never reach the site.** It printed "TITANIUM", "HAND POLISHED",
+  "PRECISION SET", a franchise name and a "T1" mark. They are unverified claims, so the front view is
+  cropped clear of the text panel, the "FRONT VIEW" caption is painted out, and the side and back views
+  (with the "T1" mark) are not used.
+- **A render is a picture, never geometry.** `Product.render` replaces the drawn pieces on the shopping
+  stages (`FloatingObject`) and leads the product page (`RenderStage`), labelled "Design render · not
+  photography of a made piece". Face Studio, the placement preview, the bag thumbnails and every form's
+  components are unchanged. Two renders differ from the drawn forms (DESERT EYE joins symbol and stone
+  with a bar; HORUS TRACE has no surface bar or dark stone); the owner chose to use them anyway, and the
+  product text and specifications were not rewritten to match.
+- **JAPANESE ANGEL and ANKH + EYE are new concept families** (owner's choice). No form is drawn, so
+  every form is "Concept pending": no price, no try-on, no bag, not in Face Studio, not in
+  `SELLABLE_FAMILIES`. ANKH TRACE keeps its own plain-ankh artwork. `isConceptFamily` now lives in
+  `lib/catalog` and the demo bag refuses a concept line even from tampered storage.
+- **Commission delivery is Vercel Blob (private) plus Resend over plain `fetch`.** Blob because the
+  project is already on Vercel and it is the only new dependency; private because customer references
+  must not sit at a public address. Files go through our own upload route one at a time, so the bytes
+  are checked before anything is stored and each request stays under Vercel's 4.5 MB body limit; large
+  photos are resized in the browser. The email attaches the files and links to them through a signed
+  route. See `docs/COMMISSION.md`.
+- **A render stands in only for the form it shows** (`ProductRender.forms`). DESERT EYE's render is the joined
+  anti-eyebrow piece, so its micro-dermal and nose forms keep their own drawn pieces; a form is never shown
+  as another form's piece. The material hotspots moved onto the render rather than being dropped.
+- **Reference links expire after 30 days**, with the expiry inside the signature. A file never goes
+  missing from the email: past the 20 MB attachment budget it is sent as a link marked "link only".
+- **Success is only ever reported after Resend accepts the email.** Without the two secrets the form
+  answers 503 and says it could not send.
+
 ## 2026-09-24 — The sand transition is local now
 
 - **The mascot's transition plays media made on this machine**: a ribbon that starts at the gourd and

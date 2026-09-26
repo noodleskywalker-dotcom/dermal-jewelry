@@ -20,7 +20,7 @@ test.describe("the storefront stands up without commerce", () => {
 
   test("the catalogue still holds every family, and the taxonomy is untouched", async ({ page }) => {
     await page.goto("/shop");
-    await expect(page.getByTestId("product-card")).toHaveCount(8);
+    await expect(page.getByTestId("product-card")).toHaveCount(10);
     const lines = page.getByRole("navigation", { name: "Browse the collection" });
     for (const label of ["All", "Men", "Women", "Full collection", "Inspired", "Original", "Limited edition"]) {
       await expect(lines.getByRole("link", { name: label, exact: true })).toBeVisible();

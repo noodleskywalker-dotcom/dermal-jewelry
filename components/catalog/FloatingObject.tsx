@@ -1,4 +1,4 @@
-import { formOf, presentationScale } from "@/lib/catalog";
+import { formOf, presentationScale, renderFor } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { resolveComponents } from "@/lib/studio/geometry";
 import { FormVisual } from "./FormVisual";
@@ -67,6 +67,43 @@ export function FloatingObject({
   // Presentation scale only: how large this family reads inside the stage every family shares. It
   // never changes the form's geometry, so Face Studio and the placement preview are untouched.
   const scale = presentationScale(product);
+  const lightSweep = motion === "blade" || motion === "sweep" || motion === "pendulum" || motion === "edge";
+  const grains =
+    motion === "sand" &&
+    GRAINS.map((g, i) => <span key={i} aria-hidden="true" className="fo-grain" style={{ "--gx": g.gx, "--gdx": g.gdx, "--gdy": g.gdy, "--gdelay": g.gdelay } as React.CSSProperties} />);
+
+  // The owner's design render stands in for the drawn pieces on every shopping stage. It already
+  // carries its own soft shadow, so it takes no second one and no reflection, and the glint and trace
+  // that are placed from drawn parts are left off. Face Studio never reaches this path.
+  const render = renderFor(product, form.id);
+  if (render) {
+    const { catalogue } = render;
+    return (
+      <span className="fo" data-motion={motion} data-depth={depth} data-render style={{ "--depth": depth, "--fo-delay": `${delay}s` } as React.CSSProperties}>
+        <span className={`fo-drift ${drift ? "fo-drifting" : ""}`}>
+          <span className="fo-scale" data-scale={scale} style={{ "--fo-scale": scale } as React.CSSProperties}>
+            <span className="fo-art">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={catalogue.src}
+                width={catalogue.width}
+                height={catalogue.height}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+                data-testid="piece-render"
+                className="fo-render"
+              />
+              {lightSweep && <span aria-hidden="true" className="fo-blade" />}
+              {grains}
+            </span>
+          </span>
+        </span>
+      </span>
+    );
+  }
+
   return (
     <span className="fo" data-motion={motion} data-depth={depth} style={{ "--depth": depth, "--fo-delay": `${delay}s` } as React.CSSProperties}>
       <span className={`fo-drift ${drift ? "fo-drifting" : ""}`}>
@@ -80,11 +117,10 @@ export function FloatingObject({
           <span className="fo-shadow">
             <FormVisual key={form.id} product={product} formId={form.id} />
           </span>
-          {(motion === "blade" || motion === "sweep" || motion === "pendulum" || motion === "edge") && <span aria-hidden="true" className="fo-blade" />}
+          {lightSweep && <span aria-hidden="true" className="fo-blade" />}
           {motion === "eye" && <span aria-hidden="true" className="fo-trace" />}
           {stone && motion !== "blade" && motion !== "sweep" && motion !== "pendulum" && motion !== "edge" && <span aria-hidden="true" className="fo-glint" style={{ left: `${stone.leftPct - stone.widthPct * 0.14}%`, top: `${stone.topPct - stone.widthPct * 0.16}%` }} />}
-          {motion === "sand" &&
-            GRAINS.map((g, i) => <span key={i} aria-hidden="true" className="fo-grain" style={{ "--gx": g.gx, "--gdx": g.gdx, "--gdy": g.gdy, "--gdelay": g.gdelay } as React.CSSProperties} />)}
+          {grains}
         </span>
         </span>
       </span>

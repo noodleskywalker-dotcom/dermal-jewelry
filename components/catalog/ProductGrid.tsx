@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { isFeatured, kindLabels, placementLabel } from "@/lib/catalog";
+import { isConceptFamily, isFeatured, kindLabels, placementLabel } from "@/lib/catalog";
 import { cardPrice } from "@/lib/commerce/display";
 import type { Product } from "@/lib/catalog/types";
 import { Modal } from "@/components/layout/Modal";
@@ -86,6 +86,8 @@ export function ProductGrid({
           // piece that happens to be listed first is never the one given the widest frame.
           const stage = layout === "editorial" && (i % 4 === 1 || i % 4 === 2) ? "wide" : "regular";
           const kind = kindLabels(product).join(" · ");
+          // A concept is shown and can be opened, but it has no form to preview on a face.
+          const concept = isConceptFamily(product);
           return (
             <li
               key={product.id}
@@ -95,14 +97,14 @@ export function ProductGrid({
               data-object-host
               className={`piece group relative ${open ? "z-30" : ""}`}
               onPointerEnter={(e) => {
-                if (e.pointerType === "mouse") scheduleOpen(product, e.currentTarget, OPEN_DELAY_MS);
+                if (e.pointerType === "mouse" && !concept) scheduleOpen(product, e.currentTarget, OPEN_DELAY_MS);
               }}
               onPointerLeave={(e) => {
                 if (e.pointerType === "mouse") scheduleClose();
               }}
               onFocus={(e) => {
                 // Keyboard focus only; a tap or click must not pop the panel.
-                if (e.target instanceof HTMLElement && e.target.matches(":focus-visible")) {
+                if (!concept && e.target instanceof HTMLElement && e.target.matches(":focus-visible")) {
                   scheduleOpen(product, e.currentTarget, 0);
                 }
               }}
@@ -144,7 +146,7 @@ export function ProductGrid({
                   </span>
                 </span>
                 <span className="label-xs mt-2 block text-ash" data-testid="piece-kind">
-                  {product.placements.map(placementLabel).join(" · ")}
+                  {concept ? "Concept" : product.placements.map(placementLabel).join(" · ")}
                   {kind ? ` · ${kind}` : ""} · Demo
                 </span>
               </Link>
@@ -153,6 +155,9 @@ export function ProductGrid({
                 <Link href={`/product/${product.slug}`} className="text-link" data-testid="view-piece">
                   View piece<span className="sr-only"> {product.title}</span> <span aria-hidden="true">↗</span>
                 </Link>
+                {concept ? (
+                  <span className="label-xs text-ash" data-testid="piece-concept">Not yet available</span>
+                ) : (
                 <button
                   type="button"
                   data-testid="try-on-button"
@@ -165,6 +170,7 @@ export function ProductGrid({
                 >
                   Try on<span className="sr-only"> {product.title}</span> <span aria-hidden="true">↗</span>
                 </button>
+                )}
               </span>
               </div>
 

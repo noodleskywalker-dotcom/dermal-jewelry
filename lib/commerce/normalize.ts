@@ -1,4 +1,5 @@
 import type { Product } from "@/lib/catalog/types";
+import { isConceptFamily } from "@/lib/catalog";
 import type { ShopifyMoney, ShopifyProduct, ShopifyVariant } from "@/lib/shopify/types";
 import { formFromVariantOptions, handleFor, slugForHandle } from "./mapping";
 import type { CommerceRecord, CommerceStatus, CommerceVariant, DermalProduct, Money } from "./model";
@@ -65,9 +66,7 @@ export function normalizeProduct(product: ShopifyProduct): CommerceRecord {
  * Whether a family is a concept rather than a product. A concept never becomes purchasable, however
  * the store is configured: KIRI is a direction, and a Shopify record would not change that.
  */
-export function isConceptFamily(product: Product): boolean {
-  return product.forms.every((form) => form.status !== "available");
-}
+export { isConceptFamily };
 
 /**
  * Joins one editorial family to the Shopify records, by handle.

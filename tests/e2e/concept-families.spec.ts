@@ -20,7 +20,7 @@ const BANNED = ["implant-grade", "implant grade", "genuine gemstone", "sterling"
 test.describe("the concept families", () => {
   test("every concept family is in the full collection, the selection and the shop, in the owner's order", async ({ page }) => {
     await page.goto("/shop");
-    await expect(page.getByTestId("product-card")).toHaveCount(8);
+    await expect(page.getByTestId("product-card")).toHaveCount(10);
     for (const f of FAMILIES) {
       await expect(page.locator(`[data-testid="product-card"][data-product="${f.slug}"]`)).toHaveCount(1);
     }
@@ -71,7 +71,7 @@ test.describe("the concept families", () => {
       await expect(page.getByTestId("spec-status")).toContainText("Prototype specification · final production details pending");
       // The piece, the placement and try-on exist; nothing pretends to be a film or a 360.
       const modes = page.getByRole("tab");
-      await expect(modes).toHaveText(f.slug === "horus-trace" ? ["The piece", "Hardware", "Placement", "Try on"] : ["The piece", "Placement", "Try on"]);
+      await expect(modes).toHaveText(f.slug === "horus-trace" ? ["The piece", "In motion", "Hardware", "Placement", "Try on"] : ["The piece", "Placement", "Try on"]);
       const text = (await page.locator("main").innerText()).toLowerCase();
       for (const word of BANNED) expect(text).not.toContain(word);
     });
@@ -94,8 +94,11 @@ test.describe("the concept families", () => {
     }
   });
 
-  test("HORUS TRACE opens on its own prepared media, honestly labelled", async ({ page }) => {
+  test("HORUS TRACE keeps its own prepared media, honestly labelled", async ({ page }) => {
     await page.goto("/product/horus-trace");
+    // The piece opens on the owner's design render (26 September 2026); the prepared film is one press away.
+    await expect(page.getByTestId("render-stage")).toBeVisible();
+    await page.getByRole("tab", { name: "In motion" }).click();
     const stage = page.getByTestId("product-stage");
     await expect(stage).toBeVisible();
     await expect(stage.getByTestId("product-stage-film")).toBeVisible();

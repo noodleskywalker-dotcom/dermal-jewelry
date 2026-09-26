@@ -1,5 +1,54 @@
 # Test report
 
+## Launch prep: product renders and commissions — 26 September 2026
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors, 0 warnings |
+| `npm run typecheck` | pass |
+| `npm test` | 159 of 159 pass (13 files; 30 new: `commission.test.ts`, `renders.test.ts`) |
+| `npm run test:e2e -- --workers=2` | **537 pass, 0 fail, 66 skipped**, run one project at a time (see below) |
+| `npm run build` | pass, 23 static pages; `/api/commission`, `/upload` and `/file` are server functions |
+
+The first full run was stopped by the operating system for low memory before it reported. It was
+rerun one project at a time, still with 2 workers, and every project finished:
+
+| Project | Pass | Fail | Skipped |
+| --- | --- | --- | --- |
+| desktop-chromium (1440 x 900) | 188 | 0 | 5 |
+| mobile-chromium (Pixel 7) | 165 | 0 | 28 |
+| desktop-webkit (1280 x 800, automated WebKit, not a real iPhone) | 165 | 0 | 28 |
+| narrow-320 (launch spec only) | 19 | 0 | 5 |
+
+Launch spec (`tests/e2e/launch.spec.ts`, 24 tests) by project: desktop Chromium 22 pass, Pixel 7 19,
+WebKit 22, 320 px 19; the skips are device-specific (phone-only camera checks, desktop-only keyboard
+and nav-bar checks). Skips elsewhere are the suite's existing ones.
+
+**What the old tests caught, and what was done.** 29 existing tests failed on the first run.
+- Structure only, expectation updated: 6 → 8 rail entries, 8 → 10 shop pieces, 08 → 10 in the
+  selection index, the owner's order with JAPANESE ANGEL and ANKH + EYE before KIRI, HORUS TRACE's
+  scale (its render is framed full-bleed), the product page opening on the render instead of the
+  orbit frame, and HORUS TRACE's film moving to "In motion".
+- **Real regressions, code fixed:** (1) the render replaced the picture for every form, so DESERT EYE's
+  micro-dermal and nose forms would have shown the whole joined piece. Renders now carry `forms` and
+  only stand in for the form they show. (2) The material hotspots were lost; they are back, placed on
+  the render. (3) A new test id clashed with KIRI's. (4) On the render a hotspot's open note covered the
+  next hotspot; dots now sit above notes. (5) In WebKit, text typed before hydration was cleared; the
+  commission form's controls are disabled until the page is ready, so nothing typed can vanish.
+
+**Production checks.** Against `next start`: `/commission` 200; submit, upload and file link all
+answer 503 "can’t be received right now" without credentials, including when the development mock
+header is sent. The built client bundles contain no `BLOB_READ_WRITE_TOKEN`, `RESEND_API_KEY`,
+`api.resend.com`, `@vercel/blob` or mock header.
+
+**Render balance.** Ink along each render's long axis, after its presentation scale: DESERT EYE 82%,
+HORUS TRACE 80%, JAPANESE ANGEL 77%, ANKH + EYE 76% of the stage — inside the 70–92% band the drawn
+pieces were balanced to. Every render is transparent, square in the catalogue, `object-fit: contain`.
+
+Screenshots from the final code: `docs/screenshots/launch/` (26 frames, desktop 1440 x 900, Pixel 7
+and 320 px). Every commission send in tests and screenshots went through the development mock; nothing
+was emailed or stored outside this machine.
+
 ## Homepage resequencing — 24 September 2026
 
 | Command | Result |

@@ -23,5 +23,7 @@ export default defineConfig({
     { name: "mobile-chromium", use: { ...devices["Pixel 7"] } },
     // Automated WebKit, not a real iPhone.
     { name: "desktop-webkit", use: { ...devices["Desktop Safari"], viewport: { width: 1280, height: 800 } } },
+    // The narrowest phone the site supports, for the launch checks only (26 September 2026).
+    { name: "narrow-320", testMatch: /launch\.spec\.ts/, use: { ...devices["Pixel 7"], viewport: { width: 320, height: 720 } } },
   ],
 });

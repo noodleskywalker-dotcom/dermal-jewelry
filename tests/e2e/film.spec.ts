@@ -27,7 +27,7 @@ test.describe("first load", () => {
     const media = mediaRequests(page);
     await page.goto(FAMILY);
     // The default mode is the finished piece, large; never a schematic and never the film's creature poster.
-    await expect(page.getByTestId("pdp-beauty")).toBeVisible();
+    await expect(page.getByTestId("render-stage")).toBeVisible();
     await expect(page.getByTestId("piece-assembly")).toHaveCount(0);
     await page.getByRole("tab", { name: "Assembly" }).click();
     await expect(film(page)).toHaveAttribute("data-state", "idle");
@@ -188,7 +188,7 @@ test.describe("playback", () => {
     await expect(page).toHaveURL(/\/face-studio\?product=desert-eye-love&form=anti-eyebrow/);
     await expect(page.locator("video:not([data-testid='mascot-clip'])")).toHaveCount(0);
     await page.goBack();
-    await expect(page.getByTestId("pdp-beauty")).toBeVisible();
+    await expect(page.getByTestId("render-stage")).toBeVisible();
     await page.getByRole("tab", { name: "Assembly" }).click();
     await expect(film(page)).toHaveAttribute("data-state", "idle");
     await expect(page.getByTestId("film-play")).toBeVisible();

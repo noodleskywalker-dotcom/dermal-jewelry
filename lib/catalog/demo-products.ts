@@ -1,4 +1,4 @@
-import type { Placement, Product, ProductComponent, ProductForm, RevealConfig } from "./types";
+import type { FormId, Placement, Product, ProductComponent, ProductForm, RevealConfig } from "./types";
 
 export const placements: Placement[] = [
   { id: "anti-eyebrow", label: "Anti-eyebrow", note: "Below and outside the outer corner of the eye." },
@@ -68,6 +68,23 @@ function family(input: FamilyInput): Product {
 const single = (id: string, label: string, art: ProductComponent["art"], size: number): ProductComponent[] => [
   { id, label, art, x: 0, y: 0, size },
 ];
+
+/**
+ * The owner's design renders of 26 September 2026, built by scripts/build-product-renders.mjs from the
+ * sources in references/renders/2026-09-26/. The sizes are the delivery files' own, so nothing stretches.
+ */
+const RENDER_NOTE = "Design render · not photography of a made piece · materials not yet confirmed";
+const CONCEPT_RENDER_NOTE = "Design render · concept · not photography of a made piece";
+function render(dir: string, hero: [number, number], detail: [number, number], alt: string, concept = false, forms?: FormId[]): Product["render"] {
+  return {
+    forms,
+    hero: { src: `/products/${dir}/hero.webp`, width: hero[0], height: hero[1] },
+    catalogue: { src: `/products/${dir}/catalogue.webp`, width: 840, height: 840 },
+    detail: { src: `/products/${dir}/detail.webp`, width: detail[0], height: detail[1] },
+    alt,
+    note: concept ? CONCEPT_RENDER_NOTE : RENDER_NOTE,
+  };
+}
 
 // Demo prices are placeholders carried over from earlier concepts. They are not selling prices.
 export const demoProducts: Product[] = [
@@ -161,6 +178,9 @@ export const demoProducts: Product[] = [
       { id: "stone", label: "Deep-red faceted gemstone", status: "Material not yet confirmed" },
       { id: "finish", label: "Polished finish", status: "Proposed" },
     ],
+    // The render shows the symbol and the stone joined by a bar. The approved anti-eyebrow form is still
+    // two separate tops on a diagonal, and Face Studio keeps drawing that form from its components.
+    render: render("desert-eye", [1070, 510], [455, 350], "The openwork love symbol with a deep-red faceted gemstone, in polished silver-tone metal", false, ["anti-eyebrow"]),
     // The owner's approved product animation (22 September 2026): a sand creature dissolves into sand,
     // the three parts of the anti-eyebrow pair appear separately and assemble, and the completed piece
     // holds. Web versions of the supplied master; the master itself is in `references/`, not here.
@@ -250,6 +270,8 @@ export const demoProducts: Product[] = [
       macro: "/media/horus-trace/macro.jpg",
       note: "Prototype render · lighting and motion only · not photography of a made piece",
     },
+    // The render draws the eye on its own, without the surface bar or the dark stone of the drawn form.
+    render: render("horus-trace", [1448, 1086], [520, 390], "A polished silver-tone Eye of Horus, with a spiral and a pointed drop", false, ["anti-eyebrow"]),
   }),
   // BLADE TRACE, approved by the owner on 23 September 2026 from the fourth reference image. Drawn
   // from that worn photograph: a tapered blade, a short ribbed grip and an open ring, on a diagonal.
@@ -471,6 +493,49 @@ export const demoProducts: Product[] = [
     ],
     reveal: NO_REVEAL,
     specs: unverifiedSpecs(),
+  }),
+  // Two design families known only from the owner's renders of 26 September 2026. Nothing about them
+  // has been configured: no form is drawn, so there is nothing to place, try on, price or buy, and
+  // every form says so. The render is the whole of what exists.
+  family({
+    id: "demo-japanese-angel",
+    slug: "japanese-angel",
+    title: "JAPANESE ANGEL",
+    collection: "originals",
+    origin: "original",
+    lines: ["full", "original", "symbolic"],
+    summary: "Two Japanese characters drawn as sharp, polished linework.",
+    story:
+      "A word written in metal: two characters with pointed, calligraphic strokes, open between the lines so the skin shows through. Known so far only from a design render.",
+    defaultFormId: "micro-dermal",
+    forms: [pendingForm("micro-dermal", "Micro dermal", "dermal"), pendingForm("anti-eyebrow", "Anti-eyebrow", "anti-eyebrow")],
+    reveal: NO_REVEAL,
+    specs: unverifiedSpecs(),
+    materials: [
+      { id: "metal", label: "Metal", status: "Not yet confirmed" },
+      { id: "finish", label: "Polished finish", status: "Proposed" },
+    ],
+    render: render("japanese-angel", [1448, 1086], [590, 470], "Two Japanese characters in polished silver-tone linework, with a flat disc back", true),
+  }),
+  family({
+    id: "demo-ankh-eye",
+    slug: "ankh-eye",
+    title: "ANKH + EYE",
+    collection: "originals",
+    origin: "original",
+    lines: ["full", "original", "symbolic", "ancient"],
+    summary: "An ankh carrying two Egyptian eyes, spread like wings.",
+    story:
+      "Two of the oldest marks people have worn, made one: an ankh rises through the centre, and an Egyptian eye opens on either side of it, each with its spiral and its drop. Known so far only from a design render.",
+    defaultFormId: "micro-dermal",
+    forms: [pendingForm("micro-dermal", "Micro dermal", "dermal"), pendingForm("anti-eyebrow", "Anti-eyebrow", "anti-eyebrow")],
+    reveal: NO_REVEAL,
+    specs: unverifiedSpecs(),
+    materials: [
+      { id: "metal", label: "Metal", status: "Not yet confirmed" },
+      { id: "finish", label: "Polished finish", status: "Proposed" },
+    ],
+    render: render("ankh-eye", [1448, 1086], [560, 480], "A polished silver-tone ankh with an Egyptian eye spread on either side", true),
   }),
   // Three concept families from the owner's brief of 23 September 2026. The reference screenshots did
   // not reach this machine, so the artwork is an original concept placeholder drawn from the written

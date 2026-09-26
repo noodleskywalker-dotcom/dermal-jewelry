@@ -47,7 +47,9 @@ export function sanitizeBag(value: unknown, catalog: Pick<CatalogProvider, "getP
     if (!Number.isFinite(raw.quantity) || raw.quantity < 1) continue;
     const product = catalog.getProductById(raw.productId);
     if (!product || !isFormId(raw.formId)) continue;
-    if (formOf(product, raw.formId).id !== raw.formId) continue;
+    // A concept family's default form resolves but is not available, so it can never become a line.
+    const form = formOf(product, raw.formId);
+    if (form.id !== raw.formId || form.status !== "available") continue;
     if (lines.some((l) => same(l, raw.productId, raw.formId))) continue;
     lines.push({ productId: raw.productId, formId: raw.formId, quantity: Math.min(MAX_QUANTITY, Math.floor(raw.quantity)) });
   }

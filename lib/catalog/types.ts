@@ -148,6 +148,30 @@ export type ProductMedia = {
   note: string;
 };
 
+/** One delivery image of a design render, with its intrinsic size so it never stretches. */
+export type RenderImage = { src: string; width: number; height: number };
+
+/**
+ * The owner's design render of a piece (26 September 2026): a hyper-realistic still of the design,
+ * with its paper lifted out so it stands on DERMAL's paper. It is a design render, never photography
+ * of a made piece, and it never supplies geometry: Face Studio and the placement preview keep drawing
+ * the form's own components. `catalogue` is a square frame for every equal stage; `hero` and
+ * `detail` are for the product page.
+ */
+export type ProductRender = {
+  hero: RenderImage;
+  catalogue: RenderImage;
+  detail?: RenderImage;
+  /**
+   * The forms this render really shows. Any other form keeps its own drawn artwork, because a form is
+   * never shown as another form's piece. Omitted means every form (a concept with none drawn yet).
+   */
+  forms?: FormId[];
+  /** What the render shows, for alt text. Describes the picture, never the material. */
+  alt: string;
+  note: string;
+};
+
 /** Who a piece is presented to when browsing. A piece for everyone is "unisex" and shows under men and women. */
 export type Audience = "men" | "women" | "unisex";
 /**
@@ -185,6 +209,8 @@ export type Product = {
   materials?: MaterialNote[];
   /** Prepared media for the product stage. Without it, the drawn assembly is the product view. */
   media?: ProductMedia;
+  /** The owner's design render. When present it is the piece's picture on every shopping surface. */
+  render?: ProductRender;
   /** An optional themed opening for the assembly view. The standard assembly never depends on it. */
   assembly?: { themed?: { id: string; description: string; status: "not-produced" | "available" } };
 

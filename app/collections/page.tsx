@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SelectionRail } from "@/components/catalog/SelectionRail";
 import { WaysIn } from "@/components/catalog/WaysIn";
+import { CommissionCta } from "@/components/commission/CommissionCta";
 import { catalog } from "@/lib/catalog";
 import { site } from "@/lib/config/site";
 
@@ -30,6 +31,9 @@ export default async function SelectionPage({ searchParams }: PageProps<"/collec
           </Link>
         ))}
       </nav>
+      <div className="commission-cta-section">
+        <CommissionCta />
+      </div>
     </div>
   );
 }
