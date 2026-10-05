@@ -86,7 +86,10 @@ export function CommissionForm({ endpoint = "/api/commission" }: { endpoint?: st
   useEffect(() => () => filesRef.current.forEach((f) => f.preview && URL.revokeObjectURL(f.preview)), []);
 
   useEffect(() => {
-    if (status.state === "sent") received.current?.focus();
+    if (status.state === "sent") {
+      received.current?.focus({ preventScroll: true });
+      received.current?.closest("section")?.scrollIntoView({ block: "start", behavior: "instant" });
+    }
     if (status.state === "failed") failure.current?.focus();
   }, [status.state]);
 

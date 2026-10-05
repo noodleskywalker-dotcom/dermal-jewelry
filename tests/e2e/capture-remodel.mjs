@@ -21,7 +21,7 @@ async function session(name, options, steps) {
   await page.route("**/api/commission**", (route) =>
     route.continue({ headers: { ...route.request().headers(), "x-dermal-commission-mock": mock.mode, "x-dermal-test-key": `capture-${name}-${Date.now()}` } }),
   );
-  const shot = async (file, full = false) => {
+  const shot = async (file, full = false, region) => {
     if (full) {
       // Walk the page once so every lazy picture has loaded before the whole-page frame is taken.
       await page.evaluate(async () => {
@@ -34,7 +34,8 @@ async function session(name, options, steps) {
     }
     await page.waitForFunction(() => Array.from(document.images).filter((img) => { const r = img.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth; }).every((img) => img.complete && img.naturalWidth > 0), null, { timeout: 10000 });
     await page.waitForTimeout(900);
-    await page.screenshot({ path: `${out}${name}-${file}.png`, fullPage: full });
+    if (region) await region.screenshot({ path: `${out}${name}-${file}.png` });
+    else await page.screenshot({ path: `${out}${name}-${file}.png`, fullPage: full });
   };
   const settle = async (url) => {
     await page.goto(`${base}${url}`);
@@ -86,11 +87,11 @@ await session("desktop", { viewport: { width: 1440, height: 900 } }, async ({ pa
   await page.getByTestId("scrub-hero").scrollIntoViewIfNeeded();
   await shot("00b-home-reveal");
   await page.getByTestId("collection-section").evaluate((el) => el.scrollIntoView({ block: "start" }));
-  await shot("01-home-selection-desert-eye");
+  await shot("01-home-selection-desert-eye", false, page.getByTestId("collection-section"));
   for (const slug of ["horus-trace", "blade-trace", "crossline"]) {
     await railTo(page, slug);
     await page.getByTestId("collection-section").evaluate((el) => el.scrollIntoView({ block: "start" }));
-    await shot(`02-home-selection-${slug}`);
+    await shot(`02-home-selection-${slug}`, false, page.getByTestId("collection-section"));
   }
 
   await page.getByTestId("home-commission").scrollIntoViewIfNeeded();

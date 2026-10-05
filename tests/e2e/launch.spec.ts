@@ -253,6 +253,11 @@ test.describe("commission page", () => {
     const success = page.getByTestId("commission-success");
     await expect(success).toBeVisible({ timeout: 20_000 });
     await expect(success.getByRole("heading", { name: "Request received" })).toBeFocused();
+    await expect.poll(async () => {
+      const heading = await success.getByRole("heading", { name: "Request received" }).boundingBox();
+      const header = await page.locator("header[data-tone]").first().boundingBox();
+      return Boolean(heading && header && heading.y >= header.y + header.height);
+    }).toBe(true);
     await expect(page.getByTestId("commission-reference")).toHaveText(/^DRM-C-[2-9A-HJKMNP-Z]{5}$/);
     await expect(success).toContainText("We’ve received your concept.");
     await expect(success.getByRole("link", { name: "Back to shop" })).toHaveAttribute("href", "/shop");
