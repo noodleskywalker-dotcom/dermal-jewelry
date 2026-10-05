@@ -91,7 +91,7 @@ await session("desktop", { viewport: { width: 1440, height: 900 } }, async ({ pa
   for (const slug of ["horus-trace", "blade-trace", "crossline"]) {
     await railTo(page, slug);
     await page.getByTestId("collection-section").evaluate((el) => el.scrollIntoView({ block: "start" }));
-    await shot(`02-home-selection-${slug}`, false, page.getByTestId("collection-section"));
+    await shot(`02-home-selection-${slug}`);
   }
 
   await page.getByTestId("home-commission").scrollIntoViewIfNeeded();

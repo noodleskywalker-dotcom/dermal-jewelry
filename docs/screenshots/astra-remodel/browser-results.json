@@ -1,0 +1,30 @@
+{
+  "commit": "cf3e518a7641e9e702bc6fd351edc01e808dc52f",
+  "run": 37287262062,
+  "stats": {
+    "startTime": "2026-10-05T09:02:01.214Z",
+    "duration": 481861.47,
+    "expected": 484,
+    "skipped": 122,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "projects": {
+    "desktop-chromium": {
+      "expected": 165,
+      "skipped": 29
+    },
+    "mobile-chromium": {
+      "expected": 150,
+      "skipped": 44
+    },
+    "desktop-webkit": {
+      "expected": 150,
+      "skipped": 44
+    },
+    "narrow-320": {
+      "expected": 19,
+      "skipped": 5
+    }
+  }
+}
