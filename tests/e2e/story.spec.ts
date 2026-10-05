@@ -228,16 +228,28 @@ test.describe("DESERT EYE collection stage", () => {
   test("changing piercing type moves the attention and changes the pieces, not just their size", async ({ page }) => {
     await page.goto(`${STAGE}?product=desert-eye-love`);
     const visual = page.getByTestId("story-visual");
+    const expectFormVisual = async (form: string, slot: string, pieces: number) => {
+      await expect(visual).toHaveAttribute("data-form", form);
+      if (await visual.getAttribute("data-media") === "placeholder") {
+        // Without an internal wearer image, the selected form has its own complete studio scene.
+        const photo = visual.locator('.product-photograph[data-presentation="photographic"] > img');
+        await expect(photo).toHaveAttribute("src", `/products/photographic/${slot}/thumb.webp`);
+        await expect.poll(() => photo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+      } else {
+        // A supplied wearer image still receives editable component artwork at the chosen placement.
+        await expect(visualPieces(page)).toHaveCount(pieces);
+      }
+    };
     await expect(visual).toHaveAttribute("data-form", "anti-eyebrow");
     const before = await visual.getAttribute("data-media");
-    // The clean close-up carries the pair as a product overlay, and only as an overlay.
+    // The clean close-up carries the pair as an overlay; absent media uses the matching product scene.
     await expect(visual).toHaveAttribute("data-jewelry", "overlay");
-    await expect(visualPieces(page)).toHaveCount(2);
+    await expectFormVisual("anti-eyebrow", "desert-eye-love", 2);
 
     await chooseForm(page, "nose");
     await expect(product(page)).toHaveAttribute("data-form", "nose");
     await expect(visual).toHaveAttribute("data-form", "nose");
-    await expect(visualPieces(page)).toHaveCount(1);
+    await expectFormVisual("nose", "desert-eye-gem", 1);
     await expect(page.getByTestId("story-price")).toContainText("Price pending");
     await expect(page.getByTestId("story-form-note")).toContainText("deep-red faceted gemstone");
     await expect(page).toHaveURL(/form=nose/);
@@ -255,7 +267,7 @@ test.describe("DESERT EYE collection stage", () => {
     }
 
     await chooseForm(page, "micro-dermal");
-    await expect(visualPieces(page)).toHaveCount(1);
+    await expectFormVisual("micro-dermal", "desert-eye-symbol", 1);
     await expect(page.getByTestId("story-price")).toContainText("Price pending");
 
     // The placement view follows the same form.
