@@ -3820,3 +3820,29 @@ body:has(.cinema-hero) header[data-scrolled="false"] a[aria-label$="home"] {
   padding: 0;
   min-width: 0;
 }
+
+/* Shared atelier frame, October 2026. */
+.site-navigation { border-bottom: 1px solid rgb(102 97 90 / .18); }
+.site-header[data-tone="cinematic"] .site-navigation { border-color: rgb(251 250 247 / .16); }
+.site-header nav > a { font-size: 1rem; letter-spacing: .34em; }
+.site-header .label-xs { font-size: .65rem; letter-spacing: .16em; }
+.atelier-footer { padding: 0 5vw; border-top: 1px solid var(--color-line); }
+.footer-intro { display:flex; justify-content:space-between; align-items:center; gap:2rem; padding:3.5rem 0; border-bottom:1px solid var(--color-line); }
+.footer-intro > p { font:300 2.6rem/1.05 var(--font-display); letter-spacing:-.03em; }
+.footer-information { display:grid; grid-template-columns:1fr 1.1fr 1.1fr; gap:6vw; padding:3rem 0 4rem; }
+.footer-information .label-xs { margin-bottom:1.4rem; }
+.footer-information ul { display:grid; grid-template-columns:1fr 1fr; gap:.8rem 1.2rem; font-size:.875rem; }
+.footer-information > div > p:not(.label-xs) { font-size:.8125rem; line-height:1.8; color:var(--color-ash); margin-top:1rem; max-width:27rem; }
+.footer-information a:hover { color:var(--color-garnet); }
+.footer-wordmark { font-family:var(--font-display); font-weight:400; font-size:21.2vw; line-height:.85; letter-spacing:-.052em; text-align:center; padding-bottom:2rem; }
+.footer-colophon { display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; border-top:1px solid var(--color-line); padding:1.4rem 0 2rem; font-size:.625rem; letter-spacing:.12em; text-transform:uppercase; color:var(--color-ash); }
+@media(max-width:760px) {
+ .atelier-footer { padding:0 1.5rem; }
+ .footer-intro { align-items:flex-start; flex-direction:column; padding:2.5rem 0; }
+ .footer-information { grid-template-columns:1fr; gap:2rem; padding:2.5rem 0 3rem; }
+ .footer-information nav ul { grid-template-columns:1fr 1fr; }
+ .footer-wordmark { font-size:20vw; }
+ .footer-colophon span:last-child { display:none; }
+}
+.navigation-search { display: none; }
+@media(min-width:1280px) { .navigation-search { display: inline-flex; } }

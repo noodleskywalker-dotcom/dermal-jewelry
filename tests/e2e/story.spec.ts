@@ -1,5 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
 import { FIXTURE } from "./helpers";
+import { internalConceptUrl } from "../../lib/story/internal-media";
+
+const HAS_STORY_MEDIA = ["seated", "closeup-clean", "sandfx"].every((name) => Boolean(internalConceptUrl(name, true)));
+const requireStoryMedia = () => test.skip(!HAS_STORY_MEDIA, "the internal story stills and sand clip are not on this machine");
+const visualPieces = (page: Page) => page.getByTestId("story-visual").locator("[data-component]");
 
 const STAGE = "/collections/desert-eye";
 
@@ -18,14 +23,19 @@ test.describe("DESERT EYE collection stage", () => {
     await expect(stage(page)).toHaveAttribute("data-mode", "browse");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("DESERT EYE");
     await expect(page.getByTestId("story-character")).toBeVisible();
+    if (!internalConceptUrl("seated", true)) {
+      await expect(page.getByTestId("story-character")).toHaveAttribute("data-media", "placeholder");
+      await expect(page.getByTestId("story-watch")).toContainText("View the piece");
+      await expect(stage(page)).toHaveAttribute("data-story-media", "false");
+    }
     await expect(page.getByTestId("product-card")).toHaveCount(0);
     await expect(page.getByTestId("story-piece")).toHaveCount(4);
     // Nothing plays by itself.
     await page.waitForTimeout(1200);
     await expect(page.getByTestId("story-cinematic")).toHaveCount(0);
     await expect(stage(page)).toHaveAttribute("data-mode", "browse");
-    // Each object is a real link that names the piece, the form and the demo price.
-    await expect(piece(page, "desert-eye-love", "nose").getByTestId("story-piece-link")).toHaveAccessibleName(/DESERT EYE — LOVE, Nose form, demo price QAR 190/);
+    // Each object is a real link that names the piece, the form and an honest price state.
+    await expect(piece(page, "desert-eye-love", "nose").getByTestId("story-piece-link")).toHaveAccessibleName(/DESERT EYE — LOVE, Nose form, Price pending/);
     await expect(piece(page, "desert-eye-love", "nose").getByTestId("story-piece-link")).toHaveAttribute("href", /product=desert-eye-love&form=nose/);
     // Customer-facing copy only: no timings, no engineering notes, never a collaboration claim.
     const head = page.locator(".story-head");
@@ -54,7 +64,7 @@ test.describe("DESERT EYE collection stage", () => {
     await expect(character).toHaveAttribute("data-reacting", "false");
     // A pointer cursor and a small label, not a card or a big button.
     expect(await character.evaluate((el) => getComputedStyle(el).cursor)).toBe("pointer");
-    await expect(page.getByTestId("story-tag")).toContainText("Watch story");
+    await expect(page.getByTestId("story-tag")).toContainText(HAS_STORY_MEDIA ? "Watch story" : "View the piece");
     // The pointer only has to come close for a first sign of life.
     const box = (await character.boundingBox())!;
     await page.mouse.move(box.x + box.width + 400, box.y + 200);
@@ -78,7 +88,7 @@ test.describe("DESERT EYE collection stage", () => {
     await target.getByTestId("story-piece-link").hover();
     await expect(target).toContainText("DESERT EYE — LOVE");
     await expect(target).toContainText("Micro dermal");
-    await expect(target).toContainText("QAR 220");
+    await expect(target).toContainText("Price pending");
     await expect(target.getByTestId("story-piece-tryon")).toBeVisible();
     await page.waitForTimeout(900);
     await expect(page.getByTestId("story-cinematic")).toHaveCount(0);
@@ -90,7 +100,7 @@ test.describe("DESERT EYE collection stage", () => {
     await piece(page, "desert-eye-love", "micro-dermal").getByTestId("story-piece-link").click();
     await expect(page.getByTestId("story-cinematic")).toHaveCount(0);
     await expect(product(page)).toHaveAttribute("data-form", "micro-dermal");
-    await expect(page.getByTestId("story-price")).toContainText("QAR 220");
+    await expect(page.getByTestId("story-price")).toContainText("Price pending");
     await expect(page).toHaveURL(/\?product=desert-eye-love&form=micro-dermal$/);
 
     // The address alone opens the same thing.
@@ -108,10 +118,11 @@ test.describe("DESERT EYE collection stage", () => {
     await expect(product(page)).toHaveAttribute("data-product", "sand-vortex");
     await expect(page.getByTestId("story-replay")).toHaveCount(0);
     await page.getByTestId("add-to-bag").click();
-    await expect(page.getByTestId("bag-subtotal")).toHaveText("QAR 350");
+    await expect(page.getByTestId("bag-subtotal")).toHaveText("Price pending");
   });
 
   test("the story starts from a press, can be skipped at once, and resolves into the product", async ({ page }) => {
+    requireStoryMedia();
     await page.goto(STAGE);
     await expect(page.getByTestId("story-watch")).toContainText("Watch story");
     await page.getByTestId("story-watch").click();
@@ -137,13 +148,14 @@ test.describe("DESERT EYE collection stage", () => {
     // Shopping controls are all there: piercing type, views, price and the bag.
     for (const id of ["anti-eyebrow", "micro-dermal", "nose"]) await expect(page.getByTestId(`story-form-${id}`)).toBeEnabled();
     for (const id of ["concept", "placement", "tryon"]) await expect(page.getByTestId(`story-view-${id}`)).toBeVisible();
-    await expect(page.getByTestId("story-price")).toContainText("QAR 390");
+    await expect(page.getByTestId("story-price")).toContainText("Price pending");
     await expect(page.getByTestId("story-form-note")).toContainText("Not manufacturing-ready");
     await page.getByTestId("add-to-bag").click();
     await expect(page.locator('[data-testid="bag-line"][data-form="anti-eyebrow"]')).toHaveCount(1);
   });
 
   test("left alone it runs its beats in about six and a half seconds, then offers replay instead of replaying", async ({ page }) => {
+    requireStoryMedia();
     test.setTimeout(45_000);
     await page.goto(STAGE);
     await page.getByTestId("story-character").click();
@@ -198,14 +210,18 @@ test.describe("DESERT EYE collection stage", () => {
     await expect(product(page)).toBeVisible();
   });
 
-  test("the keyboard can reach the character and start the story", async ({ page, isMobile }) => {
+  test("the keyboard opens the story when available, otherwise the piece directly", async ({ page, isMobile }) => {
     test.skip(isMobile, "keyboard focus order is checked on desktop");
     await page.goto(STAGE);
     await page.getByTestId("story-character").focus();
-    await expect(page.getByTestId("story-character")).toHaveAccessibleName(/Watch the DESERT EYE story/);
+    await expect(page.getByTestId("story-character")).toHaveAccessibleName(HAS_STORY_MEDIA ? /Watch the DESERT EYE story/ : /Open DESERT EYE/);
     await page.keyboard.press("Enter");
-    await expect(page.getByTestId("story-cinematic")).toBeVisible();
-    await page.keyboard.press("Enter"); // Skip has focus.
+    if (HAS_STORY_MEDIA) {
+      await expect(page.getByTestId("story-cinematic")).toBeVisible();
+      await page.keyboard.press("Enter"); // Skip has focus.
+    } else {
+      await expect(page.getByTestId("story-cinematic")).toHaveCount(0);
+    }
     await expect(product(page)).toBeVisible();
   });
 
@@ -216,18 +232,18 @@ test.describe("DESERT EYE collection stage", () => {
     const before = await visual.getAttribute("data-media");
     // The clean close-up carries the pair as a product overlay, and only as an overlay.
     await expect(visual).toHaveAttribute("data-jewelry", "overlay");
-    await expect(visual.getByTestId("story-jewel-piece")).toHaveCount(2);
+    await expect(visualPieces(page)).toHaveCount(2);
 
     await chooseForm(page, "nose");
     await expect(product(page)).toHaveAttribute("data-form", "nose");
     await expect(visual).toHaveAttribute("data-form", "nose");
-    await expect(visual.getByTestId("story-jewel-piece")).toHaveCount(1);
-    await expect(page.getByTestId("story-price")).toContainText("QAR 190");
+    await expect(visualPieces(page)).toHaveCount(1);
+    await expect(page.getByTestId("story-price")).toContainText("Price pending");
     await expect(page.getByTestId("story-form-note")).toContainText("deep-red faceted gemstone");
     await expect(page).toHaveURL(/form=nose/);
     // With internal stills present the nose uses a different picture from the eye close-up, shown in a
     // smaller window so the half-length still is never blown up until it goes soft.
-    if (before !== "placeholder") {
+    if (before !== "placeholder" && await visual.getAttribute("data-media") !== "placeholder") {
       expect(await visual.getAttribute("data-media")).not.toBe(before);
       await expect(visual).toHaveAttribute("data-jewelry", "overlay");
       const panel = (await visual.boundingBox())!;
@@ -239,8 +255,8 @@ test.describe("DESERT EYE collection stage", () => {
     }
 
     await chooseForm(page, "micro-dermal");
-    await expect(visual.getByTestId("story-jewel-piece")).toHaveCount(1);
-    await expect(page.getByTestId("story-price")).toContainText("QAR 220");
+    await expect(visualPieces(page)).toHaveCount(1);
+    await expect(page.getByTestId("story-price")).toContainText("Price pending");
 
     // The placement view follows the same form.
     await page.getByTestId("story-view-placement").click();
@@ -350,8 +366,8 @@ test.describe("DESERT EYE collection stage", () => {
       test.setTimeout(45_000);
       await page.setViewportSize({ width: size.width, height: size.height });
       await page.goto(STAGE);
-      const figure = page.getByTestId("story-character").locator("img");
-      test.skip((await figure.count()) === 0, "internal stills are not on this machine");
+      requireStoryMedia();
+      await expect(stage(page)).toHaveAttribute("data-story-media", "true");
       await page.getByTestId("story-watch").click();
       const cinematic = page.getByTestId("story-cinematic");
       await expect(cinematic).toHaveAttribute("data-ready", "true", { timeout: 12_000 });
@@ -400,7 +416,8 @@ test.describe("DESERT EYE collection stage", () => {
     test.skip(browserName !== "chromium" || Boolean(isMobile), "pixels are read once, in desktop Chromium");
     test.setTimeout(45_000);
     await page.goto(STAGE);
-    test.skip((await page.getByTestId("story-character").locator("img").count()) === 0, "internal stills are not on this machine");
+    requireStoryMedia();
+    await expect(stage(page)).toHaveAttribute("data-story-media", "true");
     const before = await page.screenshot({ clip: { x: 1100, y: 300, width: 40, height: 40 } });
     await page.getByTestId("story-watch").click();
     const cinematic = page.getByTestId("story-cinematic");
@@ -433,7 +450,8 @@ test.describe("DESERT EYE collection stage", () => {
     test.skip(browserName === "webkit", "this WebKit build does not let a test intercept a media request");
     await page.route("**/api/dev-concept/sandfx", (route) => route.fulfill({ status: 404, body: "Not found" }));
     await page.goto(STAGE);
-    test.skip((await page.getByTestId("story-character").locator("img").count()) === 0, "internal stills are not on this machine");
+    requireStoryMedia();
+    await expect(stage(page)).toHaveAttribute("data-story-media", "true");
     await page.getByTestId("story-watch").click();
     await expect(product(page)).toHaveAttribute("data-product", "desert-eye-love", { timeout: 12_000 });
     await expect(page.getByTestId("story-cinematic")).toHaveCount(0);

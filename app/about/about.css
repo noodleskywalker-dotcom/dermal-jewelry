@@ -1,0 +1,30 @@
+.dermal-about { max-width: 110rem; margin-inline: auto; padding: 0 clamp(1.25rem, 5vw, 5rem); }
+.dermal-about-intro { padding: clamp(3rem, 7vw, 7rem) 0 3rem; }
+.dermal-about h1 { margin-top: 2rem; max-width: 70rem; font-family: var(--font-display); font-size: clamp(3rem, 7.4vw, 8rem); font-weight: 300; letter-spacing: -.055em; line-height: .97; }
+.dermal-about h1 em, .dermal-about h2 em { color: var(--color-garnet); font-weight: 300; }
+.dermal-about-opening { display: grid; gap: 1.5rem; padding: 2.5rem 0 1rem; }
+.dermal-about-opening > p:last-child { max-width: 29rem; font-size: .95rem; line-height: 1.9; color: var(--color-ash); }
+.dermal-about-object { display: grid; align-items: center; margin: 2rem 0 4rem; padding: 2rem 0; border-block: 1px solid var(--color-line); }
+.dermal-about-object-text p { margin-top: 2rem; font-family: var(--font-display); font-size: clamp(2.4rem, 3.5vw, 4rem); font-weight: 300; letter-spacing: -.04em; line-height: 1.05; }
+.dermal-about-object-text p em { font-weight: 300; color: var(--color-garnet); }
+.dermal-about-object figure { min-width: 0; }
+.dermal-about-object img { width: 100%; height: auto; object-fit: contain; }
+.dermal-about-object figcaption { padding: .5rem 0; font-size: .58rem; line-height: 1.8; text-align: right; color: var(--color-ash); }
+.dermal-about-principles { display: grid; gap: 3rem; padding: 1rem 0 5rem; }
+.dermal-about-principles h2 { margin-top: 1.5rem; font-family: var(--font-display); font-size: clamp(2rem, 2.8vw, 3rem); font-weight: 300; letter-spacing: -.03em; line-height: 1.1; }
+.dermal-about-principles article > p { max-width: 25rem; min-height: 6rem; margin-top: 1rem; font-size: .85rem; line-height: 1.9; color: var(--color-ash); }
+.dermal-about-principles .text-link { margin-top: 1.8rem; font-size: .61rem; }
+.dermal-about-privacy { display: grid; gap: 2.5rem; padding: 4rem 0 6rem; border-top: 1px solid var(--color-line); scroll-margin-top: 6rem; }
+.dermal-about-privacy h2 { margin-top: 1.5rem; font-family: var(--font-display); font-size: clamp(3rem, 4vw, 4.5rem); font-weight: 300; line-height: .95; letter-spacing: -.04em; }
+.dermal-about-facts { max-width: 38rem; }
+.dermal-about-privacy-lede { font-family: var(--font-display); font-size: 1.6rem; line-height: 1.25; }
+.dermal-about-facts ul { display: grid; gap: .7rem; margin-top: 1.5rem; font-size: .85rem; line-height: 1.8; color: var(--color-ash); }
+.dermal-about-facts li { padding-left: 1rem; border-left: 1px solid var(--color-line); }
+.dermal-about-status { margin-top: 1.5rem; font-size: .75rem; line-height: 1.9; color: var(--color-ash); }
+@media (min-width: 800px) {
+  .dermal-about-opening { grid-template-columns: 1fr 1fr; padding-top: 3.5rem; }
+  .dermal-about-object { grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); }
+  .dermal-about-principles { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(2rem, 4vw, 4rem); }
+  .dermal-about-privacy { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+@media (max-width: 799px) { .dermal-about-object { gap: 1rem; margin-top: 1rem; } .dermal-about-object img { margin-block: -.5rem; } .dermal-about-object figcaption { text-align: left; } .dermal-about-principles { padding-bottom: 3rem; } .dermal-about-principles article > p { min-height: 0; } }

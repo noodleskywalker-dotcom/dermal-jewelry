@@ -57,14 +57,15 @@ test.describe("the catalogue is the brand, not one collection", () => {
   test("each piece says what it is, what it costs and where it goes, with two ways on", async ({ page }) => {
     await page.goto("/shop");
     const horus = page.locator('[data-testid="product-card"][data-product="horus-trace"]');
-    await expect(horus.getByTestId("piece-kind")).toHaveText("Anti-eyebrow · Symbolic · Ancient · Demo");
+    await expect(horus.getByTestId("piece-kind")).toHaveText("Anti-eyebrow · Symbolic · Ancient");
     await expect(horus).toContainText("Price pending");
     await expect(horus.getByTestId("view-piece")).toHaveAttribute("href", "/product/horus-trace");
     await expect(horus.getByTestId("try-on-button")).toBeVisible();
-    // A piece with a demo price shows it as a demo price and never as a selling price.
+    // Placeholder values remain internal; unconfirmed retail prices never appear in the catalogue.
     const desert = page.locator('[data-testid="product-card"][data-product="desert-eye-love"]');
-    await expect(desert).toContainText("QAR 390");
-    await expect(desert).toContainText("Demo");
+    await expect(desert).toContainText("Price pending");
+    await expect(desert).not.toContainText("QAR 390");
+    await expect(desert.getByTestId("piece-availability")).toHaveText("Not yet available");
   });
 });
 

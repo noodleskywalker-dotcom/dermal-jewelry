@@ -4,7 +4,6 @@ import { BagDrawer } from "@/components/cart/BagDrawer";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { GlobalMascot } from "@/components/layout/GlobalMascot";
-import { PreviewNote } from "@/components/layout/PreviewNote";
 import { CommerceProvider } from "@/components/commerce/CommerceProvider";
 import { StudioProvider } from "@/components/studio/StudioProvider";
 import { SandTransitionProvider } from "@/components/transition/SandTransition";
@@ -46,9 +45,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // and it falls back to "not live" whenever Shopify cannot be reached, so the bag is never offered
   // as real when it could not be.
   const { live } = await getCommerceState();
+  const internal = isInternalReview();
+  const mascot = internalMascotMedia(internal);
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col" data-mascot={isInternalReview() ? "true" : undefined}>
+      <body className="flex min-h-full flex-col" data-mascot={mascot ? "true" : undefined}>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-ivory focus:px-4 focus:py-2 focus:text-ink"
@@ -59,15 +60,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <CommerceProvider live={live}>
         <StudioProvider>
           {/* A build has no clip, so there the transition is simply a link. */}
-          <SandTransitionProvider src={internalSandSource(isInternalReview())} fallbackSrc={internalSandFallback(isInternalReview())}>
+          <SandTransitionProvider src={internalSandSource(internal)} fallbackSrc={internalSandFallback(internal)}>
             <Navbar />
             <main id="main" className="flex-1">
               {children}
             </main>
             <Footer />
             <BagDrawer />
-            <PreviewNote />
-            <GlobalMascot media={internalMascotMedia(isInternalReview())} clips={internalMascotClips(isInternalReview())} />
+            <GlobalMascot media={mascot} clips={mascot ? internalMascotClips(internal) : null} />
           </SandTransitionProvider>
         </StudioProvider>
         </CommerceProvider>

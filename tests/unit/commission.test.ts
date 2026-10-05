@@ -72,6 +72,16 @@ describe("commission fields", () => {
     expect(fields.rights).toBe(false);
     expect(fields.acknowledge).toBe(true);
   });
+
+  it("keeps older requests valid and accepts only known finish preferences", () => {
+    const legacy = { ...VALID } as Partial<CommissionFields>;
+    delete legacy.finish;
+    expect(readFields(legacy).finish).toBe("");
+    expect(validateFields(readFields(legacy))).toEqual({});
+    expect(validateFields({ ...VALID, finish: "Satin / brushed" })).toEqual({});
+    expect(validateFields({ ...VALID, finish: "<script>custom</script>" }).finish).toBeTruthy();
+    expect(readFields({ ...VALID, finish: { unsafe: true } }).finish).toBe("");
+  });
 });
 
 describe("commission files", () => {
@@ -160,7 +170,7 @@ describe("the owner's email", () => {
   it("carries the whole request and escapes what the customer wrote", () => {
     const email = commissionEmail(
       "DRM-C-8F2K1",
-      { ...VALID, description: "<script>alert(1)</script> & a crescent", instagram: "@dermal_fan" },
+      { ...VALID, description: "<script>alert(1)</script> & a crescent", instagram: "@dermal_fan", finish: "Satin / brushed" },
       [{ name: "sketch.jpg", size: 2048, contentType: "image/jpeg", url: "https://example.test/f?r=1&s=2", attached: true }],
       new Date("2026-09-26T09:00:00Z"),
     );
@@ -172,6 +182,8 @@ describe("the owner's email", () => {
       expect(email.text).toContain(text);
     }
     expect(email.text).toContain("Budget: Not given");
+    expect(email.text).toContain("Finish preference: Satin / brushed");
+    expect(email.html).toContain("Satin / brushed");
   });
 });
 
@@ -213,6 +225,14 @@ describe("the commission routes (mock delivery)", () => {
     const json = (await response.json()) as { errors: Record<string, string> };
     expect(response.status).toBe(422);
     expect(Object.keys(json.errors).sort()).toEqual(["email", "rights"]);
+  });
+
+  it("rejects an unrecognized finish on the server without sending email", async () => {
+    const before = mockOutbox().length;
+    const response = await submitJson({ fields: { ...VALID, finish: "Unknown finish" }, files: [] });
+    expect(response.status).toBe(422);
+    expect((await response.json()).errors.finish).toBeTruthy();
+    expect(mockOutbox()).toHaveLength(before);
   });
 
   it("refuses a file that did not come through the upload step", async () => {

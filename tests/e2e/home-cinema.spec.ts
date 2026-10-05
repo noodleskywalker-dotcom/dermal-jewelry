@@ -13,7 +13,7 @@ test.describe("the opening shot", () => {
     test.skip(browserName === "webkit", "no media decoder in the test WebKit build");
     await page.goto("/");
     const shot = page.getByTestId("cinema-hero");
-    await expect(shot.getByRole("heading", { level: 1 })).toHaveText("Jewelry for the face you chose.");
+    await expect(shot.getByRole("heading", { level: 1 })).toHaveText("Love, wornyour way.");
     const video = shot.getByTestId("cinema-hero-video");
     expect(await video.evaluate((v: HTMLVideoElement) => [v.muted, v.loop, v.controls])).toEqual([true, true, false]);
     const pause = shot.getByTestId("cinema-hero-pause");
@@ -32,9 +32,9 @@ test.describe("the opening shot", () => {
     const shot = page.getByTestId("cinema-hero");
     await expect(shot.locator("video")).toHaveCount(0);
     await expect(shot.locator("img")).toHaveCount(1);
-    await expect(shot.getByRole("heading", { level: 1 })).toHaveText("Jewelry for the face you chose.");
+    await expect(shot.getByRole("heading", { level: 1 })).toHaveText("Love, wornyour way.");
     await expect(shot.getByTestId("cinema-hero-pause")).toHaveCount(0);
-    await expect(page.getByTestId("cta-face")).toBeVisible();
+    await expect(page.getByTestId("cta-piece")).toBeVisible();
   });
 });
 
@@ -60,12 +60,12 @@ test.describe("the turn", () => {
     expect(late).toBeGreaterThanOrEqual(66);
     await at(0.05);
     await expect(section.getByText("Turn it in the light.")).toBeVisible();
-    await expect(section.getByText("Engineered")).toBeHidden();
+    await expect(section.getByText("A mark.", { exact: false })).toBeHidden();
     await at(0.5);
-    await expect(section.getByText("Engineered")).toBeVisible();
+    await expect(section.getByText("A mark.", { exact: false })).toBeVisible();
     await expect(section.getByText("Turn it in the light.")).toBeHidden();
     await at(0.9);
-    await expect(section.getByText("01 / 04")).toBeVisible();
+    await expect(section.getByText("DESIGN STUDY 001")).toBeVisible();
     await page.evaluate(([y]) => window.scrollTo(0, y), [box.y + box.height + 50]);
     // Past the turn the page hands over to the selection, which is where the launch ends.
     await expect(page.getByTestId("collection-section")).toBeInViewport();
@@ -124,8 +124,8 @@ test.describe("the sections", () => {
   test("the last frame: three lines and two ways in", async ({ page }) => {
     await page.goto("/");
     const final = page.getByTestId("final-section");
-    await expect(final.getByRole("heading")).toContainText("Your face.");
+    await expect(final.getByRole("heading")).toContainText("A small piece.");
     await expect(final.getByTestId("final-studio")).toHaveAttribute("href", "/face-studio");
-    await expect(final.getByTestId("final-shop")).toHaveAttribute("href", "/collections");
+    await expect(final.getByTestId("final-shop")).toHaveAttribute("href", "/shop");
   });
 });

@@ -7,27 +7,27 @@ test.describe("landing page", () => {
     page.on("pageerror", (e) => errors.push(e.message));
 
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Jewelry for the face you chose.");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Love, wornyour way.");
     // Paper, not ink, and the navigation matches it.
     const paper = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
     expect(paper).toBe("rgb(251, 250, 247)");
-    await expect(page.locator("header[data-tone]")).toHaveAttribute("data-tone", "light");
+    await expect(page.locator("header[data-tone]")).toHaveAttribute("data-tone", "cinematic");
 
     // The first screen is the piece in low light, full-bleed, with the name, the headline and the two ways in.
     const viewport = page.viewportSize()!;
     const hero = page.getByTestId("cinema-hero");
     const shot = (await hero.boundingBox())!;
     expect(shot.height).toBeGreaterThanOrEqual(viewport.height * 0.95);
-    await expect(hero.getByText("DESERT EYE — LOVE")).toBeVisible();
-    for (const id of ["cta-face", "cta-selection"]) {
+    await expect(hero.getByText("DESERT EYE — LOVE", { exact: true })).toBeVisible();
+    for (const id of ["cta-piece", "cta-selection"]) {
       await expect(page.getByTestId(id)).toBeInViewport();
       const b = (await page.getByTestId(id).boundingBox())!;
       expect(b.height).toBeGreaterThanOrEqual(44);
     }
-    await expect(page.getByTestId("cta-face")).toHaveAttribute("href", "/face-studio");
-    await expect(page.getByTestId("cta-selection")).toHaveAttribute("href", "/collections");
+    await expect(page.getByTestId("cta-piece")).toHaveAttribute("href", "/product/desert-eye-love");
+    await expect(page.getByTestId("cta-selection")).toHaveAttribute("href", "#selection");
     // No button rectangles: the ways in are text links.
-    expect(await page.getByTestId("cta-face").evaluate((el) => getComputedStyle(el).backgroundColor)).toMatch(/rgba\(0, 0, 0, 0\)|transparent/);
+    expect(await page.getByTestId("cta-piece").evaluate((el) => getComputedStyle(el).backgroundColor)).toMatch(/rgba\(0, 0, 0, 0\)|transparent/);
 
     // The pinned moments of the cinematic remake (22 September 2026): the turn, the dunes, the companion on
     // a wide screen, and the push into the stone. Each is a sticky stage in normal scroll; nothing hijacks the wheel.
@@ -48,21 +48,22 @@ test.describe("landing page", () => {
     expect(errors).toEqual([]);
   });
 
-  test("the two actions lead to Face Studio and to the selection", async ({ page }) => {
+  test("the two actions lead to the launch piece and to the brand selection", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("cta-face").click();
-    await expect(page).toHaveURL(/\/face-studio$/);
+    await page.getByTestId("cta-piece").click();
+    await expect(page).toHaveURL(/\/product\/desert-eye-love$/);
     await page.goto("/");
     await page.getByTestId("cta-selection").click();
-    await expect(page).toHaveURL(/\/collections$/);
-    await expect(page.getByTestId("selection-slide")).toHaveCount(10);
+    await expect(page).toHaveURL(/#selection$/);
+    await expect(page.getByTestId("collection-section")).toBeInViewport();
+    await expect(page.getByTestId("selection-slide")).toHaveCount(7);
   });
 
   test("the third screen is THE SELECTION, and it holds every family on one stage", async ({ page }) => {
     await page.goto("/");
     const section = page.getByTestId("collection-section");
     await expect(section.getByRole("heading", { name: "The selection" })).toBeVisible();
-    await expect(section.getByTestId("explore-lede")).toContainText("Objects engineered for the face");
+    await expect(section.getByTestId("explore-lede")).toContainText("Objects for the face");
     await expect(section.getByTestId("explore-shop")).toHaveAttribute("href", "/shop");
     await expect(section.getByTestId("explore-shop")).toContainText("View full collection");
 
@@ -70,11 +71,11 @@ test.describe("landing page", () => {
     const screens = await section.evaluate((el) => (el.getBoundingClientRect().top + window.scrollY) / window.innerHeight);
     expect(screens).toBeLessThanOrEqual(3.2);
 
-    // Eight entries (seven families and KIRI), none of them given a larger frame than the others.
-    await expect(section.getByTestId("browse-entry")).toHaveCount(8);
-    await expect(section.locator('[data-entry="kiri"]')).toContainText("Concept");
-    await expect(section.locator('[data-entry="desert-eye-love"]')).toContainText("Inspired");
-    await expect(section.locator('[data-entry="horus-trace"]')).toContainText("Symbolic");
+    // Seven primary families share the launch rail; KIRI remains in the collections concept index.
+    await expect(section.getByTestId("selection-slide")).toHaveCount(7);
+    await expect(section.getByTestId("selection-concept")).toHaveCount(0);
+    await expect(section.locator('[data-product="desert-eye-love"]')).toContainText("Inspired");
+    await expect(section.locator('[data-product="horus-trace"]')).toContainText("Symbolic");
     await expect(section.getByTestId("product-card")).toHaveCount(0);
   });
 
@@ -88,10 +89,8 @@ test.describe("landing page", () => {
       await expect(page.getByTestId(id)).toHaveCount(0);
     }
     // The selection's own canvas is DERMAL's paper, not a collection's world.
-    const stage = await page
-      .locator('[data-entry="horus-trace"] .browse-visual')
-      .evaluate((el) => getComputedStyle(el).backgroundImage);
-    expect(stage).toContain("250, 249, 246");
+    const canvas = await page.getByTestId("collection-section").evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(canvas).toBe("rgb(251, 250, 247)");
   });
 
   test("the page runs launch, selection, on you, last frame — in that order", async ({ page }) => {
@@ -107,10 +106,10 @@ test.describe("landing page", () => {
     expect(onyou).toBeGreaterThan(selection);
     expect(final).toBeGreaterThan(onyou);
     // The only sand left on the page is DESERT EYE's own slide on the rail, and it leaves with it.
-    const rail = page.getByTestId("browse");
+    const rail = page.getByTestId("selection");
     await expect(rail.getByTestId("sand-layer")).toHaveCount(1);
-    const host = rail.locator('[data-testid="browse-entry"]', { has: page.getByTestId("sand-layer") });
-    await expect(host).toHaveAttribute("data-entry", "desert-eye-love");
+    const host = rail.locator('[data-testid="selection-slide"]', { has: page.getByTestId("sand-layer") });
+    await expect(host).toHaveAttribute("data-product", "desert-eye-love");
   });
 });
 

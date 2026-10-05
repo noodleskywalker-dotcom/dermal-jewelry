@@ -30,18 +30,40 @@ function isGid(value: unknown): value is string {
 }
 
 export async function POST(request: Request) {
-  if (!isShopifyConfigured()) {
-    return NextResponse.json(
-      { ok: false, error: "not_configured", message: "This storefront has no commerce backend configured." },
-      { status: 503 },
-    );
-  }
-
   let body: Action;
   try {
     body = (await request.json()) as Action;
   } catch {
     return bad("The request body was not JSON.");
+  }
+
+  // Validate the request independently of backend availability. An unconfigured preview must not
+  // turn malformed input into a service error, or let a non-finite quantity reach Shopify later.
+  if (!body || typeof body !== "object") return bad("A cart action is required.");
+  switch (body.action) {
+    case "get":
+      if (!isGid(body.cartId)) return bad("A cart id is required.");
+      break;
+    case "add":
+      if (!isGid(body.merchandiseId)) return bad("A merchandise id is required.");
+      if (body.quantity !== undefined && (typeof body.quantity !== "number" || !Number.isFinite(body.quantity))) return bad("A numeric quantity is required.");
+      break;
+    case "update":
+      if (!isGid(body.cartId) || !isGid(body.lineId)) return bad("A cart id and a line id are required.");
+      if (typeof body.quantity !== "number" || !Number.isFinite(body.quantity)) return bad("A numeric quantity is required.");
+      break;
+    case "remove":
+      if (!isGid(body.cartId) || !isGid(body.lineId)) return bad("A cart id and a line id are required.");
+      break;
+    default:
+      return bad("Unknown cart action.");
+  }
+
+  if (!isShopifyConfigured()) {
+    return NextResponse.json(
+      { ok: false, error: "not_configured", message: "This storefront has no commerce backend configured." },
+      { status: 503 },
+    );
   }
 
   try {

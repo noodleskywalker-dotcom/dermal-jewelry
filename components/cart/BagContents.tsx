@@ -3,19 +3,18 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { catalog, formatPrice, formOf } from "@/lib/catalog";
-import { bagSubtotal, MAX_QUANTITY } from "@/lib/cart/bag";
+import { MAX_QUANTITY } from "@/lib/cart/bag";
 import { bagActions, useBag } from "@/lib/cart/store";
 import { cartActions, useShopifyCart } from "@/lib/cart/shopify-store";
 import { useCommerceLive } from "@/components/commerce/CommerceProvider";
-import { site } from "@/lib/config/site";
 import { ProductArtwork } from "@/components/catalog/ProductArtwork";
 
 // Shared by the bag drawer and the /cart page so quantities and totals can never disagree.
 //
 // Two backings, one appearance. A real Shopify cart takes precedence whenever there is one, and
 // every amount it shows came back from Shopify: nothing on this page adds money up. With no Shopify
-// cart — which is the case while the store holds no products — the demo bag is shown instead, and
-// it says on its face that it is a demo.
+// cart — which is the case while the store holds no products — a saved design selection is shown
+// instead. It has no selling prices or calculated totals.
 export function BagContents({ onNavigate }: { onNavigate?: () => void }) {
   const bag = useBag();
   const { cart, status, error } = useShopifyCart();
@@ -24,7 +23,6 @@ export function BagContents({ onNavigate }: { onNavigate?: () => void }) {
   // Shopify cart exists at all. The demo bag is a development fallback and never runs beside it.
   const shopifyOwnsTheBag = commerceLive || cart !== null;
   const live = cart && cart.lines.length > 0 ? cart : null;
-  const subtotal = bagSubtotal(bag, catalog);
 
   // A demo line must never sit beside a real one, so the demo bag is emptied as Shopify takes over.
   useEffect(() => {
@@ -36,8 +34,8 @@ export function BagContents({ onNavigate }: { onNavigate?: () => void }) {
   if (!live && !showDemo) {
     return (
       <div className="px-6 py-16" data-testid="bag-empty">
-        <p className="font-display text-4xl font-light leading-tight">Your {shopifyOwnsTheBag ? "bag" : "demo bag"} is empty.</p>
-        <p className="mt-3 text-sm text-ash">Add a piece from the shop or from Face Studio.</p>
+        <p className="font-display text-4xl font-light leading-tight">Your {shopifyOwnsTheBag ? "bag" : "selection"} is empty.</p>
+        <p className="mt-3 text-sm leading-relaxed text-ash">{shopifyOwnsTheBag ? "Explore the collection and find your piece." : "Keep the designs you’re drawn to together, ready to revisit."}</p>
         {error && <p className="mt-3 text-sm text-ash" data-testid="bag-error">{error}</p>}
         <Link href="/shop" onClick={onNavigate} className="btn-line mt-8">
           Explore the collection
@@ -120,7 +118,7 @@ export function BagContents({ onNavigate }: { onNavigate?: () => void }) {
                       {product.title}
                     </Link>
                     <p className="mt-1 text-xs text-ash" data-testid="bag-line-form">{form.label} form</p>
-                    <p className="mt-1 text-xs text-ash">Demo price {formatPrice(form.demoPrice, product.currency)}</p>
+                    <p className="mt-1 text-xs text-ash">Price pending</p>
                     <div className="mt-3 flex items-center gap-1">
                       <button
                         type="button"
@@ -159,15 +157,15 @@ export function BagContents({ onNavigate }: { onNavigate?: () => void }) {
 
       <div className="border-t border-line px-6 py-6">
         <div className="flex items-baseline justify-between">
-          <span className="eyebrow">{live ? "Subtotal" : "Demo subtotal"}</span>
+          <span className="eyebrow">{live ? "Subtotal" : "Pricing"}</span>
           <span className="font-display text-2xl" data-testid="bag-subtotal">
-            {live ? formatPrice(Number(live.subtotal.amount), live.subtotal.currencyCode) : formatPrice(subtotal, site.currency)}
+            {live ? formatPrice(Number(live.subtotal.amount), live.subtotal.currencyCode) : "Price pending"}
           </span>
         </div>
         <p className="mt-2 text-xs leading-relaxed text-ash">
           {live
-            ? "Totals are calculated by Shopify. Taxes and shipping are settled at checkout."
-            : "Demo prices only. They are placeholders, not selling prices."}
+            ? "Taxes and shipping will be confirmed when checkout opens."
+            : "Your selection saves designs on this device. It does not reserve pieces or place an order."}
         </p>
         {error && <p className="mt-2 text-xs leading-relaxed text-ash" data-testid="bag-error">{error}</p>}
         <button
@@ -177,13 +175,14 @@ export function BagContents({ onNavigate }: { onNavigate?: () => void }) {
           data-testid="checkout-button"
           className="label-xs mt-5 min-h-12 w-full cursor-not-allowed border-y border-line text-ash"
         >
-          {live ? "Checkout — not yet live" : "Checkout unavailable in preview"}
+          {live ? "Checkout — coming soon" : "Preorder — coming soon"}
         </button>
         <p id="checkout-note" className="mt-2 text-xs leading-relaxed text-ash">
           {live
-            ? "The cart is real and Shopify holds it. Checkout is not switched on yet."
-            : "This is a preview store. Nothing can be ordered or paid for yet."}
+            ? "Your pieces are in your bag. Ordering has not opened yet."
+            : "Prices and availability will be confirmed before ordering opens."}
         </p>
+        {!live && <Link href="/commission" onClick={onNavigate} className="btn-line mt-5">Commission your own</Link>}
       </div>
     </div>
   );

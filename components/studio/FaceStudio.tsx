@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { catalog, displayTitle, formatPrice, formOf, isConceptFamily, placementLabel } from "@/lib/catalog";
+import { catalog, displayTitle, formOf, isConceptFamily, placementLabel } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { bagActions } from "@/lib/cart/store";
+import { useShopifyCart } from "@/lib/cart/shopify-store";
+import { purchaseState } from "@/lib/commerce/display";
+import { useCommerceLive } from "@/components/commerce/CommerceProvider";
 import { SCALE_MAX, SCALE_MIN, TWEAK_SCALE_MAX, TWEAK_SCALE_MIN, ZERO_TWEAK } from "@/lib/studio/geometry";
 import {
   activeItem,
@@ -28,6 +31,7 @@ import { ProductArtwork } from "@/components/catalog/ProductArtwork";
 import { LookRenderer, type LookInteraction } from "./LookRenderer";
 import { PhotoPicker } from "./PhotoPicker";
 import { useStudio } from "./StudioProvider";
+import "./studio.css";
 
 const NUDGE = 0.004;
 
@@ -37,6 +41,8 @@ const toolButton =
 
 export function FaceStudio({ initialProductSlug, initialFormId }: { initialProductSlug?: string; initialFormId?: string }) {
   const studio = useStudio();
+  const commerceLive = useCommerceLive();
+  const { cart } = useShopifyCart();
   const { photo, look, change, selectProduct, selectSide, selectForm } = studio;
   // A concept family has no drawn form, so it has nothing to place: the Studio never offers one.
   const products = catalog.listProducts().filter((p) => !isConceptFamily(p));
@@ -162,33 +168,37 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
     setPendingAdd(null);
   };
 
+  const canSaveLook = look.items.length > 0 && look.items.every((item) => {
+    const product = catalog.getProductById(item.productId);
+    return product && purchaseState(product, item.formId, commerceLive || cart !== null).canSaveSelection;
+  });
+
   const addLookToBag = () => {
+    if (!canSaveLook) return;
     // A pair is one sellable product, so each distinct product is added once, not once per piece.
     // Two forms of the same design are different bag lines.
     const lines = new Map(look.items.map((i) => [`${i.productId}:${i.formId}`, i]));
     lines.forEach((i) => bagActions.add(i.productId, i.formId));
     bagActions.openDrawer();
-    setStatus(`${lines.size} ${lines.size === 1 ? "piece" : "pieces"} added to your demo bag.`);
+    setStatus(`${lines.size} ${lines.size === 1 ? "piece" : "pieces"} saved to your selection.`);
   };
 
   return (
-    <div className="mx-auto max-w-[120rem] px-6 pb-10 sm:px-10 lg:px-16">
-      <header className="flex flex-wrap items-end justify-between gap-4 pb-4 pt-6">
-        <h1 className="font-display text-3xl font-light leading-none tracking-[0.03em] sm:text-4xl">Face Studio</h1>
-        <p className="label-xs max-w-sm leading-relaxed text-ash">
-          A still, approximate preview. Not real size, not a fitting, not piercing advice.
-        </p>
+    <div className="dermal-studio">
+      <header className="dermal-studio-header">
+        <div><p className="label-xs text-garnet">An exercise in expression</p><h1>Face <em>Studio</em></h1></div>
+        <div className="dermal-studio-intro"><p>Find your point of view.</p><span>Choose a piece. Add your photo. Make the placement your own.</span></div>
       </header>
 
-      <div className="grid gap-x-12 gap-y-6 lg:grid-cols-[minmax(0,1fr)_19rem] xl:gap-x-20">
+      <div className="dermal-studio-layout">
         {/* Piece rail */}
-        <section aria-labelledby="pieces-heading" className="order-2 min-w-0 lg:col-start-1 lg:row-start-2">
+        <section aria-labelledby="pieces-heading" className="dermal-studio-pieces">
           <h2 id="pieces-heading" className="label-xs text-ash">
-            Pieces
+            The pieces <span className="dermal-studio-count">{String(products.length).padStart(2, "0")}</span>
           </h2>
           {/* Centred while the row fits, scrollable once it does not. `justify-center` alone would push
               the first pieces past the left edge, where no scrolling can reach them. */}
-          <ul className="mt-3 flex gap-6 overflow-x-auto pb-2 lg:gap-10 [&>li:first-child]:ms-auto [&>li:last-child]:me-auto">
+          <ul className="dermal-studio-piece-rail">
             {products.map((product) => {
               const selected = currentProduct.id === product.id;
               return (
@@ -199,7 +209,7 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
                     data-product={product.slug}
                     aria-pressed={selected}
                     onClick={() => chooseProduct(product)}
-                    className={`flex w-44 items-start gap-3 border-b pb-3 text-left transition-colors duration-500 ${
+                    className={`dermal-studio-piece flex w-44 items-start gap-3 border-b pb-3 text-left transition-colors duration-500 ${
                       selected ? "border-garnet text-ink" : "border-transparent text-ash hover:text-ink"
                     }`}
                   >
@@ -222,10 +232,10 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
         {/* On small screens the stage sticks under the header so the jewelry stays visible while adjusting. */}
         <section
           aria-label="Photo stage"
-          className={`order-1 min-w-0 bg-paper lg:static lg:col-start-1 lg:row-start-1 ${photo ? "sticky top-16 z-20 -mx-5 px-5 pb-1 sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0" : ""}`}
+          className={`dermal-studio-stage-section ${photo ? "dermal-studio-stage-with-photo" : ""}`}
         >
           <div
-            className={`relative lg:h-[76dvh] ${photo ? "h-[44dvh] min-h-[16rem]" : "h-[62dvh] min-h-[24rem]"}`}
+            className={`dermal-studio-stage ${photo ? "dermal-studio-stage-personal" : ""}`}
             data-testid="studio-stage"
           >
             {photo ? (
@@ -252,11 +262,11 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
                       <div className="crop-head" style={{ "--px": anchor.x, "--py": anchor.y, "--s": 1.9, "--tx": 0.55, "--ty": 0.46 } as React.CSSProperties}>
                         <PlacementPreview product={currentProduct} formId={form.id} bare />
                       </div>
-                      <p className="label-xs absolute bottom-3 left-3 text-ash">Sculpted form, not a person · approximate</p>
+                      <p className="dermal-studio-stage-caption label-xs">Sculpted form, not a person · approximate</p>
                     </div>
                   );
                 })()}
-                <div className="flex w-full max-w-md flex-col items-center pb-1 pt-3 text-center">
+                <div className="dermal-studio-photo-invite">
                   <PhotoPicker className="w-full max-w-[16rem]" label="Use my photo" compact />
                   <p className="label-xs -mt-2 text-ash">Your photo stays on this device</p>
                 </div>
@@ -299,7 +309,8 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
 
         {/* Controls and look */}
         {/* On small screens the stage is pinned above this panel, so focused controls keep clear of it. */}
-        <div className="order-3 min-w-0 space-y-12 max-lg:[&_button]:scroll-mt-[62dvh] max-lg:[&_input]:scroll-mt-[62dvh] max-lg:[&_select]:scroll-mt-[62dvh] lg:col-start-2 lg:row-span-2 lg:row-start-1">
+        <div className="dermal-studio-controls">
+          <div className="dermal-studio-selected"><p className="label-xs text-garnet">Currently selected</p><h2>{displayTitle(currentProduct.title)}</h2><Link className="text-link" href={`/product/${currentProduct.slug}`}>Explore the piece <span aria-hidden="true">↗</span></Link></div>
           <section aria-labelledby="adjust-heading">
             <h2 id="adjust-heading" className="label-xs text-ash">
               {photo ? "Adjust" : "Form"}
@@ -550,13 +561,14 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
 
                 <button
                   type="button"
-                  disabled={look.items.length === 0}
+                  disabled={!canSaveLook}
                   onClick={addLookToBag}
                   data-testid="add-look-to-bag"
                   className="min-h-12 w-full bg-garnet text-xs uppercase tracking-[0.22em] text-ivory transition-colors duration-200 hover:bg-[#a52a41] disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  Add look to demo bag
+                  Add look to selection
                 </button>
+                {(commerceLive || cart !== null) && <p className="text-xs leading-relaxed text-ash">Choose available pieces and their current prices in the <Link href="/shop" className="underline">shop</Link>.</p>}
                 <p className="text-xs leading-relaxed text-ash">
                   A virtual combination is a styling preview. It does not mean the pieces are physically compatible.
                 </p>
@@ -565,10 +577,7 @@ export function FaceStudio({ initialProductSlug, initialFormId }: { initialProdu
           </section>
           )}
 
-          <p className="border-t border-line pt-5 text-xs leading-relaxed text-ash">
-            Your photo stays in this browser tab&rsquo;s memory. It is not uploaded, saved or tracked, and it is gone
-            after a reload. <Link href="/about#privacy" className="underline hover:text-ink">How the preview works</Link>
-          </p>
+          <div className="dermal-studio-privacy"><p className="label-xs">Your photo stays on this device</p><p>Your photo stays in this browser tab&rsquo;s memory. It is not uploaded, saved or tracked, and it is gone after a reload.</p><p>A still, approximate preview. Not real size, not a fitting, not piercing advice.</p><Link href="/about#privacy" className="text-link">How the preview works <span aria-hidden="true">↗</span></Link></div>
         </div>
       </div>
     </div>
@@ -691,7 +700,7 @@ function LookRow({
           {isActive && <span className="ml-2 align-middle text-[0.625rem] uppercase tracking-[0.16em] text-garnet-text">Editing</span>}
         </p>
         <p className="shrink-0 text-xs text-ash">
-          {formOf(product, item.formId).demoPrice ? `Demo ${formatPrice(formOf(product, item.formId).demoPrice, product.currency)}` : "Concept · price pending"}
+          Price pending
         </p>
       </div>
       <p className="mt-1 text-xs text-ash">

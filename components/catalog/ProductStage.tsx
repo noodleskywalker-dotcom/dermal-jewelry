@@ -12,7 +12,7 @@ type StageView = "film" | "front" | "angle" | "macro";
 
 export function ProductStage({ media, title }: { media: ProductMedia; title: string }) {
   const reduced = useReducedMotion();
-  const [view, setView] = useState<StageView>("film");
+  const [view, setView] = useState<StageView>(media.film?.length ? "film" : "front");
   const [paused, setPaused] = useState(false);
   const live = !reduced && view === "film" && !!media.film;
   const video = useAmbientVideo(media.film ?? [], live);
@@ -60,9 +60,9 @@ export function ProductStage({ media, title }: { media: ProductMedia; title: str
 
       <div className="product-stage-controls">
         <div className="flex flex-wrap gap-x-6">
-          <button type="button" data-testid="stage-view-film" aria-pressed={view === "film"} onClick={() => setView("film")} className={`label-xs min-h-11 ${view === "film" ? "text-ink" : "text-ash hover:text-ink"}`}>
+          {!!media.film?.length && <button type="button" data-testid="stage-view-film" aria-pressed={view === "film"} onClick={() => setView("film")} className={`label-xs min-h-11 ${view === "film" ? "text-ink" : "text-ash hover:text-ink"}`}>
             In motion
-          </button>
+          </button>}
           {stills
             .filter((s) => s.src)
             .map((s) => (

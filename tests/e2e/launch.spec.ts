@@ -87,16 +87,17 @@ test.describe("design renders", () => {
 
   test("the homepage selection carries the renders and the new families", async ({ page }) => {
     await page.goto("/");
-    await page.getByTestId("collection-section").scrollIntoViewIfNeeded();
-    const entries = page.getByTestId("browse-entry");
-    await expect(entries).toHaveCount(8);
-    await expect(entries.last()).toHaveAttribute("data-entry", "kiri");
+    const selection = page.getByTestId("collection-section");
+    await selection.scrollIntoViewIfNeeded();
+    const entries = selection.getByTestId("selection-slide");
+    await expect(entries).toHaveCount(7);
+    await expect(entries.last()).toHaveAttribute("data-product", "ankh-eye");
     for (const slug of RENDERED) {
-      await expect(page.locator(`[data-entry="${slug}"] [data-testid="piece-render"]`)).toHaveCount(1);
+      await expect(selection.locator(`[data-product="${slug}"] [data-testid="piece-render"]`)).toHaveCount(1);
     }
     // A family known only from its render can be viewed, never tried on.
-    await expect(page.locator('[data-entry="ankh-eye"] [data-testid="browse-tryon"]')).toHaveCount(0);
-    await expect(page.locator('[data-entry="horus-trace"] [data-testid="browse-tryon"]')).toHaveCount(1);
+    await expect(selection.locator('[data-product="ankh-eye"]').getByRole("link", { name: "Try on" })).toHaveCount(0);
+    await expect(selection.locator('[data-product="horus-trace"]').getByRole("link", { name: "Try on" })).toHaveCount(1);
   });
 
   test("each rendered product page shows the render, says what it is, and loads", async ({ page }) => {

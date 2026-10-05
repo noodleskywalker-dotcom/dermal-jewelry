@@ -234,12 +234,12 @@ describe("what a surface shows", () => {
     expect(cardPrice(horus)).toBe("QAR 390");
   });
 
-  it("falls back to the demo placeholder, still calling it a demo price", () => {
+  it("hides historical demo amounts until Shopify supplies a selling price", () => {
     const joined = joinCatalogue(products, [], true);
     const desert = joined.find((p) => p.slug === "desert-eye-love")!;
     const label = priceLabel(desert);
-    expect(label.caption).toBe("Demo price");
-    expect(label.value).toBe("QAR 390");
+    expect(label.caption).toBe("Preorder — coming soon");
+    expect(label.value).toBe("Price pending");
   });
 
   it("says a price is pending rather than showing a zero", () => {
@@ -251,8 +251,8 @@ describe("what a surface shows", () => {
   it("works on a plain editorial product that never went through the commerce layer", () => {
     const plain = products.find((p) => p.slug === "desert-eye-love")!;
     expect(commerceOf(plain)).toBeNull();
-    expect(priceLabel(plain).caption).toBe("Demo price");
-    expect(purchaseState(plain)).toMatchObject({ canBuy: false, action: "Add to demo bag" });
+    expect(priceLabel(plain).value).toBe("Price pending");
+    expect(purchaseState(plain)).toMatchObject({ canBuy: false, canSaveSelection: true, action: "Add to selection" });
   });
 });
 
@@ -262,6 +262,7 @@ describe("what can be bought", () => {
     const horus = joined.find((p) => p.slug === "horus-trace")!;
     const state = purchaseState(horus, "anti-eyebrow");
     expect(state.canBuy).toBe(true);
+    expect(state.canSaveSelection).toBe(false);
     expect(state.merchandiseId).toBe(variantForForm(horus, "anti-eyebrow")!.id);
     expect(state.action).toBe("Add to bag");
   });
@@ -274,8 +275,10 @@ describe("what can be bought", () => {
     if (other) {
       const state = purchaseState(desert, other.id);
       expect(state.canBuy).toBe(false);
+      expect(state.canSaveSelection).toBe(false);
       expect(state.merchandiseId).toBeNull();
       expect(state.note).toBe("This form is not for sale yet.");
+      expect(priceLabel(desert, other.id).value).toBe("Price pending");
     }
   });
 
@@ -301,6 +304,7 @@ describe("what can be bought", () => {
     const crossline = joined.find((p) => p.slug === "crossline")!;
     expect(isPurchasable(crossline)).toBe(false);
     expect(purchaseState(crossline, "micro-dermal").canBuy).toBe(false);
+    expect(purchaseState(crossline, "micro-dermal").canSaveSelection).toBe(false);
     expect(purchaseState(crossline, "micro-dermal").note).toBe("Sold out.");
   });
 
@@ -347,17 +351,19 @@ describe("specifications are never invented by commerce", () => {
 describe("one cart, never two", () => {
   const live = joinCatalogue(products, [shopifyProduct({ handle: "desert-eye-love" })], true);
 
-  it("the demo bag is offered only while nothing on the storefront can really be bought", () => {
+  it("a saved selection is offered only while nothing on the storefront can really be bought", () => {
     const unmatched = joinCatalogue(products, [], true).find((p) => p.slug === "horus-trace")!;
-    // Nothing is for sale anywhere: the demo bag is the fallback, and says it is a demo.
+    // Nothing is for sale anywhere: the local selection saves designs without claiming an order.
     expect(purchaseState(unmatched, undefined, false)).toMatchObject({
       canBuy: false,
-      action: "Add to demo bag",
-      note: "Demo · nothing can be ordered yet",
+      canSaveSelection: true,
+      action: "Add to selection",
+      note: "Preorder — coming soon. Save this design for now.",
     });
     // One real variant exists somewhere on the storefront: the demo bag is gone, everywhere.
     expect(purchaseState(unmatched, undefined, true)).toMatchObject({
       canBuy: false,
+      canSaveSelection: false,
       action: "",
       note: "Not yet available",
     });
@@ -388,7 +394,7 @@ describe("one cart, never two", () => {
   it("an unreachable Shopify never offers a demo line once the storefront is selling", () => {
     const unreachable = joinCatalogue(products, [], false).find((p) => p.slug === "crossline")!;
     expect(purchaseState(unreachable, undefined, true).action).toBe("");
-    expect(purchaseState(unreachable, undefined, false).action).toBe("Add to demo bag");
+    expect(purchaseState(unreachable, undefined, false).action).toBe("Add to selection");
   });
 
   it("only the family Shopify sells becomes purchasable; the rest stay fallback", () => {

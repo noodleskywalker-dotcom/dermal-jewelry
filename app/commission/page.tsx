@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { CommissionForm } from "@/components/commission/CommissionForm";
+import "./commission.css";
 
 export const metadata: Metadata = {
   title: "Commission a piece",
@@ -10,45 +12,51 @@ export const metadata: Metadata = {
 // It is a request and never an order: nothing is priced, reserved or charged here.
 export default function CommissionPage() {
   return (
-    <div className="commission">
+    <div className="commission commission-atelier">
       <section className="commission-hero" aria-labelledby="commission-heading">
         <div className="commission-hero-copy">
-          <p className="label-xs">Commission</p>
+          <p className="label-xs commission-eyebrow"><span aria-hidden="true">✦</span> The personal collection</p>
           <h1 id="commission-heading" className="commission-title">
             Commission
             <br />a piece
           </h1>
           <p className="commission-lede">Your idea. Made for the face.</p>
-          <p className="commission-intro">
-            Send us an idea, symbol, sketch, reference or existing design. Tell us where you want to wear it and what you want it to become.
-          </p>
+          <p className="commission-intro">A symbol. An initial. A shape only you could imagine. Send us your idea and the place you want to wear it. We will explore what it can become.</p>
           <a href="#request" className="btn-solid mt-10" data-testid="start-request">
-            Start your request
+            Start your request <span aria-hidden="true">↗</span>
           </a>
         </div>
         <figure className="commission-hero-figure">
-          {/* An existing DERMAL design render, as a mood for the page. It is not a past commission. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/products/japanese-angel/detail.webp" width={590} height={470} alt="" decoding="async" className="commission-hero-image" />
-          <figcaption className="label-xs text-ash">Design render · JAPANESE ANGEL</figcaption>
+          <div className="commission-image-stage">
+            <span className="commission-image-index label-xs" aria-hidden="true">A study in expression / 01</span>
+            {/* This existing design is inspiration, not a claim of a completed client commission. */}
+            <Image src="/products/horus-trace/hero.webp" width={1448} height={1086} sizes="(max-width: 899px) 100vw, 55vw" alt="Horus Trace design study in sculptural eye geometry" className="commission-hero-image" preload />
+            <span className="commission-image-word" aria-hidden="true">Yours.</span>
+          </div>
+          <figcaption><span>HORUS TRACE / Design study</span><span>Render · specification pending</span></figcaption>
         </figure>
       </section>
 
       <section id="request" className="commission-body" aria-label="Your request">
-        <ol className="commission-steps" aria-label="How a commission works">
+        <aside className="commission-process">
+          <p className="label-xs text-garnet">A conversation, then a creation</p>
+          <h2>Begin with<br /><em>an idea.</em></h2>
+          <ol className="commission-steps" aria-label="How a commission works">
           <li>
             <span className="label-xs text-garnet">01</span>
-            <p>You send the idea and your references.</p>
+            <div><h3>Share your vision</h3><p>A sketch, a reference or just a few words. Tell us where you imagine wearing it.</p></div>
           </li>
           <li>
             <span className="label-xs text-garnet">02</span>
-            <p>We review the design, the placement and whether it can be made.</p>
+            <div><h3>Explore the possibilities</h3><p>We review the design, placement and production feasibility.</p></div>
           </li>
           <li>
             <span className="label-xs text-garnet">03</span>
-            <p>We reply with a quote and next steps. Nothing is made until you agree.</p>
+            <div><h3>Make it personal</h3><p>We reply with a quote and next steps. Nothing is made until you agree.</p></div>
           </li>
-        </ol>
+          </ol>
+          <p className="commission-process-note">A request begins the conversation. There is no payment or commitment at this stage.</p>
+        </aside>
         <CommissionForm />
       </section>
     </div>

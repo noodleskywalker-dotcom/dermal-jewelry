@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { displayTitle, filmFor, isConceptFamily, lineLabels, renderFor } from "@/lib/catalog";
@@ -18,10 +19,21 @@ import { CommissionCta } from "@/components/commission/CommissionCta";
 import { ANCHORS, PlacementPreview } from "./PlacementPreview";
 import { ProductFilm } from "./ProductFilm";
 import { TryOnPreview } from "./TryOnPreview";
+import { FormVisual } from "./FormVisual";
 
 type ViewId = "piece" | "motion" | "orbit" | "assembly" | "hardware" | "reveal" | "placement" | "tryon";
 
 const ORBIT = "/media/hero-orbit/desert-eye-love";
+
+const designHeadings: Record<string, string> = {
+  "desert-eye-love": "A symbol. A red accent. Your expression.",
+  "horus-trace": "An ancient mark, drawn close.",
+  "blade-trace": "A line with an edge.",
+  crossline: "The power of almost nothing.",
+  "ankh-trace": "A familiar symbol. A personal placement.",
+  "japanese-angel": "Character, in every stroke.",
+  "ankh-eye": "Two symbols. One silhouette.",
+};
 
 // The product page as a luxury configurator: one large cinematic stage on the left, a small fixed
 // column of information on the right that stays put while the stage changes mode. The chosen
@@ -53,10 +65,10 @@ export function FamilyExperience({
   const views: { id: ViewId; label: string }[] = [
     { id: "piece", label: "The piece" },
     // With a design render as the piece, prepared film media moves to a view of its own.
-    ...(render && product.media ? [{ id: "motion" as const, label: "In motion" }] : []),
+    ...(render && product.media ? [{ id: "motion" as const, label: product.media.film?.length ? "In motion" : "More views" }] : []),
     // A piece with prepared media shows the drawn hardware on its own; without media, "The piece" is it.
     ...(product.media ? [{ id: "hardware" as const, label: "Hardware" }] : []),
-    ...(film ? [{ id: "orbit" as const, label: "360°" }, { id: "assembly" as const, label: "Assembly" }] : []),
+    ...(film ? [{ id: "orbit" as const, label: "Orbit study" }, { id: "assembly" as const, label: "Assembly" }] : []),
     // The concept-reveal prototype is superseded on a filmed form; development fixtures can still open it.
     ...(product.reveal.mode !== "none" && (!film || fixtureSrc || concept) ? [{ id: "reveal" as const, label: "Concept reveal" }] : []),
     ...(conceptOnly
@@ -80,17 +92,22 @@ export function FamilyExperience({
 
   const onTabKey = (e: React.KeyboardEvent, index: number) => {
     const delta = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
-    if (!delta) return;
+    if (!delta && e.key !== "Home" && e.key !== "End") return;
     e.preventDefault();
-    const next = views[(index + delta + views.length) % views.length];
+    const next = views[e.key === "Home" ? 0 : e.key === "End" ? views.length - 1 : (index + delta + views.length) % views.length];
     setView(next.id);
     tabRefs.current[next.id]?.focus();
   };
 
   return (
+    <div className="pdp-experience" data-product={product.slug}>
     <div className="pdp" data-testid="family" data-form={form.id}>
       {/* The stage. */}
       <div className="pdp-stage-column">
+        <div className="pdp-stage-label label-xs">
+          <span>DERMAL / {conceptOnly ? "Concept study" : "The design"}</span>
+          <span>{current === "piece" ? "01" : String(views.findIndex((v) => v.id === current) + 1).padStart(2, "0")} / {String(views.length).padStart(2, "0")}</span>
+        </div>
         <div role="tabpanel" id={`panel-${current}`} aria-labelledby={`tab-${current}`} data-testid="pdp-stage" data-view={current} className="pdp-stage">
           {current === "piece" && render && (
             <RenderStage render={render} title={product.title} hotspots={film ? DESERT_EYE_RENDER_HOTSPOTS : undefined} />
@@ -159,10 +176,11 @@ export function FamilyExperience({
       <aside className="pdp-info">
         <p className="label-xs text-ash">{product.origin === "anime-inspired" ? "Anime-inspired design · not an official collaboration" : "Original design"}</p>
         <p className="label-xs mt-2 text-ash" data-testid="family-lines">{lineLabels(product).join(" · ")}</p>
-        <h1 className="mt-4 font-display text-[clamp(2rem,2.6vw,2.75rem)] font-light leading-[1.05] tracking-[0.04em]">{displayTitle(product.title)}</h1>
+        <h1 className="pdp-title font-display">{displayTitle(product.title)}</h1>
+        <p className="pdp-summary">{product.summary}</p>
 
-        <fieldset className="mt-10">
-          <legend className="label-xs text-ash">Form</legend>
+        <fieldset className="pdp-forms">
+          <legend className="label-xs text-ash">Choose your form</legend>
           <div className="mt-3 flex flex-col">
             {product.forms.map((f) => {
               const pending = f.status !== "available";
@@ -184,30 +202,29 @@ export function FamilyExperience({
           </div>
         </fieldset>
 
-        <p className="mt-8" data-testid="family-price">
-          {/* Shopify's price when Shopify has one; otherwise the demo placeholder, still called one. */}
+        <p className="pdp-price" data-testid="family-price">
+          {/* Price and state stay owned by the commerce layer. */}
           <span className="label-xs block text-ash">{price.caption}</span>
           <span className="mt-1 block font-display text-3xl font-light tracking-[0.06em]">{price.value}</span>
         </p>
 
         {!conceptOnly && (
-          <Link href={`/face-studio?product=${product.slug}&form=${form.id}`} data-testid="try-it-on" className="text-link mt-6">
-            Try on your face <span aria-hidden="true">↗</span>
+          <Link href={`/face-studio?product=${product.slug}&form=${form.id}`} data-testid="try-it-on" className="pdp-try-link">
+            <span>See it on you</span><span aria-hidden="true">↗</span>
           </Link>
         )}
 
-        <AddToBagButton product={product} formId={form.id} className="mt-5" />
+        <AddToBagButton product={product} formId={form.id} className="pdp-purchase" />
         {/* Without an action the button's place already carries the note, so it is not said twice. */}
         {purchase.action && purchase.note && <p className="label-xs mt-3 text-ash" data-testid="purchase-note">{purchase.note}</p>}
 
-        <div className="mt-10 divide-y divide-line border-y border-line">
+        <div className="pdp-details divide-y divide-line border-y border-line">
           <details className="group">
             <summary className="label-xs flex min-h-11 cursor-pointer list-none items-center justify-between">
               Details <span aria-hidden="true" className="text-ash group-open:hidden">+</span><span aria-hidden="true" className="hidden text-ash group-open:inline">−</span>
             </summary>
             <div className="pb-4 text-sm leading-relaxed text-ash">
-              <p>{product.story}</p>
-              <p className="mt-3" data-testid="family-form-note">{form.note}</p>
+              <p data-testid="family-form-note">{form.note}</p>
               <p className="mt-2" data-testid="family-package">{form.packageContents}</p>
             </div>
           </details>
@@ -234,8 +251,32 @@ export function FamilyExperience({
         <p className="label-xs mt-4 text-ash" data-testid="spec-status">
           {product.specs.some((s) => s.status === "unverified") ? "Prototype specification · final production details pending · unverified" : "Confirmed specification"}
         </p>
-        <CommissionCta className="mt-12" />
+        <CommissionCta className="pdp-commission" />
       </aside>
+    </div>
+
+    <section className="pdp-design-story" aria-labelledby="pdp-design-heading">
+      <div className="pdp-story-visual">
+        {render?.detail ? (
+          <Image
+            src={render.detail.src}
+            width={render.detail.width}
+            height={render.detail.height}
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            alt={`${product.title}, a close study of its design. Materials are not yet confirmed.`}
+          />
+        ) : (
+          <div className="pdp-story-drawing" aria-hidden="true"><FormVisual product={product} formId={form.id} /></div>
+        )}
+        <p className="label-xs text-ash">{render ? "Detail / Design render" : "Form / Design study"}</p>
+      </div>
+      <div className="pdp-story-copy">
+        <p className="label-xs text-ash">The thought behind the form</p>
+        <h2 id="pdp-design-heading" className="font-display">{designHeadings[product.slug] ?? "A small object. A personal statement."}</h2>
+        <p>{product.story}</p>
+        <Link href="/collections" className="text-link">Explore the collection <span aria-hidden="true">→</span></Link>
+      </div>
+    </section>
     </div>
   );
 }

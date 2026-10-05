@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatPrice } from "@/lib/catalog";
+import { priceLabel } from "@/lib/commerce/display";
 import type { Product } from "@/lib/catalog/types";
 import { site } from "@/lib/config/site";
 import { ProductPieces } from "@/components/catalog/ProductArtwork";
@@ -48,8 +48,7 @@ export function OriginalsStrip({ id, products }: { id: string; products: Product
                 <span className="flex items-baseline justify-between gap-4">
                   <span className="font-display text-3xl font-light leading-tight">{product.title}</span>
                   <span className="min-w-0 text-right text-sm text-ash">
-                    <span className="sr-only">Demo price </span>
-                    {formatPrice(product.demoPrice, product.currency)} · Demo
+                    {priceLabel(product).value}
                   </span>
                 </span>
               </Link>

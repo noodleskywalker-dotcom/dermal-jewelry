@@ -17,7 +17,7 @@ test.describe("design family: piercing forms", () => {
     await page.goto(FAMILY);
     const family = page.getByTestId("family");
     await expect(family).toHaveAttribute("data-form", "anti-eyebrow");
-    await expect(page.getByTestId("family-price")).toContainText("QAR 390");
+    await expect(page.getByTestId("family-price")).toContainText("Price pending");
     await expect(page.getByTestId("family-package")).toContainText("two decorative tops");
 
     await tab(page, "Placement").click();
@@ -34,7 +34,7 @@ test.describe("design family: piercing forms", () => {
 
     await chooseForm(page, "micro-dermal");
     await expect(family).toHaveAttribute("data-form", "micro-dermal");
-    await expect(page.getByTestId("family-price")).toContainText("QAR 220");
+    await expect(page.getByTestId("family-price")).toContainText("Price pending");
     await expect(page.getByTestId("family-package")).toContainText("one decorative top");
     await expect(page.getByTestId("family-form-note")).toContainText("Not manufacturing-ready");
     await expect(preview).toHaveAttribute("data-placement", "dermal");
@@ -82,10 +82,10 @@ test.describe("design family: piercing forms", () => {
     await expect(lines).toHaveCount(2);
     await expect(page.locator('[data-testid="bag-line"][data-form="micro-dermal"]')).toContainText("Micro dermal form");
     await expect(page.locator('[data-testid="bag-line"][data-form="anti-eyebrow"]')).toContainText("Anti-eyebrow form");
-    await expect(page.getByTestId("bag-subtotal")).toHaveText("QAR 610");
+    await expect(page.getByTestId("bag-subtotal")).toHaveText("Price pending");
     await page.locator('[data-testid="bag-line"][data-form="micro-dermal"]').getByRole("button", { name: /Increase quantity/ }).click();
     await expect(page.locator('[data-testid="bag-line"][data-form="anti-eyebrow"]').getByTestId("bag-quantity")).toContainText("1");
-    await expect(page.getByTestId("bag-subtotal")).toHaveText("QAR 830");
+    await expect(page.getByTestId("bag-subtotal")).toHaveText("Price pending");
   });
 
   test("the original piece has working forms too, including a nose form on the nose", async ({ page }) => {
@@ -100,7 +100,7 @@ test.describe("design family: piercing forms", () => {
     const nose = await preview.getByTestId("placement-piece").boundingBox();
     expect(nose!.x).toBeLessThan(cheek!.x - 20);
     expect(nose!.width).toBeLessThan(cheek!.width);
-    await expect(page.getByTestId("family-price")).toContainText("QAR 190");
+    await expect(page.getByTestId("family-price")).toContainText("Price pending");
   });
 });
 

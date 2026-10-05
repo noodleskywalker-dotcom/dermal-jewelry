@@ -14,6 +14,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
+import { pathToFileURL } from "node:url";
 
 const SRC = "references/renders/2026-09-26";
 const OUT = "public/products";
@@ -138,7 +139,7 @@ function fitPaper(data, width, height) {
  * turned into transparency, keeping the render's own soft shadow as a translucent shadow. The outer
  * edge of the crop is feathered so no line can show where the crop was cut.
  */
-function liftPaper(data, width, height, blanks) {
+export function liftPaper(data, width, height, blanks = []) {
   const paper = fitPaper(data, width, height);
   const out = Buffer.alloc(width * height * 4);
   const KNEE = 238;
@@ -213,4 +214,6 @@ async function build({ family, source, blank = [], hero, catalogue, detail }) {
   };
 }
 
-for (const r of RENDERS) await build(r);
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
+  for (const r of RENDERS) await build(r);
+}

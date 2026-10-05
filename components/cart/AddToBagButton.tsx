@@ -13,7 +13,7 @@ import { useCommerceLive } from "@/components/commerce/CommerceProvider";
  *
  * When Shopify has a variant that is genuinely for sale, this adds a real Shopify cart line and the
  * bag's totals come from Shopify. When it does not — which is every piece while the store is still
- * empty — the piece keeps its editorial presentation and the demo bag, which says it is a demo.
+ * empty — the piece can be saved in a local design selection without a price or checkout.
  * A concept is never given a button at all.
  *
  * Nothing here invents a variant from a visual form: a form the store does not sell cannot be added.
@@ -22,8 +22,8 @@ export function AddToBagButton({ product, formId, className }: { product: Produc
   const [added, setAdded] = useState<string | null>(null);
   const form = formOf(product, formId);
   const commerceLive = useCommerceLive();
-  const purchase = purchaseState(product, form.id, commerceLive);
-  const { status, error } = useShopifyCart();
+  const { cart, status, error } = useShopifyCart();
+  const purchase = purchaseState(product, form.id, commerceLive || cart !== null);
 
   // A concept, and a piece with no Shopify variant once the store is really selling, have nothing
   // to add. They are presented, and the note beside them says so where the button would be.
@@ -42,15 +42,17 @@ export function AddToBagButton({ product, formId, className }: { product: Produc
       <button
         type="button"
         data-testid="add-to-bag"
-        data-backing={purchase.canBuy ? "shopify" : "demo"}
-        disabled={busy || (!purchase.canBuy && !!purchase.merchandiseId)}
+        data-backing={purchase.canSaveSelection ? "demo" : "shopify"}
+        disabled={busy || (!purchase.canBuy && !purchase.canSaveSelection)}
         onClick={async () => {
+          if (busy) return;
           if (purchase.canBuy && purchase.merchandiseId) {
             await cartActions.add(purchase.merchandiseId);
             bagActions.openDrawer();
-            setAdded(form.id);
             return;
           }
+          // A sold-out or unmapped Shopify form must never fall through into local selection storage.
+          if (!purchase.canSaveSelection) return;
           bagActions.add(product.id, form.id);
           bagActions.openDrawer();
           setAdded(form.id);
@@ -60,10 +62,10 @@ export function AddToBagButton({ product, formId, className }: { product: Produc
         {busy ? "Adding…" : purchase.action}
       </button>
       <p role="status" className="mt-2 min-h-4 text-xs text-ash">
-        {error
+        {error && !purchase.canSaveSelection
           ? error
           : added === form.id
-            ? `${product.title}, ${form.label} form, added to your ${purchase.canBuy ? "bag" : "demo bag"}.`
+            ? `${product.title}, ${form.label} form, saved to your selection.`
             : ""}
       </p>
     </div>

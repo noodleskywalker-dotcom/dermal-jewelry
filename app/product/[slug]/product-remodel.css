@@ -1,0 +1,392 @@
+/* Product pages use one generous image plane and a quiet editorial information column.
+   Every rule stays inside this route so Next's persistent CSS cannot affect other views. */
+.product-remodel {
+  --pdp-rule: rgba(12, 12, 13, 0.16);
+  background: #fbfaf7;
+}
+.product-remodel .pdp-page {
+  max-width: 1800px;
+  margin-inline: auto;
+  padding: 3.5rem 0 0;
+}
+.product-remodel .pdp-crumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding: 0 clamp(1.25rem, 3.4vw, 4rem) 1.7rem;
+  font-size: 0.59rem;
+  letter-spacing: 0.14em;
+}
+.product-remodel .pdp {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.75rem;
+  padding-inline: 0;
+}
+.product-remodel .pdp-stage-column {
+  min-width: 0;
+}
+.product-remodel .pdp-stage-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-inline: clamp(1.25rem, 3.4vw, 4rem);
+  padding-block: 1rem;
+  border-top: 1px solid var(--pdp-rule);
+  color: #74706b;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+}
+.product-remodel .pdp-stage {
+  min-height: 25rem;
+  min-height: min(58svh, 30rem);
+  background: transparent;
+}
+.product-remodel .pdp-stage:has(.render-stage) {
+  min-height: 0;
+}
+.product-remodel .render-stage {
+  height: 100%;
+}
+.product-remodel .render-stage-frame {
+  padding: 1.75rem 1rem 2rem;
+}
+.product-remodel .render-stage-figure {
+  width: min(100%, calc(49svh * var(--ratio, 1)));
+}
+.product-remodel .render-stage-controls {
+  align-items: baseline;
+  column-gap: 1rem;
+  padding: 0 1.25rem 0.75rem;
+}
+.product-remodel .render-stage-controls > div {
+  flex-shrink: 0;
+}
+.product-remodel .render-stage-controls figcaption {
+  max-width: 29rem;
+  font-size: 0.52rem;
+  line-height: 1.9;
+  letter-spacing: 0.08em;
+}
+.product-remodel .pdp-modes {
+  margin-inline: 1.25rem;
+  padding: 0;
+  gap: 1.5rem;
+  border-top: 1px solid var(--pdp-rule);
+  scrollbar-width: thin;
+  scrollbar-color: #c5c0b7 transparent;
+}
+.product-remodel .pdp-modes button {
+  min-height: 3.5rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+}
+.product-remodel .pdp-info {
+  max-width: none;
+  padding: 0 1.25rem;
+}
+.product-remodel .pdp-info > .label-xs:first-child {
+  max-width: 28rem;
+  font-size: 0.59rem;
+  letter-spacing: 0.08em;
+  line-height: 1.8;
+}
+.product-remodel [data-testid="family-lines"] {
+  color: #8f2337;
+  font-size: 0.59rem;
+}
+.product-remodel .pdp-title {
+  max-width: 12ch;
+  margin-top: 1.45rem;
+  font-size: clamp(2.9rem, 10.3vw, 4.8rem);
+  font-weight: 400;
+  line-height: 0.99;
+  letter-spacing: -0.038em;
+  overflow-wrap: normal;
+}
+.product-remodel .pdp-summary {
+  max-width: 29rem;
+  margin-top: 1.55rem;
+  font-size: 0.89rem;
+  font-weight: 400;
+  line-height: 1.9;
+  color: #6a655f;
+}
+.product-remodel .pdp-forms {
+  margin-top: 2.5rem;
+}
+.product-remodel .pdp-forms legend {
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+}
+.product-remodel .pdp-forms label {
+  min-height: 3.25rem;
+  font-size: 0.63rem;
+  letter-spacing: 0.1em;
+  transition: color 0.5s ease, border-color 0.5s ease;
+}
+.product-remodel .pdp-forms label > span:last-child:not(:first-child) {
+  font-size: 0.68rem;
+}
+.product-remodel .pdp-price {
+  margin-top: 2rem;
+}
+.product-remodel .pdp-price > span:first-child {
+  font-size: 0.58rem;
+}
+.product-remodel .pdp-price > span:last-child {
+  margin-top: 0.6rem;
+  font-size: 1.85rem;
+  letter-spacing: -0.018em;
+}
+.product-remodel .pdp-try-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.25rem;
+  margin-top: 1.3rem;
+  padding-inline: 1rem;
+  border: 1px solid var(--pdp-rule);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: border-color 0.5s ease, color 0.5s ease;
+}
+.product-remodel .pdp-try-link:hover {
+  color: #8f2337;
+  border-color: #8f2337;
+}
+.product-remodel .pdp-purchase {
+  margin-top: 0.75rem;
+}
+.product-remodel .pdp-purchase button {
+  min-height: 3.25rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+}
+.product-remodel .pdp-details {
+  margin-top: 2rem;
+}
+.product-remodel .pdp-details summary {
+  min-height: 3.1rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.13em;
+}
+.product-remodel [data-testid="spec-status"] {
+  max-width: 27rem;
+  margin-top: 1rem;
+  font-size: 0.54rem;
+  line-height: 1.9;
+  letter-spacing: 0.075em;
+}
+.product-remodel .pdp-commission {
+  margin-top: 2.1rem;
+  padding-top: 0;
+}
+.product-remodel .pdp-commission .commission-cta-link {
+  font-size: 1.65rem;
+}
+.product-remodel .pdp-crop {
+  min-height: 30rem;
+}
+.product-remodel .pdp-crop > p {
+  right: 1rem;
+  font-size: 0.53rem;
+  line-height: 1.7;
+}
+.product-remodel .pdp-stage .assembly-figure {
+  max-width: 46rem;
+  margin-inline: auto;
+}
+.product-remodel .pdp-stage .assembly-figure > figcaption {
+  padding-inline: 1.25rem;
+  font-size: 0.54rem;
+  line-height: 1.8;
+}
+.product-remodel .pdp-design-story {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 3rem;
+  margin-top: 4rem;
+  padding: 3rem 1.25rem 4.5rem;
+  border-top: 1px solid var(--pdp-rule);
+}
+.product-remodel .pdp-story-visual {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  place-items: center;
+}
+.product-remodel .pdp-story-visual > img {
+  width: 100%;
+  height: auto;
+  max-height: 29rem;
+  object-fit: contain;
+}
+.product-remodel .pdp-story-visual > p {
+  justify-self: start;
+  margin-top: 1.5rem;
+  font-size: 0.56rem;
+}
+.product-remodel .pdp-story-drawing {
+  position: relative;
+  width: min(78%, 30rem);
+  aspect-ratio: 1;
+}
+.product-remodel .pdp-story-copy > .label-xs {
+  font-size: 0.58rem;
+  color: #8f2337;
+}
+.product-remodel .pdp-story-copy h2 {
+  max-width: 14ch;
+  margin-top: 1.5rem;
+  font-size: clamp(2.35rem, 4.1vw, 4.2rem);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+.product-remodel .pdp-story-copy > p:not(.label-xs) {
+  max-width: 27rem;
+  margin-top: 1.7rem;
+  font-size: 0.88rem;
+  line-height: 1.95;
+  color: #6a655f;
+}
+.product-remodel .pdp-story-copy > a {
+  margin-top: 2.3rem;
+  font-size: 0.62rem;
+}
+.product-remodel .hotspot-note {
+  border-top: 1px solid rgba(12, 12, 13, 0.3);
+  background: rgba(251, 250, 247, 0.97);
+}
+.product-remodel .hotspot-ring {
+  width: 10px;
+  height: 10px;
+}
+@media (min-width: 640px) and (max-width: 1023px) {
+  .product-remodel .pdp-info {
+    max-width: 42rem;
+    margin-inline: auto;
+    padding-inline: 2rem;
+  }
+  .product-remodel .pdp-stage {
+    min-height: 34rem;
+  }
+  .product-remodel .pdp-title {
+    max-width: 13ch;
+    font-size: 4.8rem;
+  }
+  .product-remodel .pdp-design-story {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    padding-inline: 2rem;
+  }
+}
+@media (min-width: 1024px) {
+  .product-remodel .pdp {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: clamp(2.5rem, 4vw, 5rem);
+    padding-inline: clamp(2rem, 3.4vw, 4rem);
+  }
+  .product-remodel .pdp-stage-column {
+    position: sticky;
+    top: 5.5rem;
+    align-self: start;
+  }
+  .product-remodel .pdp-stage-label {
+    margin-inline: 0;
+  }
+  .product-remodel .pdp-stage {
+    height: min(69svh, 49rem);
+    min-height: 28rem;
+  }
+  .product-remodel .pdp-stage:has([data-testid="tryon-preview"]) {
+    height: auto;
+    min-height: 0;
+  }
+  /* Keep the square assembly and its caption inside the stage, above the view controls. */
+  .product-remodel .pdp-stage .assembly-figure {
+    width: min(100%, calc(min(69svh, 49rem) - 5.5rem));
+  }
+  .product-remodel .pdp-stage .assembly {
+    width: 100%;
+  }
+  .product-remodel .render-stage-frame {
+    padding: 1.75rem 0 2rem;
+  }
+  .product-remodel .render-stage-figure {
+    width: min(100cqw, 100cqh * var(--ratio, 1));
+  }
+  .product-remodel .render-stage-controls {
+    padding-inline: 0;
+  }
+  .product-remodel .pdp-modes {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    column-gap: 1.5rem;
+    row-gap: 0;
+    margin: 0;
+  }
+  .product-remodel .pdp-info {
+    padding: 1rem 0 0;
+  }
+  .product-remodel .pdp-title {
+    font-size: clamp(3.1rem, 4.2vw, 5.1rem);
+    max-width: 12ch;
+  }
+  .product-remodel .pdp-summary {
+    margin-top: 1.7rem;
+  }
+  .product-remodel .pdp-forms {
+    margin-top: 2.25rem;
+  }
+  .product-remodel .pdp-design-story {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: clamp(4rem, 8vw, 10rem);
+    margin-top: 6rem;
+    padding: 5rem clamp(2rem, 5.5vw, 7rem) 6rem;
+  }
+  .product-remodel .pdp-story-visual > img {
+    max-height: 36rem;
+  }
+  .product-remodel .pdp-story-copy {
+    max-width: 32rem;
+  }
+}
+@media (max-width: 639px) {
+  /* Crop only the empty margins of the square assembly. Its internal geometry stays intact. */
+  .product-remodel .pdp-stage:has(.assembly-figure) {
+    min-height: 0;
+  }
+  .product-remodel .pdp-stage .assembly {
+    margin-top: -3.5rem;
+    margin-bottom: 3.5rem;
+  }
+  .product-remodel .pdp-stage .assembly-notes {
+    padding-inline: 1.25rem;
+    transform: translateY(-3.5rem);
+  }
+}
+@media (max-width: 359px) {
+  .product-remodel .pdp-title {
+    font-size: 2.65rem;
+  }
+  .product-remodel .pdp-info > .label-xs:first-child {
+    font-size: 0.56rem;
+  }
+  .product-remodel .pdp-modes {
+    gap: 1.1rem;
+  }
+  .product-remodel .pdp-forms label {
+    gap: 0.6rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .product-remodel *,
+  .product-remodel *::before,
+  .product-remodel *::after {
+    scroll-behavior: auto;
+  }
+}

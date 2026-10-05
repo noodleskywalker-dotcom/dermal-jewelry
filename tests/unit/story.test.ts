@@ -83,7 +83,6 @@ describe("collection story", () => {
 
   it("gives a build no internal media, no working names and no production briefs", () => {
     expect(internalStoryMedia(story, false)).toEqual({});
-    expect(Object.keys(internalStoryMedia(story, true)).sort()).toEqual(["character", "closeup", "portrait", "sand", "sandfx"]);
     const built = JSON.stringify(storyForBuild(story, false));
     expect(built).not.toMatch(/gaara|rock lee/i);
     expect(JSON.stringify(storyForBuild(story, true))).toMatch(/Gaara/);

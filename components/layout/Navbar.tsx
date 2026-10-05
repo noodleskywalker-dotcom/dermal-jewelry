@@ -17,6 +17,7 @@ export function Navbar() {
   const count = bagCount(bag);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const cinematic = pathname === "/" && !scrolled;
   const linkClass = "label-xs inline-flex min-h-11 items-center opacity-80 transition-opacity duration-200 hover:opacity-100";
 
   useEffect(() => {
@@ -28,13 +29,13 @@ export function Navbar() {
 
   return (
     <>
-    <header data-tone="light" data-scrolled={scrolled} className={`sticky top-0 z-40 text-ink transition-colors duration-500 ${scrolled ? "bg-paper/85 backdrop-blur-[6px]" : "bg-transparent"}`}>
-      <nav aria-label="Main" className="mx-auto flex h-16 max-w-[100rem] items-center justify-between px-5 sm:px-8">
+    <header data-tone={cinematic ? "cinematic" : "light"} data-scrolled={scrolled} className={`site-header sticky top-0 z-40 transition-colors duration-500 ${cinematic ? "text-ivory bg-transparent" : "text-ink bg-paper/95 backdrop-blur-[6px]"}`}>
+      <nav aria-label="Main" className="site-navigation mx-auto flex h-16 max-w-[100rem] items-center justify-between px-5 sm:px-8">
         <Link href="/" className="font-sans text-sm font-medium tracking-[0.42em]" aria-label={`${site.brand} home`}>
           {site.brand}
         </Link>
 
-        <ul className="hidden items-center gap-10 md:flex">
+        <ul className="hidden items-center gap-7 lg:flex">
           {site.nav.map((item) => {
             const current = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
@@ -48,14 +49,14 @@ export function Navbar() {
         </ul>
 
         <div className="flex items-center gap-6">
-          <Link href="/shop#shop-search" className={`${linkClass} hidden md:inline-flex`}>
+          <Link href="/shop#shop-search" className={`${linkClass} navigation-search`}>
             Search
           </Link>
           <button type="button" onClick={bagActions.openDrawer} data-testid="open-bag" className={linkClass}>
             Bag <span aria-hidden="true">&nbsp;({count})</span>
             <span className="sr-only">, {count} {count === 1 ? "item" : "items"}</span>
           </button>
-          <button type="button" className={`${linkClass} md:hidden`} aria-haspopup="dialog" onClick={() => setMenuOpen(true)}>
+          <button type="button" className={`${linkClass} lg:hidden`} aria-haspopup="dialog" onClick={() => setMenuOpen(true)}>
             Menu
           </button>
         </div>

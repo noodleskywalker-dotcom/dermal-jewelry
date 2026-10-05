@@ -1,0 +1,37 @@
+.grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.75rem;
+  overflow-x: clip;
+}
+
+.grid .piece { min-width: 0; margin: 0; }
+.grid .inner { width: 100%; max-width: none; margin-inline: auto; }
+.grid .object { width: 86%; margin-inline: auto; }
+.imageLabel { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; padding-top: .7rem; border-top: 1px solid var(--color-line); }
+.titleRow { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; margin-top: .8rem; }
+.name { font-family: var(--font-display); font-size: clamp(1.7rem, 2.3vw, 2.8rem); font-weight: 300; line-height: 1.15; letter-spacing: -.02em; }
+.price { color: var(--color-ash); font-size: .75rem; line-height: 1.5; white-space: nowrap; }
+.meta { display: block; margin-top: .8rem; color: var(--color-ash); line-height: 1.7; }
+.actions { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 1.5rem; margin-top: .5rem; }
+.status { font-size: .6875rem; color: var(--color-ash); line-height: 1.6; }
+.earlier { color: var(--color-ash); }
+
+/* A product's own motion can answer a pointer; the entire catalogue needn't float constantly. */
+.grid :global(.fo-grain) { display: none; }
+
+@media (min-width: 640px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2rem; row-gap: 3.75rem; }
+  .grid .object { width: 84%; }
+}
+
+@media (min-width: 1024px) {
+  .grid { column-gap: 5vw; row-gap: 4.5rem; }
+  .grid[data-layout="editorial"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid[data-layout="editorial"] > .piece { grid-column: auto; }
+  .grid[data-layout="editorial"] > .piece:nth-child(even) { margin-top: 4rem; }
+  .grid[data-layout="editorial"] .inner { max-width: 35rem; margin-inline: auto; }
+  .grid[data-layout="even"] { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 2.5rem; }
+  .grid[data-layout="even"] .name { font-size: clamp(1.7rem, 1.9vw, 2.1rem); }
+}

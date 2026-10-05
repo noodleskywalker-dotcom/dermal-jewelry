@@ -74,7 +74,7 @@ export function OrbitViewer({ dir, count, title }: { dir: string; count: number;
         )}
       </div>
       <figcaption className="label-xs mt-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-1 text-ash">
-        <span>360° · prototype orbit · concept hardware · drag, arrow keys or slider</span>
+        <span>Orbit study · concept hardware · drag, arrow keys or slider</span>
         <label className="flex items-center gap-3">
           <span>Turn</span>
           <input type="range" min={0} max={count - 1} value={index} onChange={(e) => setIndex(Number(e.target.value))} data-testid="orbit-turn" className="studio-range w-36" aria-valuetext={`${Math.round((index / count) * 360)} degrees`} />

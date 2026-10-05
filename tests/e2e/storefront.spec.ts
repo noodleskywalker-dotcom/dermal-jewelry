@@ -18,7 +18,7 @@ test.describe("storefront navigation", () => {
     await page.getByTestId("story-details").click();
     await expect(page).toHaveURL(/\/product\/desert-eye-love\?form=anti-eyebrow$/);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("DESERT EYE — LOVE");
-    await expect(page.getByText("Demo price").first()).toBeVisible();
+    await expect(page.getByText("Price pending").first()).toBeVisible();
     // One quiet status for the specification; no row carries a warning tag of its own.
     await expect(page.getByTestId("spec-status")).toContainText(/unverified/i);
     await expect(page.getByText("Unverified", { exact: true })).toHaveCount(0);
@@ -48,7 +48,7 @@ test.describe("storefront navigation", () => {
     await page.goto("/product/sand-vortex");
     await page.getByTestId("add-to-bag").click();
     await expect(page.getByTestId("bag-line")).toHaveCount(1);
-    await expect(page.getByTestId("bag-subtotal")).toHaveText("QAR 350");
+    await expect(page.getByTestId("bag-subtotal")).toHaveText("Price pending");
   });
 
   test("the server refuses checkout in preview mode", async ({ request }) => {

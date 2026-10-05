@@ -5,6 +5,7 @@ export const PLACEMENTS = ["Anti-eyebrow", "Dermal", "Eyebrow", "Nose", "Septum"
 export const DESIGN_TYPES = ["Initial / monogram", "Symbol", "Custom shape", "Object / weapon", "Stone-focused", "Text / glyph", "Other"] as const;
 export const MATERIALS = ["Polished silver-tone", "Gold-tone", "Dark metal", "Mixed", "Not sure", "Other"] as const;
 export const STONES = ["None", "Red", "Black", "Clear", "Blue", "Green", "Other", "Not sure"] as const;
+export const FINISHES = ["High polish", "Satin / brushed", "Matte", "Mixed", "Not sure"] as const;
 export const BUDGETS = ["Under 500 QAR", "500–1,000 QAR", "1,000–2,500 QAR", "2,500+ QAR", "Not sure"] as const;
 
 export const LIMITS = {
@@ -37,6 +38,7 @@ export type CommissionFields = {
   designType: string;
   material: string;
   stone: string;
+  finish: string;
   budget: string;
   description: string;
   rights: boolean;
@@ -52,6 +54,7 @@ export const EMPTY_FIELDS: CommissionFields = {
   designType: "",
   material: "",
   stone: "",
+  finish: "",
   budget: "",
   description: "",
   rights: false,
@@ -94,6 +97,7 @@ export function validateFields(input: CommissionFields): FieldErrors {
   if (!oneOf(DESIGN_TYPES, input.designType)) errors.designType = "Choose one of the design types.";
   if (!oneOf(MATERIALS, input.material)) errors.material = "Choose one of the material directions.";
   if (!oneOf(STONES, input.stone)) errors.stone = "Choose one of the stone colours.";
+  if (!oneOf(FINISHES, input.finish ?? "")) errors.finish = "Choose one of the finish preferences.";
   if (!oneOf(BUDGETS, input.budget)) errors.budget = "Choose one of the budgets.";
 
   if (description.length < LIMITS.descriptionMin) errors.description = "Describe the piece in a sentence or two.";
@@ -117,6 +121,7 @@ export function readFields(value: unknown): CommissionFields {
     designType: text("designType"),
     material: text("material"),
     stone: text("stone"),
+    finish: text("finish"),
     budget: text("budget"),
     description: text("description"),
     rights: v.rights === true,

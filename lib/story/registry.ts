@@ -1,3 +1,4 @@
+import { internalConceptUrl } from "./internal-media";
 import { desertEyeStory } from "./desert-eye";
 import type { CollectionStory, StoryMedia } from "./types";
 
@@ -31,13 +32,11 @@ export function storyForBuild(story: CollectionStory, internal: boolean): Collec
 /** Internal media addresses, served only by a development server. A build gets none. */
 export function internalStoryMedia(story: CollectionStory, internal: boolean): StoryMedia {
   if (!internal || story.readiness.characterMedia !== "internal-concept") return {};
-  return {
-    character: "/api/dev-concept/seated",
-    closeup: "/api/dev-concept/closeup-clean",
-    portrait: "/api/dev-concept/start",
-    sand: "/api/dev-concept/sand",
-    sandfx: "/api/dev-concept/sandfx",
-  };
+  const slots = { character: "seated", closeup: "closeup-clean", portrait: "start", sand: "sand", sandfx: "sandfx" };
+  return Object.fromEntries(Object.entries(slots).flatMap(([slot, name]) => {
+    const url = internalConceptUrl(name, internal);
+    return url ? [[slot, url]] : [];
+  }));
 }
 
 export type MascotMedia = { idle: string; blink: string; yawn: string; page: string; look: string };
@@ -47,14 +46,16 @@ export type MascotMedia = { idle: string; blink: string; yawn: string; page: str
  * like the rest: a development server gets its pictures, every build gets none and shows jewelry instead.
  */
 export function internalMascotMedia(internal: boolean): MascotMedia | null {
-  if (!internal) return null;
-  const at = (pose: string) => `/api/dev-concept/chibi-${pose}`;
-  return { idle: at("idle"), blink: at("blink"), yawn: at("yawn"), page: at("page"), look: at("look") };
+  const idle = internalConceptUrl("chibi-idle", internal);
+  if (!idle) return null;
+  // An incomplete pose set may still use the real idle still without requesting missing files.
+  const at = (pose: string) => internalConceptUrl(`chibi-${pose}`, internal) ?? idle;
+  return { idle, blink: at("blink"), yawn: at("yawn"), page: at("page"), look: at("look") };
 }
 
 /** The companion still for the homepage world. Development server only; a build leaves the section out. */
 export function internalCompanionStill(internal: boolean): string | undefined {
-  return internal ? "/api/dev-concept/companion-dune" : undefined;
+  return internalConceptUrl("companion-dune", internal);
 }
 
 export type MascotClips = { idle: string; react: string };
@@ -64,7 +65,9 @@ export type MascotClips = { idle: string; react: string };
  * development server; a build gets null and the page falls back to the still poses.
  */
 export function internalMascotClips(internal: boolean): MascotClips | null {
-  return internal ? { idle: "/api/dev-concept/mascot-idle", react: "/api/dev-concept/mascot-react" } : null;
+  const idle = internalConceptUrl("mascot-idle", internal);
+  const react = internalConceptUrl("mascot-react", internal);
+  return idle && react ? { idle, react } : null;
 }
 
 /**
@@ -73,9 +76,9 @@ export function internalMascotClips(internal: boolean): MascotClips | null {
  * local transition has been reviewed.
  */
 export function internalSandSource(internal: boolean): string | undefined {
-  return internal ? "/api/dev-concept/sandfx-local" : undefined;
+  return internalConceptUrl("sandfx-local", internal);
 }
 
 export function internalSandFallback(internal: boolean): string | undefined {
-  return internal ? "/api/dev-concept/sandfx" : undefined;
+  return internalConceptUrl("sandfx", internal);
 }

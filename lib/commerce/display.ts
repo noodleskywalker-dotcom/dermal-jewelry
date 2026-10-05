@@ -24,9 +24,8 @@ export type PriceLabel = { caption: string; value: string };
 /**
  * The price, said honestly.
  *
- * Shopify's amount whenever Shopify has one; otherwise the demo placeholder, still called a demo
- * price; otherwise that there is no price yet. A demo price is never presented as a selling price,
- * and a concept is never given one at all.
+ * Only Shopify supplies selling prices. Historical demo values stay in the editorial data for
+ * compatibility, but never appear as customer-facing prices. A concept is never priced.
  */
 export function priceLabel(product: Product, formId?: FormId): PriceLabel {
   const commerce = commerceOf(product);
@@ -38,7 +37,8 @@ export function priceLabel(product: Product, formId?: FormId): PriceLabel {
   if (commerce && (commerce.status === "live" || commerce.status === "sold-out")) {
     const dermal = product as DermalProduct;
     const variant = variantForForm(dermal, form.id);
-    const money = variant?.price ?? commerce.price;
+    // A family's starting price must not become the price of a form Shopify has never sold.
+    const money = variant?.price ?? (formId ? null : commerce.price);
     if (money) {
       return {
         caption: commerce.status === "sold-out" ? "Sold out" : "Price",
@@ -47,9 +47,7 @@ export function priceLabel(product: Product, formId?: FormId): PriceLabel {
     }
   }
 
-  // No commerce record, or one with no price: the demo placeholder, labelled as one.
-  if (!form.demoPrice) return { caption: "Price", value: "Price pending" };
-  return { caption: "Demo price", value: formatPrice(form.demoPrice, product.currency) };
+  return { caption: "Preorder — coming soon", value: "Price pending" };
 }
 
 /** The short price a catalogue card shows, where there is no room for a caption. */
@@ -60,6 +58,8 @@ export function cardPrice(product: Product): string {
 export type PurchaseState = {
   /** True only when Shopify has a variant that is genuinely for sale. */
   canBuy: boolean;
+  /** A local design selection is allowed only while Shopify does not own the bag. */
+  canSaveSelection: boolean;
   /** The merchandise id a cart line is built from, when there is one. */
   merchandiseId: string | null;
   /** What the button says. */
@@ -80,32 +80,32 @@ export function purchaseState(product: Product, formId?: FormId, commerceLive = 
   // variant is for sale, Shopify is the only cart and a piece without one says so plainly instead
   // of offering a placeholder line beside real ones.
   const fallback: PurchaseState = commerceLive
-    ? { canBuy: false, merchandiseId: null, action: "", note: "Not yet available" }
-    : { canBuy: false, merchandiseId: null, action: "Add to demo bag", note: "Demo · nothing can be ordered yet" };
+    ? { canBuy: false, canSaveSelection: false, merchandiseId: null, action: "", note: "Not yet available" }
+    : { canBuy: false, canSaveSelection: true, merchandiseId: null, action: "Add to selection", note: "Preorder — coming soon. Save this design for now." };
 
-  if (isConceptFamily(product)) return { canBuy: false, merchandiseId: null, action: "", note: "Concept · not yet available" };
+  if (isConceptFamily(product)) return { canBuy: false, canSaveSelection: false, merchandiseId: null, action: "", note: "Concept · not yet available" };
   if (!commerce) return fallback;
 
   switch (commerce.status) {
     case "concept":
-      return { canBuy: false, merchandiseId: null, action: "", note: "Concept · not yet available" };
+      return { canBuy: false, canSaveSelection: false, merchandiseId: null, action: "", note: "Concept · not yet available" };
     case "live": {
       const variant = variantForForm(product as DermalProduct, form.id);
       if (variant?.availableForSale) {
-        return { canBuy: true, merchandiseId: variant.id, action: "Add to bag", note: "" };
+        return { canBuy: true, canSaveSelection: false, merchandiseId: variant.id, action: "Add to bag", note: "" };
       }
       if (variant) {
-        return { canBuy: false, merchandiseId: null, action: "Add to bag", note: "This form is sold out." };
+        return { canBuy: false, canSaveSelection: false, merchandiseId: null, action: "Sold out", note: "This form is sold out." };
       }
       // The product sells, but not this form. A visual form is not a purchasable variant.
-      return { canBuy: false, merchandiseId: null, action: "Add to bag", note: "This form is not for sale yet." };
+      return { canBuy: false, canSaveSelection: false, merchandiseId: null, action: "Not yet available", note: "This form is not for sale yet." };
     }
     case "sold-out":
-      return { canBuy: false, merchandiseId: null, action: "Add to bag", note: "Sold out." };
+      return { canBuy: false, canSaveSelection: false, merchandiseId: null, action: "Sold out", note: "Sold out." };
     case "unavailable":
       return commerceLive
-        ? { canBuy: false, merchandiseId: null, action: "", note: "The bag is unavailable right now." }
-        : { canBuy: false, merchandiseId: null, action: "Add to demo bag", note: "The bag is unavailable right now." };
+        ? { canBuy: false, canSaveSelection: false, merchandiseId: null, action: "", note: "The bag is unavailable right now." }
+        : { ...fallback, note: "Ordering is unavailable. You can still save this design." };
     case "unmatched":
     default:
       return fallback;

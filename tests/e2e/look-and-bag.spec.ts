@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { mouseDrag, openStudioWithPhoto } from "./helpers";
 
-test("build a look, handle a conflict, and carry it into the demo bag", async ({ page }) => {
+test("build a look, handle a conflict, and carry it into the saved selection", async ({ page }) => {
   await openStudioWithPhoto(page);
   await expect(page.getByTestId("look-item")).toHaveCount(1);
   await expect(page.getByTestId("look-item").first()).toContainText("Anti-eyebrow form · wearer’s left");
@@ -25,24 +25,24 @@ test("build a look, handle a conflict, and carry it into the demo bag", async ({
   // The pair is one product: two pieces on screen, one bag line.
   await page.getByTestId("add-look-to-bag").click();
   await expect(page.getByTestId("bag-line")).toHaveCount(2);
-  await expect(page.getByTestId("bag-subtotal")).toHaveText("QAR 580");
+  await expect(page.getByTestId("bag-subtotal")).toHaveText("Price pending");
 
   const heroLine = page.locator('[data-testid="bag-line"][data-product="desert-eye-love"]');
   await heroLine.getByRole("button", { name: /Increase quantity/ }).click();
   await expect(heroLine.getByTestId("bag-quantity")).toContainText("2");
-  await expect(page.getByTestId("bag-subtotal")).toHaveText("QAR 970");
+  await expect(page.getByTestId("bag-subtotal")).toHaveText("Price pending");
   await expect(page.getByTestId("open-bag")).toContainText("(3)");
 
-  await expect(page.getByRole("button", { name: "Checkout unavailable in preview" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Preorder — coming soon" })).toBeDisabled();
 
   await heroLine.getByRole("button", { name: /^Remove/ }).click();
-  await expect(page.getByTestId("bag-subtotal")).toHaveText("QAR 190");
+  await expect(page.getByTestId("bag-subtotal")).toHaveText("Price pending");
   await page.locator('[data-testid="bag-line"]').getByRole("button", { name: /^Remove/ }).click();
   await expect(page.getByTestId("bag-empty")).toBeVisible();
 
   // Escape closes the drawer and focus returns to the page.
   await page.keyboard.press("Escape");
-  await expect(page.getByRole("dialog", { name: "Demo bag" })).toBeHidden();
+  await expect(page.getByRole("dialog", { name: "Your selection" })).toBeHidden();
 
   // Removing pieces from the look.
   await page.getByTestId("remove-piece").first().click();
@@ -54,10 +54,10 @@ test("build a look, handle a conflict, and carry it into the demo bag", async ({
 test("the bag survives a reload and the full bag page agrees with the drawer", async ({ page }) => {
   await page.goto("/product/desert-eye-love");
   await page.getByTestId("add-to-bag").click();
-  await expect(page.getByTestId("bag-subtotal")).toHaveText("QAR 390");
+  await expect(page.getByTestId("bag-subtotal")).toHaveText("Price pending");
   await page.goto("/cart");
   await expect(page.getByTestId("bag-line")).toHaveCount(1);
-  await expect(page.getByTestId("bag-subtotal")).toHaveText("QAR 390");
+  await expect(page.getByTestId("bag-subtotal")).toHaveText("Price pending");
 });
 
 test("nothing about the photo leaves the browser", async ({ page, baseURL }) => {

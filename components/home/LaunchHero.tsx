@@ -29,7 +29,7 @@ function StillOpening({ frames }: { frames: ScrubFrames }) {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={frameSrc(frames, 0)} alt="DESERT EYE — LOVE, the completed piece" decoding="async" className="launch-still-media" />
       <div className="launch-still-copy">
-        <p className="label-xs">01 / The piece</p>
+        <p className="label-xs">02 / The reveal</p>
       </div>
     </section>
   );
@@ -118,20 +118,20 @@ function ScrubOpening({ frames }: { frames: ScrubFrames }) {
 
         {/* 01: the hero words, at the start, in the lower left. */}
         <div className="launch-copy launch-copy-hero" data-from="0" data-to="0.3">
-          <p className="label-xs">01 / The piece</p>
+          <p className="label-xs">02 / The reveal</p>
           <p className="mt-4 font-display text-[clamp(1.75rem,3vw,3rem)] font-light leading-[1.05]">Turn it in the light.</p>
         </div>
         {/* 02: two words at chosen points of the turn, in the corners. */}
         <p className="launch-copy launch-copy-mid font-display text-[clamp(1.75rem,3.2vw,3.25rem)] font-light uppercase leading-[1.05] tracking-[0.06em]" data-from="0.36" data-to="0.62">
-          Engineered
+          A mark.
           <br />
-          for the face.
+          A meaning.
         </p>
         <p className="launch-copy launch-copy-end" data-from="0.7" data-to="1">
           <span className="font-display text-[clamp(1.5rem,2.4vw,2.25rem)] font-light tracking-[0.1em]">DESERT EYE</span>
-          <span className="label-xs mt-2 block">01 / 04</span>
+          <span className="label-xs mt-2 block">DESIGN STUDY 001</span>
         </p>
-        <p className="launch-note label-xs text-ash">Prototype orbit · concept hardware · rear side conceptual · scroll to turn</p>
+        <p className="launch-note label-xs text-ash">Orbit study · design render · reverse geometry is conceptual</p>
       </div>
     </section>
   );

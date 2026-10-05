@@ -1,14 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { isConceptFamily, isFeatured, kindLabels, placementLabel } from "@/lib/catalog";
-import { cardPrice } from "@/lib/commerce/display";
+import { cardPrice, commerceOf } from "@/lib/commerce/display";
 import type { Product } from "@/lib/catalog/types";
 import { Modal } from "@/components/layout/Modal";
 import { FloatingObject } from "./FloatingObject";
 import { artworkLabel } from "./ProductArtwork";
 import { TryOnPreview } from "./TryOnPreview";
+import { isEarlierStudy } from "./editorial";
+import styles from "./product-grid.module.css";
 
 const OPEN_DELAY_MS = 200;
 const CLOSE_DELAY_MS = 140;
@@ -17,20 +19,8 @@ const PANEL_HEIGHT_ESTIMATE = 560;
 
 type PanelPlacement = { side: "right" | "left" | "over"; shiftY: number };
 
-/**
- * How the catalogue is laid out. "editorial" is the art-directed rhythm, "even" is the plain
- * browsing view, and "column" is the older paired column a collection page still uses.
- *
- * The rhythm varies composition, never importance: which stage is wide follows the position on the
- * page, not the piece standing in it, and a wide stage is only a little wider than its neighbour.
- */
+/** Editorial pairs have a slight vertical offset; the compact grid shares the same product order. */
 export type CatalogueLayout = "editorial" | "even" | "column";
-
-const LAYOUT_CLASS: Record<CatalogueLayout, string> = {
-  editorial: "catalogue catalogue-editorial",
-  even: "catalogue catalogue-even",
-  column: "grid grid-cols-1 gap-x-[10vw] gap-y-24 sm:grid-cols-2 sm:[&>li:nth-child(even)]:mt-40 lg:gap-y-32",
-};
 
 /** Keeps the hover panel inside the viewport: beside the card when there is room, otherwise over it. */
 function placePanel(card: DOMRect, viewportW: number, viewportH: number): PanelPlacement {
@@ -56,6 +46,11 @@ export function ProductGrid({
   const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  useEffect(() => () => {
+    if (openTimer.current) clearTimeout(openTimer.current);
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  }, []);
+
   const cancelTimers = () => {
     if (openTimer.current) clearTimeout(openTimer.current);
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -77,17 +72,19 @@ export function ProductGrid({
 
   return (
     <>
-      {/* No tiles: each piece stands on the paper, with a great deal of air around it. */}
-      <ul data-testid="catalogue" data-layout={layout} className={className ?? LAYOUT_CLASS[layout]}>
+      {/* No tiles: each piece stands directly on the paper. */}
+      <ul data-testid="catalogue" data-layout={layout} className={`catalogue ${styles.grid} ${className ?? ""}`}>
         {products.map((product, i) => {
           const open = hover?.id === product.id;
           const panelId = `tryon-panel-${product.slug}`;
-          // The wider stage falls on the second and third position of each block of four, so the
-          // piece that happens to be listed first is never the one given the widest frame.
+          // Retain the presentation marker for existing instrumentation; all images now share
+          // an equal frame, with rhythm supplied by the paired row's vertical offset.
           const stage = layout === "editorial" && (i % 4 === 1 || i % 4 === 2) ? "wide" : "regular";
           const kind = kindLabels(product).join(" · ");
           // A concept is shown and can be opened, but it has no form to preview on a face.
           const concept = isConceptFamily(product);
+          const status = commerceOf(product)?.status;
+          const availability = concept ? "Concept · not yet available" : status === "sold-out" ? "Sold out" : status === "live" ? "View availability" : "Not yet available";
           return (
             <li
               key={product.id}
@@ -95,7 +92,7 @@ export function ProductGrid({
               data-product={product.slug}
               data-stage={stage}
               data-object-host
-              className={`piece group relative ${open ? "z-30" : ""}`}
+              className={`piece group relative ${styles.piece} ${open ? "z-30" : ""}`}
               onPointerEnter={(e) => {
                 if (e.pointerType === "mouse" && !concept) scheduleOpen(product, e.currentTarget, OPEN_DELAY_MS);
               }}
@@ -119,39 +116,40 @@ export function ProductGrid({
                 }
               }}
             >
-              <div className="piece-inner">
+              <div className={`piece-inner ${styles.inner}`}>
               <Link href={`/product/${product.slug}`} className="piece-stage" aria-describedby={open ? panelId : undefined}>
                 <span
                   role="img"
                   aria-label={`${product.title}: ${artworkLabel(product).toLowerCase()}. ${product.summary}`}
-                  className="piece-object relative block aspect-square"
+                  className={`piece-object relative block aspect-square ${styles.object}`}
                 >
-                  <FloatingObject product={product} depth={1} delay={i * -1.1} />
+                  <FloatingObject product={product} depth={1} drift={false} delay={i * -1.1} />
                 </span>
-                <span className="label-xs mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-ash">
+                <span className={`label-xs text-ash ${styles.imageLabel}`}>
                   <span>
                     {String(i + 1).padStart(2, "0")} · {artworkLabel(product)}
                   </span>
+                  {isEarlierStudy(product) && <span className={styles.earlier}>Earlier study</span>}
                   {isFeatured(product) && (
                     <span data-testid="piece-flag" className="piece-flag">
                       Featured
                     </span>
                   )}
                 </span>
-                <span className="mt-3 flex items-baseline justify-between gap-4">
-                  <span className="font-display text-3xl font-light leading-tight tracking-[0.03em] sm:text-4xl">{product.title}</span>
-                  <span className="min-w-0 text-right text-sm text-ash">
+                <span className={styles.titleRow}>
+                  <span className={styles.name}>{product.title}</span>
+                  <span className={styles.price}>
                     <span className="sr-only">Price </span>
                     {cardPrice(product)}
                   </span>
                 </span>
-                <span className="label-xs mt-2 block text-ash" data-testid="piece-kind">
+                <span className={`label-xs ${styles.meta}`} data-testid="piece-kind">
                   {concept ? "Concept" : product.placements.map(placementLabel).join(" · ")}
-                  {kind ? ` · ${kind}` : ""} · Demo
+                  {kind ? ` · ${kind}` : ""}
                 </span>
               </Link>
 
-              <span className="mt-1 flex flex-wrap items-baseline gap-x-6">
+              <span className={styles.actions}>
                 <Link href={`/product/${product.slug}`} className="text-link" data-testid="view-piece">
                   View piece<span className="sr-only"> {product.title}</span> <span aria-hidden="true">↗</span>
                 </Link>
@@ -172,6 +170,7 @@ export function ProductGrid({
                 </button>
                 )}
               </span>
+              {!concept && <p className={styles.status} data-testid="piece-availability">{availability}</p>}
               </div>
 
               {open && hover && (

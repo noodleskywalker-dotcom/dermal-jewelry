@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { formatPrice } from "@/lib/catalog";
+import { priceLabel } from "@/lib/commerce/display";
 import type { Product, ProductForm } from "@/lib/catalog/types";
 import type { CollectionStory, StoryMedia } from "@/lib/story";
 import { previewItems } from "@/lib/studio/look";
@@ -49,6 +49,7 @@ export function StoryProductExperience({
   onBack: () => void;
 }) {
   const { photo, look } = useStudio();
+  const price = priceLabel(product, form.id);
   const heading = useRef<HTMLHeadingElement>(null);
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
@@ -145,7 +146,7 @@ export function StoryProductExperience({
         </div>
 
         <p className="label-xs mt-8 text-ink/60" style={{ "--i": 1 } as React.CSSProperties}>
-          {product.origin === "anime-inspired" ? "Anime-inspired design · not an official collaboration" : "Original design"} · Demo product
+          {product.origin === "anime-inspired" ? "Inspired design · not an official collaboration" : "Original design"} · Design study
         </p>
         <h1
           ref={heading}
@@ -223,13 +224,13 @@ export function StoryProductExperience({
         </div>
 
         <p className="mt-8 font-display text-3xl font-light" data-testid="story-price" style={{ "--i": 5 } as React.CSSProperties}>
-          <span className="label-xs mr-3 align-middle text-ink/60">Demo price</span>
-          {formatPrice(form.demoPrice, product.currency)}
+          <span className="label-xs mr-3 align-middle text-ink/60">{price.caption}</span>
+          {price.value}
         </p>
 
         <div className="mt-6 max-w-sm" style={{ "--i": 6 } as React.CSSProperties}>
           <AddToBagButton product={product} formId={form.id} />
-          <p className="text-xs leading-relaxed text-ink/60">Demo shopping only. Checkout is disabled and nothing can be ordered.</p>
+          <p className="text-xs leading-relaxed text-ink/60">Ordering has not opened yet. No payment is taken.</p>
         </div>
 
         <div className="mt-8 border-t border-ink/15 pt-5" style={{ "--i": 7 } as React.CSSProperties}>

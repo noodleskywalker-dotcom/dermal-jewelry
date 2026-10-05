@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BrowseRail } from "@/components/catalog/BrowseRail";
+import { SelectionRail } from "@/components/catalog/SelectionRail";
 import { WaysIn } from "@/components/catalog/WaysIn";
 import type { Product } from "@/lib/catalog/types";
 
@@ -15,7 +15,7 @@ import type { Product } from "@/lib/catalog/types";
 // Every family stands on the same stage. Nothing about this section ranks them.
 export function TheSelection({ products }: { products: Product[] }) {
   return (
-    <section aria-labelledby="collection-heading" data-testid="collection-section" className="collection-section selection-world">
+    <section id="selection" aria-labelledby="collection-heading" data-testid="collection-section" className="collection-section selection-world">
       <div className="explore-head">
         <p className="label-xs">03 / The selection</p>
         <h2
@@ -25,12 +25,11 @@ export function TheSelection({ products }: { products: Product[] }) {
           The selection
         </h2>
         <p className="explore-lede" data-testid="explore-lede">
-          Objects engineered for the face. Original and anime-inspired designs, side by side — an influence, never an
-          official collaboration.
+          Objects for the face. Symbols, lines and unexpected forms — each with its own point of view.
         </p>
       </div>
 
-      <BrowseRail products={products} />
+      <SelectionRail products={products} />
 
       <div className="selection-cta">
         <Link href="/shop" className="text-link selection-cta-main" data-testid="explore-shop">

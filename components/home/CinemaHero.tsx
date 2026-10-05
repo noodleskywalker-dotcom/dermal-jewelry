@@ -32,17 +32,18 @@ export function CinemaHero({ sources, poster }: { sources: VideoSource[]; poster
       )}
       <div className="cinema-hero-veil" aria-hidden="true" />
       <div className="cinema-hero-copy">
-        <p className="label-xs">DERMAL · Collection 001</p>
+        <p className="label-xs">01 / The launch collection</p>
         <p className="mt-4 font-display text-[clamp(1.25rem,1.7vw,1.6rem)] font-light tracking-[0.14em]">DESERT EYE&nbsp;—&nbsp;LOVE</p>
         <h1 id="landing-heading" className="mt-5 font-display text-[clamp(2.5rem,5.2vw,5.25rem)] font-light leading-[1.02] tracking-[0.01em]">
-          Jewelry for the face you chose.
+          Love, worn<br /><em>your way.</em>
         </h1>
+        <p className="hero-introduction">A symbol. A deep-red stone. A different kind of signature.</p>
         <div className="mt-9 flex flex-wrap gap-x-10 gap-y-2">
-          <Link href="/face-studio" data-testid="cta-face" className="text-link">
-            View on your face <span aria-hidden="true">↗</span>
+          <Link href="/product/desert-eye-love" data-testid="cta-piece" className="text-link">
+            Discover the piece <span aria-hidden="true">↗</span>
           </Link>
-          <Link href="/collections" data-testid="cta-selection" className="text-link">
-            View selection <span aria-hidden="true">↗</span>
+          <Link href="#selection" data-testid="cta-selection" className="text-link">
+            Explore DERMAL <span aria-hidden="true">↗</span>
           </Link>
         </div>
       </div>
@@ -51,6 +52,7 @@ export function CinemaHero({ sources, poster }: { sources: VideoSource[]; poster
           {paused ? "Play" : "Pause"}
         </button>
       )}
+      <p className="cinema-hero-edition label-xs">DESERT EYE — LOVE / Design render</p>
       <p className="cinema-hero-scroll label-xs" aria-hidden="true">
         Scroll
       </p>

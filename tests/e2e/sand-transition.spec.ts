@@ -1,19 +1,35 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { internalConceptUrl } from "../../lib/story/internal-media";
 
 // The mascot's sand transition, rebuilt on 24 September 2026 from clips generated on this machine:
 // a ribbon that starts at the gourd and a full-frame wipe that takes over inside the dense grains.
 // The earlier supplied clip is kept only as a fallback. All of it is internal concept media, so every
 // test here skips on a machine that does not have it.
 
-const hasMascot = async (page: Page) => (await page.getByTestId("global-mascot").count()) > 0;
+const HAS_MASCOT = Boolean(internalConceptUrl("chibi-idle", true));
+const requireSandClip = () => test.skip(!internalConceptUrl("sandfx-local", true), "the local sand clip is not on this machine");
+
+test("missing local mascot media leaves no broken companion or reserved space", async ({ page }) => {
+  test.skip(HAS_MASCOT, "this machine has the internal mascot still");
+  const requests: string[] = [];
+  page.on("request", (request) => {
+    if (/\/api\/dev-concept\/(?:chibi-|mascot-)/.test(request.url())) requests.push(request.url());
+  });
+  await page.goto("/collections");
+  await expect(page.getByTestId("global-mascot")).toHaveCount(0);
+  await expect(page.locator("body")).not.toHaveAttribute("data-mascot");
+  expect(requests).toEqual([]);
+});
 
 test.describe("the local sand transition", () => {
   test.beforeEach(async ({ page }) => {
+    test.skip(!HAS_MASCOT, "internal mascot media is not on this machine");
     await page.goto("/collections");
-    test.skip(!(await hasMascot(page)), "internal mascot media is not on this machine");
+    await expect(page.getByTestId("global-mascot")).toBeVisible();
   });
 
   test("the local clip is what plays, and the supplied clip is not the path taken", async ({ page }) => {
+    requireSandClip();
     const requested: string[] = [];
     page.on("request", (r) => r.url().includes("/api/dev-concept/sandfx") && requested.push(r.url().split("/").pop()!));
     await page.getByTestId("mascot").click();
@@ -27,6 +43,7 @@ test.describe("the local sand transition", () => {
   });
 
   test("the sand starts at the gourd, whatever size the mascot is drawn at", async ({ page }) => {
+    requireSandClip();
     await page.getByTestId("mascot").click();
     await expect(page.getByTestId("sand-transition")).toBeVisible({ timeout: 15_000 });
     // Early in the clip the sand is still pinned: its entry point must sit on the gourd's opening.
@@ -54,6 +71,7 @@ test.describe("the local sand transition", () => {
   });
 
   test("the page only changes once the sand covers it, and the mascot reads again afterwards", async ({ page }) => {
+    requireSandClip();
     test.setTimeout(45_000);
     await page.getByTestId("mascot").click();
     await expect(page.getByTestId("sand-transition")).toBeVisible({ timeout: 15_000 });
@@ -66,6 +84,7 @@ test.describe("the local sand transition", () => {
   });
 
   test("a second press works the same way", async ({ page }) => {
+    requireSandClip();
     test.setTimeout(60_000);
     await page.getByTestId("mascot").click();
     await expect(page.getByTestId("sand-transition")).toBeVisible({ timeout: 15_000 });

@@ -7,6 +7,7 @@ import {
   DESIGN_TYPES,
   EMPTY_FIELDS,
   FILES,
+  FINISHES,
   LIMITS,
   looksAllowed,
   MATERIALS,
@@ -258,7 +259,7 @@ export function CommissionForm({ endpoint = "/api/commission" }: { endpoint?: st
     </div>
   );
 
-  const choices = (key: "placement" | "designType" | "material" | "stone" | "budget", legend: string, options: readonly string[]) => (
+  const choices = (key: "placement" | "designType" | "material" | "stone" | "finish" | "budget", legend: string, options: readonly string[]) => (
     <fieldset className="commission-choices" data-testid={`choices-${key}`} aria-describedby={describedBy(key)}>
       <legend className="commission-label">{legend}</legend>
       <div className="commission-chips">
@@ -291,7 +292,7 @@ export function CommissionForm({ endpoint = "/api/commission" }: { endpoint?: st
       {/* 01 */}
       <section className="commission-step" aria-labelledby={`${uid}-you`}>
         <h2 id={`${uid}-you`} className="commission-step-title">
-          <span aria-hidden="true">01</span> You
+          <span aria-hidden="true">01</span> A little about you
         </h2>
         <div className="commission-grid">
           {text("name", "Name", { autoComplete: "name", required: true, maxLength: LIMITS.name })}
@@ -304,7 +305,7 @@ export function CommissionForm({ endpoint = "/api/commission" }: { endpoint?: st
       {/* 02 */}
       <section className="commission-step" aria-labelledby={`${uid}-piece`}>
         <h2 id={`${uid}-piece`} className="commission-step-title">
-          <span aria-hidden="true">02</span> The piece
+          <span aria-hidden="true">02</span> Your idea
         </h2>
         {choices("placement", "Placement", PLACEMENTS)}
         <div className="commission-field">
@@ -335,7 +336,7 @@ export function CommissionForm({ endpoint = "/api/commission" }: { endpoint?: st
       {/* 03 */}
       <section className="commission-step" aria-labelledby={`${uid}-refs`}>
         <h2 id={`${uid}-refs`} className="commission-step-title">
-          <span aria-hidden="true">03</span> Reference images
+          <span aria-hidden="true">03</span> The inspiration
         </h2>
         <div
           data-testid="commission-dropzone"
@@ -445,6 +446,7 @@ export function CommissionForm({ endpoint = "/api/commission" }: { endpoint?: st
         {choices("designType", "Design type", DESIGN_TYPES)}
         {choices("material", "Material direction", MATERIALS)}
         {choices("stone", "Stone / colour", STONES)}
+        {choices("finish", "Finish", FINISHES)}
         {choices("budget", "Budget", BUDGETS)}
       </section>
 

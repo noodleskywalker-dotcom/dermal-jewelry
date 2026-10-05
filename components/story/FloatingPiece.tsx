@@ -1,6 +1,6 @@
 "use client";
 
-import { formatPrice } from "@/lib/catalog";
+import { priceLabel } from "@/lib/commerce/display";
 import type { FloatingPiece as Piece } from "@/lib/story";
 import { resolveComponents } from "@/lib/studio/geometry";
 import { FormVisual } from "@/components/catalog/FormVisual";
@@ -17,7 +17,7 @@ const STONES = new Set(["garnet-gem", "orbit"]);
 
 // One jewelry object on the open canvas: no card, no frame. The object is a link to this product
 // and form, so it is always directly shoppable, and the small label beside it carries the name, the
-// form, the demo price and TRY ON. Hover lifts it, lets the metal catch the light and stirs a few
+// form, the honest price state and TRY ON. Hover lifts it, lets the metal catch the light and stirs a few
 // grains of sand; it never plays a story.
 export function FloatingPiece({
   piece,
@@ -34,6 +34,7 @@ export function FloatingPiece({
   onOpen: (view: "concept" | "tryon") => void;
 }) {
   const { product, form, spot } = piece;
+  const price = priceLabel(product, form.id);
   // The glint lands on the stone when the piece has one, otherwise on its first metal part.
   const parts = resolveComponents(product, { side: "left", tweaks: {}, formId: form.id });
   const stone = parts.find((c) => STONES.has(c.art)) ?? parts[0];
@@ -58,7 +59,7 @@ export function FloatingPiece({
       <a
         href={`/collections/${collectionSlug}?product=${product.slug}&form=${form.id}`}
         data-testid="story-piece-link"
-        aria-label={`${product.title}, ${form.label} form, demo price ${formatPrice(form.demoPrice, product.currency)}`}
+        aria-label={`${product.title}, ${form.label} form, ${price.value}`}
         onClick={(e) => {
           // A modified click keeps its browser meaning, such as opening a new tab.
           if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
@@ -84,8 +85,7 @@ export function FloatingPiece({
       <div className="story-piece-label">
         <p className="font-display text-lg font-light leading-tight">{product.title}</p>
         <p className="label-xs mt-1 text-ink/60">
-          {form.label} · <span className="sr-only">Demo price </span>
-          {formatPrice(form.demoPrice, product.currency)} · Demo
+          {form.label} · {price.value}
         </p>
         <button type="button" data-testid="story-piece-tryon" onClick={() => onOpen("tryon")} className="text-link">
           Try on<span className="sr-only"> {product.title}, {form.label} form</span> <span aria-hidden="true">↗</span>

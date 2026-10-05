@@ -36,18 +36,18 @@ test.describe("the storefront stands up without commerce", () => {
     await expect(page.getByTestId("shop-empty")).toContainText("No limited edition has been announced.");
   });
 
-  test("a piece with no Shopify product keeps its demo presentation and is not sold", async ({ page }) => {
+  test("a piece with no Shopify product keeps its design presentation and is not sold", async ({ page }) => {
     await page.goto("/product/horus-trace");
-    // The price is the demo placeholder and says so; it is never dressed up as a selling price.
+    // An unpriced design stays unpriced; historical demo amounts are never shown.
     await expect(page.getByTestId("family-price")).toContainText("Price pending");
-    await expect(page.getByTestId("purchase-note")).toHaveText("Demo · nothing can be ordered yet");
+    await expect(page.getByTestId("purchase-note")).toHaveText(/^(Preorder — coming soon\. Save this design for now\.|Ordering is unavailable\. You can still save this design\.)$/);
     const button = page.getByTestId("add-to-bag");
     await expect(button).toBeVisible();
     await expect(button).toHaveAttribute("data-backing", "demo");
-    await expect(button).toContainText("Add to demo bag");
+    await expect(button).toContainText("Add to selection");
   });
 
-  test("the demo bag still works end to end while the store is empty", async ({ page }) => {
+  test("the saved selection works end to end while the store is empty", async ({ page }) => {
     await page.goto("/product/crimson-orbit");
     await page.getByTestId("add-to-bag").click();
     const line = page.getByTestId("bag-line").first();
@@ -55,7 +55,7 @@ test.describe("the storefront stands up without commerce", () => {
     await expect(page.getByTestId("bag-subtotal")).toBeVisible();
     await page.goto("/cart");
     await expect(page.locator('[data-testid="bag-line"]')).toHaveCount(1);
-    await expect(page.getByText("Demo prices only.")).toBeVisible();
+    await expect(page.getByText("Your selection saves designs on this device. It does not reserve pieces or place an order.")).toBeVisible();
     await expect(page.getByTestId("checkout-button")).toBeDisabled();
   });
 });

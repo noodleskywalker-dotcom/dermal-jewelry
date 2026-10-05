@@ -1,0 +1,93 @@
+/* The launch opens in low light, then resolves into DERMAL's paper gallery. */
+.dermal-home { overflow: clip; }
+.dermal-home .cinema-hero { min-height: 740px; height: calc(100svh + 1px); }
+.dermal-home .cinema-hero-media { transform: translateX(15%) scale(1.2); animation: none; object-position: 50% 50%; }
+.dermal-home .cinema-hero-veil { background: linear-gradient(90deg, rgb(13 11 9 / .68), transparent 65%), linear-gradient(0deg, rgb(13 11 9 / .4), transparent 40%); }
+.dermal-home .cinema-hero-copy { top: 22%; bottom: auto; left: clamp(1.5rem,5vw,6rem); max-width: 40%; }
+.dermal-home .cinema-hero-copy h1 { font-size: clamp(4.5rem,7.5vw,8.5rem); line-height: .88; letter-spacing: -.055em; margin-top: 2.2rem; }
+.dermal-home .cinema-hero-copy h1 em { font-weight: 300; }
+.hero-introduction { max-width: 21rem; margin-top: 1.8rem; font-size: .9375rem; line-height: 1.8; color: #dfd9cf; }
+.cinema-hero-edition { position: absolute; bottom: 2.4rem; left: clamp(1.5rem,5vw,6rem); color: #d0c8bc; }
+.dermal-home .cinema-hero-scroll { display: none; }
+.dermal-home .launch { height: 140svh; }
+.dermal-home .launch-note { display: block; font-size: .625rem; letter-spacing: .08em; bottom: 1.25rem; }
+.dermal-home .launch-copy-hero { left: 5vw; top: 7rem; }
+.dermal-home .launch-copy-hero > p:last-child { max-width: 19rem; font-size: clamp(2.3rem,4vw,4.5rem); letter-spacing: -.03em; }
+.dermal-home .launch-copy-mid { left: 5vw; font-style: italic; text-transform: none; letter-spacing: -.03em; }
+.dermal-home .selection-world { padding-top: 6rem; padding-bottom: 6rem; background: var(--color-paper); }
+.dermal-home .explore-head { max-width: none; margin: 0 5vw 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 4rem; }
+.dermal-home .explore-head > .label-xs { grid-column: 1 / -1; }
+.dermal-home .explore-head h2 { margin-top: 0; text-transform: none; letter-spacing: -.05em; font-size: clamp(3.5rem,6vw,7rem); }
+.dermal-home .explore-lede { align-self: end; max-width: 26rem; margin: 0 0 0 auto; text-align: left; line-height: 1.8; }
+.dermal-home .selection-object { width: min(90%,39rem); }
+.dermal-home .selection-sand { display: none; }
+.dermal-home .selection-slide { padding-top: 3rem; padding-bottom: 2rem; }
+.dermal-home .selection-info h2 { letter-spacing: -.025em; }
+.dermal-home .selection-cta { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--color-line); }
+.dermal-home .onyou { min-height: 650px; margin: 0 5vw; border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); grid-template-columns: 1.1fr 1fr; }
+.dermal-home .onyou-crop { min-height: 570px; background: #eeece6; }
+.dermal-home .onyou-copy { padding: 4rem 0 4rem 5vw; align-self: center; }
+.dermal-home .onyou-copy h2 { font-size: clamp(3.5rem,5.2vw,5.5rem); text-transform: none; letter-spacing: -.045em; }
+.onyou-introduction { max-width: 23rem; margin-top: 2rem; font-size: 1rem; line-height: 1.8; color: var(--color-ash); }
+.onyou-privacy { margin-top: 3rem; font-size: .65rem; color: var(--color-ash); }
+.atelier-introduction { display: grid; grid-template-columns: 1fr 1fr; margin: 0 5vw; padding: 8rem 0; gap: 6vw; align-items: center; }
+.atelier-copy h2 { font: 300 clamp(3.4rem,5vw,5.7rem)/.98 var(--font-display); letter-spacing: -.045em; margin: 2rem 0; }
+.atelier-copy > p:not(.label-xs) { max-width: 30rem; color: var(--color-ash); line-height: 1.85; margin: 1rem 0; }
+.atelier-copy > .text-link { margin-top: 1.8rem; }
+.atelier-process { display: flex; list-style: none; flex-wrap: wrap; gap: 1.5rem; margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid var(--color-line); font-size: .75rem; }
+.atelier-process span { color: var(--color-garnet); margin-right: .5rem; }
+.atelier-study { position: relative; min-height: 540px; aspect-ratio: 1; }
+.atelier-study img { object-fit: contain; padding: 0 0 4rem; }
+.atelier-study figcaption { position: absolute; left: 0; right: 0; bottom: 1rem; display: flex; justify-content: space-between; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--color-line); font-size: .75rem; color: var(--color-ash); }
+.brand-closing { padding: 7rem 5vw 9rem; text-align: center; border-top: 1px solid var(--color-line); }
+.brand-closing h2 { font: 300 clamp(3.5rem,6.5vw,7rem)/1 var(--font-display); letter-spacing: -.045em; margin: 2.5rem auto; }
+.brand-closing-links { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+@media(min-width:1600px) { .dermal-home .cinema-hero-copy { top: 25%; } }
+@media(max-width:1000px) {
+ .dermal-home .cinema-hero { min-height: 800px; }
+ .dermal-home .cinema-hero-copy { max-width: 50%; top: 25%; }
+ .dermal-home .cinema-hero-copy h1 { font-size: clamp(4.5rem,9vw,6rem); }
+ .atelier-introduction { gap: 3vw; }
+ .atelier-study { min-height: 400px; }
+}
+@media(max-width:760px) {
+ .dermal-home .cinema-hero { min-height: 810px; height: 100svh; }
+ .dermal-home .cinema-hero-media { width: 150%; height: 65%; left: -25%; top: 6%; transform: none; object-fit: cover; }
+ .dermal-home .cinema-hero-veil { background: linear-gradient(0deg,#0d0b09 0%,#0d0b09 24%,transparent 65%); }
+ .dermal-home .cinema-hero-copy { max-width: none; left: 1.5rem; right: 1.5rem; top: auto; bottom: 5.5rem; }
+ .dermal-home .cinema-hero-copy h1 { font-size: clamp(3.8rem,14vw,5.8rem); margin-top: 1rem; }
+ .dermal-home .cinema-hero-copy > p:nth-child(2) { font-size: 1.1rem; margin-top: .7rem; }
+ .dermal-home .cinema-hero-copy > .label-xs { display: none; }
+ .hero-introduction { font-size: .875rem; margin-top: 1rem; max-width: 18rem; }
+ .dermal-home .cinema-hero-copy > div { margin-top: 1.5rem; gap: 1.5rem; }
+ .cinema-hero-edition { bottom: 1.5rem; left: 1.5rem; max-width: 70%; font-size: .5625rem; }
+ .dermal-home .cinema-hero-pause { bottom: 1rem; right: 1rem; }
+ .dermal-home .launch { height: 125svh; }
+ .dermal-home .launch-copy-hero,.dermal-home .launch-copy-mid { left: 1.5rem; top: 6rem; }
+ .dermal-home .launch-note { width: 80%; font-size: .6rem; }
+ .dermal-home .explore-head { display: block; margin: 0 1.5rem 1rem; }
+ .dermal-home .explore-head h2 { margin-top: 1.2rem; font-size: 3.8rem; }
+ .dermal-home .explore-lede { margin: 1.5rem 0 0; max-width: 25rem; }
+ .dermal-home .selection-world { padding-top: 4rem; padding-bottom: 4rem; }
+ .dermal-home .selection-slide { padding-top: 3rem; }
+ .dermal-home .selection-object { width: 100%; }
+ .dermal-home .onyou { display:flex; flex-direction:column; margin: 0 1.5rem; min-height:0; }
+ .dermal-home .onyou-crop { min-height:0; height:440px; width:100%; }
+ .dermal-home .onyou-copy { padding:3rem 0; align-self:stretch; }
+ .dermal-home .onyou-copy h2 { font-size:3.75rem; }
+ .atelier-introduction { display:flex; flex-direction:column; margin:0 1.5rem; padding:4rem 0; gap:2rem; }
+ .atelier-copy h2 { font-size:3.6rem; }
+ .atelier-study { width:100%; min-height:340px; }
+ .atelier-study figcaption { flex-direction:column; gap:.6rem; }
+ .brand-closing { padding:4rem 1.5rem 5rem; }
+ .brand-closing h2 { font-size:3.6rem; }
+ .brand-closing-links { gap:1rem 2rem; }
+}
+@media(prefers-reduced-motion:reduce) { .dermal-home .launch-still { height:80svh; } }
+/* Reset inherited source-frame limits so the whole piece remains visible on a phone. */
+.dermal-home .cinema-hero-media { max-width: none; }
+.dermal-home .cinema-hero-pause { top: auto; height: 44px; }
+@media(max-width:760px) {
+ .dermal-home .cinema-hero-media { width: 180%; left: -40%; height: 54%; top: 5%; object-fit: contain; object-position: center; }
+ .dermal-home .cinema-hero-pause { top: auto; bottom: 1rem; }
+}

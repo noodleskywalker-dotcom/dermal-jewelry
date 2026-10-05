@@ -5,9 +5,11 @@ import { ProductGrid, type CatalogueLayout } from "@/components/catalog/ProductG
 import { type BrowseFilter, matchesBrowse, placements } from "@/lib/catalog";
 import { getCatalogue } from "@/lib/commerce/catalog";
 import { site } from "@/lib/config/site";
+import { editorialOrder } from "@/components/catalog/editorial";
+import styles from "@/components/catalog/catalogue.module.css";
 import type { PlacementId } from "@/lib/catalog/types";
 
-export const metadata: Metadata = { title: "Shop" };
+export const metadata: Metadata = { title: "The collection", description: "Explore DERMAL facial jewelry: symbolic forms, original lines and personal commissions." };
 
 // The catalogue is the brand, not one collection: warm paper, black type, one garnet marker, and a
 // stage of roughly equal weight for every piece. DESERT EYE is browsed here like any other family;
@@ -47,7 +49,8 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
 
   // One server read of the catalogue, joined to Shopify. It falls back to the editorial catalogue
   // when the store is empty or unreachable, so this page renders either way.
-  const { products: all } = await getCatalogue();
+  const { products: catalogue } = await getCatalogue();
+  const all = editorialOrder(catalogue);
   let products = placement ? all.filter((p) => p.placements.includes(placement)) : all;
   if (browse) products = products.filter((p) => matchesBrowse(p, browse));
   if (query) {
@@ -67,21 +70,21 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
   };
 
   return (
-    <div className="catalogue-page">
-      <header className="catalogue-head">
-        <p className="label-xs text-ash">Catalogue · Demo prices · Nothing can be ordered yet</p>
-        <h1 className="mt-6 font-display text-[clamp(3.25rem,7.2vw,7.5rem)] font-light leading-[0.98] tracking-[-0.01em]">
-          The collection
-        </h1>
-        <p className="mt-6 max-w-lg text-base leading-relaxed text-ash">
-          Every design family DERMAL has drawn so far, each one given the same room. Materials, dimensions and
-          compatibility are unverified while the pieces are still concepts.
-        </p>
+    <div className={`catalogue-page ${styles.page}`}>
+      <header className={styles.head}>
+        <div>
+          <p className="label-xs text-ash">DERMAL / The catalogue</p>
+          <h1 className={styles.title}>The collection</h1>
+        </div>
+        <div className={styles.intro}>
+          <p>A symbol. A line. Something entirely yours. Explore our designs and find the form that feels like you.</p>
+          <Link href="/collections" className="text-link">Explore the design families <span aria-hidden="true">↗</span></Link>
+        </div>
       </header>
 
-      <div className="catalogue-filters" data-testid="catalogue-filters">
+      <div className={styles.filters} data-testid="catalogue-filters">
         <nav aria-label="Browse the collection">
-          <ul className="flex flex-wrap gap-x-7">
+          <ul className={styles.filterNav}>
             <li>
               <FilterLink href={hrefFor({})} current={!placement && !browse}>
                 All
@@ -97,9 +100,9 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
           </ul>
         </nav>
 
-        <div className="catalogue-filters-row">
+        <div className={styles.tools}>
           <nav aria-label="Filter by placement">
-            <ul className="flex flex-wrap gap-x-6">
+            <ul className={styles.filterNav}>
               {placements.map((p) => (
                 <li key={p.id}>
                   <FilterLink href={hrefFor({ placement: p.id, browse })} current={placement === p.id} muted>
@@ -110,7 +113,7 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
             </ul>
           </nav>
 
-          <div className="catalogue-tools">
+          <div className={styles.secondaryTools}>
             <nav aria-label="Catalogue view" data-testid="catalogue-view">
               <ul className="flex gap-x-5">
                 {VIEWS.map((v) => (
@@ -146,18 +149,23 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
           </div>
         </div>
 
-        <p className="label-xs mt-6 text-ash" data-testid="catalogue-count" aria-live="polite">
+      </div>
+      <div className={styles.resultLine}>
+        <p className="label-xs text-ash" data-testid="catalogue-count" aria-live="polite">
           {products.length} {products.length === 1 ? "piece" : "pieces"}
         </p>
+        {(placement || browse || query) ? (
+          <Link href={view === "even" ? "/shop?view=even" : "/shop"} className="label-xs text-ash">Clear filters</Link>
+        ) : <p className="label-xs text-ash">Design preview</p>}
       </div>
 
       {products.length > 0 ? (
-        <div className="catalogue-body">
+        <div className={styles.body}>
           <ProductGrid products={products} layout={view} />
         </div>
       ) : (
-        <div className="py-24 text-center" data-testid="shop-empty">
-          <p className="font-display text-3xl">No pieces here yet.</p>
+        <div className={styles.empty} data-testid="shop-empty">
+          <h2>No pieces here yet.</h2>
           <p className="mt-3 text-sm text-ash">
             {query
               ? `Nothing matches “${query}”.`
@@ -171,21 +179,25 @@ export default async function ShopPage({ searchParams }: PageProps<"/shop">) {
         </div>
       )}
 
+      <p className={styles.note}>
+        Shown as design renders and concept artwork. Final materials, dimensions and compatibility are still to be confirmed. Prices appear only when confirmed in the catalogue.
+      </p>
+
       {/* An original that exists only as a direction is named here in words, never drawn as a piece
           and never priced. It is not part of the count above, because there is nothing to order. */}
       {showConcepts && (
-        <section aria-labelledby="concepts-heading" data-testid="catalogue-concepts" className="catalogue-concepts">
+        <section aria-labelledby="concepts-heading" data-testid="catalogue-concepts" className={styles.concepts}>
           <h2 id="concepts-heading" className="label-xs">
             In design
           </h2>
-          <ul className="catalogue-concept-list">
+          <ul>
             {site.concepts.map((concept) => (
               <li key={concept.name} data-concept={concept.name}>
-                <p className="font-display text-3xl font-light tracking-[0.12em]">{concept.name}</p>
+                <p className={styles.conceptName}>{concept.name}</p>
                 <p className="label-xs mt-3 text-ash">
                   {concept.kind} · {concept.status}
                 </p>
-                <p className="mt-3 max-w-sm text-sm leading-relaxed text-ash">{concept.note}</p>
+                <p className={styles.conceptNote}>{concept.note}</p>
               </li>
             ))}
           </ul>
@@ -214,9 +226,7 @@ function FilterLink({
     <Link
       href={href}
       aria-current={current ? "true" : undefined}
-      className={`label-xs inline-flex min-h-11 items-center border-b transition-colors duration-300 ${
-        current ? "border-garnet text-ink" : `border-transparent hover:text-ink ${muted ? "text-ash/80" : "text-ash"}`
-      }`}
+      className={`label-xs ${styles.filterLink}${muted ? " text-ash" : ""}`}
     >
       {children}
     </Link>

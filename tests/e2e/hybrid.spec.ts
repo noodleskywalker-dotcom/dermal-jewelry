@@ -12,7 +12,7 @@ test.describe("one light system on every page", () => {
       await page.goto(route);
       expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe(PAPER);
       const header = page.locator("header[data-tone]").first();
-      await expect(header).toHaveAttribute("data-tone", "light");
+      await expect(header).toHaveAttribute("data-tone", route === "/" ? "cinematic" : "light");
       // Near-black words on the bar, never ivory on a dark bar.
       // The homepage opens on the dark cinema hero with ivory words; past it, the bar is the paper bar.
       if (route === "/") {

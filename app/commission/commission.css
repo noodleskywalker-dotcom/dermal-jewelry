@@ -1,0 +1,68 @@
+.commission-atelier .commission-hero {
+  max-width: 100rem;
+  gap: clamp(1rem, 3vw, 4rem);
+  padding: clamp(3rem, 6vw, 6rem) clamp(1.25rem, 5vw, 5rem) clamp(3rem, 6vw, 6rem);
+}
+.commission-atelier .commission-eyebrow { display: flex; align-items: center; gap: 1rem; color: var(--color-garnet); }
+.commission-eyebrow > span { font-size: 1rem; }
+.commission-atelier .commission-title { margin-top: 2.1rem; font-size: clamp(3.3rem, 7.2vw, 7.4rem); line-height: .91; letter-spacing: -.055em; text-transform: none; }
+.commission-atelier .commission-title::after { display: block; width: 3rem; height: 1px; margin-top: 2.3rem; content: ""; background: var(--color-garnet); }
+.commission-atelier .commission-lede { margin-top: 1.9rem; font-size: clamp(1.4rem, 2.4vw, 2rem); color: var(--color-ink); }
+.commission-atelier .commission-intro { max-width: 25rem; font-size: .875rem; line-height: 1.9; }
+.commission-atelier .commission-hero-copy .btn-solid { gap: 2.5rem; margin-top: 2rem; }
+.commission-atelier .commission-hero-figure { align-self: stretch; justify-content: center; min-width: 0; gap: 1.2rem; }
+.commission-image-stage { position: relative; display: flex; min-height: 26rem; width: 100%; align-items: center; isolation: isolate; }
+.commission-image-index { position: absolute; top: 1rem; left: 1.5rem; color: var(--color-ash); }
+.commission-atelier .commission-hero-image { position: relative; z-index: 1; width: 118%; max-width: none; height: auto; margin-left: -9%; object-fit: contain; }
+.commission-image-word { position: absolute; z-index: -1; right: 0; bottom: 0; color: #e8e3dc; font-family: var(--font-display); font-size: clamp(6rem, 14vw, 14rem); font-weight: 300; font-style: italic; line-height: .8; letter-spacing: -.065em; }
+.commission-atelier .commission-hero-figure figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1rem; width: 100%; padding-top: .9rem; border-top: 1px solid var(--color-line); font-size: .58rem; line-height: 1.6; letter-spacing: .13em; text-transform: uppercase; color: var(--color-ash); }
+.commission-atelier .commission-body { max-width: 100rem; padding: clamp(3rem, 6vw, 6rem) clamp(1.25rem, 5vw, 5rem) clamp(4rem, 8vw, 8rem); gap: clamp(2rem, 7vw, 8rem); scroll-margin-top: 5.5rem; }
+.commission-process { order: 2; min-width: 0; }
+.commission-process > h2 { margin: 1.6rem 0 2.75rem; font-family: var(--font-display); font-size: clamp(2.8rem, 4.3vw, 4rem); font-weight: 300; line-height: .95; letter-spacing: -.035em; }
+.commission-process > h2 em { font-weight: 300; color: var(--color-garnet); }
+.commission-atelier .commission-steps { position: static; gap: 1.7rem; }
+.commission-atelier .commission-steps li { grid-template-columns: 1.8rem minmax(0, 1fr); gap: .6rem; }
+.commission-steps h3 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 400; line-height: 1.2; }
+.commission-atelier .commission-steps p { margin-top: .5rem; font-family: var(--font-sans); font-size: .8rem; font-weight: 400; line-height: 1.8; color: var(--color-ash); }
+.commission-process-note { margin-top: 2.6rem; padding-top: 1.3rem; border-top: 1px solid var(--color-line); font-size: .75rem; line-height: 1.8; color: var(--color-ash); }
+.commission-atelier .commission-form { gap: 3.25rem; max-width: none; }
+.commission-atelier .commission-form > fieldset > p:first-child { line-height: 1.9; font-size: .61rem; letter-spacing: .1em; }
+.commission-atelier .commission-step { gap: 1.7rem; }
+.commission-atelier .commission-step-title { gap: 1rem; font-size: clamp(1.7rem, 2.8vw, 2.25rem); text-transform: none; letter-spacing: -.02em; padding-bottom: 1rem; }
+.commission-atelier .commission-step-title > span[aria-hidden] { color: var(--color-ash); font-size: .6rem; }
+.commission-atelier .commission-label { font-family: var(--font-sans); font-size: .61rem; letter-spacing: .13em; }
+.commission-atelier .commission-input { min-height: 3rem; border-bottom-color: var(--color-line); transition: border-color 500ms var(--ease-editorial); }
+.commission-atelier .commission-input:focus { border-bottom-color: var(--color-garnet); }
+.commission-atelier .commission-textarea { min-height: 11rem; padding: 1rem; border-color: var(--color-line); line-height: 1.8; }
+.commission-atelier .commission-textarea::placeholder { font-size: .85rem; }
+.commission-atelier .commission-chips { gap: .2rem 1.35rem; }
+.commission-atelier .commission-chip { min-height: 44px; font-family: var(--font-sans); font-size: .65rem; line-height: 1.4; letter-spacing: .08em; }
+.commission-atelier .commission-chip:has(input:checked) { color: var(--color-garnet); }
+.commission-atelier .commission-drop { position: relative; padding: clamp(1.25rem, 3vw, 2.75rem); border: 1px solid var(--color-line); gap: 1.4rem; }
+.commission-atelier .commission-drop::before { content: "+"; display: grid; width: 2rem; height: 2rem; place-items: center; border: 1px solid var(--color-line); border-radius: 50%; font-size: 1.2rem; font-weight: 300; color: var(--color-garnet); }
+.commission-atelier .commission-drop-lede { max-width: 27rem; font-size: clamp(1.5rem, 2.5vw, 2rem); line-height: 1.2; }
+.commission-atelier .commission-drop > .label-xs { max-width: 28rem; font-size: .59rem; letter-spacing: .1em; line-height: 1.8; }
+.commission-atelier .commission-help { font-size: .8rem; line-height: 1.8; }
+.commission-atelier .commission-optional { margin-left: auto; font-size: .7rem; font-style: italic; }
+.commission-atelier .commission-check { font-size: .85rem; line-height: 1.8; }
+.commission-atelier .commission-check input { width: 1rem; height: 1rem; margin-top: .3rem; }
+.commission-atelier .commission-submit { align-items: flex-start; flex-direction: column; gap: 1rem; }
+.commission-atelier .commission-submit .btn-solid { min-width: 15rem; }
+.commission-atelier .commission-submit .label-xs { font-size: .6rem; line-height: 1.8; letter-spacing: .11em; }
+.commission-atelier .commission-success { align-self: start; border-top: 1px solid var(--color-garnet); padding-top: 2rem; }
+.commission-atelier .commission-success-title { font-size: clamp(3rem, 5.5vw, 5.5rem); letter-spacing: -.04em; text-transform: none; }
+@media (min-width: 900px) { .commission-atelier .commission-hero { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); } }
+@media (min-width: 1024px) {
+  .commission-atelier .commission-body { grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); }
+  .commission-process { position: sticky; top: 7rem; order: 0; max-width: 20rem; }
+}
+@media (max-width: 899px) {
+  .commission-atelier .commission-hero { padding-top: 2.75rem; gap: 2.5rem; }
+  .commission-atelier .commission-title { font-size: clamp(3.2rem, 13vw, 6rem); }
+  .commission-image-stage { min-height: 0; aspect-ratio: 1.25; }
+  .commission-image-index { top: 0; left: 0; font-size: .58rem; }
+  .commission-image-word { font-size: clamp(7rem, 30vw, 13rem); }
+  .commission-atelier .commission-hero-image { width: 110%; margin-left: -5%; }
+  .commission-atelier .commission-hero-figure figcaption { font-size: .55rem; }
+}
+@media (max-width: 380px) { .commission-atelier .commission-grid { gap: 1.5rem; } .commission-atelier .commission-drop-actions { width: 100%; } .commission-atelier .commission-drop-actions .btn-line { flex: 1 1 auto; padding-inline: 1rem; } }

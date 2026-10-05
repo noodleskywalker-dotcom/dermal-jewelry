@@ -94,7 +94,9 @@ export function CollectionStage({
   const { forms } = useStudio();
   // The cinematic always ends on the form the customer has chosen for the story's own design.
   const storyFormId = formOf(storyProduct, forms[storyProduct.id]).id;
-  const playable = canPlayCinematic(story, { internal, reducedMotion });
+  const ending = story.focus[storyFormId];
+  const mediaReady = Boolean(media.character && ending && media[ending.slot] && story.effect && media[story.effect.slot]);
+  const playable = mediaReady && canPlayCinematic(story, { internal, reducedMotion });
   const pieces = floatingPieces(story, products);
 
   // The address may name a product and a form, and never anything else.
@@ -171,7 +173,7 @@ export function CollectionStage({
 
 
   return (
-    <section ref={section} data-testid="story-stage" data-mode={active ? "product" : "browse"} data-internal={internal} className="story-light relative scroll-mt-16">
+    <section ref={section} data-testid="story-stage" data-mode={active ? "product" : "browse"} data-internal={internal} data-story-media={mediaReady} className="story-light relative scroll-mt-16">
       {active ? (
         <StoryProductExperience
           key={active.id}

@@ -30,6 +30,7 @@ export function commissionEmail(id: string, fields: CommissionFields, references
     ["Design type", or(fields.designType, "Not given")],
     ["Material preference", or(fields.material, "Not given")],
     ["Stone / colour preference", or(fields.stone, "Not given")],
+    ["Finish preference", or(fields.finish ?? "", "Not given")],
     ["Budget", or(fields.budget, "Not given")],
   ];
 

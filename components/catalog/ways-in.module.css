@@ -1,0 +1,20 @@
+.ways {
+  margin-inline: auto;
+  max-width: 112rem;
+  gap: .15rem 1.75rem;
+  padding-top: 1.5rem;
+}
+
+.ways a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  gap: .6rem;
+}
+
+.ways a span { transition: transform .45s; }
+.ways a:hover span { transform: translate(2px, -2px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ways a span { transition: none; }
+}

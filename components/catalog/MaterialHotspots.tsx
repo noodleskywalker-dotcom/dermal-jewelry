@@ -106,10 +106,10 @@ export const DESERT_EYE_HOTSPOTS: Hotspot[] = [
     x: 0.47,
     y: 0.71,
     side: "right",
-    title: "Titanium",
+    title: "Surface-bar hardware",
     rows: [
-      { label: "Grade", value: "Proposed · pending confirmation" },
-      { label: "Finish", value: "Polished" },
+      { label: "Metal", value: "Not yet confirmed" },
+      { label: "Finish", value: "Proposed · pending confirmation" },
       { label: "Hardware", value: "Prototype surface-bar concept" },
     ],
   },

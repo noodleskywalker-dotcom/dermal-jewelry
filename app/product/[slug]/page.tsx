@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { FamilyExperience } from "@/components/catalog/FamilyExperience";
 import { catalog } from "@/lib/catalog";
 import { getDermalProduct } from "@/lib/commerce/catalog";
+import "./product-remodel.css";
 
 export function generateStaticParams() {
   return catalog.listProducts().map((p) => ({ slug: p.slug }));
@@ -40,7 +41,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
   if (!product) notFound();
 
   return (
-    <div className="story-light">
+    <div className="story-light product-remodel">
     <div className="pdp-page">
       <nav aria-label="Breadcrumb" className="label-xs pdp-crumb text-ash">
         <Link href="/collections" className="hover:text-ink">Collections</Link>
