@@ -8,7 +8,7 @@ import type { Product } from "@/lib/catalog/types";
 import { productStories } from "@/lib/catalog/product-stories";
 
 /** One chapter at a time, at the visitor's pace. No autoplay and no scroll capture. */
-export function StoryChapters({ products, cinematicPortrait }: { products: Product[]; cinematicPortrait?: string }) {
+export function StoryChapters({ products, cinematicPortrait, ankhReference, crosslineReference }: { products: Product[]; cinematicPortrait?: string; ankhReference?: string; crosslineReference?: string }) {
   const chapters = products.filter((product) => productStories[product.slug] && product.render);
   const [index, setIndex] = useState(0);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -16,7 +16,10 @@ export function StoryChapters({ products, cinematicPortrait }: { products: Produ
   if (!product?.render) return null;
   const story = productStories[product.slug];
   const image = product.render.hero;
-  const portrait = product.slug === "desert-eye-love" ? cinematicPortrait : undefined;
+  const compactReference = product.slug === "crossline" ? crosslineReference : undefined;
+  const reference = product.slug === "ankh-trace" ? ankhReference : compactReference;
+  const portrait = product.slug === "desert-eye-love" ? cinematicPortrait : reference;
+  const photographic = !portrait && product.render.presentation === "photographic";
   const beats = [story.signature, story.expression];
 
   function move(event: KeyboardEvent<HTMLButtonElement>, at: number) {
@@ -59,18 +62,18 @@ export function StoryChapters({ products, cinematicPortrait }: { products: Produ
         ))}
       </div>
       <div id="home-story-panel" role="tabpanel" aria-labelledby={`home-story-tab-${product.slug}`} tabIndex={0} className="home-story-panel" data-family={product.slug} data-mode={portrait ? "portrait" : "product"} data-testid="home-story-panel">
-        <figure className={`home-story-visual${portrait ? " home-story-visual-portrait" : ""}`} key={product.slug}>
+        <figure className={`home-story-visual${portrait ? " home-story-visual-portrait" : photographic ? " home-story-visual-photographic" : ""}${reference ? " home-story-visual-reference" : ""}${compactReference ? " home-story-visual-reference-compact" : ""}`} key={product.slug}>
           {portrait ? (
             // Private preview art must not enter Next's public image-optimization cache.
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={portrait} alt="Adult Gaara interpreted as a hyperrealistic portrait, wearing the DESERT EYE LOVE anti-eyebrow design" className="home-story-portrait" loading="lazy" />
+            <img src={portrait} alt={compactReference ? "Original CROSSLINE placement reference: a thin dark line and separate small silver cross below the eye" : reference ? "Original ANKH TRACE design reference: a silver-haired wearer with a small ankh below the eye" : "Adult Gaara interpreted as a hyperrealistic portrait, wearing the DESERT EYE LOVE anti-eyebrow design"} className="home-story-portrait" loading="lazy" />
           ) : (
             <>
-              <span className="home-story-word" aria-hidden="true">{story.word}</span>
+              {!photographic && <span className="home-story-word" aria-hidden="true">{story.word}</span>}
               <Image src={image.src} alt={product.render.alt} width={image.width} height={image.height} sizes="(max-width: 760px) 90vw, 50vw" className="home-story-image" />
             </>
           )}
-          <figcaption><span>{displayTitle(product.title)}</span><span>{portrait ? "Gaara / AI editorial study" : isConceptFamily(product) ? "Concept study" : "Design render"}</span></figcaption>
+          <figcaption><span>{displayTitle(product.title)}</span><span>{compactReference ? "Original placement reference" : reference ? "Original design reference" : portrait ? "Gaara / AI editorial study" : isConceptFamily(product) ? "Concept study" : "Design render"}</span></figcaption>
         </figure>
         <div className="home-story-copy">
           <p className="label-xs">Chapter {String(index + 1).padStart(2, "0")} / {story.word}</p>

@@ -4,6 +4,8 @@ import { priceLabel } from "@/lib/commerce/display";
 import type { FloatingPiece as Piece } from "@/lib/story";
 import { resolveComponents } from "@/lib/studio/geometry";
 import { FormVisual } from "@/components/catalog/FormVisual";
+import { renderFor } from "@/lib/catalog";
+import { ProductPieces } from "@/components/catalog/ProductArtwork";
 
 const GRAINS = [
   { gx: "-34%", gdx: "-8px", gdy: "-22px", gdelay: "0ms" },
@@ -35,6 +37,7 @@ export function FloatingPiece({
 }) {
   const { product, form, spot } = piece;
   const price = priceLabel(product, form.id);
+  const photographic = renderFor(product, form.id)?.presentation === "photographic";
   // The glint lands on the stone when the piece has one, otherwise on its first metal part.
   const parts = resolveComponents(product, { side: "left", tweaks: {}, formId: form.id });
   const stone = parts.find((c) => STONES.has(c.art)) ?? parts[0];
@@ -45,6 +48,7 @@ export function FloatingPiece({
       data-product={product.slug}
       data-form={form.id}
       data-pieces={form.components.length}
+      data-presentation={photographic ? "photographic" : undefined}
       className="story-piece"
       style={
         {
@@ -68,7 +72,11 @@ export function FloatingPiece({
         }}
         className="story-piece-link"
       >
-        <span className="story-piece-float">
+        {photographic ? (
+          <span className="relative block aspect-square">
+            <ProductPieces product={product} formId={form.id} scale={1} shadow="none" />
+          </span>
+        ) : <span className="story-piece-float">
           <span className="story-piece-art">
             <span className="story-piece-shadow">
               <FormVisual product={product} formId={form.id} />
@@ -79,7 +87,7 @@ export function FloatingPiece({
                 <span key={i} aria-hidden="true" className="story-grain" style={{ "--gx": g.gx, "--gdx": g.gdx, "--gdy": g.gdy, "--gdelay": g.gdelay } as React.CSSProperties} />
               ))}
           </span>
-        </span>
+        </span>}
       </a>
 
       <div className="story-piece-label">

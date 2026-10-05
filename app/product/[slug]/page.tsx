@@ -69,6 +69,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
           fixtureSrc={fixtureFor(first(query.revealFixture))}
           concept={conceptFor(first(query.revealFixture), slug)}
           editorialDetailSrc={slug === "desert-eye-love" ? editorialPreviewUrl("gaara-detail") : undefined}
+          editorialReferenceSrc={slug === "ankh-trace" ? editorialPreviewUrl("ankh-reference") : slug === "crossline" ? editorialPreviewUrl("crossline-reference") : undefined}
         />
       </div>
 

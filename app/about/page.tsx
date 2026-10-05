@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { catalog } from "@/lib/catalog";
 import "./about.css";
 
 export const metadata: Metadata = {
@@ -10,6 +11,9 @@ export const metadata: Metadata = {
 
 // A brand editorial page: the piece large, a few lines, the privacy facts. No founder story.
 export default function AboutPage() {
+  const render = catalog.getProduct("ankh-eye")?.render;
+  const image = render?.hero ?? { src: "/products/ankh-eye/hero.webp", width: 1448, height: 1086 };
+  const photographic = render?.presentation === "photographic";
   return (
     <div className="dermal-about">
       <section className="dermal-about-intro" aria-labelledby="about-heading">
@@ -23,8 +27,8 @@ export default function AboutPage() {
 
       <section className="dermal-about-object" aria-label="An exploration of symbolic form">
         <div className="dermal-about-object-text"><span className="label-xs">An exploration of form / 01</span><p>A line.<br />A symbol.<br /><em>A point of view.</em></p></div>
-        <figure>
-          <Image src="/products/ankh-eye/hero.webp" width={1448} height={1086} sizes="(max-width: 800px) 100vw, 65vw" alt="Ankh and eye geometry joined in one sculptural jewelry design" preload />
+        <figure data-presentation={render?.presentation}>
+          <Image src={image.src} width={image.width} height={image.height} sizes="(max-width: 800px) 100vw, 65vw" alt={render?.alt ?? "Ankh and eye geometry joined in one sculptural jewelry design"} style={photographic ? { display: "block", margin: 0, filter: "none", mixBlendMode: "normal" } : undefined} preload />
           <figcaption className="label-xs">ANKH + EYE · concept render · specification pending</figcaption>
         </figure>
       </section>

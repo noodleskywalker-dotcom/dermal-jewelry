@@ -33,47 +33,44 @@ test.describe("one light system on every page", () => {
     expect(colour).toBe("rgb(251, 250, 247)");
   });
 
-  test("the shop stands its pieces on the paper: no tinted tiles and no boxed filters", async ({ page }) => {
+  test("the shop preserves each photographic scene, with paper around it and unboxed filters", async ({ page }) => {
     await page.goto("/shop");
     const cards = page.getByTestId("product-card");
     await expect(cards).toHaveCount(10);
     for (const card of await cards.all()) {
       const painted = await card.evaluate((li) =>
         [li, ...li.querySelectorAll("*")].filter((el) => {
+          if (el.closest(".product-photograph")) return false;
           const s = getComputedStyle(el);
           const box = el.getBoundingClientRect();
-          // A tile is a large filled surface. Light sweeps and shadows are gradients and belong to the jewelry.
+          // Only the photographic frame has its own surface; the card around it stays unpainted.
           return box.width > 120 && box.height > 120 && !/rgba\(0, 0, 0, 0\)|transparent/.test(s.backgroundColor);
         }).length,
       );
       expect(painted).toBe(0);
+      await expect(card.locator(".product-photograph")).toHaveCount(1);
     }
     const filter = page.getByRole("navigation", { name: "Filter by placement" }).getByRole("link").first();
     expect(await filter.evaluate((el) => getComputedStyle(el).borderTopWidth)).toBe("0px");
   });
 });
 
-test.describe("sand belongs to DESERT EYE alone", () => {
-  test("the sand layer sits on the DESERT EYE slide and nowhere else", async ({ page }) => {
+test.describe("photographic scenes retain their own ground", () => {
+  test("photographic browsing and product stages have no synthetic sand overlay", async ({ page }) => {
     await page.goto("/collections");
     const pieces = page.getByTestId("selection-rail");
-    await expect(pieces.getByTestId("sand-layer")).toHaveCount(1);
-    const host = page.locator('[data-testid="selection-slide"]', { has: page.getByTestId("sand-layer") });
-    await expect(host).toHaveAttribute("data-product", "desert-eye-love");
-    await expect
-      .poll(() => pieces.getByTestId("sand-layer").evaluate((el) => Number(getComputedStyle(el).opacity)))
-      .toBeGreaterThan(0.9);
+    await expect(pieces.getByTestId("sand-layer")).toHaveCount(0);
+    await expect(current(page)).toHaveAttribute("data-presentation", "photographic");
 
-    // The next family is centred: the sand has gone with its slide.
+    // The next family keeps the same photographic treatment.
     await page.getByTestId("selection-next").click();
     await expect(current(page)).toHaveAttribute("data-product", "horus-trace");
-    await expect
-      .poll(() => pieces.getByTestId("sand-layer").evaluate((el) => Number(getComputedStyle(el).opacity)))
-      .toBeLessThan(0.05);
+    await expect(current(page)).toHaveAttribute("data-presentation", "photographic");
 
-    // Its own drawn assembly stands on the same sand; an original's product page does not.
+    // A form-specific product photo has its own ground too.
     await page.goto("/product/desert-eye-love?form=micro-dermal");
-    await expect(page.getByTestId("sand-layer")).toHaveCount(1);
+    await expect(page.getByTestId("render-stage")).toHaveAttribute("data-presentation", "photographic");
+    await expect(page.getByTestId("sand-layer")).toHaveCount(0);
 
     for (const route of ["/shop", "/product/crimson-orbit", "/face-studio", "/cart"]) {
       await page.goto(route);
@@ -103,7 +100,7 @@ test.describe("sand belongs to DESERT EYE alone", () => {
     await expect(page.getByTestId("selection-index")).toHaveText(/Concept · KIRI/, { timeout: 10_000 });
   });
 
-  test("the neighbouring family shows at the edge, softer, and the sand never lies behind words", async ({ page }) => {
+  test("the neighbouring photographic frame shows at the edge, softer, and stays above its words", async ({ page }) => {
     await page.goto("/collections");
     const width = page.viewportSize()!.width;
     const next = page.locator('[data-testid="selection-slide"][data-side="after"]').first().locator(".selection-object");
@@ -112,9 +109,9 @@ test.describe("sand belongs to DESERT EYE alone", () => {
     expect(width - box.x).toBeGreaterThan(width * 0.08);
     expect(await next.evaluate((el) => Number(getComputedStyle(el).opacity))).toBeGreaterThan(0.3);
 
-    const sand = (await page.getByTestId("selection-rail").getByTestId("sand-layer").boundingBox())!;
+    const picture = (await current(page).locator(".selection-object").boundingBox())!;
     const title = (await current(page).getByRole("heading").boundingBox())!;
-    expect(sand.y + sand.height).toBeLessThanOrEqual(title.y + 1);
+    expect(picture.y + picture.height).toBeLessThanOrEqual(title.y + 1);
   });
 });
 
@@ -136,27 +133,21 @@ test.describe("the selection is dragged with a mouse", () => {
   });
 });
 
-test.describe("the piece: assembly, exploded view, replay", () => {
-  test("it assembles once, opens out, closes and replays, with the owner's material wording", async ({ page }) => {
-    // The anti-eyebrow form has a film; the nose form still shows the drawn assembly with all three notes.
-    await page.goto("/product/desert-eye-love?form=nose");
+test.describe("photographs and the separate hardware study", () => {
+  test("the explicit HORUS hardware study still opens out, closes and replays", async ({ page }) => {
+    // Hardware is a separate, labelled concept view; it never replaces the opening photograph.
+    await page.goto("/product/horus-trace");
+    await expect(page.getByTestId("render-stage")).toHaveAttribute("data-presentation", "photographic");
+    await page.getByRole("tab", { name: "Hardware" }).click();
     const piece = page.getByTestId("piece-assembly");
     await expect(piece).toHaveAttribute("data-phase", "assembling");
     await expect(piece).toHaveAttribute("data-phase", "assembled", { timeout: 8000 });
 
-    const notes = page.getByTestId("assembly-notes");
-    await expect(notes).toContainText("Titanium");
-    await expect(notes).toContainText("Proposed");
-    await expect(notes).toContainText("Deep-red faceted gemstone");
-    await expect(notes).toContainText("Material not yet confirmed");
-    await expect(notes).toContainText("Polished finish");
-    await expect(piece).toContainText("Concept hardware");
-    // The hardware is drawn slim: no riser stands taller than a fifth of the stage.
+    await expect(piece).toHaveAttribute("data-hardware", "integrated");
+    await expect(piece).toContainText("Prototype specification · final production details pending");
+    // The integrated study does not invent an additional post or anchor below the design.
+    await expect(piece.locator("[data-post]")).toHaveCount(0);
     const stage = (await piece.locator(".assembly").boundingBox())!;
-    for (const post of await piece.locator('[data-part="posts"] [data-post] rect').all()) {
-      const h = Number(await post.getAttribute("height"));
-      if (Number.isFinite(h)) expect(h).toBeLessThan(20);
-    }
     expect(stage.width).toBeGreaterThan(0);
     const words = (await page.locator("main").innerText()).toLowerCase();
     for (const banned of ["ruby", "implant-grade", "implant grade", "certified"]) expect(words).not.toContain(banned);
@@ -173,11 +164,13 @@ test.describe("the piece: assembly, exploded view, replay", () => {
     await expect(piece).toHaveAttribute("data-phase", "assembling");
   });
 
-  test("a themed opening is recorded as not produced and nothing is loaded for it", async ({ page }) => {
+  test("a single-form photograph opens without a synthetic assembly or unsolicited film", async ({ page }) => {
     const media: string[] = [];
     page.on("request", (r) => /\.(mp4|webm|mov)(\?|$)/.test(r.url()) && media.push(r.url()));
     await page.goto("/product/desert-eye-love?form=micro-dermal");
-    await expect(page.getByTestId("piece-assembly")).toHaveAttribute("data-phase", "assembled", { timeout: 8000 });
+    await expect(page.getByTestId("render-stage")).toHaveAttribute("data-presentation", "photographic");
+    await expect(page.getByTestId("render-stage-image")).toHaveAttribute("src", "/products/photographic/desert-eye-symbol/hero.webp");
+    await expect(page.getByTestId("piece-assembly")).toHaveCount(0);
     expect(media).toEqual([]);
   });
 });
@@ -186,9 +179,10 @@ test.describe("homepage: the piece is the hero", () => {
   test("the opening is the piece filling the screen, with no floating teaser pieces, and the bar is transparent until scrolled", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByTestId("teaser-piece")).toHaveCount(0);
-    const canvas = (await page.getByTestId("scrub-canvas").boundingBox())!;
-    const v = page.viewportSize()!;
-    expect(canvas.width * canvas.height).toBeGreaterThan(v.width * v.height * 0.5);
+    const shot = page.getByTestId("cinema-hero");
+    await expect(shot.locator("img")).toHaveCount(1);
+    await expect(shot.locator("video")).toHaveCount(0);
+    await expect(page.getByTestId("scrub-canvas")).toHaveCount(0);
     const header = page.locator("header[data-tone]").first();
     await expect(header).toHaveAttribute("data-scrolled", "false");
     await page.evaluate(() => window.scrollTo(0, 400));

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formOf } from "@/lib/catalog";
+import { formOf, renderFor } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { clampFocus, type CollectionStory, type StoryFocus, type StoryMedia } from "@/lib/story";
 import { FormVisual } from "@/components/catalog/FormVisual";
@@ -32,6 +32,7 @@ export function StoryVisual({
   captions?: boolean;
 }) {
   const form = formOf(product, formId);
+  const photographic = renderFor(product, form.id)?.presentation === "photographic";
   const [failed, setFailed] = useState<Record<string, boolean>>({});
   const focus = product.slug === story.productSlug ? story.focus[form.id] : undefined;
   const usable = (f: StoryFocus | undefined): f is StoryFocus => Boolean(f && media[f.slot] && !failed[f.slot]);
@@ -40,7 +41,7 @@ export function StoryVisual({
     return (
       <div data-testid="story-visual" data-form={form.id} data-media="placeholder" data-jewelry="overlay" className="absolute inset-0" style={{ backgroundImage: "linear-gradient(165deg, #f4f0e7 0%, #e9e2d4 60%, #dcd2bf 100%)" }}>
         <ProductPieces product={product} formId={form.id} scale={form.components.length > 1 ? 0.5 : 0.24} shadow="soft" />
-        {captions && <p className="label-xs absolute inset-x-5 bottom-5 text-ink/55">{form.label} · {artworkLabel(product, form.id).toLowerCase()}</p>}
+        {captions && <p className={`label-xs absolute inset-x-5 bottom-5 ${photographic ? "product-photograph-label" : "text-ink/55"}`}>{form.label} · {artworkLabel(product, form.id).toLowerCase()}</p>}
       </div>
     );
   }

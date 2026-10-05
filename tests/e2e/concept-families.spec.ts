@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { openStudioWithPhoto } from "./helpers";
 
 // BLADE TRACE, CROSSLINE, ANKH TRACE and HORUS TRACE (the owner's briefs of 23 September 2026). They are concept
-// products: drawn from a written description, with no price, no confirmed material and no hardware.
+// products: visualised from design references, with no price, no confirmed material and no verified hardware.
 // These tests hold that honesty in place, and check that each one is browsable, has a product page,
 // a placement preview and a place in Face Studio.
 
@@ -133,11 +133,13 @@ test.describe("the concept families", () => {
     }
   });
 
-  test("each family carries its own motion, and none of them carries sand", async ({ page }) => {
+  test("each family keeps its photographic lighting, without synthetic motion or sand", async ({ page }) => {
     await page.goto("/collections");
     for (const f of FAMILIES) {
       const slide = page.locator(`[data-testid="selection-slide"][data-product="${f.slug}"]`);
-      await expect(slide.locator(".fo")).toHaveAttribute("data-motion", f.motion);
+      await expect(slide).toHaveAttribute("data-presentation", "photographic");
+      await expect(slide.getByTestId("piece-render")).toHaveAttribute("src", `/products/photographic/${f.slug}/thumb.webp`);
+      await expect(slide.locator(".fo, .fo-drifting, .fo-glint, .fo-grain, .fo-blade")).toHaveCount(0);
       await expect(slide.getByTestId("sand-layer")).toHaveCount(0);
     }
   });

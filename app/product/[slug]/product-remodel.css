@@ -68,6 +68,13 @@
   line-height: 1.9;
   letter-spacing: 0.08em;
 }
+.product-remodel .render-stage[data-presentation="photographic"] .render-stage-frame {
+  padding: 0 0 1.25rem;
+}
+.product-remodel .render-stage[data-presentation="photographic"] .render-stage-image {
+  filter: none;
+  mix-blend-mode: normal;
+}
 .product-remodel .pdp-modes {
   margin-inline: 1.25rem;
   padding: 0;
@@ -312,6 +319,26 @@
   max-height: 26rem;
   filter: drop-shadow(0 1.8rem 1.6rem rgba(38, 32, 25, 0.12));
 }
+.product-remodel .pdp-story-photographic {
+  align-self: center;
+  padding: 0;
+}
+.product-remodel .pdp-story-photographic > img {
+  max-height: none;
+  filter: none;
+  mix-blend-mode: normal;
+}
+.product-remodel .pdp-story-photographic figcaption {
+  margin-top: 1.1rem;
+  line-height: 1.8;
+}
+.product-remodel .pdp-story-reference-compact {
+  width: 100%;
+  padding: 2rem 1.25rem 1.25rem;
+  background: #1d1b19;
+}
+.product-remodel .pdp-story-reference-compact > img { width: min(100%, 179px); }
+.product-remodel .pdp-story-reference-compact figcaption { color: #c7bfb4; }
 .product-remodel .pdp-story-portrait {
   align-self: center;
   padding-block: 0 2rem;

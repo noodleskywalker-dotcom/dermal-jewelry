@@ -33,6 +33,7 @@ export function FamilyExperience({
   fixtureSrc,
   concept,
   editorialDetailSrc,
+  editorialReferenceSrc,
 }: {
   product: Product;
   initialFormId?: string;
@@ -41,6 +42,8 @@ export function FamilyExperience({
   concept?: ConceptStills;
   /** Server-gated character campaign artwork, isolated from product/form geometry. */
   editorialDetailSrc?: string;
+  /** Owner-supplied design reference, shown only through the private preview route. */
+  editorialReferenceSrc?: string;
 }) {
   const { form, choose } = useFormChoice(product, initialFormId);
   const film = filmFor(product, form.id);
@@ -248,7 +251,7 @@ export function FamilyExperience({
       </aside>
     </div>
 
-    <ProductStory product={product} formId={form.id} editorialDetailSrc={editorialDetailSrc} />
+    <ProductStory product={product} formId={form.id} editorialDetailSrc={editorialDetailSrc} editorialReferenceSrc={editorialReferenceSrc} />
     </div>
   );
 }

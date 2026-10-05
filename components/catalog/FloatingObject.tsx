@@ -76,6 +76,26 @@ export function FloatingObject({
   // carries its own soft shadow, so it takes no second one and no reflection, and the glint and trace
   // that are placed from drawn parts are left off. Face Studio never reaches this path.
   const render = renderFor(product, form.id);
+  // Photographic scenes already contain their lighting, ground and contact shadows. Keep the
+  // complete frame still; the cutout's scale, reflections and synthetic glints do not apply.
+  if (render?.presentation === "photographic") {
+    const { catalogue } = render;
+    return (
+      <span className="product-photograph" data-render data-presentation="photographic">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={catalogue.src}
+          width={catalogue.width}
+          height={catalogue.height}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          data-testid="piece-render"
+        />
+      </span>
+    );
+  }
   if (render) {
     const { catalogue } = render;
     return (

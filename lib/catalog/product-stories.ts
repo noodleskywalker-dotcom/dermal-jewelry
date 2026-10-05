@@ -119,4 +119,52 @@ export const productStories: Record<string, ProductStory> = {
       copy: "Known so far through a design render, this concept explores the balance between symbols. Piercing forms and production details remain in development.",
     },
   },
+  "crimson-orbit": {
+    word: "Gravity",
+    atmosphere: {
+      title: "A small centre of gravity.",
+      copy: "A deep-red centre holds the eye while an open circle gives it room. CRIMSON ORBIT begins with that quiet pull: colour contained, light moving around it.",
+    },
+    signature: {
+      title: "A circle, left open.",
+      copy: "The polished outline almost closes around the faceted centre. That small opening lets the form breathe, balancing the depth of the red with a clear rim of light.",
+      detail: "Open circle and faceted red / A study in balance",
+    },
+    expression: {
+      title: "Keep your own centre.",
+      copy: "An earlier study in concentration and restraint. Its rounded shape gives the face a single point of colour, leaving the surrounding space quiet.",
+    },
+  },
+  "sand-vortex": {
+    word: "Movement",
+    atmosphere: {
+      title: "The trace of something moving.",
+      copy: "A spiral suggests a turn that has just come to rest. SAND VORTEX follows that motion inward, then lets a separate point settle beside it.",
+    },
+    signature: {
+      title: "A turn. A point of stillness.",
+      copy: "The open spiral gathers the line toward its centre. The smaller round point answers it across a little space, giving the pair a measured diagonal.",
+      detail: "Open spiral and separate point / Two distinct tops",
+    },
+    expression: {
+      title: "Carry a little movement.",
+      copy: "This earlier study brings a fluid gesture close to the eye. The two elements work together while keeping their own shape and their own space.",
+    },
+  },
+  "void-stud": {
+    word: "Stillness",
+    atmosphere: {
+      title: "A pause in the light.",
+      copy: "VOID STUD begins with a dark circle. Its quiet centre absorbs attention differently from a bright stone: a small pause, edged with light.",
+    },
+    signature: {
+      title: "Darkness, given an edge.",
+      copy: "The matte centre meets a polished outer rim. That contrast gives a simple disc its depth, with just enough reflection to make the outline clear.",
+      detail: "Matte centre and polished rim / A study in contrast",
+    },
+    expression: {
+      title: "Let a small detail hold its ground.",
+      copy: "An earlier study in reduction. Its circular form keeps the gesture direct, for an expression built from very few elements.",
+    },
+  },
 };

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { isConceptFamily, isFeatured, kindLabels, placementLabel } from "@/lib/catalog";
+import { isConceptFamily, isFeatured, kindLabels, placementLabel, renderFor } from "@/lib/catalog";
 import { cardPrice, commerceOf } from "@/lib/commerce/display";
 import type { Product } from "@/lib/catalog/types";
 import { Modal } from "@/components/layout/Modal";
@@ -91,6 +91,7 @@ export function ProductGrid({
               data-testid="product-card"
               data-product={product.slug}
               data-stage={stage}
+              data-presentation={renderFor(product)?.presentation}
               data-object-host
               className={`piece group relative ${styles.piece} ${open ? "z-30" : ""}`}
               onPointerEnter={(e) => {

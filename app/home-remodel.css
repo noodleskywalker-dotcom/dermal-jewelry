@@ -208,3 +208,74 @@
 .home-story-panel[data-mode="product"] .home-story-visual { background: var(--color-paper); }
 .home-story-panel[data-mode="product"] .home-story-word { color: #665748; opacity: .24; }
 .home-story-panel[data-mode="product"] .home-story-visual figcaption { left: 1.25rem; right: 1.25rem; bottom: 1.2rem; color: #665d52; border-color: #d8d0c5; }
+/* Opaque studio scenes fill their own image plane; words and captions stay outside the photograph. */
+.home-story-panel[data-mode="product"] .home-story-visual-photographic {
+  display: block;
+  align-self: start;
+  height: auto;
+  background: transparent;
+}
+.home-story-panel .home-story-visual-photographic .home-story-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: none;
+  mix-blend-mode: normal;
+}
+.home-story-panel[data-mode="product"] .home-story-visual-photographic figcaption {
+  position: static;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  color: #c0b6a8;
+  border-color: #45403a;
+}
+.home-story-visual-reference {
+  display: block;
+  align-self: start;
+  height: auto;
+  margin-right: 0;
+  background: transparent;
+}
+.home-story-visual-reference .home-story-portrait {
+  position: static;
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.home-story-visual-reference figcaption {
+  position: static;
+  margin-top: 1rem;
+  padding: 1rem 0 0;
+  border-top: 1px solid #45403a;
+  background: none;
+}
+.home-story-visual-reference-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1.25rem 1.25rem;
+  background: #1d1b19;
+}
+.home-story-visual-reference-compact .home-story-portrait { width: min(100%, 179px); }
+.home-story-visual-reference-compact figcaption { width: 100%; flex-wrap: wrap; }
+/* Current geometry stays in normal flow as a photographic still until accurate footage exists. */
+.launch-editorial { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: center; gap: 5vw; padding: 4rem 5vw; background: #171615; color: #f4f0e8; }
+.launch-editorial-copy > .label-xs { color: #c3b8aa; }
+.launch-editorial h2 { margin-top: 1.6rem; font: 300 clamp(3.4rem,6vw,6.5rem)/.98 var(--font-display); letter-spacing: -.04em; }
+.launch-editorial-copy > p:not(.label-xs) { max-width: 27rem; margin-top: 1.8rem; font-size: .875rem; line-height: 1.9; color: #c3b8aa; }
+.launch-editorial-copy > a { margin-top: 2rem; color: #f4f0e8; }
+.launch-editorial figure { min-width: 0; }
+.launch-editorial figure img { display: block; width: 100%; height: auto; object-fit: contain; filter: none; mix-blend-mode: normal; }
+.launch-editorial figcaption { margin-top: 1rem; color: #c3b8aa; font-size: .56rem; }
+.dermal-home .cinema-hero-product { background: #171615; }
+.dermal-home .cinema-hero-product .cinema-hero-media { width: 65%; height: 100%; left: auto; right: 0; top: 0; transform: none; object-fit: contain; filter: none; mix-blend-mode: normal; }
+.dermal-home .cinema-hero-product .cinema-hero-veil { background: linear-gradient(90deg,#171615 0%,rgb(23 22 21 / .9) 24%,transparent 55%); }
+@media(max-width:760px) {
+ .launch-editorial { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; padding: 3.25rem 1.5rem; }
+ .launch-editorial h2 { font-size: clamp(3.25rem,13vw,5rem); }
+ .launch-editorial-copy > p:not(.label-xs) { margin-top: 1.25rem; font-size: .8125rem; }
+ .dermal-home .cinema-hero-product .cinema-hero-media { width: 100%; height: 57%; left: 0; right: auto; top: 0; }
+ .dermal-home .cinema-hero-product .cinema-hero-veil { background: linear-gradient(0deg,#171615 0%,#171615 37%,transparent 62%); }
+}

@@ -159,6 +159,8 @@ export type RenderImage = { src: string; width: number; height: number };
  * `detail` are for the product page.
  */
 export type ProductRender = {
+  /** Opaque photographic scenes keep their lighting and background; cutouts sit on the page's paper. */
+  presentation?: "cutout" | "photographic";
   hero: RenderImage;
   catalogue: RenderImage;
   detail?: RenderImage;
@@ -211,6 +213,8 @@ export type Product = {
   media?: ProductMedia;
   /** The owner's design render. When present it is the piece's picture on every shopping surface. */
   render?: ProductRender;
+  /** A form's own image overrides the family image without changing its components or placement. */
+  formRenders?: Partial<Record<FormId, ProductRender>>;
   /** An optional themed opening for the assembly view. The standard assembly never depends on it. */
   assembly?: { themed?: { id: string; description: string; status: "not-produced" | "available" } };
 

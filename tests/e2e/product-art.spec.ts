@@ -32,62 +32,62 @@ async function inspect(region: Locator) {
 const waitForArt = (page: Page) => page.waitForFunction(() => [...document.querySelectorAll<HTMLImageElement>('[data-testid="piece-asset"]')].every((i) => i.complete && i.naturalWidth > 0));
 
 test.describe("prototype product art", () => {
-  test("the real symbol and gemstone are drawn on every surface that shows DESERT EYE — LOVE", async ({ page }) => {
+  test("photographic scenes follow each form while placement retains exact symbol and gemstone assets", async ({ page }) => {
     const errors: string[] = [];
     page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
     page.on("response", (r) => r.url().includes("/products/") && r.status() >= 400 && errors.push(`${r.status()} ${r.url()}`));
 
-    // Collection stage: three floating forms of the design.
+    // Collection scenes use each form's own photograph; geometry stays in Placement and Face Studio.
     await page.goto("/collections/desert-eye");
+    for (const [form, slot] of [["anti-eyebrow", "desert-eye-love"], ["micro-dermal", "desert-eye-symbol"], ["nose", "desert-eye-gem"]]) {
+      const scene = page.locator(`[data-testid="story-piece"][data-form="${form}"][data-product="desert-eye-love"]`);
+      await expect(scene).toHaveAttribute("data-presentation", "photographic");
+      await expect(scene.locator("img")).toHaveAttribute("src", `/products/photographic/${slot}/thumb.webp`);
+      await expect(scene.getByTestId("piece-asset")).toHaveCount(0);
+    }
+
+    await page.goto("/product/desert-eye-love");
+    await expect(page.getByTestId("render-stage")).toBeVisible();
+    await page.getByRole("tab", { name: "Placement" }).click();
     await waitForArt(page);
-    const pair = await inspect(page.locator('[data-testid="story-piece"][data-form="anti-eyebrow"][data-product="desert-eye-love"]'));
+    const pair = await inspect(page.getByTestId("placement-preview"));
     expect(pair.map((p) => p.component)).toEqual(["symbol", "gemstone"]);
     expect(pair[0].src).toMatch(SYMBOL);
     expect(pair[1].src).toMatch(GEMSTONE);
     expect(pair[0].natural).toEqual([1600, 1656]);
     expect(pair[1].natural).toEqual([800, 800]);
-    // The approved proportion: the stone is a little over a third of the symbol's width.
     expect(pair[1].width / pair[0].width).toBeGreaterThan(0.34);
     expect(pair[1].width / pair[0].width).toBeLessThan(0.42);
-    const dermal = await inspect(page.locator('[data-testid="story-piece"][data-form="micro-dermal"]'));
-    expect(dermal.map((p) => p.src)).toEqual(["/products/desert-eye-love/micro-dermal/symbol.webp"]);
-    const nose = await inspect(page.locator('[data-testid="story-piece"][data-form="nose"]'));
-    expect(nose.map((p) => p.src)).toEqual(["/products/desert-eye-love/nose/gemstone.webp"]);
-    // A design without supplied art keeps its drawn artwork. Nothing was invented for it.
-    await expect(page.locator('[data-testid="story-piece"][data-product="sand-vortex"]').getByTestId("piece-asset")).toHaveCount(0);
 
-    // Product page: still, placement head, and the honest label.
-    // The anti-eyebrow form opens on its product animation; the film is presentation, so the exact art
-    // is checked on the placement head, and the assembly is checked on a form without a film.
-    await page.goto("/product/desert-eye-love");
-    await expect(page.getByTestId("render-stage")).toBeVisible();
+    await page.goto("/product/desert-eye-love?form=micro-dermal");
+    await expect(page.getByTestId("render-stage-image")).toHaveAttribute("src", "/products/photographic/desert-eye-symbol/hero.webp");
     await page.getByRole("tab", { name: "Placement" }).click();
     await waitForArt(page);
-    const placed = await inspect(page.getByTestId("placement-preview"));
-    expect(placed.map((p) => p.component)).toEqual(["symbol", "gemstone"]);
-    expect(placed.every((p) => p.loaded && !p.flipped)).toBe(true);
-    await page.goto("/product/desert-eye-love?form=micro-dermal");
+    const dermal = await inspect(page.getByTestId("placement-preview"));
+    expect(dermal.map((p) => p.src)).toEqual(["/products/desert-eye-love/micro-dermal/symbol.webp"]);
+
+    await page.goto("/product/desert-eye-love?form=nose");
+    await expect(page.getByTestId("render-stage-image")).toHaveAttribute("src", "/products/photographic/desert-eye-gem/hero.webp");
+    await page.getByRole("tab", { name: "Placement" }).click();
     await waitForArt(page);
-    const assembled = await inspect(page.getByTestId("piece-assembly"));
-    expect(assembled.map((p) => p.component)).toEqual(["symbol"]);
-    expect(assembled.every((p) => p.loaded && !p.flipped)).toBe(true);
+    const nose = await inspect(page.getByTestId("placement-preview"));
+    expect(nose.map((p) => p.src)).toEqual(["/products/desert-eye-love/nose/gemstone.webp"]);
 
     // Shop grid and bag thumbnail.
     await page.goto("/shop");
     await waitForArt(page);
-    // The shop card shows the owner's design render of the anti-eyebrow piece (26 September 2026);
-    // the per-form prototype art stays on every surface that shows a single form, checked above and below.
+    // Shopping imagery follows the selected form without borrowing another form's geometry.
     const card = page.locator('[data-testid="product-card"][data-product="desert-eye-love"]');
-    await expect(card.getByTestId("piece-render")).toHaveAttribute("src", "/products/desert-eye/catalogue.webp");
+    await expect(card.getByTestId("piece-render")).toHaveAttribute("src", "/products/photographic/desert-eye-love/thumb.webp");
     await expect(card.getByTestId("piece-asset")).toHaveCount(0);
     await expect(card).toContainText("Design render");
-    await expect(page.locator('[data-testid="product-card"][data-product="sand-vortex"]')).toContainText("Concept artwork");
+    await expect(page.locator('[data-testid="product-card"][data-product="sand-vortex"]')).toContainText("Design render");
     await page.goto("/product/desert-eye-love?form=nose");
     await page.getByTestId("add-to-bag").click();
     const line = page.locator('[data-testid="bag-line"][data-form="nose"]');
-    expect((await inspect(line)).map((p) => p.src)).toEqual(["/products/desert-eye-love/nose/gemstone.webp"]);
+    await expect(line.locator('[data-presentation="photographic"] img')).toHaveAttribute("src", "/products/photographic/desert-eye-gem/thumb.webp");
 
-    for (const group of [pair, dermal, nose, placed]) {
+    for (const group of [pair, dermal, nose]) {
       for (const piece of group) {
         expect(piece.loaded, `${piece.src} loaded`).toBe(true);
         expect(piece.flipped, `${piece.src} is never flipped`).toBe(false);

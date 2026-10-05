@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 const base = process.env.BASE_URL ?? "http://127.0.0.1:3000";
 const out = fileURLToPath(new URL("../../docs/screenshots/astra-remodel/", import.meta.url));
 const fixture = fileURLToPath(new URL("../fixtures/geometric-portrait.png", import.meta.url));
+const families = ["desert-eye-love", "horus-trace", "blade-trace", "crossline", "ankh-trace", "japanese-angel", "ankh-eye", "crimson-orbit", "sand-vortex", "void-stud"];
 mkdirSync(out, { recursive: true });
 
 const browser = await chromium.launch();
@@ -22,15 +23,19 @@ async function session(name, options, steps) {
     route.continue({ headers: { ...route.request().headers(), "x-dermal-commission-mock": mock.mode, "x-dermal-test-key": `capture-${name}-${Date.now()}` } }),
   );
   const shot = async (file, full = false, region) => {
-    if (full) {
-      // Walk the page once so every lazy picture has loaded before the whole-page frame is taken.
-      await page.evaluate(async () => {
-        for (let y = 0; y < document.body.scrollHeight; y += 500) {
-          window.scrollTo(0, y);
-          await new Promise((r) => setTimeout(r, 60));
-        }
-        window.scrollTo(0, 0);
-      });
+    if (full || region) {
+      // A whole catalogue region can extend well below the viewport. Load those images together
+      // without scrolling a horizontal selection rail away from the family being reviewed.
+      const images = (region ?? page.locator("body")).locator("img");
+      await images.evaluateAll((els) => els.forEach((img) => { img.loading = "eager"; }));
+      await Promise.all((await images.all()).map((image) => image.evaluate(async (img) => {
+        let timer;
+        try {
+          await Promise.race([img.decode(), new Promise((_, reject) => {
+            timer = setTimeout(() => reject(new Error(`Picture did not decode: ${img.currentSrc || img.src}`)), 15_000);
+          })]);
+        } finally { clearTimeout(timer); }
+      })));
     }
     await page.waitForFunction(() => Array.from(document.images).filter((img) => { const r = img.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth; }).every((img) => img.complete && img.naturalWidth > 0), null, { timeout: 10000 });
     await page.waitForTimeout(900);
@@ -100,13 +105,22 @@ await session("desktop", { viewport: { width: 1440, height: 900 } }, async ({ pa
     await settle(`/${route}`);
     await shot(`03-${route}`);
   }
+  await settle("/shop?view=even");
+  if (await page.getByTestId("product-card").count() !== families.length) throw new Error("The catalogue capture must include all ten families");
+  if (await page.locator('[data-testid="product-card"][data-presentation="photographic"]').count() !== families.length) throw new Error("Every catalogue family must use its photographic render");
+  await shot("03b-shop-all-ten-photographic", false, page.getByTestId("catalogue"));
 
-  for (const slug of ["desert-eye-love", "horus-trace", "blade-trace", "crossline", "ankh-trace", "japanese-angel", "ankh-eye"]) {
+  for (const slug of families) {
     await settle(`/product/${slug}`);
     await shot(`04-product-${slug}`);
   }
+  await settle("/product/ankh-eye");
   await page.getByTestId("render-view-detail").click();
   await shot("04-product-ankh-eye-detail");
+  for (const form of ["micro-dermal", "nose"]) {
+    await settle(`/product/desert-eye-love?form=${form}`);
+    await shot(`04-product-desert-eye-${form}`);
+  }
 
   await settle("/commission");
   await shot("05-commission-opening");
@@ -135,9 +149,13 @@ await session("mobile", { ...devices["Pixel 7"] }, async ({ page, shot, settle }
     await settle(`/${route}`);
     await shot(`20-${route}`);
   }
-  for (const slug of ["desert-eye-love", "horus-trace", "blade-trace", "crossline", "ankh-trace", "japanese-angel", "ankh-eye"]) {
+  for (const slug of families) {
     await settle(`/product/${slug}`);
     await shot(`12-product-${slug}`);
+  }
+  for (const form of ["micro-dermal", "nose"]) {
+    await settle(`/product/desert-eye-love?form=${form}`);
+    await shot(`12-product-desert-eye-${form}`);
   }
   await settle("/commission");
   await shot("13-commission-opening");

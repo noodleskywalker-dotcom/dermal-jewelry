@@ -158,17 +158,17 @@ function VoidTop({ id }: { id: string }) {
 // drawn from the owner's written description of each piece. No reference photograph was on this
 // machine when these were drawn, so they interpret the idea and are not the product's geometry.
 
-/** A polished bar with rounded ends: the line of CROSSLINE. Drawn as a shape, never a stroked line:
- * a gradient has no height to fill on a flat line, and the metal would come out grey. */
+/** The owner's worn reference shows a very thin, plain dark line beside a separate chrome cross.
+ * Keep this placement illustration consistent with that silhouette; it is not dimensional CAD. */
 function CrossLine({ id }: { id: string }) {
   const bar = (dx: number, dy: number, fill: string) => (
-    <rect x={130 + dx} y={425 + dy} width="740" height="150" rx="75" fill={fill} />
+    <rect x={130 + dx} y={463 + dy} width="740" height="74" rx="5" fill={fill} />
   );
   return (
     <>
-      {bar(14, 22, "rgba(0,0,0,0.32)")}
-      {bar(0, 0, `url(#${id}-metal)`)}
-      <rect x="180" y="455" width="640" height="16" rx="8" fill="rgba(255,255,255,0.55)" />
+      {bar(4, 8, "rgba(0,0,0,0.32)")}
+      {bar(0, 0, `url(#${id}-void)`)}
+      <rect x="134" y="463" width="732" height="4" rx="2" fill="rgba(255,255,255,0.32)" />
     </>
   );
 }

@@ -1,0 +1,206 @@
+{
+  "desert-eye-love": {
+    "hero": {
+      "src": "/products/photographic/desert-eye-love/hero.webp",
+      "width": 1800,
+      "height": 1800
+    },
+    "catalogue": {
+      "src": "/products/photographic/desert-eye-love/thumb.webp",
+      "width": 840,
+      "height": 840
+    },
+    "detail": {
+      "src": "/products/photographic/desert-eye-love/detail.webp",
+      "width": 1600,
+      "height": 1600
+    }
+  },
+  "horus-trace": {
+    "hero": {
+      "src": "/products/photographic/horus-trace/hero.webp",
+      "width": 1800,
+      "height": 1800
+    },
+    "catalogue": {
+      "src": "/products/photographic/horus-trace/thumb.webp",
+      "width": 840,
+      "height": 840
+    },
+    "detail": {
+      "src": "/products/photographic/horus-trace/detail.webp",
+      "width": 1600,
+      "height": 1600
+    }
+  },
+  "blade-trace": {
+    "hero": {
+      "src": "/products/photographic/blade-trace/hero.webp",
+      "width": 1800,
+      "height": 1800
+    },
+    "catalogue": {
+      "src": "/products/photographic/blade-trace/thumb.webp",
+      "width": 840,
+      "height": 840
+    },
+    "detail": {
+      "src": "/products/photographic/blade-trace/detail.webp",
+      "width": 1600,
+      "height": 1600
+    }
+  },
+  "crossline": {
+    "hero": {
+      "src": "/products/photographic/crossline/hero.webp",
+      "width": 1800,
+      "height": 1800
+    },
+    "catalogue": {
+      "src": "/products/photographic/crossline/thumb.webp",
+      "width": 840,
+      "height": 840
+    },
+    "detail": {
+      "src": "/products/photographic/crossline/detail.webp",
+      "width": 1600,
+      "height": 1600
+    }
+  },
+  "ankh-trace": {
+    "hero": {
+      "src": "/products/photographic/ankh-trace/hero.webp",
+      "width": 1800,
+      "height": 1800
+    },
+    "catalogue": {
+      "src": "/products/photographic/ankh-trace/thumb.webp",
+      "width": 840,
+      "height": 840
+    },
+    "detail": {
+      "src": "/products/photographic/ankh-trace/detail.webp",
+      "width": 1600,
+      "height": 1600
+    }
+  },
+  "japanese-angel": {
+    "hero": {
+      "src": "/products/photographic/japanese-angel/hero.webp",
+      "width": 1800,
+      "height": 1800
+    },
+    "catalogue": {
+      "src": "/products/photographic/japanese-angel/thumb.webp",
+      "width": 840,
+      "height": 840
+    },
+    "detail": {
+      "src": "/products/photographic/japanese-angel/detail.webp",
+      "width": 1600,
+      "height": 1600
+    }
+  },
+  "ankh-eye": {
+    "hero": {
+      "src": "/products/photographic/ankh-eye/hero.webp",
+      "width": 1800,
+      "height": 1800
+    },
+    "catalogue": {
+      "src": "/products/photographic/ankh-eye/thumb.webp",
+      "width": 840,
+      "height": 840
+    },
+    "detail": {
+      "src": "/products/photographic/ankh-eye/detail.webp",
+      "width": 1600,
+      "height": 1600
+    }
+  },
+  "crimson-orbit": {
+    "hero": {
+      "src": "/products/photographic/crimson-orbit/hero.webp",
+      "width": 1800,
+      "height": 1800
+    },
+    "catalogue": {
+      "src": "/products/photographic/crimson-orbit/thumb.webp",
+      "width": 840,
+      "height": 840
+    },
+    "detail": {
+      "src": "/products/photographic/crimson-orbit/detail.webp",
+      "width": 1600,
+      "height": 1600
+    }
+  },
+  "sand-vortex": {
+    "hero": {
+      "src": "/products/photographic/sand-vortex/hero.webp",
+      "width": 1800,
+      "height": 1800
+    },
+    "catalogue": {
+      "src": "/products/photographic/sand-vortex/thumb.webp",
+      "width": 840,
+      "height": 840
+    },
+    "detail": {
+      "src": "/products/photographic/sand-vortex/detail.webp",
+      "width": 1600,
+      "height": 1600
+    }
+  },
+  "void-stud": {
+    "hero": {
+      "src": "/products/photographic/void-stud/hero.webp",
+      "width": 1800,
+      "height": 1800
+    },
+    "catalogue": {
+      "src": "/products/photographic/void-stud/thumb.webp",
+      "width": 840,
+      "height": 840
+    },
+    "detail": {
+      "src": "/products/photographic/void-stud/detail.webp",
+      "width": 1600,
+      "height": 1600
+    }
+  },
+  "desert-eye-symbol": {
+    "hero": {
+      "src": "/products/photographic/desert-eye-symbol/hero.webp",
+      "width": 1800,
+      "height": 1800
+    },
+    "catalogue": {
+      "src": "/products/photographic/desert-eye-symbol/thumb.webp",
+      "width": 840,
+      "height": 840
+    },
+    "detail": {
+      "src": "/products/photographic/desert-eye-symbol/detail.webp",
+      "width": 1600,
+      "height": 1600
+    }
+  },
+  "desert-eye-gem": {
+    "hero": {
+      "src": "/products/photographic/desert-eye-gem/hero.webp",
+      "width": 1800,
+      "height": 1800
+    },
+    "catalogue": {
+      "src": "/products/photographic/desert-eye-gem/thumb.webp",
+      "width": 840,
+      "height": 840
+    },
+    "detail": {
+      "src": "/products/photographic/desert-eye-gem/detail.webp",
+      "width": 1600,
+      "height": 1600
+    }
+  }
+}

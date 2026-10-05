@@ -9,7 +9,6 @@ import { getCatalogue } from "@/lib/commerce/catalog";
 import { editorialPortraitUrl, editorialPreviewUrl } from "@/lib/story/editorial-preview";
 import "./home-remodel.css";
 
-const CINEMA = "/media/cinema";
 const FAMILY_ORDER = ["desert-eye-love", "horus-trace", "blade-trace", "crossline", "ankh-trace", "japanese-angel", "ankh-eye"];
 
 export default async function HomePage() {
@@ -20,13 +19,10 @@ export default async function HomePage() {
   const cinematicDetail = editorialPreviewUrl("gaara-detail");
   return (
     <div className="dermal-home">
-      <CinemaHero cinematicPortrait={cinematicPortrait} poster={`${CINEMA}/hero-poster.jpg`} sources={[
-        { src: `${CINEMA}/hero.webm`, type: "video/webm" },
-        { src: `${CINEMA}/hero.mp4`, type: "video/mp4" },
-      ]} />
-      <LaunchHero frames={{ dir: `${CINEMA}/orbit`, count: 72, poster: `${CINEMA}/orbit/poster.jpg` }} />
+      <CinemaHero cinematicPortrait={cinematicPortrait} poster={featured.render!.hero.src} posterAlt={featured.render!.alt} />
+      <LaunchHero render={featured.render} />
       <TheSelection products={products} />
-      <StoryChapters products={products} cinematicPortrait={cinematicDetail ?? cinematicPortrait} />
+      <StoryChapters products={products} cinematicPortrait={cinematicDetail ?? cinematicPortrait} ankhReference={editorialPreviewUrl("ankh-reference")} crosslineReference={editorialPreviewUrl("crossline-reference")} />
       <SeeItOnYou product={featured} />
       <AtelierIntroduction />
       <FinalCta shopHref="/shop" />

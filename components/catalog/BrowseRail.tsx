@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { availableForms, isConceptFamily, lineLabels } from "@/lib/catalog";
+import { availableForms, isConceptFamily, lineLabels, renderFor } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 import { FloatingObject } from "./FloatingObject";
@@ -54,6 +54,7 @@ export function BrowseRail({ products }: { products: Product[] }) {
     const product = products.find((p) => p.slug === slug);
     if (!product) return [];
     const concept = isConceptFamily(product);
+    const photographic = renderFor(product)?.presentation === "photographic";
     return [
       {
         id: slug,
@@ -66,8 +67,8 @@ export function BrowseRail({ products }: { products: Product[] }) {
         visual: (
           <span className="browse-object">
             {/* The family's own detail, held close to the piece. The stage behind it stays DERMAL. */}
-            <span aria-hidden="true" className="browse-halo" />
-            {world === "sand" && <SandLayer className="browse-sand" />}
+            {!photographic && <span aria-hidden="true" className="browse-halo" />}
+            {!photographic && world === "sand" && <SandLayer className="browse-sand" />}
             <FloatingObject product={product} depth={1} />
           </span>
         ),

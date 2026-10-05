@@ -11,8 +11,8 @@ export function artworkLabel(product: Product, formId?: string): string {
   return exact && form.composition?.artClass === "prototype-product-art" ? "Prototype artwork" : "Concept artwork";
 }
 
-// Product-only still life used wherever final photography is missing. The pieces come from
-// FormVisual, so an exact asset in the slot replaces the concept artwork here as well.
+// Product-only still life. A completed photographic render fills its frame; other forms use
+// their exact component artwork or the existing concept drawing.
 export function ProductArtwork({
   product,
   className,
@@ -31,24 +31,24 @@ export function ProductArtwork({
   /** Kept for callers; it now only chooses the weight of the contact shadow. */
   tone?: "bone" | "ink" | "none";
 }) {
-  // No tinted tile behind the jewelry: every tone sits straight on the paper.
-  const surface = "";
   const label = artworkLabel(product, formId);
+  const photographic = renderFor(product, formId)?.presentation === "photographic";
   return (
     <div
       role="img"
       aria-label={`${product.title}: ${label.toLowerCase()}. ${product.summary}`}
-      className={`relative overflow-hidden ${surface} ${className ?? ""}`}
+      data-presentation={photographic ? "photographic" : undefined}
+      className={`relative overflow-hidden ${className ?? ""}`}
     >
       <ProductPieces product={product} formId={formId} scale={scale} shadow={tone === "ink" ? "dark" : "soft"} />
       {showLabel && (
-        <span className={`label-xs absolute bottom-3 left-3 ${tone === "ink" ? "text-ash" : "text-ink/55"}`}>{label}</span>
+        <span className={`label-xs absolute bottom-3 left-3 ${photographic ? "product-photograph-label" : tone === "ink" ? "text-ash" : "text-ink/55"}`}>{label}</span>
       )}
     </div>
   );
 }
 
-/** The bare pieces, centred in their parent. Used by tiles, the homepage, bag thumbnails and the reveal ending. */
+/** The selected form's photographic scene or component artwork, used by thumbnails and story stills. */
 export function ProductPieces({
   product,
   scale,
@@ -60,6 +60,15 @@ export function ProductPieces({
   scale: number;
   shadow?: "soft" | "dark" | "none";
 }) {
+  const render = renderFor(product, formId);
+  if (render?.presentation === "photographic") {
+    return (
+      <span className="product-photograph" data-presentation="photographic">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={render.catalogue.src} width={render.catalogue.width} height={render.catalogue.height} alt="" loading="lazy" decoding="async" draggable={false} />
+      </span>
+    );
+  }
   const filter =
     shadow === "soft"
       ? "drop-shadow(0 1.2vw 1vw rgba(40,30,20,0.28)) drop-shadow(0 0.2vw 0.2vw rgba(40,30,20,0.35))"

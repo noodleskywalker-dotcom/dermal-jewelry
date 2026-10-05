@@ -14,6 +14,10 @@ export function editorialPreviewPath(name: string): string | undefined {
       return path.join(process.cwd(), "assets/editorial-preview/gaara-portrait.webp");
     case "gaara-detail":
       return path.join(process.cwd(), "assets/editorial-preview/gaara-detail.webp");
+    case "ankh-reference":
+      return path.join(process.cwd(), "assets/editorial-preview/ankh-reference.webp");
+    case "crossline-reference":
+      return path.join(process.cwd(), "assets/editorial-preview/crossline-reference.webp");
     default:
       return undefined;
   }

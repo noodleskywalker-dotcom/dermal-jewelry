@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { EDITORIAL_PORTRAIT_AVAILABLE, OPENING_HEADLINE } from "./helpers";
+import { OPENING_HEADLINE } from "./helpers";
 
 test.describe("landing page", () => {
   test("opens on the campaign, the headline and two ways in, and scrolls like a normal page", async ({ page }) => {
@@ -30,8 +30,7 @@ test.describe("landing page", () => {
     // No button rectangles: the ways in are text links.
     expect(await page.getByTestId("cta-piece").evaluate((el) => getComputedStyle(el).backgroundColor)).toMatch(/rgba\(0, 0, 0, 0\)|transparent/);
 
-    // The pinned moments of the cinematic remake (22 September 2026): the turn, the dunes, the companion on
-    // a wide screen, and the push into the stone. Each is a sticky stage in normal scroll; nothing hijacks the wheel.
+    // The current still imagery uses normal document flow, with no pinned animation stage.
     await page.evaluate(() => window.scrollTo(0, 0));
     const pinned = await page.evaluate(
       () =>
@@ -40,9 +39,8 @@ test.describe("landing page", () => {
           return (s.position === "sticky" || s.position === "fixed") && el.getBoundingClientRect().height >= window.innerHeight * 0.85;
         }).map((el) => el.className.split(" ")[0]),
     );
-    // The launch owns the opening and nothing after it, so the turn is the only pinned stage left
-    // on this page (the owner's homepage correction, 24 September 2026).
-    expect(pinned).toEqual(["launch-stage"]);
+    // No retired orbit is mounted behind the current image.
+    expect(pinned).toEqual([]);
     await page.mouse.move(200, 300);
     await page.mouse.wheel(0, 400);
     await expect.poll(() => page.evaluate(() => Math.round(window.scrollY))).toBe(400);
@@ -108,11 +106,10 @@ test.describe("landing page", () => {
     expect(stories).toBeGreaterThan(selection);
     expect(onyou).toBeGreaterThan(stories);
     expect(final).toBeGreaterThan(onyou);
-    // The only sand left on the page is DESERT EYE's own slide on the rail, and it leaves with it.
+    // Photographic product frames retain their own ground and lighting, with no generated sand overlay.
     const rail = page.getByTestId("selection");
-    await expect(rail.getByTestId("sand-layer")).toHaveCount(1);
-    const host = rail.locator('[data-testid="selection-slide"]', { has: page.getByTestId("sand-layer") });
-    await expect(host).toHaveAttribute("data-product", "desert-eye-love");
+    await expect(rail.getByTestId("sand-layer")).toHaveCount(0);
+    await expect(rail.locator('[data-testid="selection-slide"][data-presentation="photographic"]')).toHaveCount(7);
   });
 });
 
@@ -134,8 +131,8 @@ test.describe("homepage mascot (internal concept art, development server only)",
     // The clip loops silently and never starts anything.
     expect(await clip.evaluate((v: HTMLVideoElement) => [v.loop, v.muted])).toEqual([true, true]);
     await expect(clip).toHaveAttribute("data-clip", "idle");
-    // A product loop takes precedence over the mascot; a still campaign portrait does not.
-    await expect.poll(() => clip.evaluate((v: HTMLVideoElement) => v.paused)).toBe(!EDITORIAL_PORTRAIT_AVAILABLE);
+    // Both public product imagery and the campaign portrait are stills.
+    await expect.poll(() => clip.evaluate((v: HTMLVideoElement) => v.paused)).toBe(false);
     await expect(page.getByTestId("sand-transition")).toHaveCount(0);
     await expect(page).toHaveURL(/\/$/);
   });

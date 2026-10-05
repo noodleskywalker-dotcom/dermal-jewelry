@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { availableForms, catalog, formOf } from "@/lib/catalog";
+import { availableForms, catalog, filmFor, formOf } from "@/lib/catalog";
 import { resolveComponents } from "@/lib/studio/geometry";
 import { addItem, createItem, EMPTY_LOOK, previewItems, setForm, setSide, updateGroup } from "@/lib/studio/look";
 
@@ -7,6 +7,10 @@ const hero = catalog.getProduct("desert-eye-love")!;
 const orbit = catalog.getProduct("crimson-orbit")!;
 
 describe("design family forms", () => {
+  it("withholds the retired connected-bar movie for every current DESERT EYE form", () => {
+    expect(hero.film?.approvedForPublication).toBe(false);
+    for (const form of availableForms(hero)) expect(filmFor(hero, form.id)).toBeUndefined();
+  });
   it("offers only forms whose demo configuration exists", () => {
     expect(availableForms(hero).map((f) => f.id)).toEqual(["anti-eyebrow", "micro-dermal", "nose"]);
     expect(availableForms(orbit).map((f) => f.id)).toEqual(["micro-dermal", "nose"]);

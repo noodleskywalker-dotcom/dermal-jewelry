@@ -6,6 +6,8 @@ import { EDITORIAL_PORTRAIT_AVAILABLE } from "./helpers";
 const families = ["desert-eye-love", "horus-trace", "blade-trace", "crossline", "ankh-trace", "japanese-angel", "ankh-eye"];
 const concepts = new Set(["japanese-angel", "ankh-eye"]);
 const editorialDetailAvailable = existsSync(path.join(process.cwd(), "assets/editorial-preview/gaara-detail.webp"));
+const ankhReferenceAvailable = existsSync(path.join(process.cwd(), "assets/editorial-preview/ankh-reference.webp"));
+const crosslineReferenceAvailable = existsSync(path.join(process.cwd(), "assets/editorial-preview/crossline-reference.webp"));
 
 async function loadPictures(region: Locator) {
   for (const picture of await region.locator("img").all()) {
@@ -34,7 +36,8 @@ test.describe("the design stories", () => {
       await expect(stories.getByRole("tab", { selected: true })).toHaveCount(1);
       await expect(panel).toHaveAttribute("data-family", slug);
       await expect(panel).toHaveAttribute("aria-labelledby", `home-story-tab-${slug}`);
-      await expect(panel).toHaveAttribute("data-mode", slug === "desert-eye-love" && EDITORIAL_PORTRAIT_AVAILABLE ? "portrait" : "product");
+      const portrait = (slug === "desert-eye-love" && EDITORIAL_PORTRAIT_AVAILABLE) || (slug === "ankh-trace" && ankhReferenceAvailable) || (slug === "crossline" && crosslineReferenceAvailable);
+      await expect(panel).toHaveAttribute("data-mode", portrait ? "portrait" : "product");
       await expect(panel.getByRole("list", { name: "The form and the expression" }).getByRole("listitem")).toHaveCount(2);
       await expect(panel.getByTestId("home-story-link")).toHaveAttribute("href", `/product/${slug}#design-story`);
       if (concepts.has(slug)) await expect(panel).toContainText("Concept study");
@@ -76,7 +79,7 @@ test.describe("the design stories", () => {
     await expect(panel.getByTestId("home-story-link")).toBeVisible();
   });
 
-  for (const slug of families) {
+  for (const slug of [...families, "crimson-orbit", "sand-vortex", "void-stud"]) {
     test(`${slug} has a complete story and a truthful next step`, async ({ page }) => {
       await page.goto(`/product/${slug}`);
       await page.getByRole("link", { name: "Enter the story" }).click();
@@ -105,6 +108,22 @@ test.describe("the design stories", () => {
           await expect(story).toContainText("AI editorial concept / Anti-eyebrow pair");
         }
       }
+      if (slug === "ankh-trace") {
+        await expect(story.getByTestId("product-story-reference")).toHaveCount(ankhReferenceAvailable ? 1 : 0);
+        if (ankhReferenceAvailable) {
+          await expect(story.getByTestId("product-story-reference")).toHaveAttribute("src", "/api/editorial-preview/ankh-reference");
+          await expect(story).toContainText("Original design reference / ANKH TRACE");
+        }
+      }
+      if (slug === "crossline") {
+        const reference = story.getByTestId("product-story-reference");
+        await expect(reference).toHaveCount(crosslineReferenceAvailable ? 1 : 0);
+        if (crosslineReferenceAvailable) {
+          await expect(reference).toHaveAttribute("src", "/api/editorial-preview/crossline-reference");
+          await expect(story).toContainText("Original placement reference / CROSSLINE");
+          expect((await reference.boundingBox())!.width).toBeLessThanOrEqual(179);
+        }
+      }
       await noSidewaysScroll(page);
     });
   }
@@ -112,11 +131,11 @@ test.describe("the design stories", () => {
   test("the story keeps the chosen single-piece form in its detail and next step", async ({ page }) => {
     await page.goto("/product/desert-eye-love?form=nose#design-story");
     const story = page.getByTestId("product-design-story");
-    const detail = story.locator(".pdp-story-detail");
+    const detail = story.locator(".pdp-story-signature figure");
     await expect(detail.locator("img")).toHaveCount(1);
-    await expect(detail.getByRole("img", { name: /nose form illustration/ })).toHaveCount(1);
-    await expect(detail.getByTestId("piece-asset")).toHaveAttribute("data-component", "gemstone");
-    await expect(detail.getByTestId("piece-asset")).toHaveAttribute("src", "/products/desert-eye-love/nose/gemstone.webp");
+    await expect(detail.locator("img")).toHaveAttribute("src", /desert-eye-gem%2Fdetail\.webp|desert-eye-gem\/detail\.webp/);
+    await expect(detail.getByTestId("piece-asset")).toHaveCount(0);
+    await loadPictures(detail);
     await expect(story.getByRole("link", { name: "See it on you" })).toHaveAttribute("href", "/face-studio?product=desert-eye-love&form=nose");
     await story.getByRole("link", { name: "See it on you" }).click();
     await expect(page).toHaveURL(/\/face-studio\?product=desert-eye-love&form=nose$/);

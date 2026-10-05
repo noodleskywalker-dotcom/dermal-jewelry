@@ -1,70 +1,53 @@
 import { expect, test } from "@playwright/test";
 
-// The final master redesign: material hotspots on the piece, the browse rail of worlds, the
-// shop's audience and line filters, the jewelry poster for the film, the 360° rear note, and the
-// companion on every page (development server only: his art is internal).
+// The photographic redesign: complete studio scenes, the browse rail, the shop's audience and
+// line filters, and the companion on every page (development server only: his art is internal).
 
 const PRODUCT = "/product/desert-eye-love";
 
-test.describe("material hotspots on the piece", () => {
-  test("each part opens a refined annotation with the owner's wording, and nothing is invented", async ({ page }) => {
+test.describe("photographic presentation", () => {
+  test("the complete scene keeps its light and carries no annotations from an older image", async ({ page }) => {
     await page.goto(PRODUCT);
-    // The anti-eyebrow form opens on the design render, and the hotspots sit on it.
-    await expect(page.getByTestId("render-stage")).toBeVisible();
-    for (const id of ["gemstone", "bar", "symbol"]) await expect(page.getByTestId(`hotspot-${id}`)).toBeVisible();
-
-    await page.getByTestId("hotspot-gemstone").click();
-    const gem = page.getByTestId("hotspot-note-gemstone");
-    await expect(gem).toBeVisible();
-    await expect(gem).toContainText("Deep-red faceted gemstone");
-    await expect(gem).toContainText("Not yet confirmed");
-    await expect(gem).toContainText("Four-prong concept");
-    await expect(gem).toContainText("Pending supplier confirmation");
-    await expect(page.getByTestId("hotspot-gemstone")).toHaveAttribute("aria-expanded", "true");
-
-    // One at a time.
-    await page.getByTestId("hotspot-bar").click();
-    await expect(gem).toBeHidden();
-    const bar = page.getByTestId("hotspot-note-bar");
-    await expect(bar).toContainText("Surface-bar hardware");
-    await expect(bar).toContainText("Not yet confirmed");
-    await expect(bar).toContainText("Proposed · pending confirmation");
-    await expect(bar).toContainText("Prototype surface-bar concept");
-
-    await page.getByTestId("hotspot-symbol").click();
-    const symbol = page.getByTestId("hotspot-note-symbol");
-    await expect(symbol).toContainText("Openwork symbol");
-    await expect(symbol).toContainText("manufacturing geometry pending");
-
+    const stage = page.getByTestId("render-stage");
+    await expect(stage).toBeVisible();
+    await expect(stage).toHaveAttribute("data-presentation", "photographic");
+    await expect(page.getByTestId("render-stage-image")).toHaveAttribute("src", "/products/photographic/desert-eye-love/hero.webp");
+    await expect(stage.locator('[data-testid^="hotspot-"]')).toHaveCount(0);
+    const imageStyle = await page.getByTestId("render-stage-image").evaluate((image) => ({
+      filter: getComputedStyle(image).filter,
+      blend: getComputedStyle(image).mixBlendMode,
+    }));
+    expect(imageStyle).toEqual({ filter: "none", blend: "normal" });
+    await expect(page.getByTestId("render-note")).toContainText("not photography of a made piece");
+    await expect(page.getByTestId("render-note")).toContainText("materials not yet confirmed");
     const words = (await page.locator("main").innerText()).toLowerCase();
     expect(words).not.toMatch(/\bruby\b|grade 5|implant.grade|certified|\b925\b|\d\s?mm\b/);
-    await page.keyboard.press("Escape");
-    await expect(symbol).toBeHidden();
   });
 
-  test("the keyboard reaches every hotspot and opens it", async ({ page, isMobile }) => {
+  test("the keyboard can switch whole-piece and close views", async ({ page, isMobile }) => {
     test.skip(isMobile, "keyboard is a desktop matter");
     await page.goto(PRODUCT);
-    await page.getByTestId("hotspot-gemstone").focus();
+    await page.getByTestId("render-view-detail").focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByTestId("hotspot-note-gemstone")).toBeVisible();
-    await page.getByTestId("hotspot-bar").focus();
+    await expect(page.getByTestId("render-stage")).toHaveAttribute("data-view", "detail");
+    await expect(page.getByTestId("render-stage-image")).toHaveAttribute("src", "/products/photographic/desert-eye-love/detail.webp");
+    await page.getByTestId("render-view-front").focus();
     await page.keyboard.press("Space");
-    await expect(page.getByTestId("hotspot-note-bar")).toBeVisible();
+    await expect(page.getByTestId("render-stage")).toHaveAttribute("data-view", "front");
+    await expect(page.getByTestId("render-view-front")).toHaveAttribute("aria-pressed", "true");
   });
 });
 
-test.describe("assembly and 360°", () => {
-  test("the film opens on the finished jewelry, never the creature, and the rear note shows only at the rear", async ({ page }) => {
+test.describe("the corrected design replaces the older hardware study", () => {
+  test("the product offers actual supplied views without the superseded orbit or assembly", async ({ page }) => {
     await page.goto(PRODUCT);
-    await page.getByRole("tab", { name: "Assembly" }).click();
-    await expect(page.getByTestId("film-poster")).toHaveAttribute("src", /final\.jpg$/);
-    await page.getByRole("tab", { name: "Orbit study" }).click();
-    await expect(page.getByTestId("orbit-rear-note")).toHaveCount(0);
-    await page.getByTestId("orbit-turn").fill("36");
-    await expect(page.getByTestId("orbit-rear-note")).toContainText("Rear geometry conceptual");
-    await page.getByTestId("orbit-turn").fill("70");
-    await expect(page.getByTestId("orbit-rear-note")).toHaveCount(0);
+    await expect(page.getByRole("tab", { name: "Assembly", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("tab", { name: "Orbit study", exact: true })).toHaveCount(0);
+    await expect(page.getByTestId("film-poster")).toHaveCount(0);
+    await expect(page.getByTestId("orbit-turn")).toHaveCount(0);
+    await expect(page.getByTestId("render-view-front")).toHaveText("Whole piece");
+    await expect(page.getByTestId("render-view-detail")).toHaveText("Detail");
+    await expect(page.getByTestId("render-note")).toContainText("AI design render");
   });
 });
 
@@ -84,11 +67,12 @@ test.describe("the collection browser", () => {
     expect(new Set(frames).size).toBe(1);
     const current = selection.locator('[data-testid="selection-slide"][data-current="true"]');
     await expect(current).toHaveAttribute("data-product", "desert-eye-love");
-    await expect(selection.getByTestId("sand-layer")).toHaveCount(1);
-    await expect(selection.locator('[data-product="desert-eye-love"]').getByTestId("sand-layer")).toHaveCount(1);
-    await expect(selection.locator('[data-product="horus-trace"]').getByTestId("sand-layer")).toHaveCount(0);
+    // The light and ground belong to each scene; no synthetic sand or glint overlays it.
+    await expect(selection.getByTestId("sand-layer")).toHaveCount(0);
+    await expect(selection.locator(".fo-blade, .fo-grain")).toHaveCount(0);
+    await expect(selection.locator('[data-presentation="photographic"] > img')).toHaveCount(7);
 
-    // The surrounding world stays DERMAL paper; a product carries no opaque card background.
+    // The surrounding page stays DERMAL paper; the scene itself is the opaque image plane.
     const stages = await entries.locator(".selection-object").evaluateAll((els) => els.map((el) => ({
       color: getComputedStyle(el).backgroundColor,
       image: getComputedStyle(el).backgroundImage,

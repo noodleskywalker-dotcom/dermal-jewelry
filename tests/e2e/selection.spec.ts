@@ -82,47 +82,42 @@ test.describe("the selection: sideways browsing", () => {
 });
 
 test.describe("product page: the whole piece", () => {
-  test("opens on the full piercing, assembled, with honest material notes", async ({ page }) => {
-    // The anti-eyebrow form opens on its film; the nose form opens on the drawn piece with every note.
+  test("opens on the chosen form's photograph and keeps materials and hardware unconfirmed", async ({ page }) => {
     await page.goto("/product/desert-eye-love?form=nose");
     await expect(page.getByRole("tab", { name: "The piece" })).toHaveAttribute("aria-selected", "true");
-    const assembly = page.getByTestId("piece-assembly");
-    await expect(assembly).toHaveAttribute("data-hardware", "stud");
-    // Top, post and base are all there.
-    for (const part of ["base", "posts", "gemstone"]) await expect(assembly.locator(`[data-part="${part}"]`)).toHaveCount(1);
-    await expect(assembly.locator('[data-part="posts"] [data-post]')).toHaveCount(1);
-
-    // It comes together by itself and ends fully visible.
-    await expect.poll(async () => assembly.locator('[data-part="gemstone"]').evaluate((el) => getComputedStyle(el).opacity), { timeout: 6000 }).toBe("1");
-    const notes = page.getByTestId("assembly-notes");
-    await expect(notes).toContainText("Titanium");
-    await expect(notes).toContainText("Proposed");
-    await expect(notes).toContainText("Deep-red faceted gemstone");
-    await expect(notes).toContainText("Material not yet confirmed");
-    // The stone is never named, and nothing is called verified.
-    await expect(assembly).not.toContainText(/ruby|sapphire|garnet|verified|certified/i);
-    await expect(assembly).toContainText(/concept hardware/i);
-
-    // Replay runs it again, and shopping is never blocked by it.
-    await page.getByTestId("assembly-replay").click();
+    const stage = page.getByTestId("render-stage");
+    const image = page.getByTestId("render-stage-image");
+    await expect(stage).toHaveAttribute("data-presentation", "photographic");
+    await expect(image).toHaveAttribute("src", "/products/photographic/desert-eye-gem/hero.webp");
+    await expect(page.getByTestId("piece-assembly")).toHaveCount(0);
+    await expect(page.getByTestId("assembly-explode")).toHaveCount(0);
+    // Material proposals remain in readable details; the photograph does not certify them.
+    await page.locator("details").evaluateAll((els) => els.forEach((el) => ((el as HTMLDetailsElement).open = true)));
+    const notes = page.locator(".pdp-details");
+    await expect(notes).toContainText("Titanium — proposed");
+    await expect(notes).toContainText("Deep-red faceted gemstone — material not yet confirmed");
+    await expect(notes).toContainText("Polished — proposed");
+    await expect(notes).not.toContainText(/ruby|sapphire|garnet|certified/i);
+    await expect(page.getByTestId("spec-status")).toContainText("final production details pending");
     await expect(page.getByTestId("add-to-bag")).toBeEnabled();
 
-    // Each form shows its own hardware. The bar, a pair on one base, is checked on a design without a film.
+    // Switching forms changes the image itself, rather than shrinking the pair or inventing hardware.
     await page.locator("label", { has: page.getByTestId("form-micro-dermal") }).click();
-    await expect(assembly).toHaveAttribute("data-hardware", "anchor");
-    await expect(assembly.locator('[data-part="posts"] [data-post]')).toHaveCount(1);
+    await expect(image).toHaveAttribute("src", "/products/photographic/desert-eye-symbol/hero.webp");
+    await page.locator("label", { has: page.getByTestId("form-anti-eyebrow") }).click();
+    await expect(image).toHaveAttribute("src", "/products/photographic/desert-eye-love/hero.webp");
     await page.goto("/product/sand-vortex");
-    const bar = page.getByTestId("piece-assembly");
-    await expect(bar).toHaveAttribute("data-hardware", "bar");
-    for (const part of ["base", "posts"]) await expect(bar.locator(`[data-part="${part}"]`)).toHaveCount(1);
-    await expect(bar.locator('[data-part="posts"] [data-post]')).toHaveCount(2);
+    await expect(image).toHaveAttribute("src", "/products/photographic/sand-vortex/hero.webp");
+    await expect(page.getByTestId("piece-assembly")).toHaveCount(0);
   });
 
-  test("with reduced motion the piece is simply assembled", async ({ page }) => {
+  test("with reduced motion the chosen form's photograph is immediately visible", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/product/desert-eye-love?form=micro-dermal");
-    const symbol = page.getByTestId("piece-assembly").locator('[data-part="symbol"]');
-    await expect.poll(async () => symbol.evaluate((el) => getComputedStyle(el).opacity), { timeout: 1500 }).toBe("1");
+    const symbol = page.getByTestId("render-stage-image");
+    await expect(symbol).toHaveAttribute("src", "/products/photographic/desert-eye-symbol/hero.webp");
+    await expect(symbol).toBeVisible();
+    await expect(page.getByTestId("piece-assembly")).toHaveCount(0);
   });
 
   test("the sculpted head is built from soft shading only, with no drawn lines", async ({ page }) => {

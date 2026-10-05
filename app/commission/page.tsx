@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { CommissionForm } from "@/components/commission/CommissionForm";
+import { catalog } from "@/lib/catalog";
 import "./commission.css";
 
 export const metadata: Metadata = {
@@ -11,6 +12,9 @@ export const metadata: Metadata = {
 // A commission request: the idea, where it is worn, and the references, sent to the studio by email.
 // It is a request and never an order: nothing is priced, reserved or charged here.
 export default function CommissionPage() {
+  const render = catalog.getProduct("horus-trace")?.render;
+  const image = render?.hero ?? { src: "/products/horus-trace/hero.webp", width: 1448, height: 1086 };
+  const photographic = render?.presentation === "photographic";
   return (
     <div className="commission commission-atelier">
       <section className="commission-hero" aria-labelledby="commission-heading">
@@ -26,12 +30,12 @@ export default function CommissionPage() {
             Start your request <span aria-hidden="true">↗</span>
           </a>
         </div>
-        <figure className="commission-hero-figure">
-          <div className="commission-image-stage">
-            <span className="commission-image-index label-xs" aria-hidden="true">A study in expression / 01</span>
+        <figure className="commission-hero-figure" data-presentation={render?.presentation}>
+          <div className="commission-image-stage" style={photographic ? { minHeight: 0 } : undefined}>
+            {!photographic && <span className="commission-image-index label-xs" aria-hidden="true">A study in expression / 01</span>}
             {/* This existing design is inspiration, not a claim of a completed client commission. */}
-            <Image src="/products/horus-trace/hero.webp" width={1448} height={1086} sizes="(max-width: 899px) 100vw, 55vw" alt="Horus Trace design study in sculptural eye geometry" className="commission-hero-image" preload />
-            <span className="commission-image-word" aria-hidden="true">Yours.</span>
+            <Image src={image.src} width={image.width} height={image.height} sizes="(max-width: 899px) 100vw, 55vw" alt={render?.alt ?? "Horus Trace design study in sculptural eye geometry"} className="commission-hero-image" style={photographic ? { width: "100%", maxWidth: "100%", marginLeft: 0, filter: "none", mixBlendMode: "normal" } : undefined} preload />
+            {!photographic && <span className="commission-image-word" aria-hidden="true">Yours.</span>}
           </div>
           <figcaption><span>HORUS TRACE / Design study</span><span>Render · specification pending</span></figcaption>
         </figure>

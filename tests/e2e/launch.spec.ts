@@ -12,7 +12,8 @@ const EXE = { name: "setup.exe", mimeType: "application/x-msdownload", buffer: B
 const GIF = { name: "loop.gif", mimeType: "image/gif", buffer: Buffer.from("GIF89a\x01\x00\x01\x00") };
 const BIG_PDF = { name: "huge.pdf", mimeType: "application/pdf", buffer: Buffer.concat([Buffer.from("%PDF-1.4\n"), Buffer.alloc(4 * 1024 * 1024 + 10, 32)]) };
 
-const RENDERED = ["desert-eye-love", "horus-trace", "blade-trace", "crossline", "ankh-trace", "japanese-angel", "ankh-eye"];
+const PRIMARY = ["desert-eye-love", "horus-trace", "blade-trace", "crossline", "ankh-trace", "japanese-angel", "ankh-eye"];
+const RENDERED = [...PRIMARY, "crimson-orbit", "sand-vortex", "void-stud"];
 
 /** Routes this page's commission calls to the mock delivery, in a rate-limit bucket of its own. */
 async function mockDelivery(page: Page, mode: "ok" | "fail-email" | (() => "ok" | "fail-email") = "ok") {
@@ -60,9 +61,9 @@ async function imagesLoaded(page: Page, selector: string) {
 
 test.describe("design renders", () => {
   test("every render file the catalogue names is served", async ({ request }) => {
-    for (const family of RENDERED.map((slug) => slug === "desert-eye-love" ? "desert-eye" : slug)) {
-      for (const file of ["hero", "catalogue", "detail"]) {
-        const response = await request.get(`/products/${family}/${file}.webp`);
+    for (const family of [...RENDERED, "desert-eye-symbol", "desert-eye-gem"]) {
+      for (const file of ["hero", "thumb", "detail"]) {
+        const response = await request.get(`/products/photographic/${family}/${file}.webp`);
         expect(response.status(), `${family}/${file}`).toBe(200);
         expect(response.headers()["content-type"]).toContain("image/webp");
       }
@@ -75,13 +76,12 @@ test.describe("design renders", () => {
     expect(count).toBe(RENDERED.length);
     for (const slug of RENDERED) {
       const img = page.locator(`[data-product="${slug}"] [data-testid="piece-render"]`);
-      const fit = await img.evaluate((el: HTMLImageElement) => ({ fit: getComputedStyle(el).objectFit, w: el.naturalWidth, h: el.naturalHeight }));
+      await expect(img).toHaveAttribute("src", `/products/photographic/${slug}/thumb.webp`);
+      const fit = await img.evaluate((el: HTMLImageElement) => ({ fit: getComputedStyle(el).objectFit, filter: getComputedStyle(el).filter, blend: getComputedStyle(el).mixBlendMode, w: el.naturalWidth, h: el.naturalHeight }));
       expect(fit.fit).toBe("contain");
+      expect(fit.filter).toBe("none");
+      expect(fit.blend).toBe("normal");
       expect(fit.w).toBe(fit.h);
-    }
-    // Secondary studies keep their approved drawn artwork.
-    for (const slug of ["crimson-orbit", "sand-vortex", "void-stud"]) {
-      await expect(page.locator(`[data-product="${slug}"] [data-testid="piece-render"]`)).toHaveCount(0);
     }
     await noHorizontalScroll(page);
   });
@@ -93,7 +93,7 @@ test.describe("design renders", () => {
     const entries = selection.getByTestId("selection-slide");
     await expect(entries).toHaveCount(7);
     await expect(entries.last()).toHaveAttribute("data-product", "ankh-eye");
-    for (const slug of RENDERED) {
+    for (const slug of PRIMARY) {
       await expect(selection.locator(`[data-product="${slug}"] [data-testid="piece-render"]`)).toHaveCount(1);
     }
     // A family known only from its render can be viewed, never tried on.
@@ -106,8 +106,9 @@ test.describe("design renders", () => {
       await page.goto(`/product/${slug}`);
       const stage = page.getByTestId("render-stage");
       await expect(stage).toBeVisible();
+      await expect(stage).toHaveAttribute("data-presentation", "photographic");
       await imagesLoaded(page, '[data-testid="render-stage-image"]');
-      await expect(page.getByTestId("render-note")).toHaveText(/Design render · (concept · )?not photography of a made piece/);
+      await expect(page.getByTestId("render-note")).toHaveText(/AI design render · not photography of a made piece/);
       await page.getByTestId("render-view-detail").click();
       await expect(stage).toHaveAttribute("data-view", "detail");
       await imagesLoaded(page, '[data-testid="render-stage-image"]');

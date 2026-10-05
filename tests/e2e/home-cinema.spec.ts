@@ -1,121 +1,63 @@
 import { expect, test } from "@playwright/test";
 import { EDITORIAL_PORTRAIT_AVAILABLE, OPENING_HEADLINE } from "./helpers";
 
-// The homepage as a short film (the cinematic remake of 22 September 2026): the opening shot, the turn,
-// the world and its companion, the push into the stone, the close views, the meaning, the assembly,
-// the forms, on you, the collection, a last frame. Only two muted ambient loops play by themselves,
-// the opening shot has a pause control, and nothing locks the page.
-
+// Every visible DESERT scene follows the current separate-top design. The retired orbit and
+// connected-bar movie are never fetched, and browsing uses ordinary document scrolling.
 const hero = (page: import("@playwright/test").Page) => page.getByTestId("scrub-hero");
 
-test.describe("the opening shot", () => {
-  test("the opening shows its prepared editorial portrait, or the product loop with a working pause control", async ({ page, browserName }) => {
-    // The test WebKit build on Windows has no video decoder, so it shows the poster and honestly offers Play.
-    test.skip(!EDITORIAL_PORTRAIT_AVAILABLE && browserName === "webkit", "no media decoder in the test WebKit build");
+test.describe("the opening story", () => {
+  test("the opening shows the prepared portrait or the current product photograph", async ({ page }) => {
     await page.goto("/");
     const shot = page.getByTestId("cinema-hero");
     await expect(shot.getByRole("heading", { level: 1 })).toHaveText(OPENING_HEADLINE);
     await expect(shot).toHaveAttribute("data-presentation", EDITORIAL_PORTRAIT_AVAILABLE ? "portrait" : "product");
-    if (EDITORIAL_PORTRAIT_AVAILABLE) {
-      const portrait = shot.getByTestId("cinema-hero-portrait");
-      await expect(portrait).toHaveAttribute("src", "/api/editorial-preview/gaara-portrait");
-      await expect(portrait).toHaveAccessibleName(/adult Gaara wearing the DESERT EYE LOVE anti-eyebrow design/);
-      await expect.poll(() => portrait.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
-      await expect(shot.locator("video")).toHaveCount(0);
-      await expect(shot.getByTestId("cinema-hero-pause")).toHaveCount(0);
-      await expect(shot).toContainText("Gaara / AI editorial study");
-      return;
-    }
-    const video = shot.getByTestId("cinema-hero-video");
-    expect(await video.evaluate((v: HTMLVideoElement) => [v.muted, v.loop, v.controls])).toEqual([true, true, false]);
-    const pause = shot.getByTestId("cinema-hero-pause");
-    await expect(pause).toHaveAttribute("aria-pressed", "false");
-    await pause.click();
-    await expect(pause).toHaveAttribute("aria-pressed", "true");
-    await expect(pause).toHaveText("Play");
-    expect(await video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
-    const box = (await pause.boundingBox())!;
-    expect(box.height).toBeGreaterThanOrEqual(44);
-  });
-
-  test("with reduced motion it is the still, with the same words and no pause control", async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto("/");
-    const shot = page.getByTestId("cinema-hero");
+    const image = shot.locator("img");
+    await expect(image).toHaveAttribute("src", EDITORIAL_PORTRAIT_AVAILABLE ? "/api/editorial-preview/gaara-portrait" : "/products/photographic/desert-eye-love/hero.webp");
+    await expect.poll(() => image.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
     await expect(shot.locator("video")).toHaveCount(0);
-    await expect(shot.locator("img")).toHaveCount(1);
-    await expect(shot.getByRole("heading", { level: 1 })).toHaveText(OPENING_HEADLINE);
     await expect(shot.getByTestId("cinema-hero-pause")).toHaveCount(0);
-    await expect(page.getByTestId("cta-piece")).toBeVisible();
   });
-});
 
-test.describe("the turn", () => {
-  test("frames follow the scroll, the words arrive at their moments, and the page is never locked", async ({ page }) => {
-    const errors: string[] = [];
-    page.on("pageerror", (e) => errors.push(e.message));
+  test("the second scene shows the current pair and a story link without a scroll illusion", async ({ page }) => {
     await page.goto("/");
     const section = hero(page);
-    await expect(section).toHaveAttribute("data-mode", "scrub");
-    const box = (await section.boundingBox())!;
-    const h = page.viewportSize()!.height;
-    const at = async (frac: number) => {
-      await page.evaluate(([y]) => window.scrollTo(0, y), [box.y + (box.height - h) * frac]);
-      await page.waitForTimeout(400);
-      return Number(await section.getAttribute("data-frame"));
-    };
-    await expect.poll(() => section.getAttribute("data-ready"), { timeout: 20000 }).toBe("true");
-    expect(await at(0.05)).toBe(0);
-    const mid = await at(0.55);
-    const late = await at(0.98);
-    expect(mid).toBeGreaterThan(20);
-    expect(late).toBeGreaterThanOrEqual(66);
-    await at(0.05);
-    await expect(section.getByText("Turn it in the light.")).toBeVisible();
-    await expect(section.getByText("A mark.", { exact: false })).toBeHidden();
-    await at(0.5);
-    await expect(section.getByText("A mark.", { exact: false })).toBeVisible();
-    await expect(section.getByText("Turn it in the light.")).toBeHidden();
-    await at(0.9);
-    await expect(section.getByText("DESIGN STUDY 001")).toBeVisible();
-    await page.evaluate(([y]) => window.scrollTo(0, y), [box.y + box.height + 50]);
-    // Past the turn the page hands over to the selection, which is where the launch ends.
-    await expect(page.getByTestId("collection-section")).toBeInViewport();
-    expect(errors).toEqual([]);
+    await expect(section).toHaveAttribute("data-mode", "still");
+    await expect(section.locator("canvas, video")).toHaveCount(0);
+    await expect(section.getByTestId("launch-product-image")).toHaveAttribute("src", /desert-eye-love%2Fhero\.webp|desert-eye-love\/hero\.webp/);
+    await expect(section).toContainText("Two separate tops");
+    await expect(section.getByRole("link", { name: /Explore DESERT EYE/ })).toHaveAttribute("href", "/product/desert-eye-love#design-story");
+    await section.getByRole("link").click();
+    await expect(page).toHaveURL(/\/product\/desert-eye-love#design-story$/);
   });
 
-  test("the turn is fetched once as stills, and the assembly film waits for a press", async ({ page }) => {
-    const frames: string[] = [];
-    page.on("request", (r) => r.url().includes("/media/cinema/orbit/f-") && frames.push(r.url()));
+  test("neither opening scene fetches retired connected-bar imagery", async ({ page }) => {
+    const retired: string[] = [];
+    page.on("request", (r) => /\/media\/(cinema|hero-orbit\/desert-eye-love|product-animation\/desert-eye-love)\//.test(r.url()) && retired.push(r.url()));
     await page.goto("/");
-    await expect.poll(() => hero(page).getAttribute("data-ready"), { timeout: 20000 }).toBe("true");
-    expect(new Set(frames).size).toBe(72);
-    // A prepared portrait is a still; otherwise only the product opening is an ambient loop.
-    // The mascot's own clip is left out because it is separate internal art.
-    const loops = await page.locator("video[autoplay]:not([data-testid='mascot-clip'])").evaluateAll((vs) => vs.map((v) => v.className.split(" ")[0]));
-    expect(loops.sort()).toEqual(EDITORIAL_PORTRAIT_AVAILABLE ? [] : ["cinema-hero-media"]);
+    await hero(page).scrollIntoViewIfNeeded();
+    await page.getByTestId("collection-section").scrollIntoViewIfNeeded();
+    expect(retired).toEqual([]);
+    await expect(page.locator("video[autoplay]:not([data-testid='mascot-clip'])")).toHaveCount(0);
   });
 
-  test("with reduced motion the turn is a plain still and nothing is pinned", async ({ page }) => {
+  test("reduced motion keeps the same current design with nothing pinned", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
     await expect(hero(page)).toHaveAttribute("data-mode", "still");
-    await expect(hero(page).locator("canvas")).toHaveCount(0);
+    await expect(page.getByTestId("cinema-hero").locator("video")).toHaveCount(0);
     const pinned = await page.evaluate(() => [...document.querySelectorAll("main *")].filter((el) => getComputedStyle(el).position === "sticky" && el.getBoundingClientRect().height > window.innerHeight * 0.85).length);
     expect(pinned).toBe(0);
+    await expect(page.getByTestId("cta-piece")).toBeVisible();
   });
 
-  test("the keyboard scrolls it like any page", async ({ page, isMobile }) => {
+  test("the keyboard scrolls directly from the still into the collection", async ({ page, isMobile }) => {
     test.skip(isMobile, "keyboard scrolling is a desktop matter");
     await page.goto("/");
-    const section = hero(page);
-    await section.evaluate((el) => el.scrollIntoView());
-    await page.waitForTimeout(300);
-    const start = Number(await section.getAttribute("data-frame"));
-    // Focus the page on an empty part of the stage: its right edge, low, clear of the bar and the words.
+    await hero(page).scrollIntoViewIfNeeded();
+    const start = await page.evaluate(() => window.scrollY);
     await page.mouse.click(page.viewportSize()!.width - 12, page.viewportSize()!.height * 0.6);
-    for (let i = 0; i < 5; i++) await page.keyboard.press("PageDown");
-    await expect.poll(() => section.getAttribute("data-frame").then(Number), { timeout: 5000 }).toBeGreaterThan(start);
+    await page.keyboard.press("PageDown");
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(start);
   });
 });
 

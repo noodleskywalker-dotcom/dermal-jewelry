@@ -7,18 +7,20 @@ import { expect, test } from "@playwright/test";
 const FAMILIES = ["desert-eye-love", "horus-trace", "blade-trace", "crossline", "ankh-trace"];
 
 test.describe("the catalogue is the brand, not one collection", () => {
-  test("no sand, no world and no campaign treatment anywhere on it", async ({ page }) => {
+  test("photographic frames sit in a neutral catalogue without a collection-wide backdrop", async ({ page }) => {
     await page.goto("/shop");
     await expect(page.getByTestId("sand-layer")).toHaveCount(0);
-    // Nothing on the page is painted: the pieces stand on the paper itself.
+    // Each photograph owns its background; the surrounding catalogue stays on the brand's paper.
     const painted = await page.locator("main *").evaluateAll((els) =>
       els.filter((el) => {
+        if (el.closest(".product-photograph")) return false;
         const box = el.getBoundingClientRect();
         if (box.width < 160 || box.height < 160) return false;
         return !/rgba\(0, 0, 0, 0\)|transparent/.test(getComputedStyle(el).backgroundColor);
       }).length,
     );
     expect(painted).toBe(0);
+    await expect(page.locator('[data-testid="product-card"][data-presentation="photographic"]')).toHaveCount(10);
   });
 
   test("every family has a stage of roughly equal weight, and DESERT EYE is not the largest", async ({ page, isMobile }) => {
@@ -118,19 +120,20 @@ test.describe("finding a piece", () => {
 });
 
 test.describe("perceived scale inside equal stages", () => {
-  test("a family's artwork is scaled for presentation only, and never outgrows its stage", async ({ page }) => {
+  test("every photograph keeps its complete frame inside an equal product stage", async ({ page }) => {
     await page.goto("/shop");
-    // The seven primary families now use tightly framed renders. Their presentation scale
-    // keeps the whole image inside its stage, without changing the wearable geometry.
-    const scales = Object.fromEntries(
-      await page.getByTestId("product-card").evaluateAll((els) =>
-        els.map((el) => [el.getAttribute("data-product"), Number(el.querySelector(".fo-scale")?.getAttribute("data-scale"))]),
-      ),
-    ) as Record<string, number>;
-    for (const slug of ["desert-eye-love", "horus-trace", "blade-trace", "crossline", "ankh-trace", "japanese-angel", "ankh-eye"]) {
-      expect(scales[slug], slug).toBeGreaterThanOrEqual(0.75);
-      expect(scales[slug], slug).toBeLessThanOrEqual(1);
+    const photographs = page.getByTestId("product-card").locator(".product-photograph > img");
+    await expect(photographs).toHaveCount(10);
+    for (const photo of await photographs.all()) {
+      const presentation = await photo.evaluate((el) => {
+        const style = getComputedStyle(el);
+        const picture = el.getBoundingClientRect();
+        const frame = el.parentElement!.getBoundingClientRect();
+        return { fit: style.objectFit, filter: style.filter, blend: style.mixBlendMode, contained: picture.width <= frame.width + 1 && picture.height <= frame.height + 1 };
+      });
+      expect(presentation).toEqual({ fit: "contain", filter: "none", blend: "normal", contained: true });
     }
+    await expect(page.getByTestId("catalogue").locator(".fo-scale, .fo-glint, .fo-grain, .fo-blade, .fo-reflection")).toHaveCount(0);
 
     // The stages themselves are untouched by it: equal layout width on a phone, and the page never
     // gains a sideways scroll from a piece that was drawn larger.

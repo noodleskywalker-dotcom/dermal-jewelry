@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Product } from "@/lib/catalog/types";
-import { formOf } from "@/lib/catalog";
+import { formOf, renderFor } from "@/lib/catalog";
 import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 import { ProductPieces } from "@/components/catalog/ProductArtwork";
 import { Modal } from "@/components/layout/Modal";
@@ -95,6 +95,7 @@ function Stage({
   // The prototype and the loop have no file to load, so they start at once.
   const instant = isLoop || usingConcept;
   const active = state === "loading" || state === "playing";
+  const photographic = !active && renderFor(product, form.id)?.presentation === "photographic";
 
   const stop = (next: PlayState) => {
     videoRef.current?.pause();
@@ -195,7 +196,7 @@ function Stage({
         />
       )}
 
-      <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
+      <div className={`absolute inset-x-0 top-0 flex items-start justify-between p-3 ${photographic ? "bg-paper/95" : ""}`}>
         <p className="label-xs text-ink/60">
           {reveal.title}
           {usingFixture && <span data-testid="reveal-fixture-tag"> · test pattern, not campaign media</span>}
@@ -208,7 +209,7 @@ function Stage({
         )}
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-2 p-3">
+      <div className={`absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-2 p-3 ${photographic ? "bg-paper/95" : ""}`}>
         <div className="flex flex-wrap gap-2">
           {playable && !active && (
             <button

@@ -128,9 +128,10 @@ export function availableForms(product: Product): ProductForm[] {
 
 /** The design render for a form, when the render really shows that form; otherwise nothing. */
 export function renderFor(product: Product, formId?: string | null): Product["render"] {
-  const render = product.render;
+  const form = formOf(product, formId);
+  const render = product.formRenders?.[form.id] ?? product.render;
   if (!render) return undefined;
-  return !render.forms || render.forms.includes(formOf(product, formId).id) ? render : undefined;
+  return !render.forms || render.forms.includes(form.id) ? render : undefined;
 }
 
 /**

@@ -4,15 +4,13 @@ import { useState } from "react";
 import type { ProductRender } from "@/lib/catalog/types";
 import { MaterialHotspots, type Hotspot } from "./MaterialHotspots";
 
-// The owner's design render on the product page: the whole piece first, a closer view beside it.
-// The picture stands straight on the paper (its own paper was lifted out when it was built), keeps
-// its proportions at every width, and says once what it is: a design render, not a photograph of a
-// made piece. It never supplies geometry to the placement preview or Face Studio.
+// The whole design first, a closer view beside it. Opaque photographic renders retain their own
+// ground and lighting; all images keep their proportions. None supplies placement geometry.
 export function RenderStage({ render, title, hotspots }: { render: ProductRender; title: string; /** Annotations placed on the whole-piece picture. */ hotspots?: Hotspot[] }) {
   const [view, setView] = useState<"front" | "detail">("front");
   const image = view === "detail" && render.detail ? render.detail : render.hero;
   return (
-    <figure data-testid="render-stage" data-view={view} className="render-stage">
+    <figure data-testid="render-stage" data-view={view} data-presentation={render.presentation} className="render-stage">
       <div className="render-stage-frame">
         {/* The figure takes the picture's own proportions, so an annotation stays on its part at any size. */}
         <div className="render-stage-figure" style={{ "--ratio": image.width / image.height } as React.CSSProperties}>
@@ -22,13 +20,13 @@ export function RenderStage({ render, title, hotspots }: { render: ProductRender
           src={image.src}
           width={image.width}
           height={image.height}
-          alt={`${title}: ${render.alt}${view === "detail" ? ", seen closer" : ""}. Design render.`}
+          alt={`${title}: ${render.alt}${view === "detail" ? ", detail view" : ""}. Design render.`}
           decoding="async"
           fetchPriority="high"
           data-testid="render-stage-image"
           className="render-stage-image"
         />
-        {hotspots && view === "front" && <MaterialHotspots spots={hotspots} />}
+        {hotspots && render.presentation !== "photographic" && view === "front" && <MaterialHotspots spots={hotspots} />}
         </div>
       </div>
       <div className="render-stage-controls">

@@ -1,39 +1,18 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useAmbientVideo, type VideoSource } from "@/lib/motion/useAmbientVideo";
-import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 
-// 01: the opening shot. The piece in low-key light, sand drifting through the beam, one glint on the
-// stone: an ambient loop, muted, with a pause control (it moves for longer than five seconds). It is
-// atmosphere, not a story reveal, and it starts from the exact approved product frame. With reduced
-// motion it is the still. The words sit low on the left, in ivory, and never cover the piece.
-export function CinemaHero({ sources, poster, cinematicPortrait }: { sources: VideoSource[]; poster: string; cinematicPortrait?: string }) {
-  const reduced = useReducedMotion();
-  const video = useAmbientVideo(sources, !reduced && !cinematicPortrait);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    const v = video.current;
-    if (!v || reduced) return;
-    if (paused) v.pause();
-    // Only a refused autoplay means paused; an AbortError is a newer load taking over and is ignored.
-    else void v.play().catch((e: unknown) => e instanceof DOMException && e.name === "NotAllowedError" && setPaused(true));
-  }, [paused, reduced, video]);
-
+/** A campaign portrait, with the current photographic product scene as its public fallback. */
+export function CinemaHero({ poster, posterAlt, cinematicPortrait }: { poster: string; posterAlt: string; cinematicPortrait?: string }) {
   return (
-    <section aria-labelledby="landing-heading" data-testid="cinema-hero" data-presentation={cinematicPortrait ? "portrait" : "product"} data-mode={cinematicPortrait ? "portrait" : reduced ? "still" : "video"} className={`cinema-hero${cinematicPortrait ? " cinema-hero-portrait" : ""}`}>
-      {cinematicPortrait ? (
-        // Private preview media is served without an image-optimization cache.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={cinematicPortrait} alt="Hyperrealistic interpretation of adult Gaara wearing the DESERT EYE LOVE anti-eyebrow design, with the openwork symbol above the deep-red stone" data-testid="cinema-hero-portrait" className="cinema-hero-media" fetchPriority="high" />
-      ) : reduced ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={poster} alt="" aria-hidden="true" className="cinema-hero-media" />
-      ) : (
-        <video ref={video} data-testid="cinema-hero-video" className="cinema-hero-media" poster={poster} muted loop playsInline autoPlay preload="auto" aria-hidden="true" />
-      )}
+    <section aria-labelledby="landing-heading" data-testid="cinema-hero" data-presentation={cinematicPortrait ? "portrait" : "product"} data-mode={cinematicPortrait ? "portrait" : "still"} className={`cinema-hero ${cinematicPortrait ? "cinema-hero-portrait" : "cinema-hero-product"}`}>
+      {/* Private review portraits must not enter Next's public image-optimization cache. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={cinematicPortrait ?? poster}
+        alt={cinematicPortrait ? "Hyperrealistic interpretation of adult Gaara wearing the DESERT EYE LOVE anti-eyebrow design, with the openwork symbol above the deep-red stone" : posterAlt}
+        data-testid={cinematicPortrait ? "cinema-hero-portrait" : "cinema-hero-product"}
+        className="cinema-hero-media"
+        fetchPriority="high"
+      />
       <div className="cinema-hero-veil" aria-hidden="true" />
       <div className="cinema-hero-copy">
         <p className="label-xs">01 / {cinematicPortrait ? "The first story" : "The launch collection"}</p>
@@ -51,12 +30,7 @@ export function CinemaHero({ sources, poster, cinematicPortrait }: { sources: Vi
           </Link>
         </div>
       </div>
-      {!reduced && !cinematicPortrait && (
-        <button type="button" data-testid="cinema-hero-pause" aria-pressed={paused} onClick={() => setPaused((p) => !p)} className="cinema-hero-pause label-xs">
-          {paused ? "Play" : "Pause"}
-        </button>
-      )}
-      <p className="cinema-hero-edition label-xs">{cinematicPortrait ? "Gaara / AI editorial study" : "DESERT EYE — LOVE / Design render"}</p>
+      <p className="cinema-hero-edition label-xs">{cinematicPortrait ? "Gaara / AI editorial study" : "DESERT EYE — LOVE / AI design render"}</p>
       <a href="#reveal" className="cinema-hero-scroll label-xs" aria-label="Continue to the jewelry reveal">The story continues <span aria-hidden="true">↓</span></a>
     </section>
   );

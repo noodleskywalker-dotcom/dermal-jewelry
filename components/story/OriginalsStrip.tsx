@@ -2,7 +2,7 @@ import Link from "next/link";
 import { priceLabel } from "@/lib/commerce/display";
 import type { Product } from "@/lib/catalog/types";
 import { site } from "@/lib/config/site";
-import { ProductPieces } from "@/components/catalog/ProductArtwork";
+import { artworkLabel, ProductPieces } from "@/components/catalog/ProductArtwork";
 
 // What follows a story-driven stage. DERMAL is a jewelry brand with original designs beside its
 // anime-inspired ones, and a story page must not suggest otherwise. Its first row sits just inside
@@ -41,7 +41,7 @@ export function OriginalsStrip({ id, products }: { id: string; products: Product
           {products.map((product) => (
             <li key={product.id} className="border-t border-line pt-5">
               <Link href={`/product/${product.slug}`} className="group block">
-                <p className="label-xs text-ash">Original / Concept artwork</p>
+                <p className="label-xs text-ash">Original / {artworkLabel(product)}</p>
                 <div className="relative mt-2 aspect-[5/3] w-full transition-transform duration-700 ease-[var(--ease-editorial)] group-hover:-translate-y-1">
                   <ProductPieces product={product} scale={0.22} shadow="soft" />
                 </div>

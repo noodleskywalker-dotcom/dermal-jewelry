@@ -1,4 +1,5 @@
-import type { FormId, Placement, Product, ProductComponent, ProductForm, RevealConfig } from "./types";
+import type { FormId, Placement, Product, ProductComponent, ProductForm, ProductRender, RevealConfig } from "./types";
+import photographicManifest from "./photographic-manifest.json";
 
 export const placements: Placement[] = [
   { id: "anti-eyebrow", label: "Anti-eyebrow", note: "Below and outside the outer corner of the eye." },
@@ -49,8 +50,24 @@ type FamilyInput = Omit<Product, "isDemo" | "currency" | "placements" | "demoPri
 
 function family(input: FamilyInput): Product {
   const base = input.forms.find((f) => f.id === input.defaultFormId)!;
+  const configuredForms = input.forms.filter((form) => form.status === "available").map((form) => form.id);
+  const photographic = photographicRender(input.slug, PHOTOGRAPHIC_ALT[input.slug], configuredForms.length ? configuredForms : undefined);
+  const symbol = input.slug === "desert-eye-love"
+    ? photographicRender("desert-eye-symbol", "A single hollow love-symbol decorative top, with polished silver-tone edges and deep-red accents", ["micro-dermal"])
+    : undefined;
+  const gem = input.slug === "desert-eye-love"
+    ? photographicRender("desert-eye-gem", "A single deep-red faceted gemstone decorative top in a small silver-tone setting", ["nose"])
+    : undefined;
   return {
     ...input,
+    ...(photographic ? { render: photographic } : {}),
+    ...((symbol || gem) ? {
+      formRenders: {
+        ...input.formRenders,
+        ...(symbol ? { "micro-dermal": symbol } : {}),
+        ...(gem ? { nose: gem } : {}),
+      },
+    } : {}),
     // Nothing has been assigned to men or women, and nothing is a limited edition: those are the owner's calls.
     audience: input.audience ?? "unisex",
     lines: input.lines ?? ["full", input.origin === "anime-inspired" ? "inspired" : "original"],
@@ -75,6 +92,36 @@ const single = (id: string, label: string, art: ProductComponent["art"], size: n
  */
 const RENDER_NOTE = "Design render · not photography of a made piece · materials not yet confirmed";
 const CONCEPT_RENDER_NOTE = "Design render · concept · not photography of a made piece";
+
+// Populated only after the delivery files exist, by scripts/build-photographic-renders.mjs.
+// The JSON is safe to share with client components: it contains image paths and intrinsic sizes only.
+const PHOTOGRAPHIC = photographicManifest as Record<string, Pick<ProductRender, "hero" | "catalogue" | "detail">>;
+const PHOTOGRAPHIC_ALT: Record<string, string> = {
+  "desert-eye-love": "Two separate decorative tops: a hollow love symbol above and outside a small deep-red faceted gemstone",
+  "horus-trace": "An Eye of Horus with a dark central stone, spiral and pointed drop, beneath a curved silver-tone bar with two ball ends",
+  "blade-trace": "A small silver-tone blade with a long tapered point, a short ribbed grip and one open ring",
+  crossline: "A slender dark horizontal line beside a separate small polished silver-tone cross",
+  "ankh-trace": "A single polished silver-tone ankh with an open loop, crossbar and long stem",
+  "japanese-angel": "Two Japanese characters with sharp open strokes, rendered in polished silver-tone metal",
+  "ankh-eye": "A polished silver-tone ankh with a matching Egyptian eye, spiral and drop on either side",
+  "crimson-orbit": "A deep-red faceted centre with an open silver-tone ring around it",
+  "sand-vortex": "Two separate silver-tone decorative tops: an open spiral above and outside a small polished round point",
+  "void-stud": "A matte black circular centre inside a polished silver-tone rim",
+};
+
+function photographicRender(slot: string, alt: string | undefined, forms?: FormId[]): ProductRender | undefined {
+  const images = PHOTOGRAPHIC[slot];
+  if (!images || !alt) return undefined;
+  return {
+    ...images,
+    presentation: "photographic",
+    // The DESERT EYE family source shows the pair, never its two single-point forms.
+    forms: slot === "desert-eye-love" ? ["anti-eyebrow"] : forms,
+    alt,
+    note: "AI design render · not photography of a made piece · materials not yet confirmed",
+  };
+}
+
 function render(dir: string, hero: [number, number], detail: [number, number], alt: string, concept = false, forms?: FormId[]): Product["render"] {
   return {
     forms,
@@ -181,10 +228,8 @@ export const demoProducts: Product[] = [
     // The render shows the symbol and the stone joined by a bar. The approved anti-eyebrow form is still
     // two separate tops on a diagonal, and Face Studio keeps drawing that form from its components.
     render: render("desert-eye", [1070, 510], [455, 350], "The openwork love symbol with a deep-red faceted gemstone, in polished silver-tone metal", false, ["anti-eyebrow"]),
-    // The owner's approved product animation (22 September 2026): a sand creature dissolves into sand,
-    // the three parts of the anti-eyebrow pair appear separately and assemble, and the completed piece
-    // holds. Web versions of the supplied master; the master itself is in `references/`, not here.
-    // The words are laid over it when each part seats, never baked in, and nothing is called verified.
+    // Archived animation of the earlier connected-bar concept. It no longer matches the owner's
+    // separate tops, so publication is revoked and filmFor withholds it from every visible stage.
     film: {
       forms: ["anti-eyebrow"],
       sources: [
@@ -201,7 +246,7 @@ export const demoProducts: Product[] = [
         { at: 7.1, label: "Polished finish", status: "Proposed" },
       ],
       classification: "prototype-product-animation",
-      approvedForPublication: true,
+      approvedForPublication: false,
     },
     // Architecture only. No clip exists, and none may be generated without the owner's approval.
     assembly: { themed: { id: "sand-spirit", description: "A small sand spirit is drawn toward the piece, dissolves into grains, and the grains flow into the jewelry.", status: "not-produced" } },
@@ -322,9 +367,9 @@ export const demoProducts: Product[] = [
     collection: "originals",
     origin: "original",
     lines: ["full", "original", "signature"],
-    summary: "A single polished line with one small crossing mark, worn on the cheek.",
+    summary: "A thin dark line with a separate small polished cross, worn on the cheek.",
     story:
-      "The most restrained piece in the collection: one horizontal line, one short upright crossing it, nothing else. It is drawn the way a building is drawn, not the way jewelry usually is.",
+      "A thin horizontal line and a separate small cross. Two restrained marks give a quiet surface its rhythm, leaving space for the person wearing them.",
     defaultFormId: "micro-dermal",
     forms: [
       {

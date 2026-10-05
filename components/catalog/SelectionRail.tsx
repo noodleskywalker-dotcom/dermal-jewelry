@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { displayTitle, formOf, lineLabels, isConceptFamily } from "@/lib/catalog";
+import { displayTitle, formOf, lineLabels, isConceptFamily, renderFor } from "@/lib/catalog";
 import type { Product } from "@/lib/catalog/types";
 import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 import { SandLayer } from "@/components/story/SandLayer";
@@ -164,7 +164,8 @@ export function SelectionRail({
         {products.map((product, i) => {
           const form = formOf(product, forms[product.id]);
           const current = i === index;
-          const sand = motionOf(product) === "sand";
+          const photographic = renderFor(product, form.id)?.presentation === "photographic";
+          const sand = !photographic && motionOf(product) === "sand";
           // A concept has a page to look at, and no form to name or face to try it on.
           const concept = isConceptFamily(product);
           const href = concept ? `/product/${product.slug}` : `/product/${product.slug}?form=${form.id}`;
@@ -175,6 +176,7 @@ export function SelectionRail({
               data-product={product.slug}
               data-form={form.id}
               data-current={current}
+              data-presentation={photographic ? "photographic" : undefined}
               data-side={i < index ? "before" : i > index ? "after" : undefined}
               data-object-host
               aria-current={current ? "true" : undefined}

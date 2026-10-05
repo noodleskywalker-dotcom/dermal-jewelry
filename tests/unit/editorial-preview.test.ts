@@ -45,11 +45,17 @@ describe("preview-only campaign media", () => {
   it("serves valid artwork locally and in a production-mode Vercel preview", async () => {
     supply();
     supply("gaara-detail");
+    supply("ankh-reference");
+    supply("crossline-reference");
     for (const environment of ["development", "production"]) {
       vi.stubEnv("NODE_ENV", environment);
       vi.stubEnv("VERCEL_ENV", "preview");
       expect(editorialPortraitUrl()).toBe("/api/editorial-preview/gaara-portrait");
       expect(editorialPreviewUrl("gaara-detail")).toBe("/api/editorial-preview/gaara-detail");
+      expect(editorialPreviewUrl("ankh-reference")).toBe("/api/editorial-preview/ankh-reference");
+      expect((await get("ankh-reference")).status).toBe(200);
+      expect(editorialPreviewUrl("crossline-reference")).toBe("/api/editorial-preview/crossline-reference");
+      expect((await get("crossline-reference")).status).toBe(200);
       const response = await get("gaara-portrait");
       expect(response.status).toBe(200);
       expect(response.headers.get("Content-Type")).toBe("image/webp");
@@ -65,9 +71,12 @@ describe("preview-only campaign media", () => {
     vi.stubEnv("NODE_ENV", "production");
     for (const environment of ["production", "development", "", undefined]) {
       vi.stubEnv("VERCEL_ENV", environment);
-      expect(editorialPreviewPath("gaara-portrait")).toBeUndefined();
+      for (const name of ["gaara-portrait", "gaara-detail", "ankh-reference", "crossline-reference"]) {
+        expect(editorialPreviewPath(name)).toBeUndefined();
+        expect(editorialPreviewUrl(name)).toBeUndefined();
+        expect((await get(name)).status).toBe(404);
+      }
       expect(editorialPortraitUrl()).toBeUndefined();
-      expect((await get("gaara-portrait")).status).toBe(404);
     }
     expect(statSync).not.toHaveBeenCalled();
     expect(readFile).not.toHaveBeenCalled();
