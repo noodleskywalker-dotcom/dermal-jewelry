@@ -1,5 +1,7 @@
 # DERMAL remodel review — 5 October 2026
 
+Later visual follow-up: see `NARRATIVE_REVIEW_2026-10-05.md` for the hyperreal Gaara campaign, seven individual jewelry stories, updated preview and final screenshot review. The results below describe the preceding storefront remodel.
+
 Status: tested preview deployed and screenshots reviewed. Live commission delivery remains blocked on protected-preview access. Public launch and checkout are not approved.
 
 | # | Requested item | Result |

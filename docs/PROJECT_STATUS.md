@@ -1,6 +1,8 @@
 # DERMAL — project status
 
-Last updated: 26 September 2026. Branch: `feat/dermal-first-slice`.
+Last updated: 5 October 2026. Branch: `feat/dermal-first-slice`.
+
+Latest visual milestone: hyperreal Gaara campaign and individual stories for all seven jewelry families are integrated in the review preview. See `docs/NARRATIVE_REVIEW_2026-10-05.md` for exact commits, screenshots, test results and verification limits. The earlier milestone history below is retained.
 
 Statuses used here: planned, implemented, tested, owner-approved, blocked, deferred.
 "Tested" means an automated or recorded check actually ran. See `docs/TEST_REPORT.md`.

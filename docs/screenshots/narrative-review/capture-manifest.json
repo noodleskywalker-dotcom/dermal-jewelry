@@ -1,0 +1,339 @@
+{
+  "generatedAt": "2026-10-05T11:42:04.897Z",
+  "base": "http://127.0.0.1:3000",
+  "captures": [
+    {
+      "file": "desktop-00-gaara-opening.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "desktop-01-chapter-desert-eye-love.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "desktop-01-chapter-horus-trace.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "desktop-01-chapter-blade-trace.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "desktop-01-chapter-crossline.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "desktop-01-chapter-ankh-trace.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "desktop-01-chapter-japanese-angel.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "desktop-01-chapter-ankh-eye.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "desktop-02-story-desert-eye-love.png",
+      "url": "http://127.0.0.1:3000/product/desert-eye-love#design-story",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": null
+    },
+    {
+      "file": "desktop-02-story-horus-trace.png",
+      "url": "http://127.0.0.1:3000/product/horus-trace#design-story",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": null
+    },
+    {
+      "file": "desktop-02-story-blade-trace.png",
+      "url": "http://127.0.0.1:3000/product/blade-trace#design-story",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": null
+    },
+    {
+      "file": "desktop-02-story-crossline.png",
+      "url": "http://127.0.0.1:3000/product/crossline#design-story",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": null
+    },
+    {
+      "file": "desktop-02-story-ankh-trace.png",
+      "url": "http://127.0.0.1:3000/product/ankh-trace#design-story",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": null
+    },
+    {
+      "file": "desktop-02-story-japanese-angel.png",
+      "url": "http://127.0.0.1:3000/product/japanese-angel#design-story",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": null
+    },
+    {
+      "file": "desktop-02-story-ankh-eye.png",
+      "url": "http://127.0.0.1:3000/product/ankh-eye#design-story",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "hero": null
+    },
+    {
+      "file": "mobile-00-gaara-opening.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "mobile-01-chapter-desert-eye-love.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "mobile-01-chapter-horus-trace.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "mobile-01-chapter-blade-trace.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "mobile-01-chapter-crossline.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "mobile-01-chapter-ankh-trace.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "mobile-01-chapter-japanese-angel.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "mobile-01-chapter-ankh-eye.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "mobile-02-story-desert-eye-love.png",
+      "url": "http://127.0.0.1:3000/product/desert-eye-love#design-story",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": null
+    },
+    {
+      "file": "mobile-02-story-horus-trace.png",
+      "url": "http://127.0.0.1:3000/product/horus-trace#design-story",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": null
+    },
+    {
+      "file": "mobile-02-story-blade-trace.png",
+      "url": "http://127.0.0.1:3000/product/blade-trace#design-story",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": null
+    },
+    {
+      "file": "mobile-02-story-crossline.png",
+      "url": "http://127.0.0.1:3000/product/crossline#design-story",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": null
+    },
+    {
+      "file": "mobile-02-story-ankh-trace.png",
+      "url": "http://127.0.0.1:3000/product/ankh-trace#design-story",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": null
+    },
+    {
+      "file": "mobile-02-story-japanese-angel.png",
+      "url": "http://127.0.0.1:3000/product/japanese-angel#design-story",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": null
+    },
+    {
+      "file": "mobile-02-story-ankh-eye.png",
+      "url": "http://127.0.0.1:3000/product/ankh-eye#design-story",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "hero": null
+    },
+    {
+      "file": "narrow-00-gaara-opening.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "narrow-01-chapter-desert-eye-love.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "narrow-01-chapter-blade-trace.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "narrow-01-chapter-ankh-trace.png",
+      "url": "http://127.0.0.1:3000/",
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "hero": "portrait"
+    },
+    {
+      "file": "narrow-02-story-desert-eye-love.png",
+      "url": "http://127.0.0.1:3000/product/desert-eye-love#design-story",
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "hero": null
+    },
+    {
+      "file": "narrow-02-story-blade-trace.png",
+      "url": "http://127.0.0.1:3000/product/blade-trace#design-story",
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "hero": null
+    },
+    {
+      "file": "narrow-02-story-ankh-trace.png",
+      "url": "http://127.0.0.1:3000/product/ankh-trace#design-story",
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "hero": null
+    }
+  ]
+}
