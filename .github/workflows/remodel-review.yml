@@ -26,8 +26,25 @@ jobs:
         env:
           PLAYWRIGHT_JSON_OUTPUT_FILE: test-results/results.json
       - run: npm run build
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: remodel-test-results
+          path: test-results/
+          retention-days: 14
+
+  capture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
       - name: Capture remodel review
-        if: ${{ !cancelled() }}
         run: |
           npm run dev -- --hostname 127.0.0.1 --port 3000 > /tmp/dermal-review-server.log 2>&1 &
           server_pid=$!
@@ -43,7 +60,6 @@ jobs:
         with:
           name: remodel-browser-review
           path: |
-            test-results/
             docs/screenshots/astra-remodel/
             docs/screenshots/narrative-remodel/
           retention-days: 14

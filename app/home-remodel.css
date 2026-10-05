@@ -204,3 +204,7 @@
  .home-story-visual-portrait figcaption { padding: 3.5rem .85rem 1rem; font-size: .5rem; }
 }
 @media(prefers-reduced-motion:reduce) { .home-story-portrait { animation: none; } }
+/* These renders were lifted from ivory paper; their translucent highlights need a light field. */
+.home-story-panel[data-mode="product"] .home-story-visual { background: var(--color-paper); }
+.home-story-panel[data-mode="product"] .home-story-word { color: #665748; opacity: .24; }
+.home-story-panel[data-mode="product"] .home-story-visual figcaption { left: 1.25rem; right: 1.25rem; bottom: 1.2rem; color: #665d52; border-color: #d8d0c5; }
