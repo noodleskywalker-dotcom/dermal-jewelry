@@ -12,7 +12,7 @@ const EXE = { name: "setup.exe", mimeType: "application/x-msdownload", buffer: B
 const GIF = { name: "loop.gif", mimeType: "image/gif", buffer: Buffer.from("GIF89a\x01\x00\x01\x00") };
 const BIG_PDF = { name: "huge.pdf", mimeType: "application/pdf", buffer: Buffer.concat([Buffer.from("%PDF-1.4\n"), Buffer.alloc(4 * 1024 * 1024 + 10, 32)]) };
 
-const RENDERED = ["desert-eye-love", "horus-trace", "japanese-angel", "ankh-eye"];
+const RENDERED = ["desert-eye-love", "horus-trace", "blade-trace", "crossline", "ankh-trace", "japanese-angel", "ankh-eye"];
 
 /** Routes this page's commission calls to the mock delivery, in a rate-limit bucket of its own. */
 async function mockDelivery(page: Page, mode: "ok" | "fail-email" | (() => "ok" | "fail-email") = "ok") {
@@ -60,7 +60,7 @@ async function imagesLoaded(page: Page, selector: string) {
 
 test.describe("design renders", () => {
   test("every render file the catalogue names is served", async ({ request }) => {
-    for (const family of ["desert-eye", "horus-trace", "japanese-angel", "ankh-eye"]) {
+    for (const family of RENDERED.map((slug) => slug === "desert-eye-love" ? "desert-eye" : slug)) {
       for (const file of ["hero", "catalogue", "detail"]) {
         const response = await request.get(`/products/${family}/${file}.webp`);
         expect(response.status(), `${family}/${file}`).toBe(200);
@@ -79,9 +79,10 @@ test.describe("design renders", () => {
       expect(fit.fit).toBe("contain");
       expect(fit.w).toBe(fit.h);
     }
-    // Every other family keeps its approved drawn artwork.
-    await expect(page.locator('[data-product="blade-trace"] [data-testid="piece-render"]')).toHaveCount(0);
-    await expect(page.locator('[data-product="crossline"] [data-testid="piece-render"]')).toHaveCount(0);
+    // Secondary studies keep their approved drawn artwork.
+    for (const slug of ["crimson-orbit", "sand-vortex", "void-stud"]) {
+      await expect(page.locator(`[data-product="${slug}"] [data-testid="piece-render"]`)).toHaveCount(0);
+    }
     await noHorizontalScroll(page);
   });
 

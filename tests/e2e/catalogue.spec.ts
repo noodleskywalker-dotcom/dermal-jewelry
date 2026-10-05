@@ -120,19 +120,17 @@ test.describe("finding a piece", () => {
 test.describe("perceived scale inside equal stages", () => {
   test("a family's artwork is scaled for presentation only, and never outgrows its stage", async ({ page }) => {
     await page.goto("/shop");
-    // The scale is presentation: DESERT EYE is drawn down, the thin forms are drawn up.
+    // The seven primary families now use tightly framed renders. Their presentation scale
+    // keeps the whole image inside its stage, without changing the wearable geometry.
     const scales = Object.fromEntries(
       await page.getByTestId("product-card").evaluateAll((els) =>
         els.map((el) => [el.getAttribute("data-product"), Number(el.querySelector(".fo-scale")?.getAttribute("data-scale"))]),
       ),
     ) as Record<string, number>;
-    expect(scales["desert-eye-love"]).toBeLessThan(1);
-    expect(scales["crossline"]).toBeGreaterThan(1);
-    expect(scales["blade-trace"]).toBeGreaterThan(1);
-    // HORUS TRACE is presented by its design render now (26 September 2026); a render is framed
-    // full-bleed in its square, so its scale brings it down, never up.
-    expect(scales["horus-trace"]).toBeLessThan(1);
-    for (const slug of ["japanese-angel", "ankh-eye"]) expect(scales[slug]).toBeLessThanOrEqual(1);
+    for (const slug of ["desert-eye-love", "horus-trace", "blade-trace", "crossline", "ankh-trace", "japanese-angel", "ankh-eye"]) {
+      expect(scales[slug], slug).toBeGreaterThanOrEqual(0.75);
+      expect(scales[slug], slug).toBeLessThanOrEqual(1);
+    }
 
     // The stages themselves are untouched by it: equal layout width on a phone, and the page never
     // gains a sideways scroll from a piece that was drawn larger.
