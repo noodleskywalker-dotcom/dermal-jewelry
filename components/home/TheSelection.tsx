@@ -25,7 +25,7 @@ export function TheSelection({ products }: { products: Product[] }) {
           The selection
         </h2>
         <p className="explore-lede" data-testid="explore-lede">
-          Objects for the face. Symbols, lines and unexpected forms — each with its own point of view.
+          Objects for the face. Seven distinct stories, from ancient symbols to a single line. Find the one that feels like yours.
         </p>
       </div>
 

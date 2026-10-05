@@ -25,11 +25,12 @@ export function LaunchHero({ frames }: { frames: ScrubFrames }) {
 
 function StillOpening({ frames }: { frames: ScrubFrames }) {
   return (
-    <section aria-label="The piece, turned" data-testid="scrub-hero" data-mode="still" className="launch-still">
+    <section id="reveal" aria-label="The piece, turned" data-testid="scrub-hero" data-mode="still" className="launch-still">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={frameSrc(frames, 0)} alt="DESERT EYE — LOVE, the completed piece" decoding="async" className="launch-still-media" />
       <div className="launch-still-copy">
         <p className="label-xs">02 / The reveal</p>
+        <p className="launch-still-title">A feeling, given form.</p>
       </div>
     </section>
   );
@@ -110,7 +111,7 @@ function ScrubOpening({ frames }: { frames: ScrubFrames }) {
   const complete = ready >= frames.count;
 
   return (
-    <section ref={section} aria-label="The piece, turned by scrolling" data-testid="scrub-hero" data-mode="scrub" data-frame={frame} data-ready={complete} className="launch">
+    <section id="reveal" ref={section} aria-label="The piece, turned by scrolling" data-testid="scrub-hero" data-mode="scrub" data-frame={frame} data-ready={complete} className="launch">
       <div className="launch-stage">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={frames.poster} alt="" aria-hidden="true" className={`launch-media transition-opacity duration-700 ${complete ? "opacity-0" : "opacity-100"}`} />

@@ -1,13 +1,14 @@
 import { expect, test } from "@playwright/test";
+import { EDITORIAL_PORTRAIT_AVAILABLE, OPENING_HEADLINE } from "./helpers";
 
 test.describe("landing page", () => {
-  test("opens on the piece alone, then the headline and two ways in, and scrolls like a normal page", async ({ page }) => {
+  test("opens on the campaign, the headline and two ways in, and scrolls like a normal page", async ({ page }) => {
     const errors: string[] = [];
     page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
     page.on("pageerror", (e) => errors.push(e.message));
 
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Love, wornyour way.");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(OPENING_HEADLINE);
     // Paper, not ink, and the navigation matches it.
     const paper = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
     expect(paper).toBe("rgb(251, 250, 247)");
@@ -93,17 +94,19 @@ test.describe("landing page", () => {
     expect(canvas).toBe("rgb(251, 250, 247)");
   });
 
-  test("the page runs launch, selection, on you, last frame — in that order", async ({ page }) => {
+  test("the page runs launch, selection, design stories, on you, last frame — in that order", async ({ page }) => {
     await page.goto("/");
     const top = async (id: string) => (await page.getByTestId(id).evaluate((el) => el.getBoundingClientRect().top + window.scrollY)) as number;
-    const [hero, selection, onyou, final] = [
+    const [hero, selection, stories, onyou, final] = [
       await top("cinema-hero"),
       await top("collection-section"),
+      await top("home-stories"),
       await top("onyou-section"),
       await top("final-section"),
     ];
     expect(selection).toBeGreaterThan(hero);
-    expect(onyou).toBeGreaterThan(selection);
+    expect(stories).toBeGreaterThan(selection);
+    expect(onyou).toBeGreaterThan(stories);
     expect(final).toBeGreaterThan(onyou);
     // The only sand left on the page is DESERT EYE's own slide on the rail, and it leaves with it.
     const rail = page.getByTestId("selection");
@@ -131,9 +134,8 @@ test.describe("homepage mascot (internal concept art, development server only)",
     // The clip loops silently and never starts anything.
     expect(await clip.evaluate((v: HTMLVideoElement) => [v.loop, v.muted])).toEqual([true, true]);
     await expect(clip).toHaveAttribute("data-clip", "idle");
-    // The homepage's own opening loop is playing, and the mascot gives way to it rather than decoding
-    // a second video beside it.
-    await expect.poll(() => clip.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
+    // A product loop takes precedence over the mascot; a still campaign portrait does not.
+    await expect.poll(() => clip.evaluate((v: HTMLVideoElement) => v.paused)).toBe(!EDITORIAL_PORTRAIT_AVAILABLE);
     await expect(page.getByTestId("sand-transition")).toHaveCount(0);
     await expect(page).toHaveURL(/\/$/);
   });

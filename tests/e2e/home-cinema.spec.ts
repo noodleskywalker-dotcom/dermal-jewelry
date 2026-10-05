@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { EDITORIAL_PORTRAIT_AVAILABLE, OPENING_HEADLINE } from "./helpers";
 
 // The homepage as a short film (the cinematic remake of 22 September 2026): the opening shot, the turn,
 // the world and its companion, the push into the stone, the close views, the meaning, the assembly,
@@ -8,12 +9,23 @@ import { expect, test } from "@playwright/test";
 const hero = (page: import("@playwright/test").Page) => page.getByTestId("scrub-hero");
 
 test.describe("the opening shot", () => {
-  test("a muted ambient loop of the piece in low light, with a pause control and the headline", async ({ page, browserName }) => {
+  test("the opening shows its prepared editorial portrait, or the product loop with a working pause control", async ({ page, browserName }) => {
     // The test WebKit build on Windows has no video decoder, so it shows the poster and honestly offers Play.
-    test.skip(browserName === "webkit", "no media decoder in the test WebKit build");
+    test.skip(!EDITORIAL_PORTRAIT_AVAILABLE && browserName === "webkit", "no media decoder in the test WebKit build");
     await page.goto("/");
     const shot = page.getByTestId("cinema-hero");
-    await expect(shot.getByRole("heading", { level: 1 })).toHaveText("Love, wornyour way.");
+    await expect(shot.getByRole("heading", { level: 1 })).toHaveText(OPENING_HEADLINE);
+    await expect(shot).toHaveAttribute("data-presentation", EDITORIAL_PORTRAIT_AVAILABLE ? "portrait" : "product");
+    if (EDITORIAL_PORTRAIT_AVAILABLE) {
+      const portrait = shot.getByTestId("cinema-hero-portrait");
+      await expect(portrait).toHaveAttribute("src", "/api/editorial-preview/gaara-portrait");
+      await expect(portrait).toHaveAccessibleName(/adult Gaara wearing the DESERT EYE LOVE anti-eyebrow design/);
+      await expect.poll(() => portrait.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
+      await expect(shot.locator("video")).toHaveCount(0);
+      await expect(shot.getByTestId("cinema-hero-pause")).toHaveCount(0);
+      await expect(shot).toContainText("Gaara / AI editorial study");
+      return;
+    }
     const video = shot.getByTestId("cinema-hero-video");
     expect(await video.evaluate((v: HTMLVideoElement) => [v.muted, v.loop, v.controls])).toEqual([true, true, false]);
     const pause = shot.getByTestId("cinema-hero-pause");
@@ -32,7 +44,7 @@ test.describe("the opening shot", () => {
     const shot = page.getByTestId("cinema-hero");
     await expect(shot.locator("video")).toHaveCount(0);
     await expect(shot.locator("img")).toHaveCount(1);
-    await expect(shot.getByRole("heading", { level: 1 })).toHaveText("Love, wornyour way.");
+    await expect(shot.getByRole("heading", { level: 1 })).toHaveText(OPENING_HEADLINE);
     await expect(shot.getByTestId("cinema-hero-pause")).toHaveCount(0);
     await expect(page.getByTestId("cta-piece")).toBeVisible();
   });
@@ -78,10 +90,10 @@ test.describe("the turn", () => {
     await page.goto("/");
     await expect.poll(() => hero(page).getAttribute("data-ready"), { timeout: 20000 }).toBe("true");
     expect(new Set(frames).size).toBe(72);
-    // Only the two ambient loops (the opening shot and the dunes) play by themselves; the product film
-    // is idle. The mascot's own clip is left out: it is internal art and gives way to these anyway.
+    // A prepared portrait is a still; otherwise only the product opening is an ambient loop.
+    // The mascot's own clip is left out because it is separate internal art.
     const loops = await page.locator("video[autoplay]:not([data-testid='mascot-clip'])").evaluateAll((vs) => vs.map((v) => v.className.split(" ")[0]));
-    expect(loops.sort()).toEqual(["cinema-hero-media"]);
+    expect(loops.sort()).toEqual(EDITORIAL_PORTRAIT_AVAILABLE ? [] : ["cinema-hero-media"]);
   });
 
   test("with reduced motion the turn is a plain still and nothing is pinned", async ({ page }) => {

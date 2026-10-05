@@ -37,6 +37,7 @@ jobs:
             sleep 1
           done
           node tests/e2e/capture-remodel.mjs
+          node tests/e2e/capture-narrative.mjs
       - uses: actions/upload-artifact@v5
         if: always()
         with:
@@ -44,4 +45,5 @@ jobs:
           path: |
             test-results/
             docs/screenshots/astra-remodel/
+            docs/screenshots/narrative-remodel/
           retention-days: 14

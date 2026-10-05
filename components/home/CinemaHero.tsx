@@ -9,9 +9,9 @@ import { useReducedMotion } from "@/lib/motion/useScrollProgress";
 // stone: an ambient loop, muted, with a pause control (it moves for longer than five seconds). It is
 // atmosphere, not a story reveal, and it starts from the exact approved product frame. With reduced
 // motion it is the still. The words sit low on the left, in ivory, and never cover the piece.
-export function CinemaHero({ sources, poster }: { sources: VideoSource[]; poster: string }) {
+export function CinemaHero({ sources, poster, cinematicPortrait }: { sources: VideoSource[]; poster: string; cinematicPortrait?: string }) {
   const reduced = useReducedMotion();
-  const video = useAmbientVideo(sources, !reduced);
+  const video = useAmbientVideo(sources, !reduced && !cinematicPortrait);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
@@ -23,8 +23,12 @@ export function CinemaHero({ sources, poster }: { sources: VideoSource[]; poster
   }, [paused, reduced, video]);
 
   return (
-    <section aria-labelledby="landing-heading" data-testid="cinema-hero" className="cinema-hero">
-      {reduced ? (
+    <section aria-labelledby="landing-heading" data-testid="cinema-hero" data-presentation={cinematicPortrait ? "portrait" : "product"} data-mode={cinematicPortrait ? "portrait" : reduced ? "still" : "video"} className={`cinema-hero${cinematicPortrait ? " cinema-hero-portrait" : ""}`}>
+      {cinematicPortrait ? (
+        // Private preview media is served without an image-optimization cache.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={cinematicPortrait} alt="Hyperrealistic interpretation of adult Gaara wearing the DESERT EYE LOVE anti-eyebrow design, with the openwork symbol above the deep-red stone" data-testid="cinema-hero-portrait" className="cinema-hero-media" fetchPriority="high" />
+      ) : reduced ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={poster} alt="" aria-hidden="true" className="cinema-hero-media" />
       ) : (
@@ -32,30 +36,28 @@ export function CinemaHero({ sources, poster }: { sources: VideoSource[]; poster
       )}
       <div className="cinema-hero-veil" aria-hidden="true" />
       <div className="cinema-hero-copy">
-        <p className="label-xs">01 / The launch collection</p>
+        <p className="label-xs">01 / {cinematicPortrait ? "The first story" : "The launch collection"}</p>
         <p className="mt-4 font-display text-[clamp(1.25rem,1.7vw,1.6rem)] font-light tracking-[0.14em]">DESERT EYE&nbsp;—&nbsp;LOVE</p>
         <h1 id="landing-heading" className="mt-5 font-display text-[clamp(2.5rem,5.2vw,5.25rem)] font-light leading-[1.02] tracking-[0.01em]">
-          Love, worn<br /><em>your way.</em>
+          {cinematicPortrait ? <>A story,<br /><em>worn close.</em></> : <>Love, worn<br /><em>your way.</em></>}
         </h1>
-        <p className="hero-introduction">A symbol. A deep-red stone. A different kind of signature.</p>
+        <p className="hero-introduction">{cinematicPortrait ? "From a mark of solitude to a sign of belonging. A symbol and a deep-red stone, made personal." : "A symbol. A deep-red stone. A different kind of signature."}</p>
         <div className="mt-9 flex flex-wrap gap-x-10 gap-y-2">
           <Link href="/product/desert-eye-love" data-testid="cta-piece" className="text-link">
-            Discover the piece <span aria-hidden="true">↗</span>
+            {cinematicPortrait ? "Enter the story" : "Discover the piece"} <span aria-hidden="true">↗</span>
           </Link>
           <Link href="#selection" data-testid="cta-selection" className="text-link">
             Explore DERMAL <span aria-hidden="true">↗</span>
           </Link>
         </div>
       </div>
-      {!reduced && (
+      {!reduced && !cinematicPortrait && (
         <button type="button" data-testid="cinema-hero-pause" aria-pressed={paused} onClick={() => setPaused((p) => !p)} className="cinema-hero-pause label-xs">
           {paused ? "Play" : "Pause"}
         </button>
       )}
-      <p className="cinema-hero-edition label-xs">DESERT EYE — LOVE / Design render</p>
-      <p className="cinema-hero-scroll label-xs" aria-hidden="true">
-        Scroll
-      </p>
+      <p className="cinema-hero-edition label-xs">{cinematicPortrait ? "Gaara / AI editorial study" : "DESERT EYE — LOVE / Design render"}</p>
+      <a href="#reveal" className="cinema-hero-scroll label-xs" aria-label="Continue to the jewelry reveal">The story continues <span aria-hidden="true">↓</span></a>
     </section>
   );
 }

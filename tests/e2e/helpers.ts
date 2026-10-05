@@ -1,8 +1,14 @@
 import path from "node:path";
+import { existsSync } from "node:fs";
 import { expect, type Locator, type Page } from "@playwright/test";
 
 // Abstract grid image. It is not a face and proves nothing about face detection.
 export const FIXTURE = path.join(__dirname, "..", "fixtures", "geometric-portrait.png");
+
+// The development server deliberately exposes campaign art only when the review asset is present.
+// Assert the expected branch from the fixture on disk, not from whatever the page happens to render.
+export const EDITORIAL_PORTRAIT_AVAILABLE = existsSync(path.join(process.cwd(), "assets/editorial-preview/gaara-portrait.webp"));
+export const OPENING_HEADLINE = EDITORIAL_PORTRAIT_AVAILABLE ? "A story,worn close." : "Love, wornyour way.";
 
 export async function openStudioWithPhoto(page: Page, query = "") {
   await page.goto(`/face-studio${query}`);

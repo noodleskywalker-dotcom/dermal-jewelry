@@ -5,6 +5,7 @@ import { FamilyExperience } from "@/components/catalog/FamilyExperience";
 import { catalog } from "@/lib/catalog";
 import { getDermalProduct } from "@/lib/commerce/catalog";
 import { canonicalOrigin } from "@/lib/config/metadata";
+import { editorialPreviewUrl } from "@/lib/story/editorial-preview";
 import "./product-remodel.css";
 
 export function generateStaticParams() {
@@ -62,7 +63,13 @@ export default async function ProductPage({ params, searchParams }: PageProps<"/
       </nav>
 
       <div>
-        <FamilyExperience product={product} initialFormId={first(query.form)} fixtureSrc={fixtureFor(first(query.revealFixture))} concept={conceptFor(first(query.revealFixture), slug)} />
+        <FamilyExperience
+          product={product}
+          initialFormId={first(query.form)}
+          fixtureSrc={fixtureFor(first(query.revealFixture))}
+          concept={conceptFor(first(query.revealFixture), slug)}
+          editorialDetailSrc={slug === "desert-eye-love" ? editorialPreviewUrl("gaara-detail") : undefined}
+        />
       </div>
 
     </div>

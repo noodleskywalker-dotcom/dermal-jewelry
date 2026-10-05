@@ -27,11 +27,16 @@ export function SeeItOnYou({ product }: { product: Product }) {
         <p className="label-xs absolute bottom-4 left-4 text-ash">{photo ? "Your photo · stays on this device" : "Sculpted form, not a person"} · approximate</p>
       </div>
       <div className="onyou-copy">
-        <p className="label-xs">04 / On you</p>
+        <p className="label-xs">05 / The next chapter</p>
         <h2 id="onyou-heading" className="mt-4 font-display text-[clamp(2.25rem,4.4vw,4.5rem)] font-light uppercase leading-[0.98] tracking-[0.04em]">
           The final detail<br /><em>is you.</em>
         </h2>
-        <p className="onyou-introduction">Explore placement on your own photo. Find the form that feels like you.</p>
+        <p className="onyou-introduction">A piece has its own story. Where you place it becomes part of yours.</p>
+        <ol className="onyou-steps" aria-label="How to try on a piece">
+          <li><span>01</span><div><strong>Bring your face.</strong><p>Choose a photo that stays on this device.</p></div></li>
+          <li><span>02</span><div><strong>Find your placement.</strong><p>Explore the form, scale and angle.</p></div></li>
+          <li><span>03</span><div><strong>Make it personal.</strong><p>See the piece in the context of you.</p></div></li>
+        </ol>
         <Link href={`/face-studio?product=${product.slug}`} className="text-link mt-8" data-testid="onyou-try">
           Try on your face <span aria-hidden="true">↗</span>
         </Link>

@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { displayTitle, filmFor, isConceptFamily, lineLabels, renderFor } from "@/lib/catalog";
@@ -19,21 +18,11 @@ import { CommissionCta } from "@/components/commission/CommissionCta";
 import { ANCHORS, PlacementPreview } from "./PlacementPreview";
 import { ProductFilm } from "./ProductFilm";
 import { TryOnPreview } from "./TryOnPreview";
-import { FormVisual } from "./FormVisual";
+import { ProductStory } from "./ProductStory";
 
 type ViewId = "piece" | "motion" | "orbit" | "assembly" | "hardware" | "reveal" | "placement" | "tryon";
 
 const ORBIT = "/media/hero-orbit/desert-eye-love";
-
-const designHeadings: Record<string, string> = {
-  "desert-eye-love": "A symbol. A red accent. Your expression.",
-  "horus-trace": "An ancient mark, drawn close.",
-  "blade-trace": "A line with an edge.",
-  crossline: "The power of almost nothing.",
-  "ankh-trace": "A familiar symbol. A personal placement.",
-  "japanese-angel": "Character, in every stroke.",
-  "ankh-eye": "Two symbols. One silhouette.",
-};
 
 // The product page as a luxury configurator: one large cinematic stage on the left, a small fixed
 // column of information on the right that stays put while the stage changes mode. The chosen
@@ -43,12 +32,15 @@ export function FamilyExperience({
   initialFormId,
   fixtureSrc,
   concept,
+  editorialDetailSrc,
 }: {
   product: Product;
   initialFormId?: string;
   fixtureSrc?: string;
   /** Development-only stills for the local reveal prototype. */
   concept?: ConceptStills;
+  /** Server-gated character campaign artwork, isolated from product/form geometry. */
+  editorialDetailSrc?: string;
 }) {
   const { form, choose } = useFormChoice(product, initialFormId);
   const film = filmFor(product, form.id);
@@ -178,6 +170,7 @@ export function FamilyExperience({
         <p className="label-xs mt-2 text-ash" data-testid="family-lines">{lineLabels(product).join(" · ")}</p>
         <h1 className="pdp-title font-display">{displayTitle(product.title)}</h1>
         <p className="pdp-summary">{product.summary}</p>
+        <a className="pdp-story-invitation text-link" href="#design-story">Enter the story <span aria-hidden="true">↓</span></a>
 
         <fieldset className="pdp-forms">
           <legend className="label-xs text-ash">Choose your form</legend>
@@ -255,28 +248,7 @@ export function FamilyExperience({
       </aside>
     </div>
 
-    <section className="pdp-design-story" aria-labelledby="pdp-design-heading">
-      <div className="pdp-story-visual">
-        {render?.detail ? (
-          <Image
-            src={render.detail.src}
-            width={render.detail.width}
-            height={render.detail.height}
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            alt={`${product.title}, a close study of its design. Materials are not yet confirmed.`}
-          />
-        ) : (
-          <div className="pdp-story-drawing" aria-hidden="true"><FormVisual product={product} formId={form.id} /></div>
-        )}
-        <p className="label-xs text-ash">{render ? "Detail / Design render" : "Form / Design study"}</p>
-      </div>
-      <div className="pdp-story-copy">
-        <p className="label-xs text-ash">The thought behind the form</p>
-        <h2 id="pdp-design-heading" className="font-display">{designHeadings[product.slug] ?? "A small object. A personal statement."}</h2>
-        <p>{product.story}</p>
-        <Link href="/collections" className="text-link">Explore the collection <span aria-hidden="true">→</span></Link>
-      </div>
-    </section>
+    <ProductStory product={product} formId={form.id} editorialDetailSrc={editorialDetailSrc} />
     </div>
   );
 }
