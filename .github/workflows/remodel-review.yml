@@ -26,9 +26,22 @@ jobs:
         env:
           PLAYWRIGHT_JSON_OUTPUT_FILE: test-results/results.json
       - run: npm run build
+      - name: Capture remodel review
+        if: ${{ !cancelled() }}
+        run: |
+          npm run dev -- --hostname 127.0.0.1 --port 3000 > /tmp/dermal-review-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..60}; do
+            curl --silent --fail http://127.0.0.1:3000/ > /dev/null && break
+            sleep 1
+          done
+          node tests/e2e/capture-remodel.mjs
       - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: remodel-browser-review
-          path: test-results/
+          path: |
+            test-results/
+            docs/screenshots/astra-remodel/
           retention-days: 14

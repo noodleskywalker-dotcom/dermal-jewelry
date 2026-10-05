@@ -307,6 +307,7 @@ export const demoProducts: Product[] = [
       pendingForm("anti-eyebrow", "Anti-eyebrow", "anti-eyebrow"),
       pendingForm("nose", "Nose", "nostril"),
     ],
+    render: render("blade-trace", [1600, 605], [1050, 580], "A polished silver-tone tapered blade silhouette, short ribbed grip and single open ring", false, ["micro-dermal"]),
     reveal: NO_REVEAL,
     specs: unverifiedSpecs(),
     materials: [
@@ -350,6 +351,7 @@ export const demoProducts: Product[] = [
       pendingForm("anti-eyebrow", "Anti-eyebrow", "anti-eyebrow"),
       pendingForm("nose", "Nose", "nostril"),
     ],
+    render: render("crossline", [1600, 565], [430, 450], "A polished silver-tone line with a separate small crossing mark", false, ["micro-dermal"]),
     reveal: NO_REVEAL,
     specs: unverifiedSpecs(),
     materials: [
@@ -388,6 +390,7 @@ export const demoProducts: Product[] = [
       pendingForm("anti-eyebrow", "Anti-eyebrow", "anti-eyebrow"),
       pendingForm("nose", "Nose", "nostril"),
     ],
+    render: render("ankh-trace", [950, 1600], [800, 780], "A polished silver-tone ankh with a rounded loop, crossbar and long stem", false, ["micro-dermal"]),
     reveal: NO_REVEAL,
     specs: unverifiedSpecs(),
     materials: [

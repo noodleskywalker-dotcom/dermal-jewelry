@@ -10,6 +10,7 @@ import { SandTransitionProvider } from "@/components/transition/SandTransition";
 import { getCommerceState } from "@/lib/commerce/catalog";
 import { internalMascotClips, internalMascotMedia, internalSandFallback, internalSandSource, isInternalReview } from "@/lib/story/registry";
 import { site } from "@/lib/config/site";
+import { canonicalOrigin } from "@/lib/config/metadata";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -30,8 +31,10 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: { default: `${site.brand} — facial jewelry, previewed on you`, template: `%s — ${site.brand}` },
+  metadataBase: canonicalOrigin(),
+  title: { default: `${site.brand} — facial jewelry & custom commissions`, template: `%s — ${site.brand}` },
   description: site.tagline,
+  openGraph: { siteName: site.brand, type: "website", title: "DERMAL — facial jewelry & custom commissions", description: site.tagline },
   // Preview build with demo products. Keep it out of search until launch is approved.
   robots: { index: false, follow: false },
 };

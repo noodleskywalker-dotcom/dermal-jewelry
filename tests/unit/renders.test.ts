@@ -8,11 +8,11 @@ import { SELLABLE_FAMILIES } from "@/lib/commerce/mapping";
 
 const publicFile = (src: string) => path.join(process.cwd(), "public", src);
 
-// The owner's renders of 26 September 2026: which family each one belongs to.
-const RENDERED = ["desert-eye-love", "horus-trace", "japanese-angel", "ankh-eye"];
+// The four owner renders plus three Skywork reference edits: exact family mapping.
+const RENDERED = ["desert-eye-love", "horus-trace", "japanese-angel", "ankh-eye", "blade-trace", "crossline", "ankh-trace"];
 
 describe("design renders", () => {
-  it("are attached to exactly the four families they show", () => {
+  it("are attached to exactly the seven families they show", () => {
     expect(catalog.listProducts().filter((p) => p.render).map((p) => p.slug).sort()).toEqual([...RENDERED].sort());
   });
 

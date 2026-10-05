@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { FamilyExperience } from "@/components/catalog/FamilyExperience";
 import { catalog } from "@/lib/catalog";
 import { getDermalProduct } from "@/lib/commerce/catalog";
+import { canonicalOrigin } from "@/lib/config/metadata";
 import "./product-remodel.css";
 
 export function generateStaticParams() {
@@ -12,8 +13,19 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps<"/product/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const product = catalog.getProduct(slug);
-  return product ? { title: product.title, description: product.summary } : {};
+  const product = await getDermalProduct(slug);
+  if (!product) return {};
+  const origin = canonicalOrigin();
+  return {
+    title: product.title,
+    description: product.summary,
+    alternates: origin ? { canonical: new URL(`/product/${slug}`, origin).href } : undefined,
+    openGraph: {
+      title: product.title,
+      description: product.summary,
+      ...(origin && product.render ? { images: [{ url: new URL(product.render.catalogue.src, origin).href, alt: product.render.alt }] } : {}),
+    },
+  };
 }
 
 const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);

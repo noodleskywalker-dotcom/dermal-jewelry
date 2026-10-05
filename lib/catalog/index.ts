@@ -111,9 +111,9 @@ const PRESENTATION_SCALE: Record<string, number> = {
   "horus-trace": 0.9,
   "japanese-angel": 0.88,
   "ankh-eye": 0.84,
-  "blade-trace": 1.08,
-  crossline: 1.3,
-  "ankh-trace": 1.15,
+  "blade-trace": 0.96,
+  crossline: 0.96,
+  "ankh-trace": 0.9,
   "crimson-orbit": 0.9,
   "void-stud": 0.88,
 };
